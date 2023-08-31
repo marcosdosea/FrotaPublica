@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2023-08-30 23:06
+-- Generated: 2023-08-31 09:14
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -237,6 +237,7 @@ CREATE TABLE IF NOT EXISTS `Frota`.`Manutencao` (
   `valorManutencao` DECIMAL(10,2) NOT NULL,
   `tipo` ENUM('P', 'C') NOT NULL DEFAULT 'P',
   `comprovante` BLOB NULL DEFAULT NULL,
+  `status` ENUM('O', 'A', 'E', 'F') NOT NULL DEFAULT 'O',
   PRIMARY KEY (`id`),
   INDEX `fk_Manutencao_Veiculo1_idx` (`idVeiculo` ASC),
   INDEX `fk_Manutencao_Fornecedor1_idx` (`idFornecedor` ASC),

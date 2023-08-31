@@ -23,6 +23,8 @@ public partial class Manutencao
 
     public byte[]? Comprovante { get; set; }
 
+    public string Status { get; set; } = null!;
+
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 
     public virtual Pessoa IdResponsavelNavigation { get; set; } = null!;

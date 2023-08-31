@@ -49,7 +49,8 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
 
-     protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abastecimento>(entity =>
         {
@@ -210,6 +211,10 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.IdVeiculo)
                 .HasColumnType("int(10) unsigned")
                 .HasColumnName("idVeiculo");
+            entity.Property(e => e.Status)
+                .HasDefaultValueSql("'O'")
+                .HasColumnType("enum('O','A','E','F')")
+                .HasColumnName("status");
             entity.Property(e => e.Tipo)
                 .HasDefaultValueSql("'P'")
                 .HasColumnType("enum('P','C')")
