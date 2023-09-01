@@ -1,6 +1,4 @@
-﻿using Core;
-
-namespace Service
+﻿namespace Core.Service
 {
     public interface IMarcaPecaInsumoService
     {

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FrotaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
-using Service;
+using Core.Service;
+using Core;
 
 namespace FrotaWeb.Controllers
 {
@@ -18,13 +20,17 @@ namespace FrotaWeb.Controllers
         // GET: MarcaPecaInsumoController
         public ActionResult Index()
         {
-            return View();
+            var lista = _marcaPecaInsumoService.GetAll();
+            var listaModel = _mapper.Map<List<MarcaPecaInsumoViewModel>>(lista);
+            return View(listaModel);
         }
 
         // GET: MarcaPecaInsumoController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(uint id)
         {
-            return View();
+            var entity = _marcaPecaInsumoService.Get(id);
+            var entityModel = _mapper.Map<MarcaPecaInsumoViewModel>(entity);
+            return View(entityModel);
         }
 
         // GET: MarcaPecaInsumoController/Create
@@ -36,58 +42,52 @@ namespace FrotaWeb.Controllers
         // POST: MarcaPecaInsumoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(MarcaPecaInsumoViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var entity = _mapper.Map<Marcapecainsumo>(model);
+                _marcaPecaInsumoService.Create(entity);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MarcaPecaInsumoController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(uint id)
         {
-            return View();
+            var entity = _marcaPecaInsumoService.Get(id);
+            var entityModel = _mapper.Map<MarcaPecaInsumoViewModel>(entity);
+            return View(entityModel);
         }
 
         // POST: MarcaPecaInsumoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(MarcaPecaInsumoViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var entity = _mapper.Map<Marcapecainsumo>(model);
+                _marcaPecaInsumoService.Edit(entity);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MarcaPecaInsumoController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(uint id)
         {
-            return View();
+            var entity = _marcaPecaInsumoService.Get(id);
+            var entityModel = _mapper.Map<MarcaPecaInsumoViewModel>(entity);
+            return View(entityModel);
         }
 
         // POST: MarcaPecaInsumoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(uint id, MarcaPecaInsumoViewModel model)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _marcaPecaInsumoService.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
