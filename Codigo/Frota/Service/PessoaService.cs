@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Service
 {
-    internal class PessoaService : IPessoaService
+    public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
 
