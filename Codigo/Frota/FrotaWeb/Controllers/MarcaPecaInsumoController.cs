@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Service;
 
 namespace FrotaWeb.Controllers
@@ -6,10 +7,12 @@ namespace FrotaWeb.Controllers
     public class MarcaPecaInsumoController : Controller
     {
         private readonly IMarcaPecaInsumoService _marcaPecaInsumoService;
+        private readonly IMapper _mapper;
 
-        public MarcaPecaInsumoController(IMarcaPecaInsumoService marcaPecaInsumoService)
+        public MarcaPecaInsumoController(IMarcaPecaInsumoService marcaPecaInsumoService, IMapper mapper)
         {
             _marcaPecaInsumoService = marcaPecaInsumoService;
+            _mapper = mapper;
         }
 
         // GET: MarcaPecaInsumoController
