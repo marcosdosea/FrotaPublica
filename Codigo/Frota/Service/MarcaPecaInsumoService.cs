@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Service
 {
     /// <summary>
-    /// Manter dados de marcas, peças e insumos no banco de dados
+    /// Manter dados de marcas das peças e insumos no banco de dados
     /// </summary>
     public class MarcaPecaInsumoService : IMarcaPecaInsumoService
     {
