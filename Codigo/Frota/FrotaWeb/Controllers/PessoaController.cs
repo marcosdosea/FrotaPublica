@@ -1,20 +1,39 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Core;
+using Core.Service;
+using FrotaWeb.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.PortableExecutable;
 
 namespace FrotaWeb.Controllers
 {
     public class PessoaController : Controller
     {
+        private readonly IPessoaService pessoaService;
+        private readonly IMapper mapper;
+
+        public PessoaController(IPessoaService pessoaService, IMapper mapper)
+        {
+            this.pessoaService = pessoaService;
+            this.mapper = mapper;
+        }
+
         // GET: PessoaController
         public ActionResult Index()
         {
-            return View();
+            var listaPessoa = pessoaService.GetAll();
+            var listaPessoasModel = mapper.Map<List<PessoaModel>>(listaPessoa);
+            
+            return View(listaPessoasModel);
         }
 
         // GET: PessoaController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(uint id)
         {
-            return View();
+            Pessoa pessoa = pessoaService.Get(id);
+            PessoaModel pessoaModel = mapper.Map<PessoaModel>(pessoa);
+            return View(pessoaModel);
         }
 
         // GET: PessoaController/Create
@@ -26,58 +45,52 @@ namespace FrotaWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(PessoaModel pessoaModel)
         {
-            try
+            if(ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var pessoa = mapper.Map<Pessoa>(pessoaModel);
+                pessoaService.Creat(pessoa);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PessoaController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(uint id)
         {
-            return View();
+            Pessoa pessoa = pessoaService.Get(id);
+            PessoaModel pessoaModel = mapper.Map<PessoaModel>(pessoa);
+            return View(pessoaModel);
         }
 
         // POST: PessoaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, PessoaModel pessoaModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var pessoa = mapper.Map<Pessoa>(pessoaModel);
+                pessoaService.Edit(pessoa);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PessoaController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(uint id)
         {
-            return View();
+            Pessoa pessoa = pessoaService.Get(id);
+            PessoaModel pessoaModel = mapper.Map<PessoaModel>(pessoa);
+            return View(pessoaModel);
         }
 
         // POST: PessoaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(uint id, PessoaModel pessoaModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            pessoaService.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

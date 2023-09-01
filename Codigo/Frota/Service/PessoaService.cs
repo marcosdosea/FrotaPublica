@@ -51,6 +51,17 @@ namespace Service
             context.SaveChanges();
         }
         /// <summary>
+        /// Busca uma pessoa cadastrada
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Pessoa Get(uint idPessoa)
+        {
+            return context.Pessoas.Find(idPessoa);
+        }
+
+        /// <summary>
         /// Busca todas as pessoas cadastradas
         /// </summary>
         /// <returns></returns>

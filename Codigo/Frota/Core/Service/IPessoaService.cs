@@ -12,5 +12,6 @@ namespace Core.Service
         void Edit(Pessoa pessoa);
         void Delete(uint idPessoa);
         IEnumerable<Pessoa> GetAll();
+        Pessoa Get(uint idPessoa);
     }
 }
