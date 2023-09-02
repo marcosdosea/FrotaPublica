@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrotaWeb.Models
 {
-    public class PessoaModel
+    public class PessoaViewModel
     {
         [Display(Name = "Código da pessoa")]
         [Required(ErrorMessage = "Código da pessoa é obrigatório")]
