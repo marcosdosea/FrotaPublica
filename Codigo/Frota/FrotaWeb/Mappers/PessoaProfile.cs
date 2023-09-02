@@ -10,6 +10,5 @@ namespace FrotaWeb.Mappers
         {
             CreateMap<PessoaModel, Pessoa>().ReverseMap();
         }
-
     }
 }

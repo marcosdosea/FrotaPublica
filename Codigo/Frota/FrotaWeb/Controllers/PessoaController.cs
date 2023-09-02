@@ -22,9 +22,9 @@ namespace FrotaWeb.Controllers
         // GET: PessoaController
         public ActionResult Index()
         {
-            var listaPessoa = pessoaService.GetAll();
-            var listaPessoasModel = mapper.Map<List<PessoaModel>>(listaPessoa);
-            
+            var listaPessoas = pessoaService.GetAll();
+
+            var listaPessoasModel = mapper.Map<List<PessoaModel>>(listaPessoas);
             return View(listaPessoasModel);
         }
 
@@ -50,7 +50,7 @@ namespace FrotaWeb.Controllers
             if(ModelState.IsValid)
             {
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
-                pessoaService.Creat(pessoa);
+                pessoaService.Create(pessoa);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -59,6 +59,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Edit(uint id)
         {
             Pessoa pessoa = pessoaService.Get(id);
+
             PessoaModel pessoaModel = mapper.Map<PessoaModel>(pessoa);
             return View(pessoaModel);
         }
@@ -80,6 +81,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Delete(uint id)
         {
             Pessoa pessoa = pessoaService.Get(id);
+
             PessoaModel pessoaModel = mapper.Map<PessoaModel>(pessoa);
             return View(pessoaModel);
         }
@@ -90,6 +92,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Delete(uint id, PessoaModel pessoaModel)
         {
             pessoaService.Delete(id);
+
             return RedirectToAction(nameof(Index));
         }
     }

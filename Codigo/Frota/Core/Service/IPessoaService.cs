@@ -8,7 +8,7 @@ namespace Core.Service
 {
     public interface IPessoaService
     {
-        uint Creat(Pessoa pessoa);
+        uint Create(Pessoa pessoa);
         void Edit(Pessoa pessoa);
         void Delete(uint idPessoa);
         IEnumerable<Pessoa> GetAll();

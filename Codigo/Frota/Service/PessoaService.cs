@@ -23,7 +23,7 @@ namespace Service
         /// <param name="pessoa"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public uint Creat(Pessoa pessoa)
+        public uint Create(Pessoa pessoa)
         {
             context.Add(pessoa);
             context.SaveChanges();
@@ -59,6 +59,7 @@ namespace Service
         public Pessoa Get(uint idPessoa)
         {
             return context.Pessoas.Find(idPessoa);
+            
         }
 
         /// <summary>
