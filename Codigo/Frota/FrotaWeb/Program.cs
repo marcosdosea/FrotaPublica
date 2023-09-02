@@ -1,5 +1,7 @@
 using Core;
+using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Service;
 
 namespace FrotaWeb
 {
@@ -11,6 +13,11 @@ namespace FrotaWeb
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddTransient<IFrotaService, FrotaService>();
+            
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             builder.Services.AddDbContext<FrotaContext>(
                 options =>
                 {
