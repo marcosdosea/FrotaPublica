@@ -14,8 +14,10 @@ namespace FrotaWeb
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddTransient<IPessoaService, PessoaService>();
 
+            builder.Services.AddTransient<IPessoaService, PessoaService>();
+            builder.Services.AddTransient<IFrotaService, FrotaService>();
+            
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(
