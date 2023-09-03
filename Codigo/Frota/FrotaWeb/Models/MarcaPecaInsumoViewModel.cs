@@ -4,11 +4,11 @@ namespace FrotaWeb.Models
 {
     public class MarcaPecaInsumoViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "O código é obrigatório (por enquanto).")]
         [Display(Name = "Código")]
         public uint Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A descrição é obrigatória.")]
         [Display(Name = "Descrição")]
         [StringLength(50)]
         public string Descricao { get; set; } = null!;
