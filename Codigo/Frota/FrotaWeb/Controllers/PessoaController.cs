@@ -5,6 +5,7 @@ using FrotaWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.PortableExecutable;
+using System.Text.RegularExpressions;
 
 namespace FrotaWeb.Controllers
 {
@@ -30,7 +31,9 @@ namespace FrotaWeb.Controllers
         // GET: PessoaController/Details/5
         public ActionResult Details(uint id)
         {
-            return View();
+            Pessoa pessoa = pessoaService.Get(id);
+            PessoaViewModel pessoaModel = mapper.Map<PessoaViewModel>(pessoa);
+            return View(pessoaModel);
         }
 
         // GET: PessoaController/Create
@@ -42,16 +45,14 @@ namespace FrotaWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(PessoaViewModel pessoaModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var pessoa = mapper.Map<Pessoa>(pessoaModel);
+                pessoaService.Create(pessoa);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PessoaController/Edit/5
@@ -65,16 +66,14 @@ namespace FrotaWeb.Controllers
         // POST: PessoaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(uint id, PessoaViewModel pessoaModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var pessoa = mapper.Map<Pessoa>(pessoaModel);
+                pessoaService.Edit(pessoa);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PessoaController/Delete/5
@@ -88,16 +87,10 @@ namespace FrotaWeb.Controllers
         // POST: PessoaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, IFormCollection collection)
+        public ActionResult Delete(uint id, PessoaViewModel pessoaModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            pessoaService.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
