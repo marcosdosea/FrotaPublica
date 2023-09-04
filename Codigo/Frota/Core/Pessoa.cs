@@ -31,7 +31,7 @@ public partial class Pessoa
 
     public sbyte Ativo { get; set; }
 
-    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
+    public virtual Frota IdFrotaNavigation { get; set; } = null!;
 
     public virtual Papelpessoa IdPapelPessoaNavigation { get; set; } = null!;
 

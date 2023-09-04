@@ -35,7 +35,7 @@ public partial class Veiculo
 
     public DateTime DataReferenciaValor { get; set; }
 
-    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
+    public virtual Frota IdFrotaNavigation { get; set; } = null!;
 
     public virtual Modeloveiculo IdModeloVeiculoNavigation { get; set; } = null!;
 
