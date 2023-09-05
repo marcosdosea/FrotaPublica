@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    internal interface IModeloVeiculoService
+    public interface IModeloVeiculoService
     {
         uint Create(Modeloveiculo modeloVeiculo);
         void Edit(Modeloveiculo modeloVeiculo);
