@@ -11,11 +11,11 @@ namespace Core.Service
     {
         uint Create(Pecainsumo pecainsumo);
 
-        void Editar(Pecainsumo pecainsumo);
+        void Edit(Pecainsumo pecainsumo);
 
-       void Deletar(uint IdPeca);
+       void Delete(uint IdPeca);
 
-        Pecainsumo Obter (uint IdPeca);
+        Pecainsumo? Get(uint IdPeca);
         
         IEnumerable<Pecainsumo> GetAll();
     }

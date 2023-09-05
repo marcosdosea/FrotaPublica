@@ -16,7 +16,8 @@ namespace FrotaWeb
 
             builder.Services.AddTransient<IFrotaService, FrotaService>();
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
-            
+            builder.Services.AddTransient < IPecaInsumoService, PecaInsumoService>();
+
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(

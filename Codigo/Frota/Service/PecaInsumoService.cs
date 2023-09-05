@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Service
 {
-    class PecaInsumoService : IPecaInsumoService
+    public class PecaInsumoService : IPecaInsumoService
     {
         private readonly FrotaContext context;
 
@@ -18,6 +18,7 @@ namespace Service
             context = context;
         }
 
+
         public uint Create(Pecainsumo pecainsumo)
         {
             context.Add(pecainsumo);
@@ -25,16 +26,19 @@ namespace Service
             return pecainsumo.Id;
         }
 
-        public void Deletar(uint IdPeca)
+        public void Delete(uint IdPeca)
         {
             var peca = context.Pecainsumos.Find(IdPeca);
-            context.Remove(peca);
-            context.SaveChanges();
         }
-        public void Editar(Pecainsumo pecainsumo)
+
+        public void Edit (Pecainsumo pecainsumo)
         {
             context.Update(pecainsumo);
             context.SaveChanges();
+        }
+        public Pecainsumo? Get(uint IdPeca)
+        {
+            return context.Pecainsumos.Find(IdPeca);
         }
 
         public IEnumerable<Pecainsumo> GetAll()
@@ -42,18 +46,7 @@ namespace Service
             return context.Pecainsumos.AsNoTracking(); 
         }
 
-        public Pecainsumo Obter(uint IdPeca)
-        {
-            return context.Pecainsumos.Find(IdPeca);
-
-
-
-
-
-
-
-
-        }
+        
     }
 }
    
