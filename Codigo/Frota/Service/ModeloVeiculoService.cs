@@ -27,7 +27,10 @@ namespace Service
 
         public void Delete(Modeloveiculo idVeiculo)
         {
-            throw new NotImplementedException();
+            var modeloVeiculo = _context.Modeloveiculos.Find(idVeiculo);
+            _context.Remove(idVeiculo);
+            _context.SaveChanges();
+
         }
 
         public void Edit(Modeloveiculo modeloVeiculo)
