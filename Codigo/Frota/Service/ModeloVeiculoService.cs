@@ -41,12 +41,12 @@ namespace Service
 
         public Modeloveiculo Get(uint idVeiculo)
         {
-            throw new NotImplementedException();
+            return _context.Modeloveiculos.Find(idVeiculo);
         }
 
         public IEnumerable<Modeloveiculo> GetAll()
         {
-            throw new NotImplementedException();
+            return _context.Modeloveiculos;
         }
     }
 }
