@@ -2,7 +2,7 @@
 
 namespace FrotaWeb.Models
 {
-    public class PecainsumoViewModel
+    public class PecaInsumoViewModel
     {
         [Display( Name = "Código")]
         [Required(ErrorMessage = "Código obrigatório")]

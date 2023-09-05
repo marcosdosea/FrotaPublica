@@ -11,42 +11,39 @@ namespace Service
 {
     public class PecaInsumoService : IPecaInsumoService
     {
-        private readonly FrotaContext context;
-
+        private readonly FrotaContext _context;
         public PecaInsumoService(FrotaContext context)
         {
-            context = context;
+            _context = context;
         }
-
-
         public uint Create(Pecainsumo pecainsumo)
         {
-            context.Add(pecainsumo);
-            context.SaveChanges();
+            _context.Add(pecainsumo);
+            _context.SaveChanges();
             return pecainsumo.Id;
         }
 
-        public void Delete(uint IdPeca)
+        public void Delete(uint idPeca)
         {
-            var peca = context.Pecainsumos.Find(IdPeca);
+            var peca = _context.Pecainsumos.Find(idPeca);
+            _context.Remove(peca);
+            _context.SaveChanges();
         }
 
-        public void Edit (Pecainsumo pecainsumo)
+        public void Edit(Pecainsumo pecainsumo)
         {
-            context.Update(pecainsumo);
-            context.SaveChanges();
+            _context.Update(pecainsumo);
+            _context.SaveChanges();
         }
-        public Pecainsumo? Get(uint IdPeca)
+
+        public Pecainsumo? Get(uint idPeca)
         {
-            return context.Pecainsumos.Find(IdPeca);
+            return _context.Pecainsumos.Find(idPeca);
         }
 
         public IEnumerable<Pecainsumo> GetAll()
         {
-            return context.Pecainsumos.AsNoTracking(); 
+            return _context.Pecainsumos.AsNoTracking();
         }
-
-        
     }
 }
-   
