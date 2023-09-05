@@ -15,6 +15,7 @@ namespace FrotaWeb
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddTransient<IFrotaService, FrotaService>();
+            builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
             
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
