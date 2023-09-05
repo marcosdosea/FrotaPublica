@@ -35,7 +35,8 @@ namespace Service
 
         public void Edit(Modeloveiculo modeloVeiculo)
         {
-            throw new NotImplementedException();
+            _context.Update(modeloVeiculo);
+            _context.SaveChanges();
         }
 
         public Modeloveiculo Get(uint idVeiculo)
