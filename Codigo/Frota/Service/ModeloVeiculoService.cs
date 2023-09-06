@@ -25,6 +25,7 @@ namespace Service
             return modeloVeiculo.Id;
         }
 
+        //Remover um veiculo da base de dados
         public void Delete(Modeloveiculo idVeiculo)
         {
             var modeloVeiculo = _context.Modeloveiculos.Find(idVeiculo);
@@ -33,12 +34,14 @@ namespace Service
 
         }
 
+        // Atualizar as informações de um veiculo na base de dados
         public void Edit(Modeloveiculo modeloVeiculo)
         {
             _context.Update(modeloVeiculo);
             _context.SaveChanges();
         }
 
+        // Retorna um modelo de veiculo da base de dados
         public Modeloveiculo Get(uint idVeiculo)
         {
             return _context.Modeloveiculos.Find(idVeiculo);
