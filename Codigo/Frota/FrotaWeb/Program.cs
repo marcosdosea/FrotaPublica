@@ -1,5 +1,7 @@
 using Core;
+using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using Service;
 
 namespace FrotaWeb
 {
@@ -16,6 +18,10 @@ namespace FrotaWeb
                 {
                     options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase"));
                 });
+
+            builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
