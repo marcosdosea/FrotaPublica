@@ -1,6 +1,6 @@
 namespace Core.Service;
 
-public interface ISolicitacaoManutencaoService
+public interface ISolicitacaomanutencaoService
 {
     uint Create(Solicitacaomanutencao solicitacao);
 

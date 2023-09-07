@@ -3,11 +3,11 @@ using Core.Service;
 
 namespace Service;
 
-public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
+public class SolicitacaomanutencaoService : ISolicitacaomanutencaoService
 {
     private readonly FrotaContext _context;
 
-    public SolicitacaoManutencaoService(FrotaContext context)
+    public SolicitacaomanutencaoService(FrotaContext context)
     {
         _context = context;
     }
