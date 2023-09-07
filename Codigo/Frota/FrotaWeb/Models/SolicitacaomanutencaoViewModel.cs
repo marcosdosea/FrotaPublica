@@ -4,22 +4,29 @@ namespace FrotaWeb.Models;
 
 public class SolicitacaomanutencaoViewModel
 {
+    [Key]
+    [Required]
+    [Display(Name = "Código")]
+    [Editable(allowEdit: false)]
+    public uint Id { get; set; }
+
     [Required]
     [Display(Name = "Código do veículo")]
     public uint IdVeiculo { get; set; }
 
     [Required]
-    [Display(Name = "Código do requerente da manutenção")]
+    [Display(Name = "Código da pessoa")]
     public uint IdPessoa { get; set; }
 
     [Required]
     [Display(Name = "Data da solicitação")]
     [DataType(DataType.DateTime)]
+    [Editable(allowEdit: false)]
     public DateTime DataSolicitacao { get; set; }
 
     [Required]
     [Display(Name = "Descrição do problema")]
     [StringLength(maximumLength: 500)]
-    public string DescricaoProblema { get; set; } = null!;
+    public string DescricaoProblema { get; set; }
 }
 
