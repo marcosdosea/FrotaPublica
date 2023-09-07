@@ -21,7 +21,6 @@ public class SolicitacaomanutencaoViewModel
     [Required]
     [Display(Name = "Data da solicitação")]
     [DataType(DataType.DateTime)]
-    [Editable(allowEdit: false)]
     public DateTime DataSolicitacao { get; set; }
 
     [Required]
