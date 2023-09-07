@@ -82,24 +82,19 @@ namespace FrotaWeb.Controllers
         // GET: SolicitacaomanutencaoController.cs/Delete/5
         public ActionResult Delete(uint id)
         {
-            return View();
+            var solicitacao = _service.Get(id);
+            var solicitacaoModel = _mapper.Map<SolicitacaomanutencaoViewModel>(solicitacao);
+
+            return View(solicitacaoModel);
         }
 
         // POST: SolicitacaomanutencaoController.cs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, IFormCollection collection)
+        public ActionResult Delete(uint id, SolicitacaomanutencaoViewModel solicitacaoModel)
         {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _service.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
