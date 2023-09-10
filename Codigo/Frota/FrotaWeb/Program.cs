@@ -30,6 +30,10 @@ namespace FrotaWeb
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -55,3 +59,4 @@ namespace FrotaWeb
         }
     }
 }
+
