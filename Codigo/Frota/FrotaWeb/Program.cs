@@ -26,6 +26,9 @@ namespace FrotaWeb
                 {
                     options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase"));
                 });
+            builder.Services.AddTransient<IFornecedorService, FornecedorService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 

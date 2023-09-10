@@ -5,9 +5,9 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrotaWeb", "FrotaWeb\FrotaWeb.csproj", "{301743A8-6D2E-4840-8157-E8A4152BD9BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{8D278AE7-6EC7-403B-8964-C7E1D3AC1E75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{8D278AE7-6EC7-403B-8964-C7E1D3AC1E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{5CC48C2E-7BE5-4F58-93F4-5BA095AA9941}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{5CC48C2E-7BE5-4F58-93F4-5BA095AA9941}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
