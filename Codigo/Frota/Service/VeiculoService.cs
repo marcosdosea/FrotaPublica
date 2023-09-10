@@ -19,7 +19,7 @@ namespace Service
         /// <returns></returns>
         public uint Create(Veiculo veiculo)
         {
-            context.Veiculos.Add(veiculo);
+            context.Add(veiculo);
             context.SaveChanges();
             return veiculo.Id;
         }
@@ -35,7 +35,7 @@ namespace Service
             if (veiculo == null)
                 return;
 
-            context.Veiculos.Remove(veiculo);
+            context.Remove(veiculo);
             context.SaveChanges();
         }
 
@@ -45,7 +45,7 @@ namespace Service
         /// <param name="veiculo"></param>
         public void Edit(Veiculo veiculo)
         {
-            context.Veiculos.Update(veiculo);
+            context.Update(veiculo);
             context.SaveChanges();
         }
 
