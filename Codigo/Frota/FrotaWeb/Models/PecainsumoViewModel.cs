@@ -7,6 +7,7 @@ namespace FrotaWeb.Models
         [Display( Name = "Código")]
         [Required(ErrorMessage = "Código obrigatório")]
         public int Id { get; set; }
+             
 
         [StringLength(50)]
        public string Descricao { get; set; }

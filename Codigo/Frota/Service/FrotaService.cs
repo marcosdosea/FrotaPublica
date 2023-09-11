@@ -58,7 +58,8 @@ namespace Service
         /// <returns></returns>
         public Frota Get(uint idFrota)
         {
-            return context.Frota.Find(idFrota);
+             return context.Frota.Find(idFrota);
+   
         }
         /// <summary>
         /// Obter a lista de frota cadastradas
