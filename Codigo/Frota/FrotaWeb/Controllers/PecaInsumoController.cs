@@ -15,22 +15,22 @@ namespace FrotaWeb.Controllers
         public PecaInsumoController(IPecaInsumoService pecaInsumoService, IMapper mapper)
         {
             _pecaInsumoService = pecaInsumoService;
-            _mapper = mapper;   
+            _mapper = mapper;
         }
         // GET: PecaInsumoController
         public ActionResult Index()
         {
-            var peca = _pecaInsumoService.GetAll();
-            var listaModel = _mapper.Map<List<PecaInsumoViewModel>>(peca);
-            return View(listaModel);
+            var listaPeca = _pecaInsumoService.GetAll();
+            var listaPecaModel = _mapper.Map<List<PecaInsumoViewModel>>(listaPeca);
+            return View(listaPecaModel);
         }
 
         // GET: PecaInsumoController/Details/5
-        public ActionResult Details(uint idPeca)
+        public ActionResult Details(uint id)
         {
-            var entity = _pecaInsumoService.Get(idPeca);
-            var entityModel = _mapper.Map<PecaInsumoViewModel>(entity);
-            return View(entityModel);
+            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            PecaInsumoViewModel pecainsumoModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
+            return View(pecainsumoModel);
         }
 
         // GET: PecaInsumoController/Create
@@ -46,50 +46,47 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var entity = _mapper.Map<Pecainsumo>(model);
-                _pecaInsumoService.Create(entity);
+                var peca = _mapper.Map<Pecainsumo>(model);
+                _pecaInsumoService.Create(peca);
             }
             return RedirectToAction(nameof(Index));
         }
 
         // GET: PecaInsumoController/Edit/5
-        public ActionResult Edit(uint idPeca)
+        public ActionResult Edit(uint id)
         {
-            var entity = _pecaInsumoService.Get(idPeca);
-            var entityModel = _mapper.Map<PecaInsumoViewModel>(entity);
-            return View(entityModel);
+            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            PecaInsumoViewModel pecaInsumoViewModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
+            return View(pecaInsumoViewModel);
         }
 
         // POST: PecaInsumoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit( IPecaInsumoService model)
+        public ActionResult Edit(uint id, PecaInsumoViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var entity = _mapper.Map<Pecainsumo>(model);
-                _pecaInsumoService.Edit(entity);
+                var peca = _mapper.Map<Pecainsumo>(model);
+                _pecaInsumoService.Edit(peca);
             }
-            
-                return RedirectToAction(nameof(Index));
-            
-           
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PecaInsumoController/Delete/5
-        public ActionResult Delete(uint idPeca)
+        public ActionResult Delete(uint id)
         {
-            var entity = _pecaInsumoService.Get(idPeca);
-            var entityModel = _mapper.Map<PecaInsumoViewModel>(entity);
-            return View();
+            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            PecaInsumoViewModel pecaInsumoViewModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
+            return View(pecaInsumoViewModel);
         }
 
         // POST: PecaInsumoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint idPeca, PecaInsumoViewModel model)
+        public ActionResult Delete(uint id, PecaInsumoViewModel model)
         {
-            _pecaInsumoService.Delete(idPeca);
+            _pecaInsumoService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

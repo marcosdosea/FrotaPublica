@@ -25,8 +25,8 @@ namespace Service
 
         public void Delete(uint idPeca)
         {
-            var peca = _context.Pecainsumos.Find(idPeca);
-            _context.Remove(peca);
+            var pecainsumo = _context.Pecainsumos.Find(idPeca);
+            _context.Remove(pecainsumo);
             _context.SaveChanges();
         }
 

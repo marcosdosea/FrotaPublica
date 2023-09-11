@@ -13,10 +13,10 @@ namespace Core.Service
 
         void Edit(Pecainsumo pecainsumo);
 
-       void Delete(uint IdPeca);
+        void Delete(uint idPeca);
 
-        Pecainsumo? Get(uint IdPeca);
-        
+        Pecainsumo? Get(uint idPeca);
+
         IEnumerable<Pecainsumo> GetAll();
     }
 }
