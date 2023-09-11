@@ -14,6 +14,8 @@ namespace FrotaWeb
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+
+            builder.Services.AddTransient<IPessoaService, PessoaService>();
             builder.Services.AddTransient<IFrotaService, FrotaService>();
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
             builder.Services.AddTransient < IPecaInsumoService, PecaInsumoService>();
@@ -22,10 +24,7 @@ namespace FrotaWeb
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(
-                options =>
-                {
-                    options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase"));
-                });
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
 
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
 
