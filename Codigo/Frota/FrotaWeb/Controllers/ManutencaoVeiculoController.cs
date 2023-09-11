@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core;
-using Core.Service;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Service
 {
-	public class ManutencaoVeiculoController : Controller
+    public class ManutencaoVeiculoController : Controller
 	{
 		private readonly IManutencaoService _manutencaoService;
 
