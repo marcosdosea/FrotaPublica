@@ -57,6 +57,9 @@ namespace Service
             return _context.Modeloveiculos.Find(idVeiculo);
         }
 
+        /// <summary>
+        //  Obter uma lista dos modelos dos veiculos na base de dados
+        /// </summary>
         public IEnumerable<Modeloveiculo> GetAll()
         {
             return _context.Modeloveiculos;
