@@ -17,7 +17,9 @@ namespace Service
             _context = context;
         }
 
-        // Inserir novo modelo de veiculo na base de dados
+        /// <summary>
+        /// Inserir novo modelo de veiculo na base de dados
+        /// </summary>
         public uint Create(Modeloveiculo modeloVeiculo)
         {
             _context.Add(modeloVeiculo);
@@ -25,7 +27,9 @@ namespace Service
             return modeloVeiculo.Id;
         }
 
-        //Remover um veiculo da base de dados
+        /// <summary>
+        //  Remover um veiculo da base de dados
+        /// </summary>
         public void Delete(Modeloveiculo idVeiculo)
         {
             var modeloVeiculo = _context.Modeloveiculos.Find(idVeiculo);
@@ -34,14 +38,20 @@ namespace Service
 
         }
 
-        // Atualizar as informações de um veiculo na base de dados
+
+        /// <summary>
+        /// Atualizar as informações de um veiculo na base de dados
+        /// </summary>
         public void Edit(Modeloveiculo modeloVeiculo)
         {
             _context.Update(modeloVeiculo);
             _context.SaveChanges();
         }
 
-        // Retorna um modelo de veiculo da base de dados
+        
+        /// <summary>
+        //  Retorna um modelo de veiculo da base de dados
+        /// </summary>
         public Modeloveiculo Get(uint idVeiculo)
         {
             return _context.Modeloveiculos.Find(idVeiculo);
