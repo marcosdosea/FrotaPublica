@@ -14,18 +14,29 @@ namespace FrotaWeb
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+
+            builder.Services.AddTransient<IPessoaService, PessoaService>();
             builder.Services.AddTransient<IFrotaService, FrotaService>();
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
-            builder.Services.AddTransient < IPecaInsumoService, PecaInsumoService>();
-            
+            builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
+            builder.Services.AddTransient<IVeiculoService, VeiculoService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(
-                options =>
-                {
-                    options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase"));
-                });
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+
+            builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddTransient<IFornecedorService, FornecedorService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
@@ -46,9 +57,10 @@ namespace FrotaWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Abastecimento}/{action=Index}/{id?}");
 
             app.Run();
         }
     }
 }
+
