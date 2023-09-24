@@ -1,5 +1,6 @@
 using Core;
 using Core.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service;
 
@@ -72,7 +73,7 @@ public class SolicitacaomanutencaoService : ISolicitacaomanutencaoService
     /// </returns>
     public IEnumerable<Solicitacaomanutencao> GetAll()
     {
-        return _context.Solicitacaomanutencaos;
+        return _context.Solicitacaomanutencaos.AsNoTracking();
     }
 
     /// <summary>
@@ -89,7 +90,7 @@ public class SolicitacaomanutencaoService : ISolicitacaomanutencaoService
             where solicitacao.DataSolicitacao.CompareTo(data) == 0
             select solicitacao;
 
-        return query;
+        return query.AsNoTracking();
     }
 
     /// <summary>
@@ -108,6 +109,6 @@ public class SolicitacaomanutencaoService : ISolicitacaomanutencaoService
             where solicitacao.DataSolicitacao.CompareTo(dataFim) <= 0
             select solicitacao;
 
-        return query;
+        return query.AsNoTracking();
     }
 }
