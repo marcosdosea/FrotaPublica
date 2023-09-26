@@ -133,3 +133,7 @@
   color: var(--grey);
   font-weight: bold;
 }
+
+.upload-container {
+  margin-top: 15px;
+}
