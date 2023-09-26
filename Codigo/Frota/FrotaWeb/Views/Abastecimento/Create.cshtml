@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 <div class="row"> 
     <div>
@@ -13,21 +14,18 @@
 
 
 <div class="row">
-    <img src="../img/FuelPump.svg" alt="abastecer" width="100px" height="100px">
+    <span class="material-symbols-outlined">
+        local_gas_station
+    </span>
     <h4>Abastecer</h4>
 </div>
 
+<hr/>
 
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Odometro" class="control-label"></label>
                 <input asp-for="Odometro" class="form-control" />
@@ -38,12 +36,7 @@
                 <input asp-for="Litros" class="form-control" />
                 <span asp-validation-for="Litros" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DataHora" class="control-label"></label>
-                <input asp-for="DataHora" class="form-control" />
-                <span asp-validation-for="DataHora" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class=" buttons">
                 <input type="submit" value="Confirmar" class="btn btn-primary" />
             </div>
         </form>

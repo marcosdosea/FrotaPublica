@@ -53,7 +53,13 @@ namespace FrotaWeb.Controllers
             if (ModelState.IsValid)
             {
                 var _abastecimento = _mapper.Map<Abastecimento>(abastecimento);
-                _abastecimentoService.Create(_abastecimento);
+                _abastecimento.DataHora = DateTime.Now;
+                _abastecimento.IdVeiculoPercurso = 1;
+                _abastecimento.IdPessoaPercurso = 1;
+                _abastecimento.IdFornecedor = 1;
+               // _abastecimento.IdFornecedorNavigation = Fornecedor;
+                _abastecimento.Id = 1;
+                _abastecimento.Id =  1;
             }
 
             return RedirectToAction(nameof(Index));

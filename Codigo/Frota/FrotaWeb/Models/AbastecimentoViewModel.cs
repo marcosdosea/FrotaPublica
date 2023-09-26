@@ -5,9 +5,16 @@ namespace FrotaWeb.Models
 {
     public class AbastecimentoViewModel
     {
+
+
         [Key]
-        [Required]
         public uint Id { get; set; }
+
+        public uint IdVeiculoPercurso { get; set; }
+
+        public uint IdPessoaPercurso { get; set; }
+
+        public DateTime DataHora { get; set; }
 
         [Required]
         [Display(Name = "Leitura do Odômetro")]
@@ -17,17 +24,17 @@ namespace FrotaWeb.Models
         [Display(Name = "Litros Abastecidos")]
         public int Litros { get; set; }
 
-        [Required]
-        [Display(Name = "Data e hora do Abastecimento")]
-        public DateTime DataHora { get; set; }
+        public uint IdFornecedor { get; set; }
 
-        [Required]
-        [Display(Name = "Fornecedor")]
         public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 
-        [Required]
-        [Display(Name = "Percurso")]
         public virtual Percurso IdNavigation { get; set; } = null!;
+
+
+        
+
+        
+        
 
     }
 }
