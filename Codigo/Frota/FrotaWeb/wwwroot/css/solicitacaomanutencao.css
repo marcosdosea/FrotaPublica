@@ -58,43 +58,22 @@
   font-weight: bold;
 }
 
-.defect-field > button {
-  color: var(--fg);
-  border: none;
-  display: flex;
-  padding: 10px;
-  align-items: center;
-  font-weight: bold;
-  border-radius: 5px;
-  background-color: var(--bg);
-}
-
 .buttons {
   display: flex;
   margin-top: 20px;
   justify-content: space-between;
 }
 
-.buttons > input {
-  color: var(--fg);
-  border: none;
-  padding: 15px 0px;
-  min-width: 200px;
-  font-weight: bold;
-  border-radius: 5px;
-  background-color: var(--bg);
-}
-
 .middle-fields {
   border: 1px solid var(--bg);
   display: flex;
   padding: 14px;
+  border-radius: 5px;
   flex-direction: column;
 }
 
 .type-container {
   display: flex;
-  border-radius: 5px;
   flex-direction: column;
 }
 
@@ -109,13 +88,18 @@
   background-color: inherit;
 }
 
+.type-container > select:invalid {
+  color: var(--grey);
+}
+
 .type-container > label {
   position: relative;
   max-width: 35%;
+  margin-bottom: 5px;
 }
 
 .type-container > label:after {
-  top: 115%;
+  top: calc(115% + 5px);
   right: 5px;
   content: "\e7cd";
   position: absolute;
@@ -132,9 +116,20 @@
   flex-direction: column;
 }
 
+.desc-container > label {
+  margin-bottom: 5px;
+}
+
 .desc-container > textarea {
   border: 1px solid var(--bg);
   resize: none;
-  border-radius: 5px;
+  outline: none;
+  padding: 10px;
   min-height: 150px;
+  border-radius: 5px;
+}
+
+.desc-container > textarea::placeholder {
+  color: var(--grey);
+  font-weight: bold;
 }
