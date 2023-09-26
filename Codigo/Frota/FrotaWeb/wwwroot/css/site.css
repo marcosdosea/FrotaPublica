@@ -6,6 +6,12 @@
   --grey: #c0c0c0;
 }
 
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
 html {
   font-size: 14px;
 }
