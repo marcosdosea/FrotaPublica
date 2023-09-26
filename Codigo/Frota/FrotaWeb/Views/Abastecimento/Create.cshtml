@@ -5,43 +5,53 @@
 }
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-<div class="row"> 
+
+<div class="box-box">
     <div>
-        <a asp-action="Index">Botão?</a>
+        <a asp-action="Index">
+            <div class="my-round-button">
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+            </div>
+        </a>
     </div>
     <h3>ABT-(id)</h3>
 </div>
 
 
-<div class="row">
-    <span class="material-symbols-outlined">
+
+<div class="abastecer-container">
+    <span class="material-symbols-outlined" style="color:darkblue">
         local_gas_station
     </span>
-    <h4>Abastecer</h4>
+    <h4 class="title-abastecer">Abastecer</h4>
 </div>
 
 <hr/>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-center">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Odometro" class="control-label"></label>
-                <input asp-for="Odometro" class="form-control" />
-                <span asp-validation-for="Odometro" class="text-danger"></span>
+                <label asp-for="Odometro" class="my-text-label"></label>
+                <input asp-for="Odometro" placeholder="Leitura do Odômetro" class="form-control" />
+                <span asp-validation-for="Odometro" class="text-danger" ></span>
             </div>
             <div class="form-group">
-                <label asp-for="Litros" class="control-label"></label>
-                <input asp-for="Litros" class="form-control" />
+                <label asp-for="Litros" class="my-text-label"></label>
+                <input asp-for="Litros" placeholder="200 L" class="form-control" />
                 <span asp-validation-for="Litros" class="text-danger"></span>
             </div>
-            <div class=" buttons">
-                <input type="submit" value="Confirmar" class="btn btn-primary" />
+            <div class="form-group">
+                <input type="submit" value="Confirmar" class="buttons-input" />
             </div>
         </form>
     </div>
 </div>
+
+
 
 
 
