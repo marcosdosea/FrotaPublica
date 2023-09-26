@@ -4,10 +4,9 @@
     ViewData["Title"] = "Apagar registro";
 }
 
-<h3>Tem certeza que deseja apagar este registro?</h3>
+<h1>Tem certeza que deseja apagar este registro?</h1>
 <div>
     <h4>Marca da peça e insumo</h4>
-    <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Id)
@@ -24,7 +23,12 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
     </form>
+</div>
+
+<div>
+    <a href="@Url.Action("Index")" class="btn btn-primary form-button" title="Index">
+        Back to list
+    </a>
 </div>
