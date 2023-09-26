@@ -5,7 +5,7 @@ namespace FrotaWeb.Models
 {
     public class PessoaViewModel
     {
-        [Display(Name = "Código da pessoa")]
+        [Display(Name = "Código")]
         [Required(ErrorMessage = "Código da pessoa é obrigatório")]
         public uint Id { get; set; }
 
@@ -39,11 +39,11 @@ namespace FrotaWeb.Models
         [StringLength(2, MinimumLength = 2,ErrorMessage = "O nome do estado deve possuir 2 caracteres")]
         public string Estado { get; set; } = null!;
 
-        [Display(Name = "Código da frota")]
+        [Display(Name = "Código/Frota")]
         [Required(ErrorMessage = "Código da frota é obrigatório")]
         public uint IdFrota { get; set; }
 
-        [Display(Name = "Código do cargo da pessoa")]
+        [Display(Name = "Código/Cargo")]
         [Required(ErrorMessage = "Código da frota é obrigatório")]
         public uint IdPapelPessoa { get; set; }
 
