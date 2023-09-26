@@ -1,3 +1,11 @@
+@import 'solicitacaomanutencao.css';
+
+:root {
+  --bg: #03438b;
+  --fg: #ffffff;
+  --grey: #c0c0c0;
+}
+
 html {
   font-size: 14px;
 }
