@@ -24,6 +24,13 @@ namespace FrotaWeb.Controllers
             return View(listView);
         }
 
+        public ActionResult Abastecer(AbastecimentoViewModel abastecimento)
+        {
+            var _abastecimento = _mapper.Map<Abastecimento>(abastecimento);
+
+            return View();
+
+        }
         // GET: AbastecimentoController/Details/5
         public ActionResult Details(uint id)
         {
