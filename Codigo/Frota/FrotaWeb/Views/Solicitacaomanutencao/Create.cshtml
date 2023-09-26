@@ -20,6 +20,26 @@
         </div>
         <div class="defect-field">
             <h5>Defeito</h5>
+            <button>
+                <span class="material-symbols-outlined">
+                    add
+                </span>
+                Novo Defeito
+            </button>
+        </div>
+        <div class="middle-fields">
+            <div class="type-container">
+                <label for="type">Tipo de Manutenção</label>
+                <select name="type" id="type">
+                    <option value="" disabled selected hidden>Troca de Pneu</option>
+                </select>
+            </div>
+            <div class="desc-container">
+                <label for="desc">Descrição</label>
+                <textarea name="desc" id="desc">
+
+                </textarea>
+            </div>
         </div>
         <div class="buttons">
             <input asp-action="Index" type="button" value="Voltar">
