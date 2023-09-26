@@ -20,30 +20,24 @@
         </div>
         <div class="defect-field">
             <h5>Defeito</h5>
-            <button>
-                <span class="material-symbols-outlined">
-                    add
-                </span>
-                Novo Defeito
-            </button>
+            <button class="my-button"><span class="material-symbols-outlined">add</span>Novo Defeito</button>
         </div>
         <div class="middle-fields">
             <div class="type-container">
                 <label for="type">Tipo de Manutenção</label>
-                <select name="type" id="type">
+                <select name="type" id="type" required>
                     <option value="" disabled selected hidden>Troca de Pneu</option>
                 </select>
             </div>
             <div class="desc-container">
                 <label for="desc">Descrição</label>
-                <textarea name="desc" id="desc">
-
-                </textarea>
+                <textarea name="desc" id="desc" placeholder="Pneu ultrapassou máximo de uso"></textarea>
             </div>
+            <button class="my-button"><span class="material-symbols-outlined">upload_file</span>Anexar arquivos</button>
         </div>
         <div class="buttons">
-            <input asp-action="Index" type="button" value="Voltar">
-            <input type="submit" value="Confirmar">
+            <input class="my-button" asp-action="Index" type="button" value="Voltar">
+            <input class="my-button" type="submit" value="Confirmar">
         </div>
     </form>
 </main>
