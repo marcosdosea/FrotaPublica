@@ -1,4 +1,6 @@
 @import 'solicitacaomanutencao.css';
+@import 'component-table.css';
+@import 'marcapecainsumo.css';
 
 :root {
   --bg: #03438b;
