@@ -1,101 +1,127 @@
 ﻿@model IEnumerable<FrotaWeb.Models.PessoaViewModel>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cpf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cep)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rua)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bairro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Complemento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Numero)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cidade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdFrota)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdPapelPessoa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ativo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpf)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cep)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rua)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Bairro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Complemento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Numero)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cidade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdFrota)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdPapelPessoa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ativo)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<head>
+	<link rel="stylesheet" href="~/css/Pessoa/style-index-pessoa.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+</head>
+<body>
+	<header class="main_header">
+		<h1 class="section_title">Condutores</h1>
+		<a asp-action="Create"><i class="fas fa-plus"></i>Adicionar Condutor</a>
+	</header>
+	<main class="main_content container">
+		<div class="content">
+			<div class="style-tabela">
+				<table id="tabela">
+					<thead>
+						<tr>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Id)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Cpf)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Nome)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Cep)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Rua)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Bairro)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Complemento)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Numero)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Cidade)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Estado)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.IdFrota)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.IdPapelPessoa)
+							</th>
+							<th class="top center">
+								@Html.DisplayNameFor(model => model.Ativo)
+							</th>
+							<th class="top center">
+								Ações
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model)
+						{
+							<tr>
+								<td>
+									@Html.DisplayFor(modelItem => item.Id)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Cpf)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Nome)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Cep)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Rua)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Bairro)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Complemento)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Numero)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Cidade)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Estado)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.IdFrota)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.IdPapelPessoa)
+								</td>
+								<td>
+									@Html.DisplayFor(modelItem => item.Ativo)
+								</td>
+								<td>
+									<button class="btn underline-bottom" id="b1">
+										@Html.ActionLink("Edit", "Edit", new { id = item.Id }, new{ @class = "no-underline"})
+									</button>
+									<button class="btn underline-bottom" id="b2">
+										@Html.ActionLink("Details", "Details", new { id = item.Id }, new{ @class = "no-underline"})
+									</button>
+									<button class="btn underline-bottom" id="b3">
+										@Html.ActionLink("Delete", "Delete", new { id = item.Id }, new{ @class = "no-underline"})
+									</button>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+			<div class="clear">
+			</div>
+		</div>
+	</main>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/js/Pessoa/script-index-pessoa.js"></script>
+</body>
