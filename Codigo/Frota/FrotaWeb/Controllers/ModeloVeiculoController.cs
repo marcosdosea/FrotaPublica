@@ -105,15 +105,29 @@ namespace FrotaWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-
-
-        public ActionResult  Delete()
+        /// <summary>
+        /// GET: ModeloVeiculoController/Delete
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Delete(uint id)
         {
-            return View();
+            var entity = _modeloveiculoservice.Get(id);
+            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            return View(entityModel);
         }
 
 
+        /// <summary>
+        /// POST: ModeloVeiculoController/Delete
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(ModeloVeiculoViewModel model, uint id)
+        {
+            _modeloveiculoservice.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
 
     }
 }

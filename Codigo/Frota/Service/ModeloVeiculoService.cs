@@ -30,12 +30,14 @@ namespace Service
         /// <summary>
         //  Remover um veiculo da base de dados
         /// </summary>
-        public void Delete(Modeloveiculo idVeiculo)
+        public void Delete(uint idVeiculo)
         {
             var modeloVeiculo = _context.Modeloveiculos.Find(idVeiculo);
-            _context.Remove(idVeiculo);
-            _context.SaveChanges();
-
+            if (modeloVeiculo != null)
+            {
+                _context.Remove(idVeiculo);
+                _context.SaveChanges();
+            }
         }
 
 

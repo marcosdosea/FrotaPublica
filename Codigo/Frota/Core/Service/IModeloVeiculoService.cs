@@ -10,7 +10,7 @@ namespace Core.Service
     {
         uint Create(Modeloveiculo modeloVeiculo);
         void Edit(Modeloveiculo modeloVeiculo);
-        void Delete(Modeloveiculo idVeiculo);
+        void Delete(uint idVeiculo);
         Modeloveiculo Get(uint idVeiculo);
         IEnumerable<Modeloveiculo> GetAll();
     }
