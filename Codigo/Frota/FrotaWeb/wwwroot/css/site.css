@@ -49,3 +49,10 @@ body {
 .my-button > span {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+
+.my-text-label {
+    display: block;
+    font-weight: bold;
+    font-size: 1.25em;
+    color: var(--bg);
+}

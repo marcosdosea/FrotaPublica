@@ -7,22 +7,22 @@
 
 
 <div class="box-box">
-    <div>
-        <a asp-action="Index">
-            <div class="my-round-button">
-                <span class="material-symbols-outlined">
-                    arrow_back
-                </span>
-            </div>
-        </a>
-    </div>
+    
+    <a asp-action="Index">
+        <div class="my-round-button">
+            <span class="material-symbols-outlined">
+                arrow_back
+            </span>
+        </div>
+    </a>
+    
     <h3>ABT-(id)</h3>
 </div>
 
 
 
 <div class="abastecer-container">
-    <span class="material-symbols-outlined" style="color:darkblue">
+    <span class="material-symbols-outlined" style="color:darkblue;font-size:3em;">
         local_gas_station
     </span>
     <h4 class="title-abastecer">Abastecer</h4>
@@ -30,29 +30,24 @@
 
 <hr/>
 
-<div class="row">
-    <div class="col-center">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Odometro" class="my-text-label"></label>
-                <input asp-for="Odometro" placeholder="Leitura do Odômetro" class="form-control" />
-                <span asp-validation-for="Odometro" class="text-danger" ></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Litros" class="my-text-label"></label>
-                <input asp-for="Litros" placeholder="200 L" class="form-control" />
-                <span asp-validation-for="Litros" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Confirmar" class="buttons-input" />
-            </div>
-        </form>
+
+<form asp-action="Create" class="col-center">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Odometro" class="my-text-label"></label>
+        <input asp-for="Odometro" placeholder="Leitura do Odômetro" class="form-control" />
+        <span asp-validation-for="Odometro" class="text-danger" ></span>
     </div>
-</div>
-
-
-
+    <div class="form-group">
+        <label asp-for="Litros" class="my-text-label"></label>
+        <input asp-for="Litros" placeholder="200 L" class="form-control"/>
+        <span asp-validation-for="Litros" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Confirmar" class="buttons-input" />
+    </div>
+</form>
+    
 
 
 <!--

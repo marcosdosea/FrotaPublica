@@ -1,9 +1,4 @@
 
-.body-container{
-    display:flex;
-    flex-direction:column;
-    
-}
 .box-box {
     border: 3px solid var(--bg);
     border-radius: 10px;
@@ -13,6 +8,8 @@
     align-items: center;
     align-content: center;
     max-width: 500px;
+    text-decoration: none;
+    margin: auto;
 }
 
 .col-center{
@@ -27,9 +24,10 @@
     margin-left: -15%;
     z-index: -1;
     padding-left: 40%;
-    font-size: 1.5em;
+    font-size: 2em;
     color: var(--bg);
     font-weight: bold;
+    
 }
 .my-round-button {
     color: var(--fg);
@@ -48,28 +46,23 @@
 .abastecer-container {
     display: flex;
     flex-direction: row;
-    justify-content: left;
-    align-items:flex-start;
-    margin-top:20px;
-    margin-left:5%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 20px;
+    
+    margin: auto;
 }
 
 .title-abastecer {
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 2em;
     color: var(--bg);
-
+    padding-left:5%;
 }
 
-.my-text-label {
-    font-weight: bold;
-    font-size: 1.5em;
-    color: var(--bg);
-}
 
 .buttons-input {
     display: flex;
-    margin-top: 20px;
     justify-content: center;
     color: white;
     background-color: var(--bg);
@@ -79,5 +72,10 @@
     max-width: 500px;
     height: 50px;
     font-size: 1.5em;
+    margin: auto;
 }
-
+.form-group {
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
