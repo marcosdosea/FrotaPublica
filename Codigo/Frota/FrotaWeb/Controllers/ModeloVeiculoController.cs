@@ -78,10 +78,15 @@ namespace FrotaWeb.Controllers
             return View(entityModel);
         }
 
-
-        public ActionResult Edit()
+        /// <summary>
+        ///  GET : ModeloVeiculoController/Edit
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Edit(uint id)
         {
-            return View();
+            var entity = _modeloveiculoservice.Get(id);
+            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            return View(entityModel);
         }
 
         public ActionResult  Delete()
