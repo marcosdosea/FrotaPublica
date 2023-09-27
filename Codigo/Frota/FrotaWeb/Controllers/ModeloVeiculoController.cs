@@ -89,6 +89,25 @@ namespace FrotaWeb.Controllers
             return View(entityModel);
         }
 
+        /// <summary>
+        ///  POST : ModeloVeiculoController/Edit
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(ModeloVeiculoViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = _mapper.Map<Modeloveiculo>(model);
+                _modeloveiculoservice.Create(entity);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
         public ActionResult  Delete()
         {
             return View();
