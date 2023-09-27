@@ -3,6 +3,7 @@ using FrotaWeb.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using Core;
 
 namespace FrotaWeb.Controllers
 {
@@ -18,6 +19,7 @@ namespace FrotaWeb.Controllers
         /// <summary>
         /// Utilização do mapper no construtor da classe
         /// </summary>
+        /// GET : ModeloVeiculoController
         /// <param name="modeloveiculoservice"></param>
         /// <param name="mapper"></param>
         public ModeloVeiculoController(IModeloVeiculoService modeloveiculoservice, IMapper mapper)
@@ -29,6 +31,7 @@ namespace FrotaWeb.Controllers
 
         /// <summary>
         /// Criação do método Index e Inicialização da View
+        /// GET : ModeloVeiculoController
         /// </summary>
         /// <returns></returns>
         public ActionResult Index()
@@ -38,10 +41,31 @@ namespace FrotaWeb.Controllers
             return View(ModelVeiculos);
         }
 
+        /// <summary>
+        /// GET : ModeloVeiculoController
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             return View();
         }
+
+        /// <summary>
+        ///  POST : ModeloVeiculoController/Create
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(ModeloVeiculoViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = _mapper.Map<Modeloveiculo>(model);
+                _modeloveiculoservice.Create(entity);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
 
         public ActionResult Edit()
         {
