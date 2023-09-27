@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Marca de Veículo - FrotaWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FrotaWeb.styles.css" asp-append-version="true" />
+    <style>
+        
+        .navbar {
+            background: linear-gradient(to bottom, #0077cc, #0056b3);
+            color: #fff;
+        }
+        .btn {
+            background-color: #1b6ec2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #1861ac;
+            }
+
+        .form-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+    
+        .footer {
+            background: linear-gradient(to bottom, #f8f9fa, #e5e5e5);
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FrotaWeb</a>
+                <!-- ... (links de navegação) ... -->
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="form-container">
+                <h2>Cadastro de Marca de Veículo</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="nome">Nome da Marca:</label>
+                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome da marca" />
+                    </div>
+
+                    <!-- Adicione outros campos do formulário, como descrição, logotipo, etc. -->
+
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - FrotaWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
