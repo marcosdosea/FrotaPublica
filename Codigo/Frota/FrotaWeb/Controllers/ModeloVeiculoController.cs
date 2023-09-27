@@ -26,24 +26,29 @@ namespace FrotaWeb.Controllers
             this._mapper = mapper;
         }
 
-        public IActionResult Index()
+
+        /// <summary>
+        /// Criação do método Index e Inicialização da View
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
         {
             var listaModelVeiculos = _modeloveiculoservice.GetAll();
             var ModelVeiculos = _mapper.Map<List<ModeloVeiculoViewModel>>(listaModelVeiculos);
             return View(ModelVeiculos);
         }
 
-        public IActionResult Create()
+        public ActionResult Create()
         {
             return View();
         }
 
-        public IActionResult Edit()
+        public ActionResult Edit()
         {
             return View();
         }
 
-        public IActionResult  Delete()
+        public ActionResult  Delete()
         {
             return View();
         }
