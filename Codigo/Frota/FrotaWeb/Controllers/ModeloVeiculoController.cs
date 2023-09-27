@@ -66,6 +66,18 @@ namespace FrotaWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// GET : ModeloVeiculoController/Details
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Details(uint id)
+        {
+            var entity = _modeloveiculoservice.Get(id);
+            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            return View(entityModel);
+        }
+
 
         public ActionResult Edit()
         {
