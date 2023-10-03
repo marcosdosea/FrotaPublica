@@ -15,7 +15,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style_prototipos.css" rel="stylesheet" type="text/css" />
     <!-- Template Stylesheet -->
-    <link href="css/styleLayout_07104.css" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -23,7 +22,7 @@
         <a class="active" href="#home"> Frota Pública </a>
         <div class="d-flex align-items-center ms-4 mb-4">
             <div class="position-relative">
-                <img class="rounded-circle" src="img/user_07104.jpg" alt="" style="width: 40px; height: 40px;">
+                <img class="rounded-circle" src="img/user_person.jpg" alt="" style="width: 40px; height: 40px;">
                 <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
             </div>
             <div class="ms-3">
@@ -43,6 +42,7 @@
             <li class="nav-item">
                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-car me-2"></i>Veiculos</a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" asp-area="" asp-controller="ModeloVeiculo" asp-action="Index"><i class="fa fa-car me-2"></i>Modelo de Veiculo</a>
             </li>
@@ -62,11 +62,32 @@
         </nav>
         </header>
 
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand bg-blue navbar-light sticky-top px-4 py-0">
+            <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                <h2 class="text-primary mb-0"><i class="fa fa-home me-2"></i></h2>
+            </a>
+            <a href="#" class="sidebar-toggler flex-shrink-0">
+                <i class="fa fa-bars bg-light"></i>
+            </a>
+        </nav>
+
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+    </div>
+
+     <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2023 - FrotaWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+    
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
