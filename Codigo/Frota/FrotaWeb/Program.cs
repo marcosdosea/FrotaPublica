@@ -2,6 +2,8 @@ using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using Service;
+using Microsoft.AspNetCore.Identity;
+using FrotaWeb.Areas.Identity.Data;
 
 namespace FrotaWeb
 {
@@ -30,6 +32,12 @@ namespace FrotaWeb
             builder.Services.AddDbContext<FrotaContext>(
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
 
+            builder.Services.AddDbContext<IdentityContext>(
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+
+            builder.Services.AddDefaultIdentity<UsuarioIdentity>(options => options.SignIn.RequireConfirmedAccount = true)
+                 .AddEntityFrameworkStores<IdentityContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,12 +52,14 @@ namespace FrotaWeb
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapRazorPages();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Abastecimento}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

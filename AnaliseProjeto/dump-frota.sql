@@ -1,411 +1,777 @@
--- MySQL Workbench Forward Engineering
+-- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+--
+-- Host: localhost    Database: frota
+-- ------------------------------------------------------
+-- Server version	5.7.39-log
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- -----------------------------------------------------
--- Schema Frota
--- -----------------------------------------------------
+--
+-- Table structure for table `__efmigrationshistory`
+--
 
--- -----------------------------------------------------
--- Schema Frota
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `Frota` DEFAULT CHARACTER SET utf8 ;
-USE `Frota` ;
+DROP TABLE IF EXISTS `__efmigrationshistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `__efmigrationshistory` (
+  `MigrationId` varchar(150) NOT NULL,
+  `ProductVersion` varchar(32) NOT NULL,
+  PRIMARY KEY (`MigrationId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table `Frota`.`Frota`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Frota` (
-  `id` INT ZEROFILL NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(50) NOT NULL,
-  `cnpj` VARCHAR(14) NOT NULL,
-  `cep` VARCHAR(8) NULL,
-  `rua` VARCHAR(50) NULL,
-  `bairro` VARCHAR(50) NULL,
-  `numero` VARCHAR(10) NULL,
-  `complemento` VARCHAR(50) NULL,
-  `cidade` VARCHAR(50) NULL,
-  `estado` VARCHAR(2) NOT NULL,
+--
+-- Dumping data for table `__efmigrationshistory`
+--
+
+LOCK TABLES `__efmigrationshistory` WRITE;
+/*!40000 ALTER TABLE `__efmigrationshistory` DISABLE KEYS */;
+INSERT INTO `__efmigrationshistory` VALUES ('20231005194039_CreateIdentitySchema','7.0.10');
+/*!40000 ALTER TABLE `__efmigrationshistory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `abastecimento`
+--
+
+DROP TABLE IF EXISTS `abastecimento`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `abastecimento` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idVeiculoPercurso` int(10) unsigned NOT NULL,
+  `idPessoaPercurso` int(10) unsigned NOT NULL,
+  `dataHora` datetime NOT NULL,
+  `odometro` int(11) NOT NULL DEFAULT '0',
+  `litros` int(11) NOT NULL DEFAULT '0',
+  `idFornecedor` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `cnpj_UNIQUE` (`cnpj` ASC))
-ENGINE = InnoDB;
+  KEY `fk_Abastecimento_Percurso1_idx` (`idVeiculoPercurso`,`idPessoaPercurso`),
+  KEY `fk_Abastecimento_Fornecedor1_idx` (`idFornecedor`),
+  CONSTRAINT `fk_Abastecimento_Fornecedor1` FOREIGN KEY (`idFornecedor`) REFERENCES `fornecedor` (`id`),
+  CONSTRAINT `fk_Abastecimento_Percurso1` FOREIGN KEY (`idVeiculoPercurso`, `idPessoaPercurso`) REFERENCES `percurso` (`idVeiculo`, `idPessoa`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `abastecimento`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`MarcaVeiculo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`MarcaVeiculo` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+LOCK TABLES `abastecimento` WRITE;
+/*!40000 ALTER TABLE `abastecimento` DISABLE KEYS */;
+/*!40000 ALTER TABLE `abastecimento` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `aspnetroleclaims`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`ModeloVeiculo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`ModeloVeiculo` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idMarcaVeiculo` INT UNSIGNED NOT NULL,
-  `nome` VARCHAR(50) NOT NULL,
-  `capacidadeTanque` INT NOT NULL,
-  INDEX `fk_ModeloVeiculo_MarcaVeiculo_idx` (`idMarcaVeiculo` ASC),
+DROP TABLE IF EXISTS `aspnetroleclaims`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetroleclaims` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `RoleId` varchar(255) NOT NULL,
+  `ClaimType` longtext,
+  `ClaimValue` longtext,
+  PRIMARY KEY (`Id`),
+  KEY `IX_AspNetRoleClaims_RoleId` (`RoleId`),
+  CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `aspnetroles` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetroleclaims`
+--
+
+LOCK TABLES `aspnetroleclaims` WRITE;
+/*!40000 ALTER TABLE `aspnetroleclaims` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetroleclaims` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetroles`
+--
+
+DROP TABLE IF EXISTS `aspnetroles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetroles` (
+  `Id` varchar(255) NOT NULL,
+  `Name` varchar(256) DEFAULT NULL,
+  `NormalizedName` varchar(256) DEFAULT NULL,
+  `ConcurrencyStamp` longtext,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `RoleNameIndex` (`NormalizedName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetroles`
+--
+
+LOCK TABLES `aspnetroles` WRITE;
+/*!40000 ALTER TABLE `aspnetroles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetroles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetuserclaims`
+--
+
+DROP TABLE IF EXISTS `aspnetuserclaims`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetuserclaims` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `UserId` varchar(255) NOT NULL,
+  `ClaimType` longtext,
+  `ClaimValue` longtext,
+  PRIMARY KEY (`Id`),
+  KEY `IX_AspNetUserClaims_UserId` (`UserId`),
+  CONSTRAINT `FK_AspNetUserClaims_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `aspnetusers` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetuserclaims`
+--
+
+LOCK TABLES `aspnetuserclaims` WRITE;
+/*!40000 ALTER TABLE `aspnetuserclaims` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetuserclaims` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetuserlogins`
+--
+
+DROP TABLE IF EXISTS `aspnetuserlogins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetuserlogins` (
+  `LoginProvider` varchar(128) NOT NULL,
+  `ProviderKey` varchar(128) NOT NULL,
+  `ProviderDisplayName` longtext,
+  `UserId` varchar(255) NOT NULL,
+  PRIMARY KEY (`LoginProvider`,`ProviderKey`),
+  KEY `IX_AspNetUserLogins_UserId` (`UserId`),
+  CONSTRAINT `FK_AspNetUserLogins_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `aspnetusers` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetuserlogins`
+--
+
+LOCK TABLES `aspnetuserlogins` WRITE;
+/*!40000 ALTER TABLE `aspnetuserlogins` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetuserlogins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetuserroles`
+--
+
+DROP TABLE IF EXISTS `aspnetuserroles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetuserroles` (
+  `UserId` varchar(255) NOT NULL,
+  `RoleId` varchar(255) NOT NULL,
+  PRIMARY KEY (`UserId`,`RoleId`),
+  KEY `IX_AspNetUserRoles_RoleId` (`RoleId`),
+  CONSTRAINT `FK_AspNetUserRoles_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `aspnetroles` (`Id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_AspNetUserRoles_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `aspnetusers` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetuserroles`
+--
+
+LOCK TABLES `aspnetuserroles` WRITE;
+/*!40000 ALTER TABLE `aspnetuserroles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetuserroles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetusers`
+--
+
+DROP TABLE IF EXISTS `aspnetusers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetusers` (
+  `Id` varchar(255) NOT NULL,
+  `UserName` varchar(256) DEFAULT NULL,
+  `NormalizedUserName` varchar(256) DEFAULT NULL,
+  `Email` varchar(256) DEFAULT NULL,
+  `NormalizedEmail` varchar(256) DEFAULT NULL,
+  `EmailConfirmed` tinyint(1) NOT NULL,
+  `PasswordHash` longtext,
+  `SecurityStamp` longtext,
+  `ConcurrencyStamp` longtext,
+  `PhoneNumber` longtext,
+  `PhoneNumberConfirmed` tinyint(1) NOT NULL,
+  `TwoFactorEnabled` tinyint(1) NOT NULL,
+  `LockoutEnd` datetime(6) DEFAULT NULL,
+  `LockoutEnabled` tinyint(1) NOT NULL,
+  `AccessFailedCount` int(11) NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `UserNameIndex` (`NormalizedUserName`),
+  KEY `EmailIndex` (`NormalizedEmail`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetusers`
+--
+
+LOCK TABLES `aspnetusers` WRITE;
+/*!40000 ALTER TABLE `aspnetusers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetusers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `aspnetusertokens`
+--
+
+DROP TABLE IF EXISTS `aspnetusertokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aspnetusertokens` (
+  `UserId` varchar(255) NOT NULL,
+  `LoginProvider` varchar(128) NOT NULL,
+  `Name` varchar(128) NOT NULL,
+  `Value` longtext,
+  PRIMARY KEY (`UserId`,`LoginProvider`,`Name`),
+  CONSTRAINT `FK_AspNetUserTokens_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `aspnetusers` (`Id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `aspnetusertokens`
+--
+
+LOCK TABLES `aspnetusertokens` WRITE;
+/*!40000 ALTER TABLE `aspnetusertokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `aspnetusertokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fornecedor`
+--
+
+DROP TABLE IF EXISTS `fornecedor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fornecedor` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  `cnpj` varchar(14) NOT NULL,
+  `cep` varchar(8) DEFAULT NULL,
+  `rua` varchar(50) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `complemento` varchar(50) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(2) DEFAULT NULL,
+  `latitude` int(11) DEFAULT NULL,
+  `longitude` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_ModeloVeiculo_MarcaVeiculo`
-    FOREIGN KEY (`idMarcaVeiculo`)
-    REFERENCES `Frota`.`MarcaVeiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  UNIQUE KEY `cnpj_UNIQUE` (`cnpj`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `fornecedor`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`MarcaPecaInsumo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`MarcaPecaInsumo` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `descricao` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+LOCK TABLES `fornecedor` WRITE;
+/*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `frota`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`PecaInsumo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`PecaInsumo` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `descricao` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Frota`.`UnidadeAdministrativa`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`UnidadeAdministrativa` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(50) NOT NULL,
-  `cep` VARCHAR(8) NULL,
-  `rua` VARCHAR(50) NULL,
-  `bairro` VARCHAR(50) NULL,
-  `complemento` VARCHAR(50) NULL,
-  `numero` VARCHAR(10) NULL,
-  `cidade` VARCHAR(50) NULL,
-  `estado` VARCHAR(2) NULL,
-  `latitude` FLOAT NULL,
-  `longitude` FLOAT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Frota`.`Veiculo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Veiculo` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `placa` VARCHAR(10) NOT NULL,
-  `chassi` VARCHAR(50) NULL,
-  `cor` VARCHAR(50) NOT NULL,
-  `idModeloVeiculo` INT UNSIGNED NOT NULL,
-  `idFrota` INT ZEROFILL NOT NULL,
-  `idUnidadeAdministrativa` INT UNSIGNED NOT NULL,
-  `odometro` INT NOT NULL DEFAULT 0,
-  `status` ENUM('D', 'U', 'M', 'I') NOT NULL DEFAULT 'D',
-  `ano` INT NOT NULL,
-  `modelo` INT NOT NULL,
-  `renavan` VARCHAR(50) NULL,
-  `vencimentoIPVA` DATETIME NULL,
-  `valor` DECIMAL(10,2) NOT NULL,
-  `dataReferenciaValor` DATETIME NOT NULL,
+DROP TABLE IF EXISTS `frota`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `frota` (
+  `id` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  `cnpj` varchar(14) NOT NULL,
+  `cep` varchar(8) DEFAULT NULL,
+  `rua` varchar(50) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `complemento` varchar(50) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(2) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Veiculo_ModeloVeiculo1_idx` (`idModeloVeiculo` ASC),
-  INDEX `fk_Veiculo_Frota1_idx` (`idFrota` ASC),
-  INDEX `fk_Veiculo_UnidadeAdministrativa1_idx` (`idUnidadeAdministrativa` ASC),
-  CONSTRAINT `fk_Veiculo_ModeloVeiculo1`
-    FOREIGN KEY (`idModeloVeiculo`)
-    REFERENCES `Frota`.`ModeloVeiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Veiculo_Frota1`
-    FOREIGN KEY (`idFrota`)
-    REFERENCES `Frota`.`Frota` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Veiculo_UnidadeAdministrativa1`
-    FOREIGN KEY (`idUnidadeAdministrativa`)
-    REFERENCES `Frota`.`UnidadeAdministrativa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  UNIQUE KEY `cnpj_UNIQUE` (`cnpj`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `frota`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`PapelPessoa`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`PapelPessoa` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `papel` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+LOCK TABLES `frota` WRITE;
+/*!40000 ALTER TABLE `frota` DISABLE KEYS */;
+/*!40000 ALTER TABLE `frota` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `manutencao`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Pessoa`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Pessoa` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `cpf` VARCHAR(11) NOT NULL,
-  `nome` VARCHAR(50) NOT NULL,
-  `cep` VARCHAR(8) NULL,
-  `rua` VARCHAR(50) NULL,
-  `bairro` VARCHAR(50) NULL,
-  `complemento` VARCHAR(50) NULL,
-  `numero` VARCHAR(10) NULL,
-  `cidade` VARCHAR(50) NULL,
-  `estado` VARCHAR(2) NOT NULL,
-  `idFrota` INT ZEROFILL NOT NULL,
-  `idPapelPessoa` INT UNSIGNED NOT NULL,
-  `ativo` TINYINT NOT NULL DEFAULT 1,
+DROP TABLE IF EXISTS `manutencao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `manutencao` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idVeiculo` int(10) unsigned NOT NULL,
+  `idFornecedor` int(10) unsigned NOT NULL,
+  `dataHora` datetime NOT NULL,
+  `idResponsavel` int(10) unsigned NOT NULL,
+  `valorPecas` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `valorManutencao` decimal(10,2) NOT NULL,
+  `tipo` enum('P','C') NOT NULL DEFAULT 'P',
+  `comprovante` blob,
+  `status` enum('O','A','E','F') NOT NULL DEFAULT 'O',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC),
-  INDEX `fk_Pessoa_Frota1_idx` (`idFrota` ASC),
-  INDEX `fk_Pessoa_PapelPessoa1_idx` (`idPapelPessoa` ASC),
-  CONSTRAINT `fk_Pessoa_Frota1`
-    FOREIGN KEY (`idFrota`)
-    REFERENCES `Frota`.`Frota` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Pessoa_PapelPessoa1`
-    FOREIGN KEY (`idPapelPessoa`)
-    REFERENCES `Frota`.`PapelPessoa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  KEY `fk_Manutencao_Veiculo1_idx` (`idVeiculo`),
+  KEY `fk_Manutencao_Fornecedor1_idx` (`idFornecedor`),
+  KEY `fk_Manutencao_Pessoa1_idx` (`idResponsavel`),
+  CONSTRAINT `fk_Manutencao_Fornecedor1` FOREIGN KEY (`idFornecedor`) REFERENCES `fornecedor` (`id`),
+  CONSTRAINT `fk_Manutencao_Pessoa1` FOREIGN KEY (`idResponsavel`) REFERENCES `pessoa` (`id`),
+  CONSTRAINT `fk_Manutencao_Veiculo1` FOREIGN KEY (`idVeiculo`) REFERENCES `veiculo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `manutencao`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Percurso`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Percurso` (
-  `idVeiculo` INT UNSIGNED NOT NULL,
-  `idPessoa` INT UNSIGNED NOT NULL,
-  `dataHoraSaida` DATETIME NOT NULL,
-  `dataHoraRetorno` DATETIME NOT NULL,
-  `localPartida` VARCHAR(50) NOT NULL,
-  `latitudePartida` FLOAT NULL,
-  `longitudePartida` FLOAT NULL,
-  `localChegada` VARCHAR(50) NOT NULL,
-  `latitudeChegada` FLOAT NULL,
-  `longitudeChegada` FLOAT NULL,
-  `odometroInicial` INT NOT NULL,
-  `odometroFinal` INT NOT NULL,
-  `motivo` VARCHAR(300) NULL,
-  PRIMARY KEY (`idVeiculo`, `idPessoa`),
-  INDEX `fk_VeiculoPessoa_Pessoa1_idx` (`idPessoa` ASC),
-  INDEX `fk_VeiculoPessoa_Veiculo1_idx` (`idVeiculo` ASC),
-  CONSTRAINT `fk_VeiculoPessoa_Veiculo1`
-    FOREIGN KEY (`idVeiculo`)
-    REFERENCES `Frota`.`Veiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_VeiculoPessoa_Pessoa1`
-    FOREIGN KEY (`idPessoa`)
-    REFERENCES `Frota`.`Pessoa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+LOCK TABLES `manutencao` WRITE;
+/*!40000 ALTER TABLE `manutencao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `manutencao` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `manutencaopecainsumo`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Fornecedor`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Fornecedor` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(50) NOT NULL,
-  `cnpj` VARCHAR(14) NOT NULL,
-  `cep` VARCHAR(8) NULL,
-  `rua` VARCHAR(50) NULL,
-  `bairro` VARCHAR(50) NULL,
-  `numero` VARCHAR(10) NULL,
-  `complemento` VARCHAR(50) NULL,
-  `cidade` VARCHAR(50) NULL,
-  `estado` VARCHAR(2) NULL,
-  `latitude` INT NULL,
-  `longitude` INT NULL,
+DROP TABLE IF EXISTS `manutencaopecainsumo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `manutencaopecainsumo` (
+  `idManutencao` int(10) unsigned NOT NULL,
+  `idPecaInsumo` int(10) unsigned NOT NULL,
+  `idMarcaPecaInsumo` int(10) unsigned NOT NULL,
+  `quantidade` float NOT NULL DEFAULT '1',
+  `mesesGarantia` int(11) NOT NULL DEFAULT '0',
+  `kmGarantia` int(11) NOT NULL,
+  `valorIndividual` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `subtotal` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`idManutencao`,`idPecaInsumo`),
+  KEY `fk_ManutencaoPecaInsumo_PecaInsumo1_idx` (`idPecaInsumo`),
+  KEY `fk_ManutencaoPecaInsumo_Manutencao1_idx` (`idManutencao`),
+  KEY `fk_ManutencaoPecaInsumo_MarcaPecaInsumo1_idx` (`idMarcaPecaInsumo`),
+  CONSTRAINT `fk_ManutencaoPecaInsumo_Manutencao1` FOREIGN KEY (`idManutencao`) REFERENCES `manutencao` (`id`),
+  CONSTRAINT `fk_ManutencaoPecaInsumo_MarcaPecaInsumo1` FOREIGN KEY (`idMarcaPecaInsumo`) REFERENCES `marcapecainsumo` (`id`),
+  CONSTRAINT `fk_ManutencaoPecaInsumo_PecaInsumo1` FOREIGN KEY (`idPecaInsumo`) REFERENCES `pecainsumo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `manutencaopecainsumo`
+--
+
+LOCK TABLES `manutencaopecainsumo` WRITE;
+/*!40000 ALTER TABLE `manutencaopecainsumo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `manutencaopecainsumo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `marcapecainsumo`
+--
+
+DROP TABLE IF EXISTS `marcapecainsumo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `marcapecainsumo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `descricao` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `marcapecainsumo`
+--
+
+LOCK TABLES `marcapecainsumo` WRITE;
+/*!40000 ALTER TABLE `marcapecainsumo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `marcapecainsumo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `marcaveiculo`
+--
+
+DROP TABLE IF EXISTS `marcaveiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `marcaveiculo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `marcaveiculo`
+--
+
+LOCK TABLES `marcaveiculo` WRITE;
+/*!40000 ALTER TABLE `marcaveiculo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `marcaveiculo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `modeloveiculo`
+--
+
+DROP TABLE IF EXISTS `modeloveiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `modeloveiculo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idMarcaVeiculo` int(10) unsigned NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `capacidadeTanque` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `cnpj_UNIQUE` (`cnpj` ASC))
-ENGINE = InnoDB;
+  KEY `fk_ModeloVeiculo_MarcaVeiculo_idx` (`idMarcaVeiculo`),
+  CONSTRAINT `fk_ModeloVeiculo_MarcaVeiculo` FOREIGN KEY (`idMarcaVeiculo`) REFERENCES `marcaveiculo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `modeloveiculo`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Abastecimento`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Abastecimento` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idVeiculoPercurso` INT UNSIGNED NOT NULL,
-  `idPessoaPercurso` INT UNSIGNED NOT NULL,
-  `dataHora` DATETIME NOT NULL,
-  `odometro` INT NOT NULL DEFAULT 0,
-  `litros` INT NOT NULL DEFAULT 0,
-  `idFornecedor` INT UNSIGNED NOT NULL,
+LOCK TABLES `modeloveiculo` WRITE;
+/*!40000 ALTER TABLE `modeloveiculo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `modeloveiculo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `papelpessoa`
+--
+
+DROP TABLE IF EXISTS `papelpessoa`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `papelpessoa` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `papel` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `papelpessoa`
+--
+
+LOCK TABLES `papelpessoa` WRITE;
+/*!40000 ALTER TABLE `papelpessoa` DISABLE KEYS */;
+/*!40000 ALTER TABLE `papelpessoa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pecainsumo`
+--
+
+DROP TABLE IF EXISTS `pecainsumo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pecainsumo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `descricao` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pecainsumo`
+--
+
+LOCK TABLES `pecainsumo` WRITE;
+/*!40000 ALTER TABLE `pecainsumo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pecainsumo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `percurso`
+--
+
+DROP TABLE IF EXISTS `percurso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `percurso` (
+  `idVeiculo` int(10) unsigned NOT NULL,
+  `idPessoa` int(10) unsigned NOT NULL,
+  `dataHoraSaida` datetime NOT NULL,
+  `dataHoraRetorno` datetime NOT NULL,
+  `localPartida` varchar(50) NOT NULL,
+  `latitudePartida` float DEFAULT NULL,
+  `longitudePartida` float DEFAULT NULL,
+  `localChegada` varchar(50) NOT NULL,
+  `latitudeChegada` float DEFAULT NULL,
+  `longitudeChegada` float DEFAULT NULL,
+  `odometroInicial` int(11) NOT NULL,
+  `odometroFinal` int(11) NOT NULL,
+  `motivo` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`idVeiculo`,`idPessoa`),
+  KEY `fk_VeiculoPessoa_Pessoa1_idx` (`idPessoa`),
+  KEY `fk_VeiculoPessoa_Veiculo1_idx` (`idVeiculo`),
+  CONSTRAINT `fk_VeiculoPessoa_Pessoa1` FOREIGN KEY (`idPessoa`) REFERENCES `pessoa` (`id`),
+  CONSTRAINT `fk_VeiculoPessoa_Veiculo1` FOREIGN KEY (`idVeiculo`) REFERENCES `veiculo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `percurso`
+--
+
+LOCK TABLES `percurso` WRITE;
+/*!40000 ALTER TABLE `percurso` DISABLE KEYS */;
+/*!40000 ALTER TABLE `percurso` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pessoa`
+--
+
+DROP TABLE IF EXISTS `pessoa`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pessoa` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cpf` varchar(11) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `cep` varchar(8) DEFAULT NULL,
+  `rua` varchar(50) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `complemento` varchar(50) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(2) NOT NULL,
+  `idFrota` int(11) unsigned zerofill NOT NULL,
+  `idPapelPessoa` int(10) unsigned NOT NULL,
+  `ativo` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  INDEX `fk_Abastecimento_Percurso1_idx` (`idVeiculoPercurso` ASC, `idPessoaPercurso` ASC),
-  INDEX `fk_Abastecimento_Fornecedor1_idx` (`idFornecedor` ASC),
-  CONSTRAINT `fk_Abastecimento_Percurso1`
-    FOREIGN KEY (`idVeiculoPercurso` , `idPessoaPercurso`)
-    REFERENCES `Frota`.`Percurso` (`idVeiculo` , `idPessoa`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Abastecimento_Fornecedor1`
-    FOREIGN KEY (`idFornecedor`)
-    REFERENCES `Frota`.`Fornecedor` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  UNIQUE KEY `cpf_UNIQUE` (`cpf`),
+  KEY `fk_Pessoa_Frota1_idx` (`idFrota`),
+  KEY `fk_Pessoa_PapelPessoa1_idx` (`idPapelPessoa`),
+  CONSTRAINT `fk_Pessoa_Frota1` FOREIGN KEY (`idFrota`) REFERENCES `frota` (`id`),
+  CONSTRAINT `fk_Pessoa_PapelPessoa1` FOREIGN KEY (`idPapelPessoa`) REFERENCES `papelpessoa` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `pessoa`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Manutencao`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Manutencao` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idVeiculo` INT UNSIGNED NOT NULL,
-  `idFornecedor` INT UNSIGNED NOT NULL,
-  `dataHora` DATETIME NOT NULL,
-  `idResponsavel` INT UNSIGNED NOT NULL,
-  `valorPecas` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `valorManutencao` DECIMAL(10,2) NOT NULL,
-  `tipo` ENUM('P', 'C') NOT NULL DEFAULT 'P',
-  `comprovante` BLOB NULL,
-  `status` ENUM('O', 'A', 'E', 'F') NOT NULL DEFAULT 'O',
+LOCK TABLES `pessoa` WRITE;
+/*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `solicitacaomanutencao`
+--
+
+DROP TABLE IF EXISTS `solicitacaomanutencao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `solicitacaomanutencao` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `idVeiculo` int(10) unsigned NOT NULL,
+  `idPessoa` int(10) unsigned NOT NULL,
+  `dataSolicitacao` datetime NOT NULL,
+  `descricaoProblema` varchar(500) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Manutencao_Veiculo1_idx` (`idVeiculo` ASC),
-  INDEX `fk_Manutencao_Fornecedor1_idx` (`idFornecedor` ASC),
-  INDEX `fk_Manutencao_Pessoa1_idx` (`idResponsavel` ASC),
-  CONSTRAINT `fk_Manutencao_Veiculo1`
-    FOREIGN KEY (`idVeiculo`)
-    REFERENCES `Frota`.`Veiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Manutencao_Fornecedor1`
-    FOREIGN KEY (`idFornecedor`)
-    REFERENCES `Frota`.`Fornecedor` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_Manutencao_Pessoa1`
-    FOREIGN KEY (`idResponsavel`)
-    REFERENCES `Frota`.`Pessoa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  KEY `fk_VeiculoPessoa_Pessoa2_idx` (`idPessoa`),
+  KEY `fk_VeiculoPessoa_Veiculo2_idx` (`idVeiculo`),
+  CONSTRAINT `fk_VeiculoPessoa_Pessoa2` FOREIGN KEY (`idPessoa`) REFERENCES `pessoa` (`id`),
+  CONSTRAINT `fk_VeiculoPessoa_Veiculo2` FOREIGN KEY (`idVeiculo`) REFERENCES `veiculo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `solicitacaomanutencao`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`ManutencaoPecaInsumo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`ManutencaoPecaInsumo` (
-  `idManutencao` INT UNSIGNED NOT NULL,
-  `idPecaInsumo` INT UNSIGNED NOT NULL,
-  `idMarcaPecaInsumo` INT UNSIGNED NOT NULL,
-  `quantidade` FLOAT NOT NULL DEFAULT 1,
-  `mesesGarantia` INT NOT NULL DEFAULT 0,
-  `kmGarantia` INT NOT NULL,
-  `valorIndividual` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  `subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`idManutencao`, `idPecaInsumo`),
-  INDEX `fk_ManutencaoPecaInsumo_PecaInsumo1_idx` (`idPecaInsumo` ASC),
-  INDEX `fk_ManutencaoPecaInsumo_Manutencao1_idx` (`idManutencao` ASC),
-  INDEX `fk_ManutencaoPecaInsumo_MarcaPecaInsumo1_idx` (`idMarcaPecaInsumo` ASC),
-  CONSTRAINT `fk_ManutencaoPecaInsumo_Manutencao1`
-    FOREIGN KEY (`idManutencao`)
-    REFERENCES `Frota`.`Manutencao` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_ManutencaoPecaInsumo_PecaInsumo1`
-    FOREIGN KEY (`idPecaInsumo`)
-    REFERENCES `Frota`.`PecaInsumo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_ManutencaoPecaInsumo_MarcaPecaInsumo1`
-    FOREIGN KEY (`idMarcaPecaInsumo`)
-    REFERENCES `Frota`.`MarcaPecaInsumo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+LOCK TABLES `solicitacaomanutencao` WRITE;
+/*!40000 ALTER TABLE `solicitacaomanutencao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `solicitacaomanutencao` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `unidadeadministrativa`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`VeiculoPecaInsumo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`VeiculoPecaInsumo` (
-  `idVeiculo` INT UNSIGNED NOT NULL,
-  `idPecaInsumo` INT UNSIGNED NOT NULL,
-  `dataFinalGarantia` DATETIME NOT NULL,
-  `kmFinalGarantia` INT NOT NULL,
-  `dataProximaTroca` DATETIME NOT NULL,
-  `kmProximaTroca` INT NOT NULL,
-  PRIMARY KEY (`idVeiculo`, `idPecaInsumo`),
-  INDEX `fk_VeiculoPecaInsumo_PecaInsumo1_idx` (`idPecaInsumo` ASC),
-  INDEX `fk_VeiculoPecaInsumo_Veiculo1_idx` (`idVeiculo` ASC),
-  CONSTRAINT `fk_VeiculoPecaInsumo_Veiculo1`
-    FOREIGN KEY (`idVeiculo`)
-    REFERENCES `Frota`.`Veiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_VeiculoPecaInsumo_PecaInsumo1`
-    FOREIGN KEY (`idPecaInsumo`)
-    REFERENCES `Frota`.`PecaInsumo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+DROP TABLE IF EXISTS `unidadeadministrativa`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `unidadeadministrativa` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  `cep` varchar(8) DEFAULT NULL,
+  `rua` varchar(50) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `complemento` varchar(50) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(2) DEFAULT NULL,
+  `latitude` float DEFAULT NULL,
+  `longitude` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `unidadeadministrativa`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`SolicitacaoManutencao`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`SolicitacaoManutencao` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `idVeiculo` INT UNSIGNED NOT NULL,
-  `idPessoa` INT UNSIGNED NOT NULL,
-  `dataSolicitacao` DATETIME NOT NULL,
-  `descricaoProblema` VARCHAR(500) NOT NULL,
+LOCK TABLES `unidadeadministrativa` WRITE;
+/*!40000 ALTER TABLE `unidadeadministrativa` DISABLE KEYS */;
+/*!40000 ALTER TABLE `unidadeadministrativa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `veiculo`
+--
+
+DROP TABLE IF EXISTS `veiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `veiculo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `placa` varchar(10) NOT NULL,
+  `chassi` varchar(50) DEFAULT NULL,
+  `cor` varchar(50) NOT NULL,
+  `idModeloVeiculo` int(10) unsigned NOT NULL,
+  `idFrota` int(11) unsigned zerofill NOT NULL,
+  `idUnidadeAdministrativa` int(10) unsigned NOT NULL,
+  `odometro` int(11) NOT NULL DEFAULT '0',
+  `status` enum('D','U','M','I') NOT NULL DEFAULT 'D',
+  `ano` int(11) NOT NULL,
+  `modelo` int(11) NOT NULL,
+  `renavan` varchar(50) DEFAULT NULL,
+  `vencimentoIPVA` datetime DEFAULT NULL,
+  `valor` decimal(10,2) NOT NULL,
+  `dataReferenciaValor` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_VeiculoPessoa_Pessoa2_idx` (`idPessoa` ASC),
-  INDEX `fk_VeiculoPessoa_Veiculo2_idx` (`idVeiculo` ASC),
-  CONSTRAINT `fk_VeiculoPessoa_Veiculo2`
-    FOREIGN KEY (`idVeiculo`)
-    REFERENCES `Frota`.`Veiculo` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_VeiculoPessoa_Pessoa2`
-    FOREIGN KEY (`idPessoa`)
-    REFERENCES `Frota`.`Pessoa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  KEY `fk_Veiculo_ModeloVeiculo1_idx` (`idModeloVeiculo`),
+  KEY `fk_Veiculo_Frota1_idx` (`idFrota`),
+  KEY `fk_Veiculo_UnidadeAdministrativa1_idx` (`idUnidadeAdministrativa`),
+  CONSTRAINT `fk_Veiculo_Frota1` FOREIGN KEY (`idFrota`) REFERENCES `frota` (`id`),
+  CONSTRAINT `fk_Veiculo_ModeloVeiculo1` FOREIGN KEY (`idModeloVeiculo`) REFERENCES `modeloveiculo` (`id`),
+  CONSTRAINT `fk_Veiculo_UnidadeAdministrativa1` FOREIGN KEY (`idUnidadeAdministrativa`) REFERENCES `unidadeadministrativa` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `veiculo`
+--
 
--- -----------------------------------------------------
--- Table `Frota`.`Vistoria`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Frota`.`Vistoria` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `data` DATETIME NOT NULL,
-  `problemas` VARCHAR(500) NOT NULL,
-  `tipo` ENUM('S', 'R') NOT NULL DEFAULT 'S',
-  `idPessoaResponsavel` INT UNSIGNED NOT NULL,
+LOCK TABLES `veiculo` WRITE;
+/*!40000 ALTER TABLE `veiculo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `veiculo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `veiculopecainsumo`
+--
+
+DROP TABLE IF EXISTS `veiculopecainsumo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `veiculopecainsumo` (
+  `idVeiculo` int(10) unsigned NOT NULL,
+  `idPecaInsumo` int(10) unsigned NOT NULL,
+  `dataFinalGarantia` datetime NOT NULL,
+  `kmFinalGarantia` int(11) NOT NULL,
+  `dataProximaTroca` datetime NOT NULL,
+  `kmProximaTroca` int(11) NOT NULL,
+  PRIMARY KEY (`idVeiculo`,`idPecaInsumo`),
+  KEY `fk_VeiculoPecaInsumo_PecaInsumo1_idx` (`idPecaInsumo`),
+  KEY `fk_VeiculoPecaInsumo_Veiculo1_idx` (`idVeiculo`),
+  CONSTRAINT `fk_VeiculoPecaInsumo_PecaInsumo1` FOREIGN KEY (`idPecaInsumo`) REFERENCES `pecainsumo` (`id`),
+  CONSTRAINT `fk_VeiculoPecaInsumo_Veiculo1` FOREIGN KEY (`idVeiculo`) REFERENCES `veiculo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `veiculopecainsumo`
+--
+
+LOCK TABLES `veiculopecainsumo` WRITE;
+/*!40000 ALTER TABLE `veiculopecainsumo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `veiculopecainsumo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vistoria`
+--
+
+DROP TABLE IF EXISTS `vistoria`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `vistoria` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `data` datetime NOT NULL,
+  `problemas` varchar(500) NOT NULL,
+  `tipo` enum('S','R') NOT NULL DEFAULT 'S',
+  `idPessoaResponsavel` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Vistoria_Pessoa1_idx` (`idPessoaResponsavel` ASC),
-  CONSTRAINT `fk_Vistoria_Pessoa1`
-    FOREIGN KEY (`idPessoaResponsavel`)
-    REFERENCES `Frota`.`Pessoa` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
+  KEY `fk_Vistoria_Pessoa1_idx` (`idPessoaResponsavel`),
+  CONSTRAINT `fk_Vistoria_Pessoa1` FOREIGN KEY (`idPessoaResponsavel`) REFERENCES `pessoa` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `vistoria`
+--
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+LOCK TABLES `vistoria` WRITE;
+/*!40000 ALTER TABLE `vistoria` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vistoria` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-10-05 16:47:18
