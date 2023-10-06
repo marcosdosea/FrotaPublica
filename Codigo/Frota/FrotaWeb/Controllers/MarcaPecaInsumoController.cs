@@ -3,9 +3,11 @@ using FrotaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Core.Service;
 using Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FrotaWeb.Controllers
 {
+    [Authorize]
     public class MarcaPecaInsumoController : Controller
     {
         private readonly IMarcaPecaInsumoService _marcaPecaInsumoService;

@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
+
+    [Authorize]
     public class FrotaController : Controller
     {
 

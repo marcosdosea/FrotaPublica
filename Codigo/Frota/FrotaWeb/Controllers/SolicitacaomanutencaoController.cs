@@ -2,10 +2,13 @@ using AutoMapper;
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
+
+    [Authorize]
     public class SolicitacaomanutencaoController : Controller
     {
         private readonly ISolicitacaomanutencaoService _service;

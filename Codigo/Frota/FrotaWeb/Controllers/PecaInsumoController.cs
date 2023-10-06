@@ -2,11 +2,13 @@
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
+    [Authorize]
     public class PecaInsumoController : Controller
     {
         private readonly IPecaInsumoService _pecaInsumoService;

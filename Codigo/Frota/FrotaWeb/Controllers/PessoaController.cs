@@ -2,6 +2,7 @@
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.PortableExecutable;
@@ -9,6 +10,8 @@ using System.Text.RegularExpressions;
 
 namespace FrotaWeb.Controllers
 {
+
+    [Authorize]
     public class PessoaController : Controller
     {
         private readonly IPessoaService pessoaService;

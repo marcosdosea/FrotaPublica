@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
+    [Authorize]
     public class MarcaVeiculoController : Controller
     {
         // Esta é uma lista simulada de marcas de veículos, substitua por um banco de dados ou serviço real.

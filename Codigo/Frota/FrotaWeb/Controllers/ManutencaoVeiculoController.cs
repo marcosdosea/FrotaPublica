@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Service
 {
+
+	[Authorize]
     public class ManutencaoVeiculoController : Controller
 	{
 		private readonly IManutencaoService _manutencaoService;

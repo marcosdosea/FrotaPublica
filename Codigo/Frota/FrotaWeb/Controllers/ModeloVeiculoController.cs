@@ -4,11 +4,12 @@ using Core.Service;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FrotaWeb.Controllers
 {
 
-
+    [Authorize]
     public class ModeloVeiculoController : Controller
     {
 

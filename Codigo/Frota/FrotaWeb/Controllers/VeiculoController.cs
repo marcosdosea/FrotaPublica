@@ -2,10 +2,12 @@ using AutoMapper;
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
+    [Authorize]
     public class VeiculoController : Controller
     {
         private readonly IVeiculoService veiculoService;
