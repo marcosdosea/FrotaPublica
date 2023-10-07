@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FrotaWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FrotaWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/style_final.css" asp-append-version="true" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="wrapper d-flex align-items-stretch">
+        <nav id="sidebar" class="active">
+            <div class="custom-menu">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                </button>
+            </div>
+
+
+            <div class="p-4">
+                <h1><a href="index.html" class="logo">FrotaWeb</a></h1>
+                <ul class="list-unstyled components mb-5">
+                    <partial name="_LoginPartial" />
+                    <li class="active">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home mr-3"></i>Página Inicial</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="Solicitacaomanutencao" asp-action="Index"><i class="fa fa-wrench mr-3"></i>Manutenção</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="MarcaPecaInsumo" asp-action="Index"><i class="fa fa-briefcase mr-3"></i>Peças e Insumos</a>
+                    </li>
+                    <li>
+                        <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-car mr-3"></i>Veiculos</a>
+                        <ul class="collapse list-unstyled" id="pageSubmenu">
+                            <li>
+                                <a class="nav-link" asp-area="" asp-controller="Abastecimento" asp-action="Index"><i class="fa fa-tachometer mr-3"></i>Abastecimento</a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-tag mr-3"></i>Marcas de Veiculos</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" asp-area="" asp-controller="ModeloVeiculo" asp-action="Index"><i class="fa fa-car mr-3"></i>Modelos de Veiculo</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" asp-area="" asp-controller="Veiculo" asp-action="Index"><i class=" fa fa-bus mr-3"></i>Adicionar Veiculo</a>
+                            </li>
+                            </ul>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="Pessoa" asp-action="Index"><i class="fa fa-id-card mr-3"></i>Condutores</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index"><i class="fa fa-truck mr-3"></i>Frota</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index"><i class="fa fa-pie-chart mr-3"></i>Fornecedor</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index"><i class="fa fa-line-chart mr-3"></i>Relatórios</a>
+                    </li>
+                </ul>
+
+                <div class="footer">
+                    <p>
+                        &copy; 2023 - FrotaWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content" class="p-4 p-md-5 pt-5">
+            <div class="container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="js/scriptLayoutFinal/jquery.min.js" asp-append-version="true"></script>
+    <script src="js/scriptLayoutFinal/popper.js" asp-append-version="true"></script>
+    <script src="js/scriptLayoutFinal/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="js/scriptLayoutFinal/main.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
