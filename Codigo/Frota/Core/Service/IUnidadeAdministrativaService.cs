@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    internal interface IUnidadeAdministrativaService
+    public interface IUnidadeAdministrativaService
     {
         uint Create(Unidadeadministrativa unidadeadministrativa);
 
