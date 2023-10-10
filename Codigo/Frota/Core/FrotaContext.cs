@@ -48,7 +48,6 @@ public partial class FrotaContext : DbContext
     public virtual DbSet<Veiculopecainsumo> Veiculopecainsumos { get; set; }
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
-    public object UADMS { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

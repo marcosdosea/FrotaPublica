@@ -35,7 +35,7 @@ namespace Service
         // Salva as alterações no banco de dados para efetuar a exclusão.
         public void Delete(uint UADM)
         {
-            var unidadeadministrativa = context.UADMS.Find(UADM);
+            var unidadeadministrativa = context.Unidadeadministrativas.Find(UADM);
             context.Remove(unidadeadministrativa);
             context.SaveChanges();
         }
@@ -56,7 +56,7 @@ namespace Service
         // Retorna a unidade administrativa encontrada.
         public Unidadeadministrativa? Get(uint IdUADM)
         {
-            var unidadeadministrativa = context.UADMS.Find(IdUADM);
+            var unidadeadministrativa = context.Unidadeadministrativas.Find(IdUADM);
             if (unidadeadministrativa == null)
             {
               return null;
