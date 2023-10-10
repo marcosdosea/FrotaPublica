@@ -49,4 +49,8 @@
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Visualizações\" />
+  </ItemGroup>
+
 </Project>
