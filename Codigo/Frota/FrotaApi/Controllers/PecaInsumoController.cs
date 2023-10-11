@@ -54,14 +54,21 @@ namespace FrotaApi.Controllers
 
         // PUT api/<PecaInsumoController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(uint id, [FromBody] PecaInsumoViewModel pecamodel)
         {
+            if (ModelState.IsValid)
+            {
+                var pecaInsumo = _mapper.Map<Pecainsumo>(pecamodel);
+                pecaInsumo.Id = id;
+                _pecaInsumoService.Edit(pecaInsumo);
+            }
         }
 
         // DELETE api/<PecaInsumoController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(uint id)
         {
+            _pecaInsumoService.Delete(id);
         }
     }
 }
