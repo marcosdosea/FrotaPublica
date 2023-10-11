@@ -14,6 +14,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        header {
+            display: none;
+        }
+
+        footer {
+            background-color: #08448c;
+        }
+
+    </style>
+    </style>
 </head>
 <body>
 
@@ -37,9 +48,19 @@
                     <li>
                         <a class="nav-link" asp-area="" asp-controller="Solicitacaomanutencao" asp-action="Index"><i class="fa fa-wrench mr-3"></i>Manutenção</a>
                     </li>
+
                     <li>
-                        <a class="nav-link" asp-area="" asp-controller="MarcaPecaInsumo" asp-action="Index"><i class="fa fa-briefcase mr-3"></i>Peças e Insumos</a>
+                        <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-briefcase mr-3"></i>Peças e Insumos</a>
+                        <ul class="collapse list-unstyled" id="homeSubmenu">
+                            <li>
+                                <a class="nav-link" asp-area="" asp-controller="PecaInsumo" asp-action="Index"><i class="fa fa-cogs mr-3"></i>Peças</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" asp-area="" asp-controller="MarcaPecaInsumo" asp-action="Index"><i class="fa fa-tag mr-3"></i>Marcas</a>
+                            </li>
+                        </ul>
                     </li>
+
                     <li>
                         <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-car mr-3"></i>Veiculos</a>
                         <ul class="collapse list-unstyled" id="pageSubmenu">
