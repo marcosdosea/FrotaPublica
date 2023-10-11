@@ -34,9 +34,11 @@ namespace FrotaApi.Controllers
 
         // GET api/<PecaInsumoController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult <PecaInsumoViewModel> Get(uint id)
         {
-            return "value";
+            Pecainsumo peca = _pecaInsumoService.Get(id);
+            PecaInsumoViewModel pecamodel = _mapper.Map<PecaInsumoViewModel>(peca);
+            return pecamodel;
         }
 
         // POST api/<PecaInsumoController>
