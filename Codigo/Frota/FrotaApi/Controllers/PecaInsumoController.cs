@@ -43,8 +43,13 @@ namespace FrotaApi.Controllers
 
         // POST api/<PecaInsumoController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] PecaInsumoViewModel pecamodel)
         {
+            if (ModelState.IsValid)
+            {
+                var pecaInsumo = _mapper.Map<Pecainsumo>(pecamodel);
+                _pecaInsumoService.Create(pecaInsumo);
+            }
         }
 
         // PUT api/<PecaInsumoController>/5
