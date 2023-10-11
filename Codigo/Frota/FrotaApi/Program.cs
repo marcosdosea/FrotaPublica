@@ -1,3 +1,6 @@
+using Core.Service;
+using Service;
+
 namespace FrotaApi
 {
     public class Program
@@ -10,6 +13,13 @@ namespace FrotaApi
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+           
+            
+            builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
+
+
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
