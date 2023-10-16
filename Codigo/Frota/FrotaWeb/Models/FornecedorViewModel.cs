@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace FrotaWeb.Models
 {
@@ -10,7 +11,7 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "Campo requerido")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "O nome deve ter entre 5 e 50 caracteres")]
-        [StringLength(50)]
+    
         public string Nome { get; set; } = null!;
 
         [Required(ErrorMessage = "Campo obrigatório")]
