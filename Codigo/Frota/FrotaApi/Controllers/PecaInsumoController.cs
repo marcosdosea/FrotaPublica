@@ -2,6 +2,7 @@
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,6 +11,7 @@ namespace FrotaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PecaInsumoController : ControllerBase
     {
 
@@ -24,51 +26,67 @@ namespace FrotaApi.Controllers
 
         [HttpGet]
         // GET: api/<PecaInsumoController>
-        public ActionResult<List<PecaInsumoViewModel>> Get()
+
+        public ActionResult Get()
         {
             var listaPecasInsumos = _pecaInsumoService.GetAll();
-            var listaPecasInsumosModel = _mapper.Map<List<PecaInsumoViewModel>>(listaPecasInsumos);
-            return listaPecasInsumosModel;
+            if(listaPecasInsumos == null)
+                return NotFound();
+            return Ok(listaPecasInsumos);
         }
       
 
         // GET api/<PecaInsumoController>/5
         [HttpGet("{id}")]
-        public ActionResult <PecaInsumoViewModel> Get(uint id)
+        public ActionResult Get(uint id)
         {
             Pecainsumo peca = _pecaInsumoService.Get(id);
-            PecaInsumoViewModel pecamodel = _mapper.Map<PecaInsumoViewModel>(peca);
-            return pecamodel;
+            if(peca == null)
+                return NotFound();
+            return Ok(peca);
         }
 
         // POST api/<PecaInsumoController>
         [HttpPost]
-        public void Post([FromBody] PecaInsumoViewModel pecamodel)
+        public ActionResult Post([FromBody] PecaInsumoViewModel pecamodel)
         {
-            if (ModelState.IsValid)
-            {
+            if (!ModelState.IsValid)
+                return BadRequest("Dados Invalidos.");
+            
                 var pecaInsumo = _mapper.Map<Pecainsumo>(pecamodel);
                 _pecaInsumoService.Create(pecaInsumo);
-            }
+
+            return Ok();
+            
         }
 
         // PUT api/<PecaInsumoController>/5
         [HttpPut("{id}")]
-        public void Put(uint id, [FromBody] PecaInsumoViewModel pecamodel)
+        public ActionResult Put(uint id, [FromBody] PecaInsumoViewModel pecamodel)
         {
-            if (ModelState.IsValid)
-            {
+            if (!ModelState.IsValid)
+                return BadRequest("Dados Invalidos.");
+
                 var pecaInsumo = _mapper.Map<Pecainsumo>(pecamodel);
-                pecaInsumo.Id = id;
+            if (pecaInsumo == null)
+                return NotFound();
+                
                 _pecaInsumoService.Edit(pecaInsumo);
-            }
+
+            return Ok();
+            
         }
 
         // DELETE api/<PecaInsumoController>/5
         [HttpDelete("{id}")]
-        public void Delete(uint id)
+        public ActionResult Delete(uint id)
         {
+            Pecainsumo peca = _pecaInsumoService.Get(id);
+            if(peca == null) 
+                return NotFound();
+
             _pecaInsumoService.Delete(id);
+            return Ok();
         }
     }
 }
