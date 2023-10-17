@@ -21,8 +21,8 @@ namespace FrotaApi
             
             builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
+            builder.Services.AddTransient<IModeloVeiculoService, ModeloVeiculoService>();
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
-
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(
