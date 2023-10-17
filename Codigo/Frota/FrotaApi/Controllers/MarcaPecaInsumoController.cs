@@ -2,12 +2,14 @@
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MarcaPecaInsumoController : ControllerBase
     {
         private readonly IMarcaPecaInsumoService _marcaPecaInsumoService;
