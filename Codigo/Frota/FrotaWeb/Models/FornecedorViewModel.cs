@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+
 namespace FrotaWeb.Models
 {
     public class FornecedorViewModel
@@ -10,7 +11,6 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "Campo requerido")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "O nome deve ter entre 5 e 50 caracteres")]
-        [StringLength(50)]
         public string Nome { get; set; } = null!;
 
         [Required(ErrorMessage = "Campo obrigatório")]
@@ -43,8 +43,8 @@ namespace FrotaWeb.Models
 
         public int? Longitude { get; set; }
 
-        public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
+        public virtual ICollection<AbastecimentoViewModel> Abastecimentos { get; set; } = new List<AbastecimentoViewModel>();
 
-        public virtual ICollection<Manutencao> Manutencaos { get; set; } = new List<Manutencao>();
+        public virtual ICollection<SolicitacaomanutencaoViewModel> Manutencaos { get; set; } = new List<SolicitacaomanutencaoViewModel>();
     }
 }
