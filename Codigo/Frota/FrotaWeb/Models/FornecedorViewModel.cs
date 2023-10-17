@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using Core;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace FrotaWeb.Models
