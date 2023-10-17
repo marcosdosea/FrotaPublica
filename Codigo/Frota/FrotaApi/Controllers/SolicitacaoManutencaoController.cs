@@ -13,7 +13,7 @@ namespace FrotaApi.Controllers
         private readonly IMapper _mapper;
         private readonly ISolicitacaomanutencaoService _service;
 
-        SolicitacaoManutencaoController(ISolicitacaomanutencaoService service, IMapper mapper)
+        public SolicitacaoManutencaoController(ISolicitacaomanutencaoService service, IMapper mapper)
         {
             _mapper = mapper;
             _service = service;
@@ -32,7 +32,7 @@ namespace FrotaApi.Controllers
         [HttpGet("{id}")]
         public ActionResult Get(uint id)
         {
-            Solicitacaomanutencao solicitacao = _service.Get(id);
+            Solicitacaomanutencao? solicitacao = _service.Get(id);
             if(solicitacao == null)
                 return NotFound();
 
@@ -68,7 +68,7 @@ namespace FrotaApi.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(uint id)
         {
-            Solicitacaomanutencao solicitacao = _service.Get(id);
+            Solicitacaomanutencao? solicitacao = _service.Get(id);
             if(solicitacao == null)
                 return NotFound();
 
