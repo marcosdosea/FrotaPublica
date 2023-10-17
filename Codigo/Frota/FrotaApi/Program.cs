@@ -1,4 +1,6 @@
+using Core;
 using Core.Service;
+using Microsoft.EntityFrameworkCore;
 using Service;
 
 namespace FrotaApi
@@ -14,12 +16,17 @@ namespace FrotaApi
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
            
-            
-            builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
-            builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
-
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
+            builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
+            builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddDbContext<FrotaContext>(
+                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
 
             var app = builder.Build();
 
