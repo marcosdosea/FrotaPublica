@@ -16,9 +16,7 @@ namespace FrotaApi
            
             
             builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
-
-
-
+            builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -35,7 +33,6 @@ namespace FrotaApi
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
