@@ -4,26 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Core.Service
 {
-    internal interface IMarcaVeiculoService
+    public interface IMarcaVeiculoService
     {
-        // Método para criar uma marca de veículo
-        void CriarMarcaVeiculo(string nome);
+        Marcaveiculo Get(uint id);
+        uint Create(string name);
+        void Edit(string currentName, string newName);
+        void Delete(string name);
+        IEnumerable<string> GetAll();
+        void Create(Marcaveiculo marcaveiculo);
+        void Edit(Marcaveiculo marcaVeiculo);
+        void Delete(uint id);
 
-        // Método para atualizar informações de uma marca de veículo
-        void AtualizarMarcaVeiculo(string nome, string novoNome);
-
-        // Método para excluir uma marca de veículo
-        void ExcluirMarcaVeiculo(string nome);
-
-        // Método para obter todas as marcas de veículos
-        IEnumerable<string> ObterTodasAsMarcasVeiculo();
-
-        // Propriedade para obter o número total de marcas de veículos
-        int TotalMarcasVeiculo { get; }
-
-        // Evento que é acionado quando uma nova marca de veículo é criada
-        event EventHandler<string> MarcaVeiculoCriada;
+        int Total { get; }
+        event EventHandler<string> MarcaVeiculoCreated;
     }
 }
