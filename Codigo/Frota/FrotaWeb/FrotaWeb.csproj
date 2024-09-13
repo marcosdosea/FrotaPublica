@@ -15,18 +15,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\css\Fornecedor\**" />
+    <Compile Remove="wwwroot\css\Pessoa\**" />
+    <Content Remove="wwwroot\css\Fornecedor\**" />
+    <Content Remove="wwwroot\css\Pessoa\**" />
+    <EmbeddedResource Remove="wwwroot\css\Fornecedor\**" />
+    <EmbeddedResource Remove="wwwroot\css\Pessoa\**" />
+    <None Remove="wwwroot\css\Fornecedor\**" />
+    <None Remove="wwwroot\css\Pessoa\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Views\Shared\_Layout_original_modificado.cshtml" />
+    <Content Remove="Views\Shared\_Layout_resp.cshtml" />
+    <Content Remove="Views\Shared\_Layout_Test13.cshtml" />
+    <Content Remove="Views\Shared\_Layout_Teste01.cshtml" />
+    <Content Remove="wwwroot\css\bootstrapLayout_07104.min.css" />
+    <Content Remove="wwwroot\css\component-table.css" />
+    <Content Remove="wwwroot\css\marcapecainsumo.css" />
+    <Content Remove="wwwroot\css\styleLayout_07104.css" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Views\Shared\_Layout_original_modificado.cshtml.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\js\scriptLayoutFinal\bootstrap.min.js" />
-    <None Include="wwwroot\js\scriptLayoutFinal\jquery.min.js" />
-    <None Include="wwwroot\js\scriptLayoutFinal\main.js" />
-    <None Include="wwwroot\js\scriptLayoutFinal\popper.js" />
+    <None Remove="Views\Shared\_Layout_resp.cshtml.css" />
+    <None Remove="Views\Shared\_Layout_Test13.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>

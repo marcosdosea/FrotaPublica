@@ -3,9 +3,9 @@
 @import 'marcapecainsumo.css';
 
 :root {
-  --bg: #03438b;
-  --fg: #ffffff;
-  --grey: #c0c0c0;
+    --bg: #03438b;
+    --fg: #ffffff;
+    --grey: #c0c0c0;
 }
 
 * {
@@ -15,40 +15,40 @@
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .my-button {
-  color: var(--fg);
-  border: none;
-  display: flex;
-  padding: 15px 0px;
-  min-width: 200px;
-  font-weight: bold;
-  align-items: center;
-  border-radius: 5px;
-  justify-content: center;
-  background-color: var(--bg);
+    color: var(--fg);
+    border: none;
+    display: flex;
+    padding: 15px 0px;
+    min-width: 200px;
+    font-weight: bold;
+    align-items: center;
+    border-radius: 5px;
+    justify-content: center;
+    background-color: var(--bg);
 }
 
-.my-button > span {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
+    .my-button > span {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
 
 .my-text-label {
     display: block;

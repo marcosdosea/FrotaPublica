@@ -34,7 +34,7 @@ namespace FrotaWeb
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
 
             builder.Services.AddDbContext<IdentityContext>(
-                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+				options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
 
             builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
             {
