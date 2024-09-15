@@ -4,28 +4,29 @@ namespace FrotaWeb.Models
 {
     public class VeiculoViewModel
     {
-        [Required]
-        public uint Id { get; set; }
+        [Key]		
+		public uint Id { get; set; }
 
-        [Required]
-        [StringLength(maximumLength: 10)]
+		[Required(ErrorMessage = "O campo Placa é obrigatório.")]
+		[StringLength(maximumLength: 10)]
         public string Placa { get; set; } = null!;
 
-        [Required]
-        [StringLength(maximumLength: 50)]
+		[Required(ErrorMessage = "O campo Chassi é obrigatório.")]
+		[StringLength(maximumLength: 50)]
         public string? Chassi { get; set; }
 
-        [StringLength(maximumLength: 50)]
+		[Required(ErrorMessage = "O campo Cor é obrigatório.")]
+		[StringLength(maximumLength: 50)]
         public string Cor { get; set; } = null!;
 
-        [Required]
+		[Required(ErrorMessage = "O campo IdModeloVeiculo é obrigatório.")]
         public uint IdModeloVeiculo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo IdFrota é obrigatório.")]
         public uint IdFrota { get; set; }
 
-        [Required]
-        public uint IdUnidadeAdministrativa { get; set; }
+		[Required(ErrorMessage = "O campo IdUnidadeAdministrativa é obrigatório.")]
+		public uint IdUnidadeAdministrativa { get; set; }
 
         public int Odometro { get; set; } = 0;
 
@@ -33,8 +34,8 @@ namespace FrotaWeb.Models
 
         public int Ano { get; set; }
 
-        [Required]
-        public int Modelo { get; set; }
+		[Required(ErrorMessage = "O campo Modelo é obrigatório.")]
+		public int Modelo { get; set; }
 
         [StringLength(maximumLength: 50)]
         public string? Renavan { get; set; }

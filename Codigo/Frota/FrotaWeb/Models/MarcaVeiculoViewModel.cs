@@ -5,9 +5,8 @@ namespace FrotaWeb.Models
 {
     public class MarcaVeiculoViewModel
     {
-        [DisplayName("Código da Marca")]
-        [Required(ErrorMessage = "O Código da marca é necessário")]
         [Key]
+        [DisplayName("Código da Marca")] 
         public int Id { get; set; }
 
         [DisplayName("Nome da Marca")]

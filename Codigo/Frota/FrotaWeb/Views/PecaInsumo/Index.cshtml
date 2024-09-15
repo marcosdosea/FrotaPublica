@@ -7,7 +7,7 @@
 <h1>Peças e Insumos</h1>
 
 <p>
-    <a asp-action="Create"class="btn btn-primary" style="background-color:#08448c">Adicionar</a>
+    <a asp-action="Create" class="btn btn-primary" style="background-color:#08448c">Adicionar</a>
 </p>
 <table class="table">
     <thead>
@@ -22,15 +22,16 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+                <td>
                     <a href="@Url.Action("Edit", new { id=item.Id })" class="edit" title="Editar" data-toggle="tooltip">
                         <i class="fa fa-pencil" aria-hidden="true" style="color:#08448c"></i>
                     </a>
@@ -42,8 +43,8 @@
                     <a href="@Url.Action("Delete", new { id=item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
                         <i class="fa fa-trash" aria-hidden="true" style="color:#08448c"></i>
                     </a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

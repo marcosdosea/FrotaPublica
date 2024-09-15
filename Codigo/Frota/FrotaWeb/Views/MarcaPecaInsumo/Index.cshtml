@@ -4,6 +4,9 @@
     ViewData["Title"] = "Listagem de marcas das peças e insumos";
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
 <div class="container-xl">
     <h1>Listagem de marcas das peças e insumos</h1>
     <a asp-action="Create" class="btn btn-primary">Novo registro</a>
@@ -29,7 +32,6 @@
                         <th>
                             @Html.DisplayNameFor(model => model.Descricao)
                         </th>
-                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,14 +45,14 @@
                                 @Html.DisplayFor(modelItem => item.Descricao)
                             </td>
                             <td>
-                                <a href="@Url.Action("Details", new { id=item.Id })" class="view" title="View" data-toggle="tooltip">
-                                    <i class="material-icons">&#xE417;</i>
+                                <a href="@Url.Action("Edit", new { id=item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                    <i class="fa fa-pencil-alt acoes" aria-hidden="true"></i>
                                 </a>
-                                <a href="@Url.Action("Edit", new { id=item.Id })" class="edit" title="Edit" data-toggle="tooltip">
-                                    <i class="material-icons">&#xE254</i>
+                                <a href="@Url.Action("Details", new { id=item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                    <i class="fa fa-eye acoes" aria-hidden="true"></i>
                                 </a>
-                                <a href="@Url.Action("Delete", new { id=item.Id })" class="delete" title="Delete" data-toggle="tooltip">
-                                    <i class="material-icons">&#xE872;</i>
+                                <a href="@Url.Action("Delete", new { id=item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                    <i class="fa fa-trash acoes" aria-hidden="true" ></i>
                                 </a>
                             </td>
                         </tr>

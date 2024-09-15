@@ -5,9 +5,9 @@ namespace FrotaWeb.Models
 {
     public class PessoaViewModel
     {
+		[Key]
         [Display(Name = "Código")]
-        [Required(ErrorMessage = "Código da pessoa é obrigatório")]
-        public uint Id { get; set; }
+		public uint Id { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]
         [StringLength(11, MinimumLength = 11 ,ErrorMessage = "Cpf deve possuir 11 dígitos")]
