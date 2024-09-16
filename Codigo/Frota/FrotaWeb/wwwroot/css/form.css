@@ -121,7 +121,7 @@
         }
 
         .type-container > input::placeholder {
-            color: var(--grey);
+            color: var(--grey) !important;
             font-weight: bold;
         }
 
@@ -171,12 +171,6 @@
     margin-top: 15px;
 }
 
-.campo-data {
-    color: var(--grey);
-    font-weight: bold;
-    font-size: 1rem;
-}
-
 .mr-p {
     margin-right: 14px;
 }
@@ -185,6 +179,19 @@
     margin-right: 215px;
 }
 
-.acoes {
-    color: #03438b
+.cor {
+    color: #03438b;
+}
+
+.borda {
+    border: 4px solid var(--bg);
+    border-radius: 5px;
+}
+
+.borda-fim {
+    border-right: 4px solid var(--bg);
+}
+
+.tabela-listra tbody tr:nth-of-type(odd) {
+    background-color: #d9eaff;
 }

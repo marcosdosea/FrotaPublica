@@ -29,7 +29,9 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .my-button {
@@ -48,5 +50,3 @@ body {
 .my-button > span {
     font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
-
-

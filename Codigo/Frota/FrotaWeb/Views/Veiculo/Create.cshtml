@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
 <main class="container mt-4">
-	<h4 class="page-title fs-3">
+	<h4 class="page-title fs-2">
 		<i class="fa fa-car mr-3"></i>
 		Veículos
 	</h4>
@@ -15,47 +15,15 @@
 		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
-					<label asp-for="Id" class="label">Id</label>
-					<input asp-for="Id" class="form-control" placeholder="IDEx" />
-					<span asp-validation-for="Id" class="text-danger"></span>
+					<label asp-for="IdUnidadeAdministrativa" class="label">Unidade Administrativa</label>
+					<input asp-for="IdUnidadeAdministrativa" class="form-control" placeholder="Administrativo" />
+					<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="type-container">
-					<label asp-for="Placa" class="label">Placa</label>
-					<input asp-for="Placa" class="form-control" placeholder="PlacaEx" />
-					<span asp-validation-for="Placa" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="Chassi" class="label">Chassi</label>
-					<input asp-for="Chassi" class="form-control" placeholder="ChassiEx" />
-					<span asp-validation-for="Chassi" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="Cor" class="label">Cor</label>
-					<input asp-for="Cor" class="form-control" placeholder="CorEx" />
-					<span asp-validation-for="Cor" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="IdModeloVeiculo" class="label">IdModeloVeiculo</label>
-					<input asp-for="IdModeloVeiculo" class="form-control" placeholder="IdModeloVeiculoEx" />
-					<span asp-validation-for="IdModeloVeiculo" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="IdFrota" class="label">IdFrota</label>
-					<input asp-for="IdFrota" class="form-control" placeholder="IdFrotaEx" />
+					<label asp-for="IdFrota" class="label">Frota</label>
+					<input asp-for="IdFrota" class="form-control" placeholder="Frota" />
 					<span asp-validation-for="IdFrota" class="text-danger"></span>
 				</div>
 			</div>
@@ -63,27 +31,67 @@
 		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
-					<label asp-for="IdUnidadeAdministrativa" class="label">IdUnidadeAdministrativa</label>
-					<input asp-for="IdUnidadeAdministrativa" class="form-control" placeholder="IdUnidadeAdministrativaEx" />
-					<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
+					<label asp-for="Placa" class="label">Placa</label>
+					<input asp-for="Placa" class="form-control" placeholder="ABC1D23" />
+					<span asp-validation-for="Placa" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="type-container">
-					<label asp-for="Odometro" class="label">Odometro</label>
-					<input asp-for="Odometro" class="form-control" placeholder="OdometroEx" />
-					<span asp-validation-for="Odometro" class="text-danger"></span>
+					<label asp-for="Chassi" class="label">Chassi</label>
+					<input asp-for="Chassi" class="form-control" placeholder="9BWZZZ377VT123456" />
 				</div>
 			</div>
 		</div>
 		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
+					<label asp-for="Valor" class="label">Valor do Veículo</label>
+					<input asp-for="Valor" class="form-control" placeholder="80000" />
+					<span asp-validation-for="Valor" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container">
+					<label asp-for="IdModeloVeiculo" class="label">Modelo Veículo</label>
+					<input asp-for="IdModeloVeiculo" class="form-control" placeholder="Modelo Veículo" />
+					<span asp-validation-for="IdModeloVeiculo" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container">
+					<label asp-for="DataReferenciaValor" class="label">Data Referência (Valor)</label>
+					<input asp-for="DataReferenciaValor" class="form-control campo-data" placeholder="" />
+					<span asp-validation-for="DataReferenciaValor" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container">
+					<label asp-for="Cor" class="label">Cor</label>
+					<input asp-for="Cor" class="form-control" placeholder="Preto" />
+					<span asp-validation-for="Cor" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container">
+					<label asp-for="Odometro" class="label">Odômetro</label>
+					<input asp-for="Odometro" class="form-control" placeholder="26000" />
+					<span asp-validation-for="Odometro" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container">
 					<label asp-for="Status" class="label">Status</label>
-					<input asp-for="Status" class="form-control" placeholder="StatusEx" />
+					<input asp-for="Status" class="form-control" placeholder="Em Uso" />
 					<span asp-validation-for="Status" class="text-danger"></span>
 				</div>
 			</div>
+		</div>
+		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
 					<label asp-for="Ano" class="label">Ano</label>
@@ -91,51 +99,31 @@
 					<span asp-validation-for="Ano" class="text-danger"></span>
 				</div>
 			</div>
-		</div>
-		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
 					<label asp-for="Modelo" class="label">Modelo</label>
-					<input asp-for="Modelo" class="form-control" placeholder="ModeloEx" />
+					<input asp-for="Modelo" class="form-control" placeholder="2024" />
 					<span asp-validation-for="Modelo" class="text-danger"></span>
 				</div>
 			</div>
+		</div>
+		<div class="row mb-3">
 			<div class="col-md-6">
 				<div class="type-container">
 					<label asp-for="Renavan" class="label">Renavan</label>
-					<input asp-for="Renavan" class="form-control" placeholder="RenavanEx" />
-					<span asp-validation-for="Renavan" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="VencimentoIpva" class="label">VencimentoIpva</label>
-					<input asp-for="VencimentoIpva" class="form-control campo-data" placeholder="VencimentoIpvaEx" />
-					<span asp-validation-for="VencimentoIpva" class="text-danger"></span>
+					<input asp-for="Renavan" class="form-control" placeholder="12345678901" />
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="type-container">
-					<label asp-for="Valor" class="label">Valor</label>
-					<input asp-for="Valor" class="form-control" placeholder="ValorEx" />
-					<span asp-validation-for="Valor" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container">
-					<label asp-for="DataReferenciaValor" class="label">DataReferenciaValor</label>
-					<input asp-for="DataReferenciaValor" class="form-control campo-data" placeholder="DataReferenciaValorEx" />
-					<span asp-validation-for="DataReferenciaValor" class="text-danger"></span>
+					<label asp-for="VencimentoIpva" class="label">Vencimento Ipva</label>
+					<input asp-for="VencimentoIpva" class="form-control campo-data" placeholder="" />
 				</div>
 			</div>
 		</div>
 		<div class="row mt-4">
 			<div class="col-12 col-md-6 mb-2 mb-md-0">
-				<button type="button" asp-action="Index" class=" my-button btn btn-danger btn-sm w-50 w-md-auto" onclick="location.href = 'Index';">Voltar</button>
+				<button type="button" asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto" onclick="location.href = 'Index';">Voltar</button>
 			</div>
 			<div class="col-12 col-md-6 d-flex justify-content-md-end">
 				<button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto">Confirmar</button>
@@ -145,6 +133,18 @@
 </main>
 
 @section Scripts {
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const camposDate = document.getElementsByClassName("campo-data");
+			Array.from(camposDate).forEach(campo => {
+				function atualizarPlaceholderColor() {
+					campo.style.color = campo.value ? '#000000' : 'var(--grey)';
+				}
+				atualizarPlaceholderColor();
+				campo.addEventListener('input', atualizarPlaceholderColor);
+			});
+		});
+	</script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
