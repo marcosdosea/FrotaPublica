@@ -1,8 +1,4 @@
-﻿.label::after {
-    content: none !important;
-}
-
-.my-text-label {
+﻿.my-text-label {
     display: block;
     font-weight: bold;
     font-size: 1.25em;
@@ -92,15 +88,12 @@
     .type-container > select {
         border: 1px solid var(--bg);
         padding: 5px 10px;
-        max-width: 45%;
+        max-width: 75%;
         box-shadow: 0px 1px 2px var(--grey);
         appearance: none;
         font-weight: bold;
         border-radius: 5px;
         background-color: inherit;
-    }
-
-    .type-container > select {
         color: var(--grey);
     }
 
@@ -194,4 +187,21 @@
 
 .tabela-listra tbody tr:nth-of-type(odd) {
     background-color: #d9eaff;
+}
+
+p {
+    color: #000000;
+    text-align: center;
+    margin: 0 auto;
+    width: fit-content;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+@media (max-width: 767px) {
+    .itens-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }

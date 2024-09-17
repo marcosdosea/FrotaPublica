@@ -27,7 +27,7 @@ namespace FrotaWeb.Models
         [ForeignKey("Frota")]
 		public uint IdFrota { get; set; }
 
-        [Required(ErrorMessage = "O campo UnidadeAdministrativa é obrigatório.")]
+        [Required(ErrorMessage = "O campo Unidade Administrativa é obrigatório.")]
         [ForeignKey("UnidadeAdministrativa")]
 		public uint IdUnidadeAdministrativa { get; set; }
 

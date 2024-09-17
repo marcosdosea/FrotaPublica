@@ -4,42 +4,40 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
 <div class="container mt-4">
-    <div class="table-responsive">
-        <table class="table tabela-listra table-hover table-bordered">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Placa)</th>
-                    <th>@Html.DisplayNameFor(model => model.Modelo)</th>
-                    <th>@Html.DisplayNameFor(model => model.Status)</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Placa)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Modelo)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
-                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
-                                <i class="fa fa-trash cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <p>
-        <a asp-action="Create" class="btn btn-primary" style="background-color:#08448c">Adicionar Veículo</a>
-    </p>
+	<div class="table-responsive">
+		<table class="table tabela-listra table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>@Html.DisplayNameFor(model => model.Placa)</th>
+					<th>@Html.DisplayNameFor(model => model.Modelo)</th>
+					<th>@Html.DisplayNameFor(model => model.Status)</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="tableBody">
+				@foreach (var item in Model)
+				{
+					<tr>
+						<td>@Html.DisplayFor(modelItem => item.Placa)</td>
+						<td>@Html.DisplayFor(modelItem => item.Modelo)</td>
+						<td>@Html.DisplayFor(modelItem => item.Status)</td>
+						<td>
+							<a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+								<i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+								<i class="fa fa-eye cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+								<i class="fa fa-trash cor" aria-hidden="true"></i>
+							</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<a asp-action="Create" class="btn btn-primary">Adicionar</a>
+	</div>
 </div>
-
