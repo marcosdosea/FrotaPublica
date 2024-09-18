@@ -15,12 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Visualizações\**" />
     <Compile Remove="wwwroot\css\Fornecedor\**" />
     <Compile Remove="wwwroot\css\Pessoa\**" />
+    <Content Remove="Views\Visualizações\**" />
     <Content Remove="wwwroot\css\Fornecedor\**" />
     <Content Remove="wwwroot\css\Pessoa\**" />
+    <EmbeddedResource Remove="Views\Visualizações\**" />
     <EmbeddedResource Remove="wwwroot\css\Fornecedor\**" />
     <EmbeddedResource Remove="wwwroot\css\Pessoa\**" />
+    <None Remove="Views\Visualizações\**" />
     <None Remove="wwwroot\css\Fornecedor\**" />
     <None Remove="wwwroot\css\Pessoa\**" />
   </ItemGroup>
@@ -54,16 +58,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Visualizações\" />
   </ItemGroup>
 
 </Project>

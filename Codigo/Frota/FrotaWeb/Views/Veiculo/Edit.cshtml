@@ -128,26 +128,14 @@
 				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
 			</div>
 			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<input type="submit" value="Editar" class="my-button btn btn-success btn-sm w-50 w-md-auto" />
+				<input type="submit" value="Salvar" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso" />
 			</div>
 		</div>
 	</form>
 </main>
 
 @section Scripts {
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const camposDate = document.getElementsByClassName("campo-data");
-			Array.from(camposDate).forEach(campo => {
-				function atualizarPlaceholderColor() {
-					campo.style.color = campo.value ? '#000000' : "var(--grey)";
-				}
-				atualizarPlaceholderColor();
-				campo.addEventListener("input", atualizarPlaceholderColor);
-			});
-		});
-
-	</script>
+	<script src="~/js/form.js" asp-append-version="true"></script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}

@@ -17,8 +17,7 @@
 				<div class="type-container offset-md-1 itens-center">
 					<label asp-for="IdUnidadeAdministrativa" class="label">Unidade Administrativa</label>
 					<select asp-for="IdUnidadeAdministrativa" class="custom-select">
-						<option value="" disabled selected hidden>Administrativo</option>
-
+						<option value=""  disabled selected hidden>Administrativo</option>
 					</select>
 					<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
 				</div>
@@ -98,7 +97,7 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-1 itens-center">
 					<label asp-for="Ano" class="label">Ano</label>
-					<input asp-for="Ano" class="form-control" placeholder="AnoEx" />
+					<input asp-for="Ano" class="form-control" placeholder="2024" />
 					<span asp-validation-for="Ano" class="text-danger"></span>
 				</div>
 			</div>
@@ -129,26 +128,13 @@
 				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
 			</div>
 			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto">Confirmar</button>
+				<button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Cadastrar</button>
 			</div>
 		</div>
 	</form>
 </main>
-
 @section Scripts {
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-			const camposDate = document.getElementsByClassName("campo-data");
-			Array.from(camposDate).forEach(campo => {
-				function atualizarPlaceholderColor() {
-					campo.style.color = campo.value ? '#000000' : "var(--grey)";
-				}
-				atualizarPlaceholderColor();
-				campo.addEventListener("input", atualizarPlaceholderColor);
-			});
-		});
-
-	</script>
+	<script src="~/js/form.js" asp-append-version="true"></script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}

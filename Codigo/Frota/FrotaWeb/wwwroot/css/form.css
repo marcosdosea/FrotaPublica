@@ -1,4 +1,49 @@
-﻿.my-text-label {
+﻿p {
+    color: #000;
+    text-align: center;
+    width: 75%;
+    padding: 5px 10px;
+    border: 1px solid var(--bg);
+    border-radius: 5px;
+    box-shadow: 0px 1px 2px var(--grey);
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: inherit;
+    color: black;
+    height: 3.5rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.cor {
+    color: #03438b;
+}
+
+.borda, .borda-fim {
+    border: 4px solid var(--bg);
+    border-radius: 5px;
+}
+
+.borda-fim {
+    border-right: 4px solid var(--bg);
+}
+
+.tabela-listra tbody tr:nth-of-type(odd) {
+    background-color: #d9eaff;
+}
+
+.mr-p {
+    margin-right: 14px;
+}
+
+.mr-g {
+    margin-right: 215px;
+}
+
+.my-text-label {
     display: block;
     font-weight: bold;
     font-size: 1.25em;
@@ -6,14 +51,14 @@
 }
 
 .page-title {
-    gap: 10px;
-    color: var(--fg);
-    box-shadow: 0px 1px 2px 1px var(--grey);
     display: flex;
-    padding: 15px;
-    font-weight: bold;
     align-items: center;
+    gap: 10px;
+    padding: 15px;
+    color: var(--fg);
     background-color: var(--bg);
+    font-weight: bold;
+    box-shadow: 0px 1px 2px 1px var(--grey);
 }
 
     .page-title > span {
@@ -27,175 +72,81 @@
     font-weight: bold;
 }
 
-.top-fields {
+.top-fields, .defect-field, .buttons, .middle-fields {
     display: flex;
     justify-content: space-between;
-}
-
-    .top-fields > div {
-        display: flex;
-        flex-direction: column;
-    }
-
-        .top-fields > div > input {
-            border: 1px solid var(--bg);
-            outline: none;
-            padding: 5px;
-            margin-top: 5px;
-            text-align: center;
-            box-shadow: 0px 1px 2px var(--grey);
-            font-weight: bold;
-            border-radius: 5px;
-        }
-
-            .top-fields > div > input::placeholder {
-                color: var(--grey);
-            }
-
-.defect-field {
-    display: flex;
-    margin: 25px 0;
     align-items: center;
-    justify-content: space-between;
-}
-
-    .defect-field > h5 {
-        margin-left: 15px;
-        font-weight: bold;
-    }
-
-.buttons {
-    display: flex;
-    margin-top: 20px;
-    justify-content: space-between;
+    margin: 25px 0;
 }
 
 .middle-fields {
     border: 1px solid var(--bg);
-    display: flex;
-    padding: 14px;
     border-radius: 5px;
+    padding: 14px;
     flex-direction: column;
 }
 
-.type-container {
+.type-container, .desc-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     width: 100%;
+    align-items: flex-start;
 }
 
-    .type-container > select {
+    .type-container > select, .type-container > input,
+    .type-container > textarea {
         border: 1px solid var(--bg);
         padding: 5px 10px;
         max-width: 75%;
         box-shadow: 0px 1px 2px var(--grey);
-        appearance: none;
-        font-weight: bold;
-        border-radius: 5px;
-        background-color: inherit;
-        color: var(--grey);
-    }
-
-    .type-container > input {
-        border: 1px solid var(--bg);
-        padding: 5px 10px;
-        max-width: 75%;
-        box-shadow: 0px 1px 2px var(--grey);
-        appearance: none;
         font-weight: bold;
         border-radius: 5px;
         background-color: inherit;
         text-align: center;
+        font-size: 1rem;
+        line-height: 1.5;
+        box-sizing: border-box;
+        color: #000;
+    }
+
+    .type-container > textarea {
+        min-height: 12rem;
+        text-align: initial;
+    }
+
+        .type-container > textarea::placeholder {
+            text-align: center;
+        }
+
+    .desc-container > textarea {
+        padding: 10px;
+        min-height: 150px;
+    }
+
+    .type-container > select, .type-container > input {
+        height: 3.5rem !important;
+        appearance: none;
     }
 
         .type-container > input:invalid {
             color: var(--grey);
         }
 
-        .type-container > input::placeholder {
-            color: var(--grey) !important;
-            font-weight: bold;
-        }
-
-    .type-container > select,
-    .type-container > input {
-        height: 3.5rem !important;
-        box-sizing: border-box;
-        font-size: 1rem;
-        line-height: 1.5;
-    }
-
-    .type-container > label {
-        position: relative;
-        max-width: 100%;
-        margin-bottom: 5px;
-        white-space: normal;
-        overflow: visible;
-    }
-
-
-
-.desc-container {
-    display: flex;
-    margin-top: 15px;
-    flex-direction: column;
-}
-
-    .desc-container > label {
-        margin-bottom: 5px;
-    }
-
-    .desc-container > textarea {
-        border: 1px solid var(--bg);
-        resize: none;
-        outline: none;
-        padding: 10px;
-        min-height: 150px;
-        border-radius: 5px;
-    }
-
-        .desc-container > textarea::placeholder {
+        .type-container > input::placeholder,
+        .type-container > textarea::placeholder {
             color: var(--grey);
             font-weight: bold;
         }
 
+.top-fields > div, .defect-field > h5 {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
 .upload-container {
     margin-top: 15px;
-}
-
-.mr-p {
-    margin-right: 14px;
-}
-
-.mr-g {
-    margin-right: 215px;
-}
-
-.cor {
-    color: #03438b;
-}
-
-.borda {
-    border: 4px solid var(--bg);
-    border-radius: 5px;
-}
-
-.borda-fim {
-    border-right: 4px solid var(--bg);
-}
-
-.tabela-listra tbody tr:nth-of-type(odd) {
-    background-color: #d9eaff;
-}
-
-p {
-    color: #000000;
-    text-align: center;
-    margin: 0 auto;
-    width: fit-content;
-    padding-top: 4px;
-    padding-bottom: 4px;
 }
 
 @media (max-width: 767px) {
@@ -203,5 +154,18 @@ p {
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+        .itens-center > label {
+            justify-content: start;
+        }
+
+    .row.mt-4 {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .botao-sucesso {
+        margin-bottom: 10px;
     }
 }

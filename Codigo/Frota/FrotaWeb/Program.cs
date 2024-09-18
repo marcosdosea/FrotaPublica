@@ -27,8 +27,9 @@ namespace FrotaWeb
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
             builder.Services.AddTransient<IFornecedorService, FornecedorService>();
             builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+			builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
 
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.AddDbContext<FrotaContext>(
                 options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
