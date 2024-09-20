@@ -12,7 +12,7 @@ namespace Core.Service
 		uint Create(Marcaveiculo frota);
 		void Edit(Marcaveiculo frota);
 		void Delete(uint idFrota);
-		Marcaveiculo Get(uint idFrota);
+		Marcaveiculo? Get(uint idFrota);
 		IEnumerable<Marcaveiculo> GetAll();
 	}
 }

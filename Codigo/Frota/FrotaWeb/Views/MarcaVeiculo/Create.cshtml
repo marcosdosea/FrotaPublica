@@ -1,22 +1,22 @@
-﻿@model FrotaWeb.Models.PecaInsumoViewModel
+﻿@model FrotaWeb.Models.MarcaVeiculoViewModel
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
 <main class="container mt-4">
     <h4 class="page-title fs-2">
-        <i class="fa fa-cog mr-3"></i>
-        Peças e Insumos
+        <i class="fa fa-tag mr-3"></i>
+        Marcas de Veículo
     </h4>
-    <h1 class="my-text-label fs-3 mt-4 mb-4">Cadastrar Peças e Insumos</h1>
+    <h1 class="my-text-label fs-3 mt-4 mb-4">Nova Marca</h1>
     <form asp-action="Create" class="creator-form fs-5">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="type-container offset-md-1 itens-center">
-                    <label asp-for="Descricao" class="label">Descricao</label>
-                    <textarea asp-for="Descricao" class="form-control" placeholder="Precisa-se de radiador"></textarea>
-                    <span asp-validation-for="Descricao" class="text-danger"></span>
+                    <label asp-for="Nome" class="label">Nome</label>
+                    <input asp-for="Nome" class="form-control" placeholder="Nome" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
             </div>
         </div>

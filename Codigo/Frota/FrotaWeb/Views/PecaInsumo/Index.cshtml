@@ -3,36 +3,36 @@
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
 <main class="container mt-4">
-	<div class="table-responsive">
-		<table class="table tabela-listra table-hover table-bordered">
-			<thead>
-				<tr>
-					<th>@Html.DisplayNameFor(model => model.Descricao)</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody id="tableBody">
-				@foreach (var item in Model)
-				{
-					<tr>
+    <div class="table-responsive">
+        <table class="table tabela-listra table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Descricao)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var item in Model)
+                {
+                    <tr>
                         <td>@Html.DisplayFor(modelItem => item.Descricao)</td>
-						<td>
-							<a href="@Url.Action("Edit", "Pecainsumo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
-								<i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-							</a>
-							<a href="@Url.Action("Details", "Pecainsumo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
-								<i class="fa fa-eye cor" aria-hidden="true"></i>
-							</a>
-							<a href="@Url.Action("Delete", "Pecainsumo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
-								<i class="fa fa-trash cor" aria-hidden="true"></i>
-							</a>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
-	<div>
-		<a asp-action="Create" class="btn btn-primary">Adicionar</a>
-	</div>
+                        <td>
+                            <a href="@Url.Action("Edit", "PecaInsumo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Details", "PecaInsumo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "PecaInsumo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Adicionar</a>
+    </div>
 </main>

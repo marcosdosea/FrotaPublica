@@ -1,4 +1,4 @@
-﻿@model FrotaWeb.Models.MarcaPecaInsumoViewModel
+﻿@model FrotaWeb.Models.MarcaVeiculoViewModel
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
@@ -6,15 +6,15 @@
 <main class="container mt-4">
     <h4 class="page-title fs-2">
         <i class="fa fa-tag mr-3"></i>
-        Marca Peças e Insumos
+        Marcas de Veículo
     </h4>
-    <h1 class="my-text-label fs-3 mt-4 mb-4">Exclui Marca</h1>
+    <h1 class="my-text-label fs-3 mt-4 mb-4">Excluir Marca</h1>
     <div class="creator-form fs-5">
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="type-container offset-md-1 itens-center">
-                    <label class="label">Descição</label>
-                    <textarea asp-for="Descricao" class="form-control bg-white" placeholder="" readonly>@Model.Descricao</textarea>
+                    <label class="label">Nome</label>
+                    <p>@Model.Nome</p>
                 </div>
             </div>
         </div>
