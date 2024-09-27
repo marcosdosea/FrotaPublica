@@ -18,7 +18,7 @@ namespace Service
 		/// <param name="vistoria"></param>
 		/// <returns></returns>
 		/// <exception cref="NotImplementedException"></exception>
-		public int Create(Vistorium vistoria)
+		public uint Create(Vistorium vistoria)
 		{
 			context.Add(vistoria);
 			context.SaveChanges();
@@ -31,7 +31,7 @@ namespace Service
 		/// <exception cref="NotImplementedException"></exception>
 		public void Delete(uint id)
 		{
-			var vistoria = context.Pessoas.Find(id);
+			var vistoria = context.Vistoria.Find(id);
 			if (vistoria != null) { 
 				context.Remove(vistoria);
 				context.SaveChanges();
@@ -48,7 +48,7 @@ namespace Service
 			context.SaveChanges();
 		}
 		/// <summary>
-		/// Busca uma pessoa cadastrada
+		/// Busca uma vistoria cadastrada
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -59,7 +59,7 @@ namespace Service
 		}
 
 		/// <summary>
-		/// Busca todas as pessoas cadastradas
+		/// Busca todas as vistorias cadastradas
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<Vistorium> GetAll()

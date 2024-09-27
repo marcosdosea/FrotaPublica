@@ -8,7 +8,7 @@ namespace Core.Service
 {
     public interface IVistoriaService
     {
-		int Create(Vistorium vistoria);
+		uint Create(Vistorium vistoria);
 		void Edit(Vistorium vistoria);
 		void Delete(uint id);
 		Vistorium? Get(uint id);

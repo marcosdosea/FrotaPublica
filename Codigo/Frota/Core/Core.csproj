@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="DTO\" />
+    <Folder Include="DTO\" />
   </ItemGroup>
 
 </Project>
