@@ -49,17 +49,5 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "Campo obrigatório")]
         public sbyte Ativo { get; set; }
-
-        public virtual Frota IdFrotaNavigation { get; set; } = null!;
-
-        public virtual Papelpessoa IdPapelPessoaNavigation { get; set; } = null!;
-
-        public virtual ICollection<Manutencao> Manutencaos { get; set; } = new List<Manutencao>();
-
-        public virtual ICollection<Percurso> Percursos { get; set; } = new List<Percurso>();
-
-        public virtual ICollection<Solicitacaomanutencao> Solicitacaomanutencaos { get; set; } = new List<Solicitacaomanutencao>();
-
-        public virtual ICollection<Vistorium> Vistoria { get; set; } = new List<Vistorium>();
     }
 }

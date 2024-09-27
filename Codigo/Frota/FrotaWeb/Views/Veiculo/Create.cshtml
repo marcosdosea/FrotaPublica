@@ -1,6 +1,5 @@
 @model FrotaWeb.Models.VeiculoViewModel
 
-
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
@@ -42,6 +41,7 @@
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="Chassi" class="label">Chassi</label>
 					<input asp-for="Chassi" class="form-control" placeholder="9BWZZZ377VT123456" />
+					<span asp-validation-for="Chassi" class="text-danger"></span>
 				</div>
 			</div>
 		</div>
@@ -114,12 +114,14 @@
 				<div class="type-container offset-md-1 itens-center">
 					<label asp-for="Renavan" class="label">Renavan</label>
 					<input asp-for="Renavan" class="form-control" placeholder="12345678901" />
+					<span asp-validation-for="Renavan" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="VencimentoIpva" class="label">Vencimento Ipva</label>
 					<input asp-for="VencimentoIpva" class="form-control campo-data" placeholder="" />
+					<span asp-validation-for="VencimentoIpva" class="text-danger"></span>
 				</div>
 			</div>
 		</div>

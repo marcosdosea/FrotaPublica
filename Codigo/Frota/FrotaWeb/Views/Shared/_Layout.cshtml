@@ -4,10 +4,9 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>@ViewData["Title"] - FrotaWeb</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<title>FrotaPública</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	<link rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -22,7 +21,7 @@
 				</button>
 			</div>
 			<div class="p-4">
-				<h1 class="fs-2"><a asp-area="" asp-controller="Home" asp-action="Index" class="logo">FrotaPública</a></h1>
+				<h1 class="fs-2"><a asp-area="" asp-controller="Home" asp-action="Index" class="logo">FrotaWeb</a></h1>
 				<ul class="list-unstyled components mb-5">
 					<partial name="_LoginPartial" />
 					<li>
@@ -31,9 +30,21 @@
 						</a>
 					</li>
 					<li>
-						<a class="nav-link" asp-area="" asp-controller="Solicitacaomanutencao" asp-action="Index">
+						<a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
 							<i class="fa fa-wrench mr-3"></i>Manutenção
 						</a>
+						<ul class="collapse list-unstyled" id="pageSubmenu">
+							<li>
+								<a class="nav-link" asp-area="" asp-controller="Solicitacaomanutencao" asp-action="Index">
+									<i class="fa fa-clipboard mr-3"></i>Solicitar Manutenção
+								</a>
+							</li>
+							<li>
+								<a class="nav-link" asp-area="" asp-controller="Manutencao" asp-action="Index">
+									<i class="fa fa-wrench mr-3"></i>Manutenção
+								</a>
+							</li>
+						</ul>
 					</li>
 					<li>
 						<a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
@@ -97,6 +108,16 @@
 					<li>
 						<a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index">
 							<i class="fa fa-line-chart mr-3"></i>Relatórios
+						</a>
+					</li>
+					<li>
+						<a class="nav-link" asp-area="" asp-controller="Vistoria" asp-action="Index">
+							<i class="fa fa-clipboard-check mr-3"></i>Vistoria
+						</a>
+					</li>
+					<li>
+						<a class="nav-link" asp-area="" asp-controller="UnidadeAdministrativa" asp-action="Index">
+							<i class="fa fa-building mr-3"></i>Unidade Administrativa
 						</a>
 					</li>
 				</ul>

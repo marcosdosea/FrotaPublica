@@ -28,16 +28,26 @@ namespace FrotaWeb
             builder.Services.AddTransient<IFornecedorService, FornecedorService>();
             builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
 			builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
+			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
+			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
+			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
 
 			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddDbContext<FrotaContext>(
-                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+			var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
 
-            builder.Services.AddDbContext<IdentityContext>(
-				options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+			if (string.IsNullOrEmpty(connectionString))
+			{
+				throw new InvalidOperationException("A string de conexão 'FrotaDatabase' não foi encontrada ou está vazia.");
+			}
 
-            builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
+			builder.Services.AddDbContext<FrotaContext>(options =>
+				options.UseMySQL(connectionString));
+
+			builder.Services.AddDbContext<IdentityContext>(options =>
+				options.UseMySQL(connectionString));
+
+			builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
             {
                 // SignIn settings
                 options.SignIn.RequireConfirmedAccount = true;
