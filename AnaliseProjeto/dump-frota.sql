@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: frota
 -- ------------------------------------------------------
--- Server version	5.7.39-log
+-- Server version	5.7.44-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `__efmigrationshistory` (
 
 LOCK TABLES `__efmigrationshistory` WRITE;
 /*!40000 ALTER TABLE `__efmigrationshistory` DISABLE KEYS */;
-INSERT INTO `__efmigrationshistory` VALUES ('20231005194039_CreateIdentitySchema','7.0.10');
+INSERT INTO `__efmigrationshistory` VALUES ('20231005194039_CreateIdentitySchema','7.0.10'),('20240906221000_InitialCreate','7.0.10');
 /*!40000 ALTER TABLE `__efmigrationshistory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,6 +239,7 @@ CREATE TABLE `aspnetusers` (
 
 LOCK TABLES `aspnetusers` WRITE;
 /*!40000 ALTER TABLE `aspnetusers` DISABLE KEYS */;
+INSERT INTO `aspnetusers` VALUES ('1eb2a799-97da-415b-8368-af70e53b85f5','gui@gmail.com','GUI@GMAIL.COM','gui@gmail.com','GUI@GMAIL.COM',0,'AQAAAAEAACcQAAAAEOBnZHLXo1+lrZXfYJ7yRzel7wvit5w82p62UmyPDRDlE1z/LX5Kf4V84QAM0DCwkQ==','H2EF5KANKMYFQMTMVCKX2TQ34EDCIRID','323c809b-51b6-4144-9265-fe7b20cfd1e1',NULL,0,0,NULL,1,0),('829c9874-9de6-4f1d-aa11-2d79bb3f6302','paulo@gmail.com','PAULO@GMAIL.COM','paulo@gmail.com','PAULO@GMAIL.COM',1,'AQAAAAIAAYagAAAAEIvvJDO4VG0MBzCqov1CJ438fm4cER8wKzFpyNjT5DUg7jMtAvPCygXRdOQkzRwYVg==','VMQH2SQC6ETPARDPE676VJICHR6WIEET','0ad8f4fd-52b8-4ef4-b460-8c0adfcaa1f7',NULL,0,0,NULL,1,0);
 /*!40000 ALTER TABLE `aspnetusers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,7 +323,7 @@ CREATE TABLE `frota` (
   `estado` varchar(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj_UNIQUE` (`cnpj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -331,6 +332,7 @@ CREATE TABLE `frota` (
 
 LOCK TABLES `frota` WRITE;
 /*!40000 ALTER TABLE `frota` DISABLE KEYS */;
+INSERT INTO `frota` VALUES (00000000001,'Ali','000','000','R','B','12','KK','ITA','SE'),(00000000003,'Aqui','111','111','R','B','12','KK','ITA','SE');
 /*!40000 ALTER TABLE `frota` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,7 +419,7 @@ CREATE TABLE `marcapecainsumo` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descricao` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -426,6 +428,7 @@ CREATE TABLE `marcapecainsumo` (
 
 LOCK TABLES `marcapecainsumo` WRITE;
 /*!40000 ALTER TABLE `marcapecainsumo` DISABLE KEYS */;
+INSERT INTO `marcapecainsumo` VALUES (215,'dgfhgfh');
 /*!40000 ALTER TABLE `marcapecainsumo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,7 +443,7 @@ CREATE TABLE `marcaveiculo` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -449,6 +452,7 @@ CREATE TABLE `marcaveiculo` (
 
 LOCK TABLES `marcaveiculo` WRITE;
 /*!40000 ALTER TABLE `marcaveiculo` DISABLE KEYS */;
+INSERT INTO `marcaveiculo` VALUES (1,'Nissan');
 /*!40000 ALTER TABLE `marcaveiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -467,7 +471,7 @@ CREATE TABLE `modeloveiculo` (
   PRIMARY KEY (`id`),
   KEY `fk_ModeloVeiculo_MarcaVeiculo_idx` (`idMarcaVeiculo`),
   CONSTRAINT `fk_ModeloVeiculo_MarcaVeiculo` FOREIGN KEY (`idMarcaVeiculo`) REFERENCES `marcaveiculo` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -476,6 +480,7 @@ CREATE TABLE `modeloveiculo` (
 
 LOCK TABLES `modeloveiculo` WRITE;
 /*!40000 ALTER TABLE `modeloveiculo` DISABLE KEYS */;
+INSERT INTO `modeloveiculo` VALUES (1,1,'Versa',80),(2,1,'gol',1000);
 /*!40000 ALTER TABLE `modeloveiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -490,7 +495,7 @@ CREATE TABLE `papelpessoa` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `papel` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -499,6 +504,7 @@ CREATE TABLE `papelpessoa` (
 
 LOCK TABLES `papelpessoa` WRITE;
 /*!40000 ALTER TABLE `papelpessoa` DISABLE KEYS */;
+INSERT INTO `papelpessoa` VALUES (1,'Bombeiro');
 /*!40000 ALTER TABLE `papelpessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -513,7 +519,7 @@ CREATE TABLE `pecainsumo` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `descricao` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -522,6 +528,7 @@ CREATE TABLE `pecainsumo` (
 
 LOCK TABLES `pecainsumo` WRITE;
 /*!40000 ALTER TABLE `pecainsumo` DISABLE KEYS */;
+INSERT INTO `pecainsumo` VALUES (1,'75575'),(2,'444444'),(3,'54445');
 /*!40000 ALTER TABLE `pecainsumo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -590,7 +597,7 @@ CREATE TABLE `pessoa` (
   KEY `fk_Pessoa_PapelPessoa1_idx` (`idPapelPessoa`),
   CONSTRAINT `fk_Pessoa_Frota1` FOREIGN KEY (`idFrota`) REFERENCES `frota` (`id`),
   CONSTRAINT `fk_Pessoa_PapelPessoa1` FOREIGN KEY (`idPapelPessoa`) REFERENCES `papelpessoa` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -599,6 +606,7 @@ CREATE TABLE `pessoa` (
 
 LOCK TABLES `pessoa` WRITE;
 /*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
+INSERT INTO `pessoa` VALUES (1,'000','guilherme','49500','rua','bairro','dsamjo','18','Itabaiana','SE',00000000001,1,1);
 /*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -620,7 +628,7 @@ CREATE TABLE `solicitacaomanutencao` (
   KEY `fk_VeiculoPessoa_Veiculo2_idx` (`idVeiculo`),
   CONSTRAINT `fk_VeiculoPessoa_Pessoa2` FOREIGN KEY (`idPessoa`) REFERENCES `pessoa` (`id`),
   CONSTRAINT `fk_VeiculoPessoa_Veiculo2` FOREIGN KEY (`idVeiculo`) REFERENCES `veiculo` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -629,6 +637,7 @@ CREATE TABLE `solicitacaomanutencao` (
 
 LOCK TABLES `solicitacaomanutencao` WRITE;
 /*!40000 ALTER TABLE `solicitacaomanutencao` DISABLE KEYS */;
+INSERT INTO `solicitacaomanutencao` VALUES (5,57,1,'2024-09-18 00:47:00','aa');
 /*!40000 ALTER TABLE `solicitacaomanutencao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -652,7 +661,7 @@ CREATE TABLE `unidadeadministrativa` (
   `latitude` float DEFAULT NULL,
   `longitude` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -661,6 +670,7 @@ CREATE TABLE `unidadeadministrativa` (
 
 LOCK TABLES `unidadeadministrativa` WRITE;
 /*!40000 ALTER TABLE `unidadeadministrativa` DISABLE KEYS */;
+INSERT INTO `unidadeadministrativa` VALUES (1,'SEILA','4950000','Jardim das Flores','Bairro Molejo','Casa','45','Itabaiana','SE',1030,-374302),(2,'aaaaaaaaaaaaaaa','0000000','aa','aa','aa','18','a','a',1,1),(3,'a','a','a','a','a','2','b','b',3,3);
 /*!40000 ALTER TABLE `unidadeadministrativa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -694,7 +704,7 @@ CREATE TABLE `veiculo` (
   CONSTRAINT `fk_Veiculo_Frota1` FOREIGN KEY (`idFrota`) REFERENCES `frota` (`id`),
   CONSTRAINT `fk_Veiculo_ModeloVeiculo1` FOREIGN KEY (`idModeloVeiculo`) REFERENCES `modeloveiculo` (`id`),
   CONSTRAINT `fk_Veiculo_UnidadeAdministrativa1` FOREIGN KEY (`idUnidadeAdministrativa`) REFERENCES `unidadeadministrativa` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -703,6 +713,7 @@ CREATE TABLE `veiculo` (
 
 LOCK TABLES `veiculo` WRITE;
 /*!40000 ALTER TABLE `veiculo` DISABLE KEYS */;
+INSERT INTO `veiculo` VALUES (57,'DDAAA-1234','5555555555555555555','Preto',1,00000000001,1,95667,'D',1988,5555,'8888888','2020-07-07 00:00:00',160000.00,'2022-07-08 00:00:00');
 /*!40000 ALTER TABLE `veiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -753,7 +764,7 @@ CREATE TABLE `vistoria` (
   PRIMARY KEY (`id`),
   KEY `fk_Vistoria_Pessoa1_idx` (`idPessoaResponsavel`),
   CONSTRAINT `fk_Vistoria_Pessoa1` FOREIGN KEY (`idPessoaResponsavel`) REFERENCES `pessoa` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -762,6 +773,7 @@ CREATE TABLE `vistoria` (
 
 LOCK TABLES `vistoria` WRITE;
 /*!40000 ALTER TABLE `vistoria` DISABLE KEYS */;
+INSERT INTO `vistoria` VALUES (3,'2024-02-20 00:00:00','Aquecimento','S',1),(4,'2024-02-20 00:00:00','Aquecimento','S',1);
 /*!40000 ALTER TABLE `vistoria` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -774,4 +786,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-05 16:47:18
+-- Dump completed on 2024-09-27 17:34:41
