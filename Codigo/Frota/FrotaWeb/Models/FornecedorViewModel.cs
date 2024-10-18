@@ -6,8 +6,8 @@ namespace FrotaWeb.Models
 {
     public class FornecedorViewModel
     {
-        [Display(Name = "Código")]
-        [Required(ErrorMessage = "Código da pessoa é obrigatório")]
+		[Key]
+		[Required(ErrorMessage = "Código da pessoa é obrigatório")]
         public uint Id { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]

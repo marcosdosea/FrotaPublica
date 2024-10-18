@@ -1,37 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core;
+using Core.Service;
 
 namespace Service
 {
-    internal class MarcaVeiculoService
-    {
-        private List<string> marcasDeVeiculo;
+	public class MarcaVeiculoService : IMarcaVeiculoService
+	{
+		private readonly FrotaContext context;
 
-        public MarcaVeiculoService()
-        {
-            // Inicialize a lista de marcas de veículo.
-            marcasDeVeiculo = new List<string>();
-        }
+		public MarcaVeiculoService(FrotaContext context)
+		{
+			this.context = context;
+		}
 
-        // Adicione uma marca de veículo à lista.
-        public void AdicionarMarca(string marca)
-        {
-            marcasDeVeiculo.Add(marca);
-        }
+		/// <summary>
+		/// Adicionar nova veiculo na base de dados
+		/// </summary>
+		/// <param name="marcaVeiculo"></param>
+		/// <returns></returns>
+		public uint Create(Marcaveiculo marcaVeiculo)
+		{
+			context.Add(marcaVeiculo);
+			context.SaveChanges();
+			return marcaVeiculo.Id;
+		}
 
-        // Obtenha todas as marcas de veículo da lista.
-        public List<string> ObterTodasAsMarcas()
-        {
-            return marcasDeVeiculo;
-        }
+		/// <summary>
+		/// Excluir uma veiculo da base de dados
+		/// </summary>
+		/// <param name="id"></param>
+		public void Delete(uint id)
+		{
+			var veiculo = context.Marcaveiculos.Find(id);
+			context.Remove(veiculo);
+			context.SaveChanges();
+		}
 
-        // Verifique se uma marca específica existe na lista.
-        public bool MarcaExiste(string marca)
-        {
-            return marcasDeVeiculo.Contains(marca);
-        }
-    }
+		/// <summary>
+		/// Alterar os dados da veiculo na base de dados
+		/// </summary>
+		/// <param name="marcaVeiculo"></param>
+		public void Edit(Marcaveiculo marcaVeiculo)
+		{
+			context.Update(marcaVeiculo);
+			context.SaveChanges();
+		}
+
+		/// <summary>
+		/// Obter pelo id da veiculo
+		/// </summary>
+		/// <param name="marcaVeiculo"></param>
+		/// <returns></returns>
+		public Marcaveiculo? Get(uint marcaVeiculo)
+		{
+			return context.Marcaveiculos.Find(marcaVeiculo);
+		}
+
+		/// <summary>
+		/// Obter a lista de veiculo cadastradas
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Marcaveiculo> GetAll()
+		{
+			return context.Marcaveiculos;
+		}
+	}
 }
+

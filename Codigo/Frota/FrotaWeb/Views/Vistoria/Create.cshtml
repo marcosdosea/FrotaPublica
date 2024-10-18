@@ -1,0 +1,61 @@
+﻿@model FrotaWeb.Models.VistoriaViewModel
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
+<main class="container mt-4">
+	<h4 class="page-title fs-2">
+		<i class="fa fa-clipboard-check mr-3"></i>
+		Vistoria
+	</h4>
+	<h1 class="my-text-label fs-3 mt-4 mb-4">Nova Vistoria</h1>
+	<form asp-action="Create" class="creator-form fs-5">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container offset-md-1 itens-center">
+					<label asp-for="Data" class="label">Data</label>
+					<input asp-for="Data" class="form-control campo-data" placeholder="Nome" />
+					<span asp-validation-for="Data" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container offset-md-2 itens-center">
+					<label asp-for="Problemas" class="label">Problemas</label>
+					<input asp-for="Problemas" class="form-control" placeholder="Problemas" />
+					<span asp-validation-for="Problemas" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container offset-md-1 itens-center">
+					<label asp-for="Tipo" class="label">Tipo</label>
+					<input asp-for="Tipo" class="form-control" placeholder="Rua" />
+					<span asp-validation-for="Tipo" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container offset-md-2 itens-center">
+					<label asp-for="IdPessoaResponsavel" class="label">Responsável</label>
+					<input asp-for="IdPessoaResponsavel" class="form-control" placeholder="Responsável" />
+					<span asp-validation-for="IdPessoaResponsavel" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-4">
+			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
+				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
+			</div>
+			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
+				<button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Cadastrar</button>
+			</div>
+		</div>
+	</form>
+</main>
+@section Scripts {
+	<script src="~/js/form.js" asp-append-version="true"></script>
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace FrotaWeb.Controllers
 {
 
-    [Authorize(Roles = "gestor")]
     public class ModeloVeiculoController : Controller
     {
 

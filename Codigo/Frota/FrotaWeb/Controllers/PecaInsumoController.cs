@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "gestor")]
     public class PecaInsumoController : Controller
     {
         private readonly IPecaInsumoService _pecaInsumoService;

@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Core.Service
 {
-    internal interface IVistoriaService
+    public interface IVistoriaService
     {
-    }
+		uint Create(Vistorium vistoria);
+		void Edit(Vistorium vistoria);
+		void Delete(uint id);
+		Vistorium? Get(uint id);
+		IEnumerable<Vistorium> GetAll();
+	}
 }

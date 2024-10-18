@@ -1,69 +1,74 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core;
 using Core.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
-	public class ManutencaoService : IManutencaoService
-	{
-		private readonly List<ManutencaoVeiculo> manutencoes = new List<ManutencaoVeiculo>();
+    /// <summary>
+    /// Manter dados de marcas das peças e insumos no banco de dados
+    /// </summary>
+    public class ManutencaoService : IManutencaoService
+    {
+        private readonly FrotaContext _context;
 
-		public IEnumerable<ManutencaoVeiculo> ListarManutencoes()
-		{
-			return manutencoes;
-		}
+        public ManutencaoService(FrotaContext context)
+        {
+            _context = context;
+        }
 
-		public ManutencaoVeiculo ObterManutencaoPorId(int id)
-		{
-			return manutencoes.FirstOrDefault(m => m.Id == id);
-		}
+        /// <summary>
+        /// Criar registro de Manutencao no banco
+        /// </summary>
+        /// <param name="manutencao">Instância de Manutencao</param>
+        /// <returns>Id da Manutencao</returns>
+        public uint Create(Manutencao manutencao)
+        {
+            _context.Add(manutencao);
+            _context.SaveChanges();
+            return manutencao.Id;
+        }
 
-		public void AdicionarManutencao(ManutencaoVeiculo manutencao)
-		{
-			if (manutencao == null)
-			{
-				throw new ArgumentNullException(nameof(manutencao));
-			}
+        /// <summary>
+        /// Excluir Manutencao da base de dados
+        /// </summary>
+        /// <param name="id">Id do Manutencao</param>
+        public void Delete(uint id)
+        {
+            var entity = _context.Manutencaos.Find(id);
+            if (entity != null)
+            {
+                _context.Remove(entity);
+                _context.SaveChanges();
+            }
+        }
 
-			// Gere um ID único, por exemplo, usando um contador
-			manutencao.Id = GerarNovoId();
-			manutencoes.Add(manutencao);
-		}
+        /// <summary>
+        /// Editar dados do Manutencao na base de dados
+        /// </summary>
+        /// <param name="manutencao">Instância de Manutencao</param>
+        public void Edit(Manutencao manutencao)
+        {
+            _context.Update(manutencao);
+            _context.SaveChanges();
+        }
 
-		public void AtualizarManutencao(ManutencaoVeiculo manutencao)
-		{
-			if (manutencao == null)
-			{
-				throw new ArgumentNullException(nameof(manutencao));
-			}
+        /// <summary>
+        /// Obter dados de um Manutencao
+        /// </summary>
+        /// <param name="id">Id do Manutencao</param>
+        /// <returns>Instância de Manutencao ou null, caso não exista</returns>
+        public Manutencao? Get(uint id)
+        {
+            return _context.Manutencaos.Find(id);
+        }
 
-			var existente = manutencoes.FirstOrDefault(m => m.Id == manutencao.Id);
-			if (existente != null)
-			{
-				existente.Descricao = manutencao.Descricao;
-				existente.Data = manutencao.Data;
-				existente.Valor = manutencao.Valor;
-				// Atualize outros campos conforme necessário
-			}
-		}
-
-		public void ExcluirManutencao(int id)
-		{
-			var existente = manutencoes.FirstOrDefault(m => m.Id == id);
-			if (existente != null)
-			{
-				manutencoes.Remove(existente);
-			}
-		}
-
-		private int GerarNovoId()
-		{
-			// Gere um novo ID único (por exemplo, com base no tamanho da lista + 1)
-			return manutencoes.Count + 1;
-		}
-	}
+        /// <summary>
+        /// Obter todos os Manutencao da base de dados
+        /// </summary>
+        /// <returns>Lista de todos os Manutencao</returns>
+        public IEnumerable<Manutencao> GetAll()
+        {
+            return _context.Manutencaos.AsNoTracking();
+        }
+    }
 }

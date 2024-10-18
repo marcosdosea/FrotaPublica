@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -31,12 +32,11 @@ namespace Service
         public void Delete(uint idVeiculo)
         {
             var veiculo = context.Veiculos.Find(idVeiculo);
-
-            if (veiculo == null)
-                return;
-
-            context.Remove(veiculo);
-            context.SaveChanges();
+            if (veiculo != null)
+            {
+                context.Remove(veiculo);
+                context.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Service
         /// <returns></returns>
         public IEnumerable<Veiculo> GetAll()
         {
-            return context.Veiculos;
+            return context.Veiculos.AsNoTracking();
         }
     }
 }

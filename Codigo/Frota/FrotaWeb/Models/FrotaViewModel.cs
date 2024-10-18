@@ -4,7 +4,7 @@ namespace FrotaWeb.Models
 {
     public class FrotaViewModel
     {
-        [Required]
+        [Key]
         public uint Id { get; set; }
         [Required]
         [StringLength(50)]

@@ -1,49 +1,38 @@
 ﻿@model IEnumerable<FrotaWeb.Models.PecaInsumoViewModel>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
-<h1>Peças e Insumos</h1>
-
-<p>
-    <a asp-action="Create"class="btn btn-primary" style="background-color:#08448c">Adicionar</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                    <a href="@Url.Action("Edit", new { id=item.Id })" class="edit" title="Editar" data-toggle="tooltip">
-                        <i class="fa fa-pencil" aria-hidden="true" style="color:#08448c"></i>
-                    </a>
-
-                    <a href="@Url.Action("Details", new { id=item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
-                        <i class="fa fa-eye" aria-hidden="true" style="color:#08448c"></i>
-                    </a>
-
-                    <a href="@Url.Action("Delete", new { id=item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
-                        <i class="fa fa-trash" aria-hidden="true" style="color:#08448c"></i>
-                    </a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<main class="container mt-4">
+    <div class="table-responsive">
+        <table class="table tabela-listra table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Descricao)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Descricao)</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "PecaInsumo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Details", "PecaInsumo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "PecaInsumo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Adicionar</a>
+    </div>
+</main>

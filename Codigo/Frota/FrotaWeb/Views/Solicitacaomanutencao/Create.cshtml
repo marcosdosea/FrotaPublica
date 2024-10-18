@@ -1,86 +1,62 @@
 @model FrotaWeb.Models.SolicitacaomanutencaoViewModel
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<main>
-    <h4 class="page-title">
-        <span class="material-symbols-outlined">construction</span>
-        Solicitar Manutenção
-    </h4>
-    <h4 class='vehicle-name'>@Html.DisplayFor(model => model.IdVeiculo)</h4>
-    <form asp-action="Create" class='creator-form'>
-        <div class='top-fields'>
-            <div>
-                <label for="odometer">Leitura do odômetro</label>
-                <input name="odometer" type="number" id="odometer" placeholder="45.600">
-            </div>
-            <div>
-                <label for="date">Data</label>
-                <input name="date" type="date" id="date">
-            </div>
-        </div>
-        <div class="defect-field">
-            <h5>Defeito</h5>
-            <button class="my-button"><span class="material-symbols-outlined">add</span>Novo Defeito</button>
-        </div>
-        <div class="middle-fields">
-            <div class="type-container">
-                <label for="type">Tipo de Manutenção</label>
-                <select name="type" id="type" required>
-                    <option value="" disabled selected hidden>Troca de Pneu</option>
-                </select>
-            </div>
-            <div class="desc-container">
-                <label for="desc">Descrição</label>
-                <textarea name="desc" id="desc" placeholder="Pneu ultrapassou máximo de uso"></textarea>
-            </div>
-            <div class="upload-container">
-                <button class="my-button"><span class="material-symbols-outlined">upload_file</span>Anexar arquivos</button>
-            </div>
-        </div>
-        <div class="buttons">
-            <input class="my-button" onclick="location.href = 'Index';" type="button" value="Voltar">
-            <input class="my-button" type="submit" value="Confirmar">
-        </div>
-    </form>
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
+<main class="container mt-4">
+	<h4 class="page-title fs-2">
+		<i class="fa fa-tools mr-3"></i>
+		Solicitação de Manutenção
+	</h4>
+	<h1 class="my-text-label fs-3 mt-4 mb-4">Nova Solicitação</h1>
+	<form asp-action="Create" class="creator-form fs-5">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container offset-md-1 itens-center">
+					<label asp-for="IdVeiculo" class="label">Veículo</label>
+					<input asp-for="IdVeiculo" class="form-control" placeholder="Veículo" />
+					<span asp-validation-for="IdVeiculo" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container offset-md-2 itens-center">
+					<label asp-for="IdPessoa" class="label">Pessoa</label>
+					<input asp-for="IdPessoa" class="form-control" placeholder="Pessoa" />
+					<span asp-validation-for="IdPessoa" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-6">
+				<div class="type-container offset-md-1 itens-center">
+					<label asp-for="DataSolicitacao" class="label">Data de Solicitação</label>
+                    <input asp-for="DataSolicitacao" class="form-control campo-data" placeholder="" />
+					<span asp-validation-for="DataSolicitacao" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="type-container offset-md-2 itens-center">
+					<label asp-for="DescricaoProblema" class="label">Descricão</label>
+					<textarea asp-for="DescricaoProblema" class="form-control" placeholder="Manutenção necessária"></textarea>
+					<span asp-validation-for="DescricaoProblema" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-4">
+			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
+				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
+			</div>
+			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
+				<button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Cadastrar</button>
+			</div>
+		</div>
+	</form>
 </main>
-
-<!--
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdVeiculo" class="control-label"></label>
-                <input asp-for="IdVeiculo" class="form-control" />
-                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdPessoa" class="control-label"></label>
-                <input asp-for="IdPessoa" class="form-control" />
-                <span asp-validation-for="IdPessoa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataSolicitacao" class="control-label"></label>
-                <input asp-for="DataSolicitacao" class="form-control" />
-                <span asp-validation-for="DataSolicitacao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DescricaoProblema" class="control-label"></label>
-                <input asp-for="DescricaoProblema" class="form-control" />
-                <span asp-validation-for="DescricaoProblema" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-            </div>
-        </form>
-    </div>
-</div>
--->
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/form.js" asp-append-version="true"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
