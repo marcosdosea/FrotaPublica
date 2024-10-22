@@ -60,7 +60,6 @@ namespace FrotaWeb.Controllers
         {
             var veiculo = veiculoService.Get(id);
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-
             return View(veiculoViewModel);
         }
 
@@ -82,7 +81,6 @@ namespace FrotaWeb.Controllers
         {
             var veiculo = veiculoService.Get(id);
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-
             return View(veiculoViewModel);
         }
 

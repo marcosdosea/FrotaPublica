@@ -5,7 +5,6 @@ namespace FrotaWeb.Models;
 public class SolicitacaomanutencaoViewModel
 {
     [Key]
-    [Required]
     [Display(Name = "Código")]
     [Editable(allowEdit: false)]
     public uint Id { get; set; }

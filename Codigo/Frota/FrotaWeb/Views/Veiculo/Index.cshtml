@@ -1,113 +1,42 @@
 @model IEnumerable<FrotaWeb.Models.VeiculoViewModel>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Placa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Chassi)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdModeloVeiculo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdFrota)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdUnidadeAdministrativa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Odometro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ano)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Modelo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Renavan)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VencimentoIpva)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Valor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataReferenciaValor)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Placa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Chassi)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdModeloVeiculo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdFrota)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdUnidadeAdministrativa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odometro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ano)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modelo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Renavan)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VencimentoIpva)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Valor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataReferenciaValor)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
+<main class="container mt-4">
+	<div class="table-responsive">
+		<table class="table tabela-listra table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>@Html.DisplayNameFor(model => model.Placa)</th>
+					<th>@Html.DisplayNameFor(model => model.Modelo)</th>
+					<th>@Html.DisplayNameFor(model => model.Status)</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="tableBody">
+				@foreach (var item in Model)
+				{
+					<tr>
+						<td>@Html.DisplayFor(modelItem => item.Placa)</td>
+						<td>@Html.DisplayFor(modelItem => item.Modelo)</td>
+						<td>@Html.DisplayFor(modelItem => item.Status)</td>
+						<td>
+							<a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+								<i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+								<i class="fa fa-eye cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+								<i class="fa fa-trash cor" aria-hidden="true"></i>
+							</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<a asp-action="Create" class="btn btn-primary">Adicionar</a>
+	</div>
+</main>

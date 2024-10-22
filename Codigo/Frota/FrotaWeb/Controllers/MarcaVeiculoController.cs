@@ -1,105 +1,100 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using Core;
+using Core.Service;
+using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize]
-    public class MarcaVeiculoController : Controller
-    {
-        // Esta é uma lista simulada de marcas de veículos, substitua por um banco de dados ou serviço real.
-        private readonly List<string> _marcas = new List<string>
-        {
-            "Marca1", "Marca2", "Marca3"
-        };
+	[Authorize]
+	public class MarcaVeiculoController : Controller
+	{
+		private readonly IMarcaVeiculoService _service;
+		private readonly IMapper mapper;
 
-        // Ação para exibir a lista de marcas de veículos
-        public IActionResult Index()
-        {
-            return View(_marcas);
-        }
+		public MarcaVeiculoController(IMarcaVeiculoService service, IMapper mapper)
+		{
+			this._service = service;
+			this.mapper = mapper;
+		}
 
-        // Ação para exibir o formulário de criação de uma nova marca de veículo
-        public IActionResult Create()
-        {
-            return View();
-        }
+		// GET: MarcaVeiculo
+		public ActionResult Index()
+		{
+			var marcaVeiculos = _service.GetAll();
+			var marcaVeiculosViewModel = mapper.Map<List<MarcaVeiculoViewModel>>(marcaVeiculos);
+			return View(marcaVeiculosViewModel);
+		}
 
-        // Ação para processar o formulário de criação
-        [HttpPost]
-        public IActionResult Create(string novaMarca)
-        {
-            if (!string.IsNullOrWhiteSpace(novaMarca))
-            {
-                _marcas.Add(novaMarca);
-                return RedirectToAction("Index");
-            }
+		// GET: MarcaVeiculo/Details/5
+		public ActionResult Details(uint id)
+		{
+			var marcaVeiculo = _service.Get(id);
+			var marcaVeiculosViewModel = mapper.Map<MarcaVeiculoViewModel>(marcaVeiculo);
 
-            return View();
-        }
+			return View(marcaVeiculosViewModel);
+		}
 
-        // Ação para exibir detalhes de uma marca de veículo
-        public IActionResult Details(string nomeMarca)
-        {
-            var marca = _marcas.Find(m => m == nomeMarca);
-            if (marca != null)
-            {
-                return View(marca);
-            }
+		// GET: MarcaVeiculo/Create
+		public ActionResult Create()
+		{
+			return View();
+		}
 
-            return NotFound();
-        }
+		// POST: MarcaVeiculo/Create
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult Create(MarcaVeiculoViewModel marcaVeiculoViewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
+				_service.Create(marcaVeiculo);
+			}
 
-        // Ação para exibir o formulário de edição de uma marca de veículo
-        public IActionResult Edit(string nomeMarca)
-        {
-            var marca = _marcas.Find(m => m == nomeMarca);
-            if (marca != null)
-            {
-                return View(marca);
-            }
+			return RedirectToAction(nameof(Index));
+		}
 
-            return NotFound();
-        }
+		// GET: MarcaVeiculo/Edit/5
+		public ActionResult Edit(uint id)
+		{
+			var marcaVeiculo = _service.Get(id);
+			var marcaVeiculoViewModel = mapper.Map<MarcaVeiculoViewModel>(marcaVeiculo);
 
-        // Ação para processar o formulário de edição
-        [HttpPost]
-        public IActionResult Edit(string nomeMarca, string novaMarca)
-        {
-            var index = _marcas.FindIndex(m => m == nomeMarca);
-            if (index != -1 && !string.IsNullOrWhiteSpace(novaMarca))
-            {
-                _marcas[index] = novaMarca;
-                return RedirectToAction("Index");
-            }
+			return View(marcaVeiculoViewModel);
+		}
 
-            return View(nomeMarca);
-        }
+		// POST: MarcaVeiculo/Edit/5
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult Edit(uint id, MarcaVeiculoViewModel marcaVeiculoViewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
+				_service.Edit(marcaVeiculo);
+			}
 
-        // Ação para excluir uma marca de veículo
-        public IActionResult Delete(string nomeMarca)
-        {
-            var marca = _marcas.Find(m => m == nomeMarca);
-            if (marca != null)
-            {
-                return View(marca);
-            }
+			return RedirectToAction(nameof(Index));
+		}
 
-            return NotFound();
-        }
+		// GET: MarcaVeiculo/Delete/5
+		public ActionResult Delete(uint id)
+		{
+			var marcaVeiculo = _service.Get(id);
+			var marcaVeiculoViewModel = mapper.Map<MarcaVeiculoViewModel>(marcaVeiculo);
+			return View(marcaVeiculoViewModel);
+		}
 
-        // Ação para confirmar a exclusão
-        [HttpPost]
-        public IActionResult DeleteConfirmed(string nomeMarca)
-        {
-            var marca = _marcas.Find(m => m == nomeMarca);
-            if (marca != null)
-            {
-                _marcas.Remove(marca);
-                return RedirectToAction("Index");
-            }
-
-            return NotFound();
-        }
-    }
+		// POST: MarcaVeiculo/Delete/5
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult Delete(uint id, MarcaVeiculoViewModel marcaVeiculo)
+		{
+			_service.Delete(id);
+			return RedirectToAction(nameof(Index));
+		}
+	}
 }
+

@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
     public interface IUnidadeAdministrativaService
     {
-        uint Create(Unidadeadministrativa unidadeadministrativa);
-
-        void Edit(Unidadeadministrativa unidadeadministrativa);
-
-        void Delete(uint IdUADM);
-
-        Unidadeadministrativa? Get(uint IdUADM);
-
+        uint Create(Unidadeadministrativa unidadeAdministrativa);
+        void Edit(Unidadeadministrativa unidadeAdministrativa);
+        void Delete(uint id);
+        Unidadeadministrativa? Get(uint id);
         IEnumerable<Unidadeadministrativa> GetAll();
-    }
+	}
 }

@@ -4,16 +4,13 @@ namespace FrotaWeb.Models
 {
     public class PecaInsumoViewModel
     {
+		[Key]
         [Display(Name = "Código")]
-        [Required(ErrorMessage = "Código obrigatório")]
-        public int Id { get; set; }
+		public int Id { get; set; }
              
 
         [StringLength(50)]
-        public string Descricao { get; set; }
-
-
-
+        public string? Descricao { get; set; }
 
     }
 }
