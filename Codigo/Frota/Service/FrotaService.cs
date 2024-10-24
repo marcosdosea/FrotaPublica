@@ -33,11 +33,17 @@ namespace Service
         /// Excluir uma frota da base de dados
         /// </summary>
         /// <param name="idFrota"></param>
-        public void Delete(uint idFrota)
+        /// <returns>retorna verdadeiro se o registro for removido</returns>
+        public bool Delete(uint idFrota)
         {
             var frota = context.Frota.Find(idFrota);
-            context.Remove(frota);
-            context.SaveChanges();
+            if(frota != null)
+            {
+                context.Remove(frota);
+                context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
 
@@ -55,8 +61,8 @@ namespace Service
         /// Obter pelo id da frota
         /// </summary>
         /// <param name="idFrota"></param>
-        /// <returns></returns>
-        public Frota Get(uint idFrota)
+        /// <returns>retorna o objeto ou um valor nulo</returns>
+        public Frota? Get(uint idFrota)
         {
              return context.Frota.Find(idFrota);
    

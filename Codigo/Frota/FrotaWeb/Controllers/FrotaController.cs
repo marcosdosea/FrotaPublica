@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -30,9 +31,11 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FrotaController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(uint id)
         {
-            return View();
+            Frota frota = frotaService.Get(id);
+            var frotaModel = mapper.Map<FrotaViewModel>(frota);
+            return View(frotaModel);
         }
 
         // GET: FrotaController/Create
@@ -44,11 +47,16 @@ namespace FrotaWeb.Controllers
         // POST: FrotaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(FrotaViewModel frotaModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var frota = mapper.Map<Frota>(frotaModel);
+                    frotaService.Create(frota);
+                }
+                return View(nameof(Index));
             }
             catch
             {
@@ -57,7 +65,7 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FrotaController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(uint id)
         {
             return View();
         }
@@ -65,11 +73,16 @@ namespace FrotaWeb.Controllers
         // POST: FrotaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, FrotaViewModel frotaModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var frota = mapper.Map<Frota>(frotaModel);
+                    frotaService.Edit(frota);
+                }
+                return View(frotaModel);
             }
             catch
             {
@@ -78,18 +91,22 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FrotaController/Delete/5
-        public ActionResult Delete(int id)
+        [HttpGet]
+        public ActionResult Delete(uint id)
         {
-            return View();
+            Frota frota = frotaService.Get(id);
+            var frotaModel = mapper.Map<FrotaViewModel>(frota);
+            return View(frotaModel);
         }
 
         // POST: FrotaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(uint id, FrotaViewModel frotaModel)
         {
             try
             {
+                frotaService.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
             catch
