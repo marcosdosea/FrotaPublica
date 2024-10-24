@@ -1,60 +1,66 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrotaWeb.Models
 {
-	public class VeiculoViewModel
-	{
-		[Key]
-		public uint Id { get; set; }
+    public class VeiculoViewModel
+    {
 
-		[Required(ErrorMessage = "O campo Placa é obrigatório.")]
-		[StringLength(maximumLength: 10)]
-		public string Placa { get; set; } = null!;
+        [Key]
+        [DisplayName("Código")]
+        public uint Id { get; set; }
 
-		[StringLength(maximumLength: 50)]
-		public string? Chassi { get; set; }
+        [Required(ErrorMessage = "A {0} é obrigatório")]
+        [StringLength(10, ErrorMessage = "A {0} pode ter no máximo 10 caracteres")]
+        public string Placa { get; set; } = null!;
 
-		[Required(ErrorMessage = "O campo Cor é obrigatório.")]
-		[StringLength(maximumLength: 50)]
-		public string Cor { get; set; } = null!;
+        [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
+        public string? Chassi { get; set; }
 
-		[Required(ErrorMessage = "O campo ModeloVeiculo é obrigatório.")]
-		[ForeignKey("ModeloVeiculo")]
-		public uint IdModeloVeiculo { get; set; }
+        [Required(ErrorMessage = "A {0} é obrigatório")]
+        [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
+        public string Cor { get; set; } = null!;
 
-        [Required(ErrorMessage = "O campo Frota é obrigatório.")]
-        [ForeignKey("Frota")]
-		public uint IdFrota { get; set; }
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Código do Modelo")]
+        public uint IdModeloVeiculo { get; set; }
 
-        [Required(ErrorMessage = "O campo Unidade Administrativa é obrigatório.")]
-        [ForeignKey("UnidadeAdministrativa")]
-		public uint IdUnidadeAdministrativa { get; set; }
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Código da Frota")]
+        public uint IdFrota { get; set; }
 
-		[Required(ErrorMessage = "O campo Odómetro é obrigatório.")]
-		public int Odometro { get; set; } = 0;
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Código da Unidade Administrativa")]
+        public uint IdUnidadeAdministrativa { get; set; }
 
-		[Required(ErrorMessage = "O campo Status é obrigatório.")]
-		public string Status { get; set; } = null!;
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Odômetro")]
+        public int Odometro { get; set; } = 0;
 
-		[Required(ErrorMessage = "O campo Ano é obrigatório.")]
-		public int Ano { get; set; }
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        public string Status { get; set; } = null!;
 
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        public int Ano { get; set; }
 
-		[StringLength(maximumLength: 50)]
-		public string? Renavan { get; set; }
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        public int Modelo { get; set; }
 
-		[DataType(DataType.DateTime)]
-		public DateTime? VencimentoIpva { get; set; }
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
+        public string? Renavan { get; set; }
 
-		[Required(ErrorMessage = "O campo Valor é obrigatório.")]
-		public decimal Valor { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime? VencimentoIpva { get; set; }
 
-		[Required(ErrorMessage = "O campo Data Referência é obrigatório.")]
-		[DataType(DataType.DateTime)]
-		public DateTime DataReferenciaValor { get; set; }
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [Range(0, 99999999.99, ErrorMessage = "O {0} deve estar entre 0 e 99.999.999,99.")]
+        public decimal Valor { get; set; }
 
-		[Required(ErrorMessage = "O campo Modelo é obrigatório.")]
-		public int Modelo { get; set; }
-	}
+        [Required(ErrorMessage = "A {0} é obrigatório")]
+        [DisplayName("Data de Referência")]
+        [DataType(DataType.DateTime)]
+        public DateTime DataReferenciaValor { get; set; }
+
+    }
 }

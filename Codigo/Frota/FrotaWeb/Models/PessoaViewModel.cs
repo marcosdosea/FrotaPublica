@@ -1,53 +1,60 @@
-﻿using Core;
+﻿using Util;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace FrotaWeb.Models
 {
     public class PessoaViewModel
     {
-		[Key]
-        [Display(Name = "Código")]
-		public uint Id { get; set; }
 
-        [Required(ErrorMessage = "Campo requerido")]
-        [StringLength(11, MinimumLength = 11 ,ErrorMessage = "Cpf deve possuir 11 dígitos")]
+        [Key]
+        [DisplayName("Código")]
+        public uint Id { get; set; }
+
+        [CPF]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "O {0} deve possuir 11 dígitos")]
         public string Cpf { get; set; } = null!;
 
-        [Required(ErrorMessage = "Campo requerido")]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "O nome deve ter entre 5 e 50 caracteres")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string Nome { get; set; } = null!;
 
-        [StringLength(8, MinimumLength = 8, ErrorMessage = "Cep deve possuir 8 dígitos")]
+        [Cep]
+        [StringLength(8, MinimumLength = 8, ErrorMessage = "O {0} deve possuir 8 dígitos")]
         public string? Cep { get; set; }
 
-        [StringLength(50, ErrorMessage = "O nome da rua deve possuir no máximo 50 caracteres")]
+        [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
         public string? Rua { get; set; }
 
-        [StringLength(50, ErrorMessage = "O nome do bairro deve possuir no máximo 50 caracteres")]
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Bairro { get; set; }
 
-        [StringLength(50, ErrorMessage = "O complemento deve possuir no máximo 50 caracteres")]
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Complemento { get; set; }
 
-        [StringLength(10, ErrorMessage = "O número deve possuir no máximo 10 caracteres")]
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 10 caracteres")]
+        [DisplayName("Número")]
         public string? Numero { get; set; }
 
-        [StringLength(50, ErrorMessage = "O nome da cidade deve possuir no máximo 50 caracteres")]
+        [StringLength(50, ErrorMessage = "O nome da {0} pode possuir no máximo 50 caracteres")]
         public string? Cidade { get; set; }
 
-        [Required(ErrorMessage = "Campo requerido")]
-        [StringLength(2, MinimumLength = 2,ErrorMessage = "O nome do estado deve possuir 2 caracteres")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [StringLength(2, MinimumLength = 2, ErrorMessage = "A sigla do {0} deve possuir 2 caracteres")]
         public string Estado { get; set; } = null!;
 
-        [Display(Name = "Código/Frota")]
-        [Required(ErrorMessage = "Código da frota é obrigatório")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Código da Frota")]
         public uint IdFrota { get; set; }
 
-        [Display(Name = "Código/Cargo")]
-        [Required(ErrorMessage = "Código da frota é obrigatório")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Código do Papel Pessoa")]
         public uint IdPapelPessoa { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Campo Ativo")]
         public sbyte Ativo { get; set; }
+
     }
 }

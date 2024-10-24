@@ -1,30 +1,32 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace FrotaWeb.Models;
 
 public class SolicitacaomanutencaoViewModel
 {
+
     [Key]
-    [Display(Name = "Código")]
-    [Editable(allowEdit: false)]
+    [DisplayName("Código")]
     public uint Id { get; set; }
 
-    [Required]
-    [Display(Name = "Código do veículo")]
+    [Required(ErrorMessage = "O {0} é obrigatório")]
+    [DisplayName("Código do Veículo")]
     public uint IdVeiculo { get; set; }
 
-    [Required]
-    [Display(Name = "Código da pessoa")]
+    [Required(ErrorMessage = "O {0} é obrigatório")]
+    [DisplayName("Código da Pessoa")]
     public uint IdPessoa { get; set; }
 
-    [Required]
-    [Display(Name = "Data da solicitação")]
+    [Required(ErrorMessage = "A {0} é obrigatório")]
+    [DisplayName("Data da Solicitação")]
     [DataType(DataType.DateTime)]
     public DateTime DataSolicitacao { get; set; }
 
-    [Required]
-    [Display(Name = "Descrição do problema")]
-    [StringLength(maximumLength: 500)]
-    public string DescricaoProblema { get; set; }
+    [Required(ErrorMessage = "A {0} é obrigatório")]
+    [DisplayName("Descrição")]
+    [StringLength(500, ErrorMessage = "A {0} pode ter no máximo 500 caracteres")]
+    public string DescricaoProblema { get; set; } = null!;
+
 }
 
