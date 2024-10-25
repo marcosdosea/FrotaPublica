@@ -73,6 +73,8 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a href="@Url.Action("Edit", "Frota", new { id = Model.Id })" class="edit" title="Editar" data-toggle="tooltip">
+        <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+    </a> |
     <a asp-action="Index">Back to List</a>
 </div>
