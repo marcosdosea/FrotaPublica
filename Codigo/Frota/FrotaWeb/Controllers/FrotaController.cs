@@ -56,7 +56,7 @@ namespace FrotaWeb.Controllers
                     var frota = mapper.Map<Frota>(frotaModel);
                     frotaService.Create(frota);
                 }
-                return View(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -65,9 +65,12 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FrotaController/Edit/5
+        [HttpGet]
         public ActionResult Edit(uint id)
         {
-            return View();
+            var frota = frotaService.Get(id);
+            var frotaModel = mapper.Map<FrotaViewModel>(frota);
+            return View(frotaModel);
         }
 
         // POST: FrotaController/Edit/5
@@ -82,7 +85,7 @@ namespace FrotaWeb.Controllers
                     var frota = mapper.Map<Frota>(frotaModel);
                     frotaService.Edit(frota);
                 }
-                return View(frotaModel);
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
