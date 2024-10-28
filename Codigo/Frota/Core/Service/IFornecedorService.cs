@@ -10,8 +10,8 @@ namespace Core.Service
     {
         uint Create(Fornecedor fornecedor);
         void Edit(Fornecedor fornecedor);
-        void Delete(uint idFornecedor);
-        Fornecedor Get(uint idFornecedor);
+        bool Delete(uint idFornecedor);
+        Fornecedor? Get(uint idFornecedor);
         IEnumerable<Fornecedor> GetAll();
     }
 }

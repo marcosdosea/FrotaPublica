@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -29,9 +30,11 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FornecedorController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(uint id)
         {
-            return View();
+            Fornecedor fornecedor = fornecedorService.Get(id);
+            var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
+            return View(fornecedorModel);
         }
 
         // GET: FornecedorController/Create
@@ -43,10 +46,15 @@ namespace FrotaWeb.Controllers
         // POST: FornecedorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(FornecedorViewModel fornecedorViewModel)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                    fornecedorService.Create(fornecedor);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -56,18 +64,25 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FornecedorController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(uint id)
         {
-            return View();
+            var fornecedor = fornecedorService.Get(id);
+            var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
+            return View(fornecedorModel);
         }
 
         // POST: FornecedorController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, FornecedorViewModel fornecedorViewModel)
         {
             try
             {
+                if(ModelState.IsValid)
+                {
+                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                    fornecedorService.Edit(fornecedor);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -79,16 +94,19 @@ namespace FrotaWeb.Controllers
         // GET: FornecedorController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Fornecedor fornecedor = fornecedorService.Get((uint)id);
+            var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
+            return View(fornecedorModel);
         }
 
         // POST: FornecedorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(uint id, FornecedorViewModel fornecedorViewModel)
         {
             try
             {
+                fornecedorService.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
             catch

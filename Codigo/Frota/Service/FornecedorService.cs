@@ -33,14 +33,16 @@ namespace Service
         /// Excluir uma frota da base de dados
         /// </summary>
         /// <param name="idFrota"></param>
-        public void Delete(uint idFornecedor)
+        public bool Delete(uint idFornecedor)
         {
             var entity = context.Fornecedors.Find(idFornecedor);
             if (entity != null)
             {
                 context.Remove(entity);
                 context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
 

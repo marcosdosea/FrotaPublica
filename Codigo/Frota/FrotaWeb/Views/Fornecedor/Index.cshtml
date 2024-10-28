@@ -101,15 +101,15 @@
                                     @Html.DisplayFor(modelItem => item.Longitude)
                                 </td>
                                 <td>
-                                    <button class="btn underline-bottom" id="b1">
-                                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                                    </button>
-                                    <button class="btn underline-bottom" id="b2">
-                                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                                    </button>
-                                    <button class="btn underline-bottom" id="b3">
-                                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                                    </button>
+                                    <a href="@Url.Action("Edit", "Fornecedor", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                        <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", "Fornecedor", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                        <i class="fa fa-eye cor" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Fornecedor", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                        <i class="fa fa-trash cor" aria-hidden="true"></i>
+                                    </a>
                                 </td>
                             </tr>
         }
