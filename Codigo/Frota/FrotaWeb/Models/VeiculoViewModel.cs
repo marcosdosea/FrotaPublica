@@ -18,7 +18,7 @@ namespace FrotaWeb.Models
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Chassi { get; set; }
 
-        [Required(ErrorMessage = "A {0} é obrigatório")]
+        [Required(ErrorMessage = "A {0} é obrigatória")]
         [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
         public string Cor { get; set; } = null!;
 

@@ -213,13 +213,19 @@
 	<script>
 		// Campos select
 		$(document).ready(function () {
-			$(".select2").select2()
-				.on('select2:opening', function () {
+			$(".select2").select2({
+				language: {
+					noResults: function () {
+						return "Não encontrado";
+					}
+				}
+			})
+			.on('select2:opening', function () {
 					$(this).siblings('.select2-container').find('.select2-selection__rendered').css('color', 'black');
-				})
-				.each(function () {
+			})
+			.each(function () {
 					$(this).siblings('.select2-container').find('.select2-selection__rendered').css('color', '#c0c0c0');
-				});
+			});
 		});
 	</script>
 }
