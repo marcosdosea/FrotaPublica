@@ -11,11 +11,11 @@ namespace FrotaWeb.Models
         [DisplayName("Código")]
         public uint Id { get; set; }
 
-        [Required(ErrorMessage = "A {0} é obrigatório")]
+        [Required(ErrorMessage = "A {0} é obrigatória")]
         [StringLength(10, ErrorMessage = "A {0} pode ter no máximo 10 caracteres")]
         public string Placa { get; set; } = null!;
 
-        [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
+        [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Chassi { get; set; }
 
         [Required(ErrorMessage = "A {0} é obrigatório")]
