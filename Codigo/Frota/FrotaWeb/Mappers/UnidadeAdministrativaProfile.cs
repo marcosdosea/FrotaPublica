@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using FrotaWeb.Models;
 
 namespace FrotaWeb.Mappers
@@ -9,6 +10,7 @@ namespace FrotaWeb.Mappers
 		public UnidadeAdministrativaProfile()
 		{
 			CreateMap<UnidadeAdministrativaViewModel, Unidadeadministrativa>().ReverseMap();
+			CreateMap<UnidadeAdministrativaDTO, UnidadeAdministrativaViewModel>().ReverseMap();
 		}
 	}
 }

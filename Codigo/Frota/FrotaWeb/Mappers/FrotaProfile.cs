@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.DTO;
 using FrotaWeb.Models;
 
 namespace FrotaWeb.Mappers
@@ -9,7 +10,8 @@ namespace FrotaWeb.Mappers
         public FrotaProfile()
         {
             CreateMap<FrotaViewModel, Frota>().ReverseMap();
-        }
+			CreateMap<FrotaDTO, FrotaViewModel>().ReverseMap();
+		}
         
     }
 }

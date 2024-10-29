@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,6 +68,22 @@ namespace Service
 		{
 			return context.Unidadeadministrativas.AsNoTracking();
 		}
+
+		/// <summary>
+		/// Obter a lista de unidades cadastradas em ordem alfabética
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica()
+		{
+			var unidadeAdministrativaDTO = from unidadeAdministrativa in context.Unidadeadministrativas
+										   orderby unidadeAdministrativa.Nome
+										   select new UnidadeAdministrativaDTO
+										   {
+											   Id = unidadeAdministrativa.Id,
+											   Nome = unidadeAdministrativa.Nome
+										   };
+			return unidadeAdministrativaDTO.ToList();
+		}
+
 	}
 }
-
