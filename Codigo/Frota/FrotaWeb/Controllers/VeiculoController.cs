@@ -12,11 +12,17 @@ namespace FrotaWeb.Controllers
     {
         private readonly IVeiculoService veiculoService;
         private readonly IMapper mapper;
+        private readonly IUnidadeAdministrativaService unidadeAdministrativaService;
+		private readonly IFrotaService frotaService;
+		private readonly IModeloVeiculoService modeloVeiculoService;
 
-        public VeiculoController(IVeiculoService service, IMapper mapper)
+		public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
+            this.unidadeAdministrativaService = unidadeAdministrativaService;
+            this.frotaService = frotaService;
+            this.modeloVeiculoService = modeloVeiculoService;
         }
 
         // GET: Veiculo
@@ -39,7 +45,10 @@ namespace FrotaWeb.Controllers
         // GET: Veiculo/Create
         public ActionResult Create()
         {
-            return View();
+            ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica();
+			ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+			ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica();
+			return View();
         }
 
         // POST: Veiculo/Create
@@ -51,7 +60,6 @@ namespace FrotaWeb.Controllers
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
                 veiculoService.Create(veiculo);
             }
-
             return RedirectToAction(nameof(Index));
         }
 

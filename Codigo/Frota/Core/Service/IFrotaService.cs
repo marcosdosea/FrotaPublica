@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.DTO;
+
+namespace Core.Service
 {
     public interface IFrotaService
     {
@@ -7,5 +9,7 @@
         bool Delete(uint idFrota);
         Frota? Get(uint idFrota);
         IEnumerable<Frota> GetAll();
-    }
+        IEnumerable<FrotaDTO> GetAllOrdemAlfabetica();
+
+	}
 }

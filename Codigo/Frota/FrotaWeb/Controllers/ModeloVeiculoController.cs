@@ -74,7 +74,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Details(uint id)
         {
             var entity = _modeloveiculoservice.Get(id);
-            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            var entityModel = _mapper.Map<ModeloVeiculoViewModel>(entity);
             return View(entityModel);
         }
 
@@ -85,7 +85,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Edit(uint id)
         {
             var entity = _modeloveiculoservice.Get(id);
-            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            var entityModel = _mapper.Map<ModeloVeiculoViewModel>(entity);
             return View(entityModel);
         }
 
@@ -112,7 +112,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Delete(uint id)
         {
             var entity = _modeloveiculoservice.Get(id);
-            var entityModel = _mapper.Map<Modeloveiculo>(entity);
+            var entityModel = _mapper.Map<ModeloVeiculoViewModel>(entity);
             return View(entityModel);
         }
 

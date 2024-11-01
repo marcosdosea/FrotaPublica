@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.DTO;
+
+namespace Core.Service
 {
     public interface IUnidadeAdministrativaService
     {
@@ -7,5 +9,6 @@
         void Delete(uint id);
         Unidadeadministrativa? Get(uint id);
         IEnumerable<Unidadeadministrativa> GetAll();
+        IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica();
 	}
 }
