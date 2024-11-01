@@ -132,30 +132,7 @@
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="Status" class="label">Status</label>
 					<select asp-for="Status" class="custom-select select2">
-						@{
-							char[] opcoes = new char[] { 'D', 'U', 'M', 'I' };
-							string status = "";
-							foreach (var opcao in opcoes)
-							{
-								if (opcao == 'D')
-								{
-									status = "Disponível";
-								}
-								else if (opcao == 'U')
-								{
-									status = "Em Uso";
-								}
-								else if (opcao == 'M')
-								{
-									status = "Manutenção";
-								}
-								else if (opcao == 'I')
-								{
-									status = "Inativo";
-								}
-								<option value="@opcao">@status</option>
-							}
-						}
+						<option value="D">Disponível</option>
 					</select>
 					<span asp-validation-for="Status" class="text-danger"></span>
 				</div>
@@ -220,12 +197,6 @@
 					}
 				}
 			})
-			.on('select2:opening', function () {
-					$(this).siblings('.select2-container').find('.select2-selection__rendered').css('color', 'black');
-			})
-			.each(function () {
-					$(this).siblings('.select2-container').find('.select2-selection__rendered').css('color', '#c0c0c0');
-			});
 		});
 	</script>
 }
