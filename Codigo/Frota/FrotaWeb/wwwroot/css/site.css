@@ -41,10 +41,6 @@ body {
     background-color: var(--bg);
 }
 
-    .my-button > span {
-        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
 .my-text-label {
     display: block;
     font-weight: bold;
@@ -155,7 +151,6 @@ body {
 #sidebarCollapse {
     z-index: 1001;
 }
-/**/
 
 @media (prefers-reduced-motion: reduce) {
     #sidebar .custom-menu {

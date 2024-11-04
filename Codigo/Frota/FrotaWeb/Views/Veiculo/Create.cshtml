@@ -1,7 +1,16 @@
+@using Core.DTO
 @model FrotaWeb.Models.VeiculoViewModel
+
+@{
+	var unidades = ViewData["Unidades"] as IEnumerable<UnidadeAdministrativaDTO> ?? Enumerable.Empty<UnidadeAdministrativaDTO>();
+	var frotas = ViewData["Frotas"] as IEnumerable<FrotaDTO> ?? Enumerable.Empty<FrotaDTO>();
+	var modelos = ViewData["Modelos"] as IEnumerable<ModeloVeiculoDTO> ?? Enumerable.Empty<ModeloVeiculoDTO>();
+}
+
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <main class="container mt-4">
 	<h4 class="page-title fs-2">
@@ -15,8 +24,18 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-1 itens-center">
 					<label asp-for="IdUnidadeAdministrativa" class="label">Unidade Administrativa</label>
-					<select asp-for="IdUnidadeAdministrativa" class="custom-select">
-						<option value=""  disabled selected hidden>Administrativo</option>
+					<select asp-for="IdUnidadeAdministrativa" class="custom-select select2">
+						@if (!unidades.Any())
+						{
+							<option value="" disabled selected hidden>Administrativo</option>
+						}
+						else
+						{
+							foreach (var unidade in unidades)
+							{
+								<option value="@unidade.Id">@unidade.Nome</option>
+							}
+						}
 					</select>
 					<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
 				</div>
@@ -24,7 +43,19 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="IdFrota" class="label">Frota</label>
-					<input asp-for="IdFrota" class="form-control" placeholder="Frota" />
+					<select asp-for="IdFrota" class="custom-select select2">
+						@if (!frotas.Any())
+						{
+							<option value="" disabled selected hidden>Frota</option>
+						}
+						else
+						{
+							foreach (var frota in frotas)
+							{
+								<option value="@frota.Id">@frota.Nome</option>
+							}
+						}
+					</select>
 					<span asp-validation-for="IdFrota" class="text-danger"></span>
 				</div>
 			</div>
@@ -56,7 +87,19 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="IdModeloVeiculo" class="label">Modelo Veículo</label>
-					<input asp-for="IdModeloVeiculo" class="form-control" placeholder="Modelo Veículo" />
+					<select asp-for="IdModeloVeiculo" class="custom-select select2">
+						@if (!modelos.Any())
+						{
+							<option value="" disabled selected hidden>Modelo</option>
+						}
+						else
+						{
+							foreach (var modelo in modelos)
+							{
+								<option value="@modelo.Id">@modelo.Nome</option>
+							}
+						}
+					</select>
 					<span asp-validation-for="IdModeloVeiculo" class="text-danger"></span>
 				</div>
 			</div>
@@ -88,7 +131,9 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-2 itens-center">
 					<label asp-for="Status" class="label">Status</label>
-					<input asp-for="Status" class="form-control" placeholder="Em Uso" />
+					<select asp-for="Status" class="custom-select select2">
+						<option value="D">Disponível</option>
+					</select>
 					<span asp-validation-for="Status" class="text-danger"></span>
 				</div>
 			</div>
@@ -137,7 +182,21 @@
 </main>
 @section Scripts {
 	<script src="~/js/form.js" asp-append-version="true"></script>
+	<!-- Pra os campos select -->
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
+	<script>
+		// Campos select
+		$(document).ready(function () {
+			$(".select2").select2({
+				language: {
+					noResults: function () {
+						return "Não encontrado";
+					}
+				}
+			})
+		});
+	</script>
 }
