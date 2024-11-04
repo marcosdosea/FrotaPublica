@@ -17,19 +17,22 @@ namespace FrotaWeb.Controllers.Tests
 		public void Initialize()
 		{
 			// Arrange
-			var mockService = new Mock<IVeiculoService>();
+			var mockVeiculoService = new Mock<IVeiculoService>();
+			var mockUnidadeService = new Mock<IUnidadeAdministrativaService>();
+			var mockFrotaService = new Mock<IFrotaService>();
+			var mockModeloService = new Mock<IModeloVeiculoService>();
 
 			IMapper mapper = new MapperConfiguration(cfg =>
 				cfg.AddProfile(new VeiculoProfile())).CreateMapper();
-			mockService.Setup(service => service.GetAll())
+			mockVeiculoService.Setup(service => service.GetAll())
 				.Returns(GetTestVeiculos());
-			mockService.Setup(service => service.Get(1))
+			mockVeiculoService.Setup(service => service.Get(1))
 				.Returns(GetTargetVeiculo());
-			mockService.Setup(service => service.Edit(It.IsAny<Veiculo>()))
+			mockVeiculoService.Setup(service => service.Edit(It.IsAny<Veiculo>()))
 				.Verifiable();
-			mockService.Setup(service => service.Create(It.IsAny<Veiculo>()))
+			mockVeiculoService.Setup(service => service.Create(It.IsAny<Veiculo>()))
 				.Verifiable();
-			controller = new VeiculoController(mockService.Object, mapper);
+			controller = new VeiculoController(mockVeiculoService.Object, mapper, mockUnidadeService.Object, mockFrotaService.Object, mockModeloService.Object);
 		}
 
 		[TestMethod()]
