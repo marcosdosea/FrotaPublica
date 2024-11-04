@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrotaApi", "FrotaApi\FrotaA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Util", "Util\Util.csproj", "{EE7E98D7-4CE4-4D6A-8F09-11283515F943}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrotaWebTests", "FrotaWebTests\FrotaWebTests.csproj", "{F7F00144-4F9D-4828-8D01-E53A9583038A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTests", "ServiceTests\ServiceTests.csproj", "{62C029EF-A858-477A-BC56-08C954FA41AD}"
 EndProject
 Global
@@ -41,10 +43,10 @@ Global
 		{EE7E98D7-4CE4-4D6A-8F09-11283515F943}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE7E98D7-4CE4-4D6A-8F09-11283515F943}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE7E98D7-4CE4-4D6A-8F09-11283515F943}.Release|Any CPU.Build.0 = Release|Any CPU
-		{62C029EF-A858-477A-BC56-08C954FA41AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{62C029EF-A858-477A-BC56-08C954FA41AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{62C029EF-A858-477A-BC56-08C954FA41AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{62C029EF-A858-477A-BC56-08C954FA41AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7F00144-4F9D-4828-8D01-E53A9583038A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7F00144-4F9D-4828-8D01-E53A9583038A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7F00144-4F9D-4828-8D01-E53A9583038A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7F00144-4F9D-4828-8D01-E53A9583038A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
