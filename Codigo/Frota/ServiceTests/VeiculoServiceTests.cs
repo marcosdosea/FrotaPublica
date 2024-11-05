@@ -79,7 +79,6 @@ namespace Service.Tests
 					DataReferenciaValor = DateTime.Parse("2023-10-10")
 				}
 			};
-
 			context.AddRange(veiculos);
 			context.SaveChanges();
 			veiculoService = new VeiculoService(context);
@@ -89,24 +88,26 @@ namespace Service.Tests
 		public void CreateTest()
 		{
 			// Act
-			veiculoService!.Create(new Veiculo
-			{
-				Id = 4,
-				Placa = "DEF4567",
-				Chassi = "6G1ZZZ999XT009876",
-				Cor = "Azul",
-				IdModeloVeiculo = 4,
-				IdFrota = 2,
-				IdUnidadeAdministrativa = 6,
-				Odometro = 15000,
-				Status = "Ativo",
-				Ano = 2018,
-				Modelo = 2019,
-				Renavan = "22334455667",
-				VencimentoIpva = DateTime.Parse("2024-05-20"),
-				Valor = 40000.00m,
-				DataReferenciaValor = DateTime.Parse("2023-08-01")
-			});
+			veiculoService!.Create(
+				new Veiculo
+				{
+					Id = 4,
+					Placa = "DEF4567",
+					Chassi = "6G1ZZZ999XT009876",
+					Cor = "Azul",
+					IdModeloVeiculo = 4,
+					IdFrota = 2,
+					IdUnidadeAdministrativa = 6,
+					Odometro = 15000,
+					Status = "Ativo",
+					Ano = 2018,
+					Modelo = 2019,
+					Renavan = "22334455667",
+					VencimentoIpva = DateTime.Parse("2024-05-20"),
+					Valor = 40000.00m,
+					DataReferenciaValor = DateTime.Parse("2023-08-01")
+				}
+			);
 
 			// Assert
 			Assert.AreEqual(4, veiculoService.GetAll().Count());

@@ -14,7 +14,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Adicionar nova veiculo na base de dados
+        /// Adiciona novo veículo na base de dados
         /// </summary>
         /// <param name="veiculo"></param>
         /// <returns></returns>
@@ -26,7 +26,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Excluir uma veiculo da base de dados
+        /// Exclui um veículo da base de dados
         /// </summary>
         /// <param name="idVeiculo"></param>
         public void Delete(uint idVeiculo)
@@ -40,7 +40,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Alterar os dados da veiculo na base de dados
+        /// Altera os dados da veiculo na base de dados
         /// </summary>
         /// <param name="veiculo"></param>
         public void Edit(Veiculo veiculo)
@@ -50,7 +50,7 @@ namespace Service
         }
 
         /// <summary>
-        /// Obter pelo id da veiculo
+        /// Obter um veículo pelo id
         /// </summary>
         /// <param name="idVeiculo"></param>
         /// <returns></returns>

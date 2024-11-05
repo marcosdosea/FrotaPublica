@@ -5,7 +5,7 @@
         uint Create(Abastecimento abastecimento);
         void Edit(Abastecimento abastecimento);
         void Delete(uint idAbastecimento);
-        Abastecimento Get(uint idAbastecimento);
+        Abastecimento? Get(uint idAbastecimento);
         IEnumerable<Abastecimento> GetAll();
     }
 }

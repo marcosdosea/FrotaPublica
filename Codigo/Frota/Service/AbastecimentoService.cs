@@ -18,41 +18,58 @@ namespace Service
             this.context = context;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="abastecimento"></param>
-        /// <returns></returns>
-        public uint Create(Abastecimento abastecimento)
+		/// <summary>
+		/// Adiciona novo abastecimento na base de dados
+		/// </summary>
+		/// <param name="abastecimento"></param>
+		/// <returns></returns>
+		public uint Create(Abastecimento abastecimento)
         {
             context.Add(abastecimento);
             context.SaveChanges();
             return abastecimento.Id;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="idAbastecimento"></param>
-        public void Delete(uint idAbastecimento)
-        {
-            var abastecimento = context.Abastecimentos.Find(idAbastecimento);
-            context.Remove(idAbastecimento);
-            context.SaveChanges();
-        }
 
-        public void Edit(Abastecimento abastecimento)
+		/// <summary>
+		/// Exclui um abastecimento da base de dados
+		/// </summary>
+		/// <param name="idAbastecimento"></param>
+		public void Delete(uint idAbastecimento)
+        {
+			var abastecimento = context.Abastecimentos.Find(idAbastecimento);
+			if (abastecimento != null)
+			{
+				context.Remove(abastecimento);
+				context.SaveChanges();
+			}
+		}
+
+		/// <summary>
+		/// Altera os dados da veiculo na base de dados
+		/// </summary>
+		/// <param name="abastecimento"></param>
+		public void Edit(Abastecimento abastecimento)
         {
             context.Update(abastecimento);
             context.SaveChanges();
 
         }
 
-        public Abastecimento Get(uint idAbastecimento)
+		/// <summary>
+		/// Obter um abastecimento pelo id
+		/// </summary>
+		/// <param name="idAbastecimento"></param>
+		/// <returns></returns>
+		public Abastecimento? Get(uint idAbastecimento)
         {
             return context.Abastecimentos.Find(idAbastecimento);
         }
 
-        public IEnumerable<Abastecimento> GetAll()
+		/// <summary>
+		/// Obter a lista de abastecimentos cadastradas
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Abastecimento> GetAll()
         {
             return context.Abastecimentos.AsNoTracking();
         }
