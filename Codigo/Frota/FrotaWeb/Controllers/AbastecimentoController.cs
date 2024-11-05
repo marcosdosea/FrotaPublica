@@ -13,6 +13,7 @@ namespace FrotaWeb.Controllers
     {
         private readonly IAbastecimentoService _abastecimentoService;
         private readonly IMapper _mapper;
+
         public AbastecimentoController(IAbastecimentoService abastecimentoService, IMapper mapper)
         {
             _mapper = mapper;
@@ -94,7 +95,7 @@ namespace FrotaWeb.Controllers
         // POST: AbastecimentoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, Abastecimento abastecimento)
+        public ActionResult Delete(uint id, AbastecimentoViewModel abastecimento)
         {
             _abastecimentoService.Delete(id);
             return RedirectToAction(nameof(Index));
