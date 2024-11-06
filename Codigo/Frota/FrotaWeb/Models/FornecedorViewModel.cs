@@ -30,8 +30,7 @@ namespace FrotaWeb.Models
 
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Bairro { get; set; }
-
-        [TelefoneCelular]
+         
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 10 caracteres")]
         [DisplayName("Número")]
         public string? Numero { get; set; }
