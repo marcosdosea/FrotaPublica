@@ -4,11 +4,11 @@ using FrotaWeb.Models;
 
 namespace FrotaWeb.Mappers;
 
-public class SolicitacaomanutencaoProfile : Profile
+public class SolicitacaoManutencaoProfile : Profile
 {
-    public SolicitacaomanutencaoProfile()
+    public SolicitacaoManutencaoProfile()
     {
-        CreateMap<SolicitacaomanutencaoViewModel, Solicitacaomanutencao>().ReverseMap();
+        CreateMap<SolicitacaoManutencaoViewModel, Solicitacaomanutencao>().ReverseMap();
     }
 }
 

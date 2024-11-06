@@ -9,12 +9,12 @@ namespace FrotaWeb.Controllers
 {
 
     [Authorize]
-    public class SolicitacaomanutencaoController : Controller
+    public class SolicitacaoManutencaoController : Controller
     {
-        private readonly ISolicitacaomanutencaoService _service;
+        private readonly ISolicitacaoManutencaoService _service;
         private readonly IMapper _mapper;
 
-        public SolicitacaomanutencaoController(ISolicitacaomanutencaoService service, IMapper mapper)
+        public SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -25,7 +25,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Index()
         {
             var listaSolicitacoes = _service.GetAll();
-            var listaSolicitacoesModel = _mapper.Map<List<SolicitacaomanutencaoViewModel>>(listaSolicitacoes);
+            var listaSolicitacoesModel = _mapper.Map<List<SolicitacaoManutencaoViewModel>>(listaSolicitacoes);
 
             return View(listaSolicitacoesModel);
         }
@@ -34,7 +34,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Details(uint id)
         {
             var solicitacao = _service.Get(id);
-            var solicitacaoModel = _mapper.Map<SolicitacaomanutencaoViewModel>(solicitacao);
+            var solicitacaoModel = _mapper.Map<SolicitacaoManutencaoViewModel>(solicitacao);
 
             return View(solicitacaoModel);
         }
@@ -48,7 +48,7 @@ namespace FrotaWeb.Controllers
         // POST: SolicitacaomanutencaoController.cs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SolicitacaomanutencaoViewModel solicitacaoModel)
+        public ActionResult Create(SolicitacaoManutencaoViewModel solicitacaoModel)
         {
             if (ModelState.IsValid) {
                 var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
@@ -63,7 +63,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Edit(uint id)
         {
             var solicitacao = _service.Get(id);
-            var solicitacaoModel = _mapper.Map<SolicitacaomanutencaoViewModel>(solicitacao);
+            var solicitacaoModel = _mapper.Map<SolicitacaoManutencaoViewModel>(solicitacao);
 
             return View(solicitacaoModel);
         }
@@ -71,7 +71,7 @@ namespace FrotaWeb.Controllers
         // POST: SolicitacaomanutencaoController.cs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, SolicitacaomanutencaoViewModel solicitacaoModel)
+        public ActionResult Edit(uint id, SolicitacaoManutencaoViewModel solicitacaoModel)
         {
             if (ModelState.IsValid) {
                 var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
@@ -86,7 +86,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Delete(uint id)
         {
             var solicitacao = _service.Get(id);
-            var solicitacaoModel = _mapper.Map<SolicitacaomanutencaoViewModel>(solicitacao);
+            var solicitacaoModel = _mapper.Map<SolicitacaoManutencaoViewModel>(solicitacao);
 
             return View(solicitacaoModel);
         }
@@ -94,7 +94,7 @@ namespace FrotaWeb.Controllers
         // POST: SolicitacaomanutencaoController.cs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, SolicitacaomanutencaoViewModel solicitacaoModel)
+        public ActionResult Delete(uint id, SolicitacaoManutencaoViewModel solicitacaoModel)
         {
             _service.Delete(id);
             return RedirectToAction(nameof(Index));

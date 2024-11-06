@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrotaWeb.Models;
 
-public class SolicitacaomanutencaoViewModel
+public class SolicitacaoManutencaoViewModel
 {
 
     [Key]

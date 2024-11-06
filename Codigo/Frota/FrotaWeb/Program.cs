@@ -26,7 +26,7 @@ namespace FrotaWeb
             builder.Services.AddTransient<IVeiculoService, VeiculoService>();
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
             builder.Services.AddTransient<IFornecedorService, FornecedorService>();
-            builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+            builder.Services.AddTransient<ISolicitacaoManutencaoService, SolicitacaoManutencaoService>();
 			builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
 			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
 			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
