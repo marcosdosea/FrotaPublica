@@ -1,0 +1,44 @@
+@model IEnumerable<FrotaWeb.Models.SolicitacaoManutencaoViewModel>
+
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
+<main class="container mt-4">
+    <div class="table-responsive">
+        <table class="table tabela-listra table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.IdVeiculo)</th>
+                    <th>@Html.DisplayNameFor(model => model.IdPessoa)</th>
+                    <th>@Html.DisplayNameFor(model => model.DataSolicitacao)</th>
+                    <th>@Html.DisplayNameFor(model => model.DescricaoProblema)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.IdVeiculo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.IdPessoa)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DataSolicitacao)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DescricaoProblema)</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Solicitacaomanutencao", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Details", "Solicitacaomanutencao", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "Solicitacaomanutencao", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Adicionar</a>
+    </div>
+</main>
