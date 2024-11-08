@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Service;
 
-public class SolicitacaomanutencaoService : ISolicitacaomanutencaoService
+public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
 {
     private readonly FrotaContext _context;
 
-    public SolicitacaomanutencaoService(FrotaContext context)
+    public SolicitacaoManutencaoService(FrotaContext context)
     {
         _context = context;
     }
