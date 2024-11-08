@@ -6,7 +6,7 @@ namespace Core.Service
     {
         uint Create(Modeloveiculo modeloVeiculo);
         void Edit(Modeloveiculo modeloVeiculo);
-        void Delete(uint idVeiculo);
+        void Delete(uint id);
         Modeloveiculo? Get(uint idVeiculo);
         IEnumerable<Modeloveiculo> GetAll();
         IEnumerable<ModeloVeiculoDTO> GetAllOrdemAlfabetica();
