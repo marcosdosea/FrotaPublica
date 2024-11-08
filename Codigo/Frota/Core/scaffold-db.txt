@@ -6,4 +6,5 @@ dotnet restore
 
 dotnet tool install --global dotnet-ef
 
-dotnet ef dbcontext scaffold "server=localhost;port=3306;user=root;password=123456;database=Frota" MySql.EntityFrameworkCore -p Core -c FrotaContext -f -v
+dotnet ef dbcontext scaffold "server=localhost;port=3306;user=root;password=123456;database=Frota" MySql.EntityFrameworkCore -p Core -c FrotaContext -f -v --table Abastecimento --table Fornecedor --table Frota --table Manutencao --table ManutencaoPecaInsumo --table MarcaPecaInsumo --table MarcaVeiculo --table ModeloVeiculo --table PapelPessoa --table PecaInsumo --table Percurso --table Pessoa --table SolicitacaoManutencao --table UnidadeAdministrativa --table Veiculo --table VeiculoPecaInsumo --table Vistoria
+
