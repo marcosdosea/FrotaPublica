@@ -12,7 +12,7 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Código da Marca")]
-        public int IdMarca { get; set; }
+        public int IdMarcaVeiculo { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
@@ -21,7 +21,7 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Capacidade do Tanque")]
         [Range(0, int.MaxValue)]
-        public int CapacidadeTanqueCombustivel { get; set; }
+        public int CapacidadeTanque { get; set; }
 
     }
 }

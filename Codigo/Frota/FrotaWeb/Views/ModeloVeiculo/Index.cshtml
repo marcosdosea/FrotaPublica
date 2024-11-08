@@ -7,9 +7,9 @@
         <table class="table tabela-listra table-hover table-bordered">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.IdMarca)</th>
+                    <th>@Html.DisplayNameFor(model => model.IdMarcaVeiculo)</th>
                     <th>@Html.DisplayNameFor(model => model.Nome)</th>
-                    <th>@Html.DisplayNameFor(model => model.CapacidadeTanqueCombustivel)</th>
+                    <th>@Html.DisplayNameFor(model => model.CapacidadeTanque)</th>
                     <th></th>
                 </tr>
             </thead>
@@ -17,9 +17,9 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.IdMarca)</td>
+                        <td>@Html.DisplayFor(modelItem => item.IdMarcaVeiculo)</td>
                         <td>@Html.DisplayFor(modelItem => item.Nome)</td>
-                        <td>@Html.DisplayFor(modelItem => item.CapacidadeTanqueCombustivel)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CapacidadeTanque)</td>
                         <td>
                             <a href="@Url.Action("Edit", "ModeloVeiculo", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
                                 <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
