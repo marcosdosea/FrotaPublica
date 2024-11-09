@@ -16,34 +16,33 @@
   Em síntese, o Frota Pública oferece uma solução completa para a gestão de frotas de veículos, 
   aumentando a eficiência operacional, reduzindo custos e melhorando a segurança nas operações.
 </p>
-<h2>2. Equipe :busts_in_silhouette:</h2>
+<h2>2. Atual equipe :busts_in_silhouette:</h2>
 <table align="center">
   <tr>
-    <td align="center" width="180px" height="190px">
+    <td align="center" width="160px">
       <a href="https://github.com/Guilherme-Yeager" target="_blank">
-        <img src="https://github.com/user-attachments/assets/be390fee-3558-430a-ab3a-ae4190ee1c48" width="130px" height="130px" alt="Foto de Guilherme Lima Santos"/>
-        <p><strong>Guilherme Lima Santos</strong></p>
+        <img src="https://github.com/user-attachments/assets/be390fee-3558-430a-ab3a-ae4190ee1c48" width="100px" alt="Foto de Guilherme Lima Santos"/>
+        <br><strong>Guilherme Lima Santos</strong><br>
       </a>
-      <p>Desenvolvedor</p>
+      Desenvolvedor
     </td>
-    <td align="center" width="210px" height="190px">
+    <td align="center" width="160px">
       <a href="https://github.com/K4U4dev" target="_blank">
-        <img src="https://github.com/user-attachments/assets/ecf0c7bb-0f27-414a-b602-40bc9d789ef7" width="130px" height="130px" alt="Foto de Kauã de Oliveira Santos Menezes"/>
-        <p><strong>Kauã de Oliveira Santos Menezes</strong></p>
+        <img src="https://github.com/user-attachments/assets/ecf0c7bb-0f27-414a-b602-40bc9d789ef7" width="100px" alt="Foto de Kauã de Oliveira Santos Menezes"/>
+        <br><strong>Kauã de Oliveira Santos Menezes</strong><br>
       </a>
-      <p>Desenvolvedor</p>
+      Desenvolvedor
     </td>
   </tr>
 </table>
-
 <table align="center">
   <tr>
-    <td align="center" width="210px" height="190px">
+    <td align="center" width="160px">
       <a href="https://github.com/marcosdosea" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/7799935?v=4" target="_blank" width="130px" height="130px" alt="Foto de Marcos Dósea no GitHub"/>
-        <p><strong>Doutor Marcos Dósea</strong></p>
+        <img src="https://avatars.githubusercontent.com/u/7799935?v=4" width="100px" alt="Foto de Marcos Dósea no GitHub"/>
+        <br><strong>Doutor Marcos Dósea</strong><br>
       </a>
-      <p>PO</p>
+      PO
     </td>
   </tr>
 </table>
