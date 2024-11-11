@@ -32,7 +32,7 @@ namespace FrotaWeb.Controllers
         // GET: FornecedorController/Details/5
         public ActionResult Details(uint id)
         {
-            Fornecedor fornecedor = fornecedorService.Get(id);
+            Fornecedor? fornecedor = fornecedorService.Get(id);
             var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
             return View(fornecedorModel);
         }
@@ -48,19 +48,12 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(FornecedorViewModel fornecedorViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                    fornecedorService.Create(fornecedor);
-                }
-                return RedirectToAction(nameof(Index));
+                var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                fornecedorService.Create(fornecedor);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: FornecedorController/Edit/5
@@ -74,27 +67,20 @@ namespace FrotaWeb.Controllers
         // POST: FornecedorController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, FornecedorViewModel fornecedorViewModel)
+        public ActionResult Edit(uint id, FornecedorViewModel fornecedorViewModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if(ModelState.IsValid)
-                {
-                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                    fornecedorService.Edit(fornecedor);
-                }
-                return RedirectToAction(nameof(Index));
+                var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                fornecedorService.Edit(fornecedor);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: FornecedorController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(uint id)
         {
-            Fornecedor fornecedor = fornecedorService.Get((uint)id);
+            Fornecedor? fornecedor = fornecedorService.Get((uint)id);
             var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
             return View(fornecedorModel);
         }
@@ -104,15 +90,8 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, FornecedorViewModel fornecedorViewModel)
         {
-            try
-            {
-                fornecedorService.Delete(id);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            fornecedorService.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
