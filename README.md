@@ -5,6 +5,7 @@
 
 ***
 ![Em desenvolvimento](https://img.shields.io/badge/Status-Em%20desenvolvimento-yellow?style=flat)
+
 <h2>1. Sobre 📋</h2>
 <p align="justify">
   O Frota Pública é um sistema centralizado e eficiente que simplifica o controle e 
@@ -28,8 +29,8 @@
     </td>
     <td align="center" width="160px">
       <a href="https://github.com/K4U4dev" target="_blank">
-        <img src="https://github.com/user-attachments/assets/ecf0c7bb-0f27-414a-b602-40bc9d789ef7" width="100px" alt="Foto de Kauã de Oliveira Santos Menezes"/>
-        <br><strong>Kauã de Oliveira Santos Menezes</strong><br>
+        <img src="https://avatars.githubusercontent.com/u/102272784?s=400&u=f7cdd52b6640b4130a18f6b0d6fa8b3193a877cf&v=4" width="100px" alt="Foto de Kauã de Oliveira Santos Menezes"/>
+        <br><strong>Kauã Oliveira</strong><br><br>
       </a>
       Desenvolvedor
     </td>
