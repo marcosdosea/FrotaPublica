@@ -2,13 +2,12 @@ using AutoMapper;
 using Core;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 
 namespace FrotaWeb.Controllers
 {
-
+    [Authorize]
     public class ManutencaoController : Controller
     {
         private readonly IManutencaoService manutencaoService;
@@ -24,16 +23,16 @@ namespace FrotaWeb.Controllers
         public ActionResult Index()
         {
             var listaManutencao = manutencaoService.GetAll();
-            var listaManutencaoModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencao);
-            return View(listaManutencaoModel);
+            var listaManutencaoViewModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencao);
+            return View(listaManutencaoViewModel);
         }
 
         // GET: ManutencaoController/Details/5
         public ActionResult Details(uint id)
         {
             var manutencao = manutencaoService.Get(id);
-            var manutencaoModel = mapper.Map<ManutencaoViewModel>(manutencao);
-            return View(manutencaoModel);
+            var manutencaoViewModel = mapper.Map<ManutencaoViewModel>(manutencao);
+            return View(manutencaoViewModel);
         }
 
         // GET: ManutencaoController/Create
@@ -45,11 +44,11 @@ namespace FrotaWeb.Controllers
         // POST: ManutencaoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ManutencaoViewModel manutencaoModel)
+        public ActionResult Create(ManutencaoViewModel manutencaoViewModel)
         {
             if (ModelState.IsValid)
             {
-                var manutencao = mapper.Map<Manutencao>(manutencaoModel);
+                var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
                 manutencaoService.Create(manutencao);
             }
             return RedirectToAction(nameof(Index));
@@ -59,18 +58,18 @@ namespace FrotaWeb.Controllers
         public ActionResult Edit(uint id)
         {
             var manutencao = manutencaoService.Get(id);
-            var manutencaoModel = mapper.Map<ManutencaoViewModel>(manutencao);
-            return View(manutencaoModel);
+            var manutencaoViewModel = mapper.Map<ManutencaoViewModel>(manutencao);
+            return View(manutencaoViewModel);
         }
 
         // POST: ManutencaoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, ManutencaoViewModel manutencaoModel)
+        public ActionResult Edit(uint id, ManutencaoViewModel manutencaoViewModel)
         {
             if (ModelState.IsValid)
             {
-                var manutencao = mapper.Map<Manutencao>(manutencaoModel);
+                var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
                 manutencaoService.Edit(manutencao);
             }
             return RedirectToAction(nameof(Index));
@@ -80,14 +79,14 @@ namespace FrotaWeb.Controllers
         public ActionResult Delete(uint id)
         {
             var manutencao = manutencaoService.Get(id);
-            var manutencaoModel = mapper.Map<ManutencaoViewModel>(manutencao);
-            return View(manutencaoModel);
+            var manutencaoViewModel = mapper.Map<ManutencaoViewModel>(manutencao);
+            return View(manutencaoViewModel);
         }
 
         // POST: ManutencaoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, ManutencaoViewModel manutencaoModel)
+        public ActionResult Delete(uint id, ManutencaoViewModel manutencaoViewModel)
         {
             manutencaoService.Delete(id);
             return RedirectToAction(nameof(Index));
