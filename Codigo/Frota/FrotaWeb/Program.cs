@@ -27,27 +27,27 @@ namespace FrotaWeb
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
             builder.Services.AddTransient<IFornecedorService, FornecedorService>();
             builder.Services.AddTransient<ISolicitacaoManutencaoService, SolicitacaoManutencaoService>();
-			builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
-			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
-			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
-			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
+	    builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
+	    builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
+	    builder.Services.AddTransient<IVistoriaService, VistoriaService>();
+	    builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
 
-			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+	    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-			var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
+	    var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
 
-			if (string.IsNullOrEmpty(connectionString))
-			{
-				throw new InvalidOperationException("A string de conex„o 'FrotaDatabase' n„o foi encontrada ou est· vazia.");
-			}
+	    if (string.IsNullOrEmpty(connectionString))
+	    {
+            	throw new InvalidOperationException("A string de conex√£o 'FrotaDatabase' n√£o foi encontrada ou est√° vazia.");
+	    }
 
-			builder.Services.AddDbContext<FrotaContext>(options =>
-				options.UseMySQL(connectionString));
+	    builder.Services.AddDbContext<FrotaContext>(options =>
+	    	options.UseMySQL(connectionString));
 
-			builder.Services.AddDbContext<IdentityContext>(options =>
-				options.UseMySQL(connectionString));
+	    builder.Services.AddDbContext<IdentityContext>(options =>
+		options.UseMySQL(connectionString));
 
-			builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
+	    builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
             {
                 // SignIn settings
                 options.SignIn.RequireConfirmedAccount = true;
@@ -57,9 +57,9 @@ namespace FrotaWeb
                 // Password settings
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 6;
+                options.Password.RequiredLength = 8;
 
                 // Default User settings.
                 options.User.AllowedUserNameCharacters =
