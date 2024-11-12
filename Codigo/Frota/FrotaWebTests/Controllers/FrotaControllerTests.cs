@@ -5,6 +5,9 @@ using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 
 namespace FrotaWeb.Controllers.Tests
 {

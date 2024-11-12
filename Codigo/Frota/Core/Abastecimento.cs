@@ -1,4 +1,7 @@
-﻿namespace Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Core;
 
 public partial class Abastecimento
 {
@@ -18,5 +21,5 @@ public partial class Abastecimento
 
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 
-    public virtual Percurso Percurso { get; set; } = null!;
+    public virtual Percurso IdNavigation { get; set; } = null!;
 }
