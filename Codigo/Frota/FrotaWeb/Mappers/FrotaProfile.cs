@@ -9,7 +9,7 @@ namespace FrotaWeb.Mappers
     {
         public FrotaProfile()
         {
-            CreateMap<FrotaViewModel, Frota>().ReverseMap();
+            CreateMap<FrotaViewModel, Frotum>().ReverseMap();
 			CreateMap<FrotaDTO, FrotaViewModel>().ReverseMap();
 		}
         

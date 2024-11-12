@@ -4,11 +4,11 @@ namespace Core.Service
 {
     public interface IFrotaService
     {
-        uint Create(Frota frota);
-        void Edit(Frota frota);
+        uint Create(Frotum frota);
+        void Edit(Frotum frota);
         bool Delete(uint idFrota);
-        Frota? Get(uint idFrota);
-        IEnumerable<Frota> GetAll();
+        Frotum? Get(uint idFrota);
+        IEnumerable<Frotum> GetAll();
         IEnumerable<FrotaDTO> GetAllOrdemAlfabetica();
 
 	}

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Core;
+﻿namespace Core;
 
 public partial class Veiculo
 {
@@ -35,7 +32,7 @@ public partial class Veiculo
 
     public DateTime DataReferenciaValor { get; set; }
 
-    public virtual Frota IdFrotaNavigation { get; set; } = null!;
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual Modeloveiculo IdModeloVeiculoNavigation { get; set; } = null!;
 

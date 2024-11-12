@@ -3,7 +3,6 @@ using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
@@ -33,7 +32,7 @@ namespace FrotaWeb.Controllers
         // GET: FrotaController/Details/5
         public ActionResult Details(uint id)
         {
-            Frota frota = frotaService.Get(id);
+            Frotum frota = frotaService.Get(id);
             var frotaModel = mapper.Map<FrotaViewModel>(frota);
             return View(frotaModel);
         }
@@ -53,7 +52,7 @@ namespace FrotaWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var frota = mapper.Map<Frota>(frotaModel);
+                    var frota = mapper.Map<Frotum>(frotaModel);
                     frotaService.Create(frota);
                 }
                 return RedirectToAction(nameof(Index));
@@ -82,7 +81,7 @@ namespace FrotaWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var frota = mapper.Map<Frota>(frotaModel);
+                    var frota = mapper.Map<Frotum>(frotaModel);
                     frotaService.Edit(frota);
                 }
                 return RedirectToAction(nameof(Index));
@@ -97,7 +96,7 @@ namespace FrotaWeb.Controllers
         [HttpGet]
         public ActionResult Delete(uint id)
         {
-            Frota frota = frotaService.Get(id);
+            var frota = frotaService.Get(id);
             var frotaModel = mapper.Map<FrotaViewModel>(frota);
             return View(frotaModel);
         }

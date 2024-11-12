@@ -5,9 +5,6 @@ using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -27,9 +24,9 @@ namespace FrotaWeb.Controllers.Tests
                 .Returns(GetTestFrotas());
             mockFrotaService.Setup(service => service.Get(1))
                 .Returns(GetTargetFrota());
-            mockFrotaService.Setup(service => service.Edit(It.IsAny<Frota>()))
+            mockFrotaService.Setup(service => service.Edit(It.IsAny<Frotum>()))
                 .Verifiable();
-            mockFrotaService.Setup(service => service.Create(It.IsAny<Frota>()))
+            mockFrotaService.Setup(service => service.Create(It.IsAny<Frotum>()))
                 .Verifiable();
             controller = new FrotaController(mockFrotaService.Object, mapper);
         }
@@ -187,9 +184,9 @@ namespace FrotaWeb.Controllers.Tests
             };
         }
 
-        private Frota GetTargetFrota()
+        private Frotum GetTargetFrota()
         {
-            return new Frota
+            return new Frotum
             {
                 Id = 1,
                 Nome = "Transportes Oliveira",
@@ -204,11 +201,11 @@ namespace FrotaWeb.Controllers.Tests
             };
         }
 
-        private IEnumerable<Frota> GetTestFrotas()
+        private IEnumerable<Frotum> GetTestFrotas()
         {
-            return new List<Frota>
+            return new List<Frotum>
             {
-                new Frota
+                new Frotum
                 {
                     Id = 1,
                     Nome = "Transportes Oliveira",
@@ -221,7 +218,7 @@ namespace FrotaWeb.Controllers.Tests
                     Cidade = "São Paulo",
                     Estado = "SP"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 2,
                     Nome = "Logística Santos",
@@ -234,7 +231,7 @@ namespace FrotaWeb.Controllers.Tests
                     Cidade = "Rio de Janeiro",
                     Estado = "RJ"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 3,
                     Nome = "Expresso Litoral",
@@ -247,7 +244,7 @@ namespace FrotaWeb.Controllers.Tests
                     Cidade = "Salvador",
                     Estado = "BA"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 4,
                     Nome = "Carga Pesada Ltda",

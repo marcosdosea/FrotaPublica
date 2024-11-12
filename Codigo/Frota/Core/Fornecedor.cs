@@ -1,13 +1,4 @@
-﻿using Core;
-using Core.Service;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core;
+﻿namespace Core;
 
 public partial class Fornecedor
 {
