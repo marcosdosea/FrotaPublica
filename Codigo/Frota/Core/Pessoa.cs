@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Core;
+﻿namespace Core;
 
 public partial class Pessoa
 {
@@ -31,7 +28,7 @@ public partial class Pessoa
 
     public sbyte Ativo { get; set; }
 
-    public virtual Frota IdFrotaNavigation { get; set; } = null!;
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual Papelpessoa IdPapelPessoaNavigation { get; set; } = null!;
 

@@ -23,7 +23,7 @@ namespace Service
 		/// </summary>
 		/// <param name="frota"></param>
 		/// <returns></returns>
-		public uint Create(Frota frota)
+		public uint Create(Frotum frota)
 		{
 			context.Add(frota);
 			context.SaveChanges();
@@ -52,7 +52,7 @@ namespace Service
 		/// Alterar os dados da frota na base de dados
 		/// </summary>
 		/// <param name="frota"></param>
-		public void Edit(Frota frota)
+		public void Edit(Frotum frota)
 		{
 			context.Update(frota);
 			context.SaveChanges();
@@ -63,7 +63,7 @@ namespace Service
 		/// </summary>
 		/// <param name="idFrota"></param>
 		/// <returns>retorna o objeto ou um valor nulo</returns>
-		public Frota? Get(uint idFrota)
+		public Frotum? Get(uint idFrota)
 		{
 			return context.Frota.Find(idFrota);
 
@@ -72,7 +72,7 @@ namespace Service
 		/// Obter a lista de frota cadastradas
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Frota> GetAll()
+		public IEnumerable<Frotum> GetAll()
 		{
 			return context.Frota.AsNoTracking();
 		}

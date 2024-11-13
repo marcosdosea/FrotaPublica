@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `frota` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `frota`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: frota
@@ -35,7 +37,6 @@ CREATE TABLE `__efmigrationshistory` (
 
 LOCK TABLES `__efmigrationshistory` WRITE;
 /*!40000 ALTER TABLE `__efmigrationshistory` DISABLE KEYS */;
-INSERT INTO `__efmigrationshistory` VALUES ('20231005194039_CreateIdentitySchema','7.0.10'),('20240906221000_InitialCreate','7.0.10');
 /*!40000 ALTER TABLE `__efmigrationshistory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,6 +122,7 @@ CREATE TABLE `aspnetroles` (
 
 LOCK TABLES `aspnetroles` WRITE;
 /*!40000 ALTER TABLE `aspnetroles` DISABLE KEYS */;
+INSERT INTO `aspnetroles` VALUES ('03dd21ba-a0cd-11ef-ab61-a8a1593b3445','Administrador','ADMINISTRADOR','03dd21d2-a0cd-11ef-ab61-a8a1593b3445'),('03dd246a-a0cd-11ef-ab61-a8a1593b3445','Mecânico','MECÂNICO','03dd246f-a0cd-11ef-ab61-a8a1593b3445'),('03dd24e1-a0cd-11ef-ab61-a8a1593b3445','Gestor','GESTOR','03dd24e6-a0cd-11ef-ab61-a8a1593b3445'),('03dd2521-a0cd-11ef-ab61-a8a1593b3445','Motorista','MOTORISTA','03dd2525-a0cd-11ef-ab61-a8a1593b3445');
 /*!40000 ALTER TABLE `aspnetroles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,9 +215,9 @@ DROP TABLE IF EXISTS `aspnetusers`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aspnetusers` (
   `Id` varchar(255) NOT NULL,
-  `UserName` varchar(256) DEFAULT NULL,
+  `UserName` varchar(256) NOT NULL,
   `NormalizedUserName` varchar(256) DEFAULT NULL,
-  `Email` varchar(256) DEFAULT NULL,
+  `Email` varchar(256) NOT NULL,
   `NormalizedEmail` varchar(256) DEFAULT NULL,
   `EmailConfirmed` tinyint(1) NOT NULL,
   `PasswordHash` longtext,
@@ -224,11 +226,12 @@ CREATE TABLE `aspnetusers` (
   `PhoneNumber` longtext,
   `PhoneNumberConfirmed` tinyint(1) NOT NULL,
   `TwoFactorEnabled` tinyint(1) NOT NULL,
-  `LockoutEnd` datetime(6) DEFAULT NULL,
+  `LockoutEnd` datetime DEFAULT NULL,
   `LockoutEnabled` tinyint(1) NOT NULL,
   `AccessFailedCount` int(11) NOT NULL,
   PRIMARY KEY (`Id`),
-  UNIQUE KEY `UserNameIndex` (`NormalizedUserName`),
+  UNIQUE KEY `Email_UNIQUE` (`Email`),
+  UNIQUE KEY `UserName_UNIQUE` (`UserName`),
   KEY `EmailIndex` (`NormalizedEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -239,7 +242,6 @@ CREATE TABLE `aspnetusers` (
 
 LOCK TABLES `aspnetusers` WRITE;
 /*!40000 ALTER TABLE `aspnetusers` DISABLE KEYS */;
-INSERT INTO `aspnetusers` VALUES ('1eb2a799-97da-415b-8368-af70e53b85f5','gui@gmail.com','GUI@GMAIL.COM','gui@gmail.com','GUI@GMAIL.COM',0,'AQAAAAEAACcQAAAAEOBnZHLXo1+lrZXfYJ7yRzel7wvit5w82p62UmyPDRDlE1z/LX5Kf4V84QAM0DCwkQ==','H2EF5KANKMYFQMTMVCKX2TQ34EDCIRID','323c809b-51b6-4144-9265-fe7b20cfd1e1',NULL,0,0,NULL,1,0),('829c9874-9de6-4f1d-aa11-2d79bb3f6302','paulo@gmail.com','PAULO@GMAIL.COM','paulo@gmail.com','PAULO@GMAIL.COM',1,'AQAAAAIAAYagAAAAEIvvJDO4VG0MBzCqov1CJ438fm4cER8wKzFpyNjT5DUg7jMtAvPCygXRdOQkzRwYVg==','VMQH2SQC6ETPARDPE676VJICHR6WIEET','0ad8f4fd-52b8-4ef4-b460-8c0adfcaa1f7',NULL,0,0,NULL,1,0);
 /*!40000 ALTER TABLE `aspnetusers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -332,7 +334,6 @@ CREATE TABLE `frota` (
 
 LOCK TABLES `frota` WRITE;
 /*!40000 ALTER TABLE `frota` DISABLE KEYS */;
-INSERT INTO `frota` VALUES (00000000001,'Ali','000','000','R','B','12','KK','ITA','SE'),(00000000003,'Aqui','111','111','R','B','12','KK','ITA','SE');
 /*!40000 ALTER TABLE `frota` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -428,7 +429,6 @@ CREATE TABLE `marcapecainsumo` (
 
 LOCK TABLES `marcapecainsumo` WRITE;
 /*!40000 ALTER TABLE `marcapecainsumo` DISABLE KEYS */;
-INSERT INTO `marcapecainsumo` VALUES (215,'dgfhgfh');
 /*!40000 ALTER TABLE `marcapecainsumo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -452,7 +452,6 @@ CREATE TABLE `marcaveiculo` (
 
 LOCK TABLES `marcaveiculo` WRITE;
 /*!40000 ALTER TABLE `marcaveiculo` DISABLE KEYS */;
-INSERT INTO `marcaveiculo` VALUES (1,'Nissan');
 /*!40000 ALTER TABLE `marcaveiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -480,7 +479,6 @@ CREATE TABLE `modeloveiculo` (
 
 LOCK TABLES `modeloveiculo` WRITE;
 /*!40000 ALTER TABLE `modeloveiculo` DISABLE KEYS */;
-INSERT INTO `modeloveiculo` VALUES (1,1,'Versa',80),(2,1,'gol',1000);
 /*!40000 ALTER TABLE `modeloveiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -495,7 +493,7 @@ CREATE TABLE `papelpessoa` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `papel` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -504,7 +502,7 @@ CREATE TABLE `papelpessoa` (
 
 LOCK TABLES `papelpessoa` WRITE;
 /*!40000 ALTER TABLE `papelpessoa` DISABLE KEYS */;
-INSERT INTO `papelpessoa` VALUES (1,'Bombeiro');
+INSERT INTO `papelpessoa` VALUES (1,'Administrador'),(2,'Mecânico'),(3,'Gestor'),(4,'Motorista');
 /*!40000 ALTER TABLE `papelpessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -528,7 +526,6 @@ CREATE TABLE `pecainsumo` (
 
 LOCK TABLES `pecainsumo` WRITE;
 /*!40000 ALTER TABLE `pecainsumo` DISABLE KEYS */;
-INSERT INTO `pecainsumo` VALUES (1,'75575'),(2,'444444'),(3,'54445');
 /*!40000 ALTER TABLE `pecainsumo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -606,7 +603,6 @@ CREATE TABLE `pessoa` (
 
 LOCK TABLES `pessoa` WRITE;
 /*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
-INSERT INTO `pessoa` VALUES (1,'000','guilherme','49500','rua','bairro','dsamjo','18','Itabaiana','SE',00000000001,1,1);
 /*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -637,7 +633,6 @@ CREATE TABLE `solicitacaomanutencao` (
 
 LOCK TABLES `solicitacaomanutencao` WRITE;
 /*!40000 ALTER TABLE `solicitacaomanutencao` DISABLE KEYS */;
-INSERT INTO `solicitacaomanutencao` VALUES (5,57,1,'2024-09-18 00:47:00','aa');
 /*!40000 ALTER TABLE `solicitacaomanutencao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -670,7 +665,6 @@ CREATE TABLE `unidadeadministrativa` (
 
 LOCK TABLES `unidadeadministrativa` WRITE;
 /*!40000 ALTER TABLE `unidadeadministrativa` DISABLE KEYS */;
-INSERT INTO `unidadeadministrativa` VALUES (1,'SEILA','4950000','Jardim das Flores','Bairro Molejo','Casa','45','Itabaiana','SE',1030,-374302),(2,'aaaaaaaaaaaaaaa','0000000','aa','aa','aa','18','a','a',1,1),(3,'a','a','a','a','a','2','b','b',3,3);
 /*!40000 ALTER TABLE `unidadeadministrativa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -698,6 +692,9 @@ CREATE TABLE `veiculo` (
   `valor` decimal(10,2) NOT NULL,
   `dataReferenciaValor` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `placa_UNIQUE` (`placa`),
+  UNIQUE KEY `chassi_UNIQUE` (`chassi`),
+  UNIQUE KEY `renavan_UNIQUE` (`renavan`),
   KEY `fk_Veiculo_ModeloVeiculo1_idx` (`idModeloVeiculo`),
   KEY `fk_Veiculo_Frota1_idx` (`idFrota`),
   KEY `fk_Veiculo_UnidadeAdministrativa1_idx` (`idUnidadeAdministrativa`),
@@ -713,7 +710,6 @@ CREATE TABLE `veiculo` (
 
 LOCK TABLES `veiculo` WRITE;
 /*!40000 ALTER TABLE `veiculo` DISABLE KEYS */;
-INSERT INTO `veiculo` VALUES (57,'DDAAA-1234','5555555555555555555','Preto',1,00000000001,1,95667,'D',1988,5555,'8888888','2020-07-07 00:00:00',160000.00,'2022-07-08 00:00:00');
 /*!40000 ALTER TABLE `veiculo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -773,7 +769,6 @@ CREATE TABLE `vistoria` (
 
 LOCK TABLES `vistoria` WRITE;
 /*!40000 ALTER TABLE `vistoria` DISABLE KEYS */;
-INSERT INTO `vistoria` VALUES (3,'2024-02-20 00:00:00','Aquecimento','S',1),(4,'2024-02-20 00:00:00','Aquecimento','S',1);
 /*!40000 ALTER TABLE `vistoria` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -786,4 +781,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-27 17:34:41
+-- Dump completed on 2024-11-12  5:08:15

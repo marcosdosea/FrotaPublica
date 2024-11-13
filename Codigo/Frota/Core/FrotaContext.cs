@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Core;
 
@@ -19,7 +17,7 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Fornecedor> Fornecedors { get; set; }
 
-    public virtual DbSet<Frota> Frota { get; set; }
+    public virtual DbSet<Frotum> Frota { get; set; }
 
     public virtual DbSet<Manutencao> Manutencaos { get; set; }
 
@@ -122,7 +120,7 @@ public partial class FrotaContext : DbContext
                 .HasColumnName("rua");
         });
 
-        modelBuilder.Entity<Frota>(entity =>
+        modelBuilder.Entity<Frotum>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 

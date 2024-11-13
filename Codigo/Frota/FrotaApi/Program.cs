@@ -22,12 +22,19 @@ namespace FrotaApi
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
             builder.Services.AddTransient<IModeloVeiculoService, ModeloVeiculoService>();
             builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
-            builder.Services.AddTransient<ISolicitacaomanutencaoService, SolicitacaomanutencaoService>();
+            builder.Services.AddTransient<ISolicitacaoManutencaoService, SolicitacaoManutencaoService>();
 			builder.Services.AddTransient<IPessoaService, PessoaService>();
 			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            builder.Services.AddDbContext<FrotaContext>(
-                options => options.UseMySQL(builder.Configuration.GetConnectionString("FrotaDatabase")));
+            var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("A string de conexão 'FrotaDatabase' não foi encontrada ou está vazia.");
+            }
+
+            builder.Services.AddDbContext<FrotaContext>(options =>
+                options.UseMySQL(connectionString));
 
             var app = builder.Build();
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Core;
 
-namespace Core;
-
-public partial class Frota
+public partial class Frotum
 {
     public uint Id { get; set; }
 
