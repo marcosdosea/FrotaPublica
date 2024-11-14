@@ -17,79 +17,82 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FrotaWeb.Areas.Identity.Pages.Account
 {
-    public class RegisterModel : PageModel
-    {
-        private readonly SignInManager<UsuarioIdentity> _signInManager;
-        private readonly UserManager<UsuarioIdentity> _userManager;
-        private readonly IUserStore<UsuarioIdentity> _userStore;
-        private readonly IUserEmailStore<UsuarioIdentity> _emailStore;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+	public class RegisterModel : PageModel
+	{
+		private readonly SignInManager<UsuarioIdentity> _signInManager;
+		private readonly UserManager<UsuarioIdentity> _userManager;
+		private readonly IUserStore<UsuarioIdentity> _userStore;
+		private readonly IUserEmailStore<UsuarioIdentity> _emailStore;
+		private readonly ILogger<RegisterModel> _logger;
+		private readonly IEmailSender _emailSender;
 
-        public RegisterModel(
-            UserManager<UsuarioIdentity> userManager,
-            IUserStore<UsuarioIdentity> userStore,
-            SignInManager<UsuarioIdentity> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
-        {
-            _userManager = userManager;
-            _userStore = userStore;
-            _emailStore = GetEmailStore();
-            _signInManager = signInManager;
-            _logger = logger;
-            _emailSender = emailSender;
-        }
+		public RegisterModel(
+			UserManager<UsuarioIdentity> userManager,
+			IUserStore<UsuarioIdentity> userStore,
+			SignInManager<UsuarioIdentity> signInManager,
+			ILogger<RegisterModel> logger,
+			IEmailSender emailSender)
+		{
+			_userManager = userManager;
+			_userStore = userStore;
+			_emailStore = GetEmailStore();
+			_signInManager = signInManager;
+			_logger = logger;
+			_emailSender = emailSender;
+		}
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [BindProperty]
-        public InputModel Input { get; set; }
+		/// <summary>
+		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+		///     directly from your code. This API may change or be removed in future releases.
+		/// </summary>
+		[BindProperty]
+		public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string ReturnUrl { get; set; }
+		/// <summary>
+		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+		///     directly from your code. This API may change or be removed in future releases.
+		/// </summary>
+		public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+		/// <summary>
+		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+		///     directly from your code. This API may change or be removed in future releases.
+		/// </summary>
+		public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
+		/// <summary>
+		///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+		///     directly from your code. This API may change or be removed in future releases.
+		/// </summary>
+		public class InputModel
+		{
 			/// <summary>
 			/// Guardar o nome do usuário
 			/// </summary>
-			[Required(ErrorMessage = "O Nome é obrigatório")]
+			[RegularExpression(@"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$", ErrorMessage = "Nome inválido")]
+			[StringLength(256, ErrorMessage = "O nome não pode ter mais de 256 caracteres.")]
+			[Required(ErrorMessage = "O nome é obrigatório")]
 			public string UserName { get; set; }
 
 			/// <summary>
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Required(ErrorMessage = "O Email é obrigatório")]
+			[Required(ErrorMessage = "O email é obrigatório")]
+			[StringLength(256, ErrorMessage = "O email não pode ter mais de 256 caracteres.")]
 			[EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
+			[Display(Name = "Email")]
+			public string Email { get; set; }
 
 			/// <summary>
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
 			[Required(ErrorMessage = "A senha é obrigatória")]
-			[StringLength(100, ErrorMessage = "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos 1 caractere especial, 1 letra maiúscula, 1 letra minúscula e 1 número.", MinimumLength = 8)]
+			[StringLength(100, ErrorMessage = "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos 1 caractere especial, 1 letra maiúscula, 1 letra minúscula e 1 número", MinimumLength = 8)]
 			[DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; }
+			[Display(Name = "Password")]
+			public string Password { get; set; }
 
 			/// <summary>
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -97,88 +100,88 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			/// </summary>
 			[Required(ErrorMessage = "A Confirmação da senha é obrigatória")]
 			[DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "As senhas não coincidem")]
-            public string ConfirmPassword { get; set; }
-        }
+			[Display(Name = "Confirm password")]
+			[Compare("Password", ErrorMessage = "As senhas não coincidem")]
+			public string ConfirmPassword { get; set; }
+		}
 
 
-        public async Task OnGetAsync(string returnUrl = null)
-        {
-            ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        }
+		public async Task OnGetAsync(string returnUrl = null)
+		{
+			ReturnUrl = returnUrl;
+			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+		}
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
+		public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+		{
+			returnUrl ??= Url.Content("~/");
+			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+			if (ModelState.IsValid)
+			{
+				var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                user.UserName = Input.UserName;
+				await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+				await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+				user.UserName = Input.UserName;
 				var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User created a new account with password.");
+				if (result.Succeeded)
+				{
+					_logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+					var userId = await _userManager.GetUserIdAsync(user);
+					var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+					var callbackUrl = Url.Page(
+						"/Account/ConfirmEmail",
+						pageHandler: null,
+						values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+						protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+					await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+						$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+					if (_userManager.Options.SignIn.RequireConfirmedAccount)
+					{
+						return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+					}
+					else
+					{
+						await _signInManager.SignInAsync(user, isPersistent: false);
+						return LocalRedirect(returnUrl);
+					}
+				}
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+			}
 
-            // If we got this far, something failed, redisplay form
-            return Page();
-        }
+			// If we got this far, something failed, redisplay form
+			return Page();
+		}
 
-        private UsuarioIdentity CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<UsuarioIdentity>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(UsuarioIdentity)}'. " +
-                    $"Ensure that '{nameof(UsuarioIdentity)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-            }
-        }
+		private UsuarioIdentity CreateUser()
+		{
+			try
+			{
+				return Activator.CreateInstance<UsuarioIdentity>();
+			}
+			catch
+			{
+				throw new InvalidOperationException($"Can't create an instance of '{nameof(UsuarioIdentity)}'. " +
+					$"Ensure that '{nameof(UsuarioIdentity)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+					$"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+			}
+		}
 
-        private IUserEmailStore<UsuarioIdentity> GetEmailStore()
-        {
-            if (!_userManager.SupportsUserEmail)
-            {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
-            }
-            return (IUserEmailStore<UsuarioIdentity>)_userStore;
-        }
-    }
+		private IUserEmailStore<UsuarioIdentity> GetEmailStore()
+		{
+			if (!_userManager.SupportsUserEmail)
+			{
+				throw new NotSupportedException("The default UI requires a user store with email support.");
+			}
+			return (IUserEmailStore<UsuarioIdentity>)_userStore;
+		}
+	}
 }

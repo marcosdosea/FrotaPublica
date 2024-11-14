@@ -90,12 +90,11 @@
 
 			.form p {
 				height: 35px;
-				font-size: 15px;
+				font-size: 18px;
 				display: flex;
 				flex-direction: column;
 				text-align: left;
 				justify-content: center;
-				align-items: right;
 				font-weight: 600;
 			}
 
@@ -131,6 +130,7 @@
 
 			.form button {
 				margin-top: 23px;
+				margin-bottom: 23px;
 				margin-left: 10%;
 				margin-right: 10%;
 				padding: 10px;
@@ -149,15 +149,22 @@
 
 		.register-link {
 			display: flex;
-			justify-content: center;
-			flex-direction: row;
+			flex-direction: column;
 			align-items: center;
-			position: absolute;
-			bottom: 30px;
+			justify-content: center;
+			position: relative;
+			margin-top: 20px;
 			font-size: 16px;
 			color: #000000;
 			font-weight: 600;
+			width: 100%;
+			text-align: center;
 		}
+
+			.register-link div {
+				margin-top: 5px;
+				text-align: center;
+			}
 
 			.register-link a {
 				margin-left: 5px;
@@ -181,6 +188,15 @@
 				padding-left: 0;
 				margin: 0;
 			}
+
+		#lembrar {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 15px;
+			margin-top: 15px;
+			color: #000;
+		}
 
 		@@media screen and (max-width: 930px) {
 			.left-section {
@@ -223,11 +239,15 @@
 					<p>Senha</p>
 					<input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
 					<span asp-validation-for="Input.Password" class="messages"></span>
-					<a id="forgot-password" asp-page="./ForgotPassword">Esqueci a senha?</a>
+					<label id="lembrar">
+						<input asp-for="Input.RememberMe" type="checkbox">
+						<span>Lembrar de mim?</span>
+					</label>
 					<button id="login-submit" type="submit">Entrar</button>
 				</div>
 				<div class="register-link">
-					Não tem uma conta? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrar-se</a>
+					<a asp-page="./ForgotPassword">Esqueceu a senha?</a>
+					<div>Não tem uma conta?<a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registre-se</a></div>
 				</div>
 			</div>
 		</form>
