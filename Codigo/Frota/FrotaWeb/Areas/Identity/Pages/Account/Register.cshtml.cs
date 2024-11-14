@@ -89,7 +89,8 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
 			[Required(ErrorMessage = "A senha é obrigatória")]
-			[StringLength(100, ErrorMessage = "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos 1 caractere especial, 1 letra maiúscula, 1 letra minúscula e 1 número", MinimumLength = 8)]
+			[StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
+			[RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$", ErrorMessage = "A senha deve conter, 1 número, 1 caractere especial, 1 letra maiúscula e 1 letra minúscula")]
 			[DataType(DataType.Password)]
 			[Display(Name = "Password")]
 			public string Password { get; set; }
@@ -99,6 +100,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
 			[Required(ErrorMessage = "A confirmação da senha é obrigatória")]
+			[StringLength(20)]
 			[DataType(DataType.Password)]
 			[Display(Name = "Confirm password")]
 			[Compare("Password", ErrorMessage = "As senhas não coincidem")]

@@ -5,222 +5,219 @@
 	Layout = null;
 }
 <head>
-
 	<style>
 		header, #sidebar {
-            display: none;
-        }
+			display: none;
+		}
 
-        footer {
-            background-color: #08448c;
-        }
+		footer {
+			background-color: #08448c;
+		}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #e6f0fa;
-        }
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background-color: #e6f0fa;
+		}
 
-        .container {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: row;
-            width: 100vw;
-            height: auto;
-            background: #D9E9F4;
-        }
+		.container {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: row;
+			width: 100vw;
+			height: auto;
+			background: #D9E9F4;
+		}
 
-        .left-section {
-            position: relative;
-            width: 60%;
-            height: auto;
-            flex-grow: 1;
-        }
+		.left-section {
+			position: relative;
+			width: 60%;
+			height: auto;
+			flex-grow: 1;
+		}
 
-            .left-section img {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
+			.left-section img {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
 
-        .right-section {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-top: 20px;
-            flex-grow: 1;
-            height: auto;
-        }
+		.right-section {
+			width: 40%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding-top: 20px;
+			flex-grow: 1;
+			height: auto;
+		}
 
-        .form-container {
-            width: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #D9E9F4;
-            margin-top: 0;
-            position: relative;
-            padding-top: 20px;
-            padding-bottom: 20px;
-            height: auto;
-        }
+		.form-container {
+			width: 300px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: #D9E9F4;
+			margin-top: 0;
+			position: relative;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			height: auto;
+		}
 
-        .right-section img {
-            width: 150px;
-            height: auto;
-            margin: 15px;
-        }
+		.right-section img {
+			width: 150px;
+			height: auto;
+			margin: 15px;
+		}
 
-        .form {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 20px;
-            margin-top: 10px;
-        }
+		.form {
+			width: 100%;
+			max-width: 350px;
+			display: flex;
+			flex-direction: column;
+			padding-bottom: 20px;
+			margin-top: 10px;
+		}
 
-        .form p {
-            height: 35px;
-            font-size: 18px;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            justify-content: center;
-            font-weight: 600;
-        }
+			.form p {
+				height: 35px;
+				font-size: 18px;
+				display: flex;
+				flex-direction: column;
+				text-align: left;
+				justify-content: center;
+				font-weight: 600;
+			}
 
-        .form input {
-            padding: 10px;
-            font-size: 1em;
-            border: 1px solid rgba(0, 0, 0, 0.25);
-            border-radius: 5px;
-            background-color: #fff;
-        }
+			.form input {
+				padding: 10px;
+				font-size: 1em;
+				border: 1px solid rgba(0, 0, 0, 0.25);
+				border-radius: 5px;
+				background-color: #fff;
+			}
 
-        .form input:focus {
-            border: 1px solid #ccc;
-            outline: none;
-            border-color: #0C69AB;
-        }
+				.form input:focus {
+					border: 1px solid #ccc;
+					outline: none;
+					border-color: #0C69AB;
+				}
 
-        .form a {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 40px;
-            font-size: 17px;
-            color: #0C69AB;
-            text-decoration: none;
-            font-weight: 600;
-        }
+			.form a {
+				text-align: left;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				height: 40px;
+				font-size: 17px;
+				color: #0C69AB;
+				text-decoration: none;
+				font-weight: 600;
+			}
 
-        .form a:hover {
-            color: #000000;
-        }
+				.form a:hover {
+					color: #000000;
+				}
 
-        .form button {
-            margin-top: 23px;
-            margin-left: 10%;
-            margin-right: 10%;
-            margin-bottom: 35px;
-            padding: 10px;
-            font-size: 1em;
-            color: white;
-            background-color: #0C69AB;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+			.form button {
+				margin-top: 23px;
+				margin-left: 10%;
+				margin-right: 10%;
+				margin-bottom: 35px;
+				padding: 10px;
+				font-size: 1em;
+				color: white;
+				background-color: #0C69AB;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+			}
 
-        .form button:hover {
-            background-color: #155cb0;
-        }
+				.form button:hover {
+					background-color: #155cb0;
+				}
 
-        #login-link {
-            display: flex;
-            justify-content: center;
-            flex-direction: row;
-            align-items: center;
-            position: absolute;
-            bottom: 20px;
-            font-size: 16px;
-            color: #000000;
-            font-weight: 600;
-        }
+		#login-link {
+			display: flex;
+			justify-content: center;
+			flex-direction: row;
+			align-items: center;
+			position: absolute;
+			bottom: 20px;
+			font-size: 16px;
+			color: #000000;
+			font-weight: 600;
+		}
 
-        #login-link a {
-            margin-left: 5px;
-            color: #1a73e8;
-            text-decoration: none;
-        }
+			#login-link a {
+				margin-left: 5px;
+				color: #1a73e8;
+				text-decoration: none;
+			}
 
-        #login-link a:hover {
-            color: #FF0000;
-        }
+				#login-link a:hover {
+					color: #FF0000;
+				}
 
-        .messages {
-            color: red;
-            text-align: center;
-            padding-top: 10px;
-        }
+		.messages {
+			color: red;
+			text-align: center;
+			padding-top: 10px;
+		}
 
-        .messages li {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
+			.messages li {
+				list-style-type: none;
+				padding-left: 0;
+				margin: 0;
+			}
 
-        @@media screen and (max-width: 930px) {
-            .left-section {
-                width: 0%;
-                height: 50vh;
-            }
+		@@media screen and (max-width: 930px) {
+			.left-section {
+				width: 0%;
+				height: 50vh;
+			}
 
-            .right-section {
-                width: 100%;
-                padding-bottom: 10px;
-                height: auto;
-            }
+			.right-section {
+				width: 100%;
+				padding-bottom: 10px;
+				height: auto;
+			}
 
-            .form-container {
-                border: 2px solid #0C69AB;
-                border-radius: 10px;
-                padding: 20px;
-                margin-top: 40px;
-                margin-bottom: 10px;
-            }
+			.form-container {
+				border: 2px solid #0C69AB;
+				border-radius: 10px;
+				padding: 20px;
+				margin-top: 40px;
+				margin-bottom: 10px;
+			}
 
-            #login-link {
-                margin-top: 15px;
-                position: relative;
-                bottom: 0;
-            }
-        }
-
+			#login-link {
+				margin-top: 15px;
+				position: relative;
+				bottom: 0;
+			}
+		}
 	</style>
 </head>
-
 <div class="container">
 	<div class="left-section">
 		<img src="~/img/background-login.png" alt="background" />
