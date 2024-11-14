@@ -69,7 +69,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			/// <summary>
 			/// Guardar o nome do usuário
 			/// </summary>
-			[RegularExpression(@"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$", ErrorMessage = "Nome inválido")]
+			[RegularExpression(@"^[A-Za-zÀ-ÖØ-öø-ÿ]{2,}(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$", ErrorMessage = "Nome inválido")]
 			[StringLength(256, ErrorMessage = "O nome não pode ter mais de 256 caracteres.")]
 			[Required(ErrorMessage = "O nome é obrigatório")]
 			public string UserName { get; set; }
@@ -98,7 +98,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Required(ErrorMessage = "A Confirmação da senha é obrigatória")]
+			[Required(ErrorMessage = "A confirmação da senha é obrigatória")]
 			[DataType(DataType.Password)]
 			[Display(Name = "Confirm password")]
 			[Compare("Password", ErrorMessage = "As senhas não coincidem")]

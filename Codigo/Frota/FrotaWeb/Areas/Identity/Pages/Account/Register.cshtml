@@ -37,13 +37,14 @@
             flex-direction: row;
             width: 100vw;
             height: auto;
-            background-color: #D9E9F4;
+            background: #D9E9F4;
         }
 
         .left-section {
             position: relative;
             width: 60%;
-            height: 100%;
+            height: auto;
+            flex-grow: 1;
         }
 
             .left-section img {
@@ -53,18 +54,19 @@
                 right: 0;
                 bottom: 0;
                 width: 100%;
-                height: auto;
+                height: 100%;
                 object-fit: cover;
             }
 
         .right-section {
-            height: auto;
             width: 40%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding-top: 20px;
+            flex-grow: 1;
+            height: auto;
         }
 
         .form-container {
@@ -78,6 +80,7 @@
             position: relative;
             padding-top: 20px;
             padding-bottom: 20px;
+            height: auto;
         }
 
         .right-section img {
@@ -108,7 +111,7 @@
         .form input {
             padding: 10px;
             font-size: 1em;
-            border: 0px;
+            border: 1px solid rgba(0, 0, 0, 0.25);
             border-radius: 5px;
             background-color: #fff;
         }
@@ -139,6 +142,7 @@
             margin-top: 23px;
             margin-left: 10%;
             margin-right: 10%;
+            margin-bottom: 35px;
             padding: 10px;
             font-size: 1em;
             color: white;
