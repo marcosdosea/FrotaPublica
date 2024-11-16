@@ -67,19 +67,19 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 		public class InputModel
 		{
 			/// <summary>
-			/// Guardar o nome do usu·rio
+			/// Guardar o nome do usu√°rio
 			/// </summary>
-			[RegularExpression(@"^[A-Za-z¿-÷ÿ-ˆ¯-ˇ]{2,}(?: [A-Za-z¿-÷ÿ-ˆ¯-ˇ]+)*$", ErrorMessage = "Nome inv·lido")]
-			[StringLength(256, ErrorMessage = "O nome n„o pode ter mais de 256 caracteres.")]
-			[Required(ErrorMessage = "O nome È obrigatÛrio")]
+			[RegularExpression(@"^[A-Za-z√Ä-√ñ√ò-√∂√∏-√ø]{2,}(?: [A-Za-z√Ä-√ñ√ò-√∂√∏-√ø]+)*$", ErrorMessage = "Nome inv√°lido")]
+			[StringLength(256, ErrorMessage = "O nome n√£o pode ter mais de 256 caracteres.")]
+			[Required(ErrorMessage = "O nome √© obrigat√≥rio")]
 			public string UserName { get; set; }
 
 			/// <summary>
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Required(ErrorMessage = "O email È obrigatÛrio")]
-			[StringLength(256, ErrorMessage = "O email n„o pode ter mais de 256 caracteres.")]
+			[Required(ErrorMessage = "O email √© obrigat√≥rio")]
+			[StringLength(256, ErrorMessage = "O email n√£o pode ter mais de 256 caracteres.")]
 			[EmailAddress]
 			[Display(Name = "Email")]
 			public string Email { get; set; }
@@ -88,9 +88,9 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Required(ErrorMessage = "A senha È obrigatÛria")]
+			[Required(ErrorMessage = "A senha √© obrigat√≥ria")]
 			[StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
-			[RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$", ErrorMessage = "A senha deve conter, 1 n˙mero, 1 caractere especial, 1 letra mai˙scula e 1 letra min˙scula")]
+			[RegularExpression(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$", ErrorMessage = "A senha deve conter, 1 n√∫mero, 1 caractere especial, 1 letra mai√∫scula e 1 letra min√∫scula")]
 			[DataType(DataType.Password)]
 			[Display(Name = "Password")]
 			public string Password { get; set; }
@@ -99,11 +99,11 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Required(ErrorMessage = "A confirmaÁ„o da senha È obrigatÛria")]
+			[Required(ErrorMessage = "A confirma√ß√£o da senha √© obrigat√≥ria")]
 			[StringLength(20)]
 			[DataType(DataType.Password)]
 			[Display(Name = "Confirm password")]
-			[Compare("Password", ErrorMessage = "As senhas n„o coincidem")]
+			[Compare("Password", ErrorMessage = "As senhas n√£o coincidem")]
 			public string ConfirmPassword { get; set; }
 		}
 
@@ -158,11 +158,11 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 					switch (error.Code)
 					{
 						case "DuplicateUserName":
-							ModelState.AddModelError(string.Empty, "O nome j· est· em uso");
+							ModelState.AddModelError(string.Empty, "O nome j√° est√° em uso");
 							break;
 
 						case "InvalidUserName":
-							ModelState.AddModelError(string.Empty, "O nome È obrigatÛrio");
+							ModelState.AddModelError(string.Empty, "Nome inv√°lido");
 							break;
 
 						default:
