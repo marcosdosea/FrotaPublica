@@ -155,8 +155,21 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 				}
 				foreach (var error in result.Errors)
 				{
-					ModelState.AddModelError(string.Empty, error.Description);
-				}
+					switch (error.Code)
+					{
+						case "DuplicateUserName":
+							ModelState.AddModelError(string.Empty, "O nome já está em uso");
+							break;
+
+						case "InvalidUserName":
+							ModelState.AddModelError(string.Empty, "O nome é obrigatório");
+							break;
+
+						default:
+							ModelState.AddModelError(string.Empty, error.Description);
+							break;
+					}
+				};
 			}
 
 			// If we got this far, something failed, redisplay form
