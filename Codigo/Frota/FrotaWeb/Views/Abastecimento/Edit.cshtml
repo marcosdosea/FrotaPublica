@@ -13,6 +13,26 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPercurso" class="control-label"></label>
+                <input asp-for="IdPercurso" class="form-control" />
+                <span asp-validation-for="IdPercurso" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdFornecedor" class="control-label"></label>
+                <input asp-for="IdFornecedor" class="form-control" />
+                <span asp-validation-for="IdFornecedor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataHora" class="control-label"></label>
+                <input asp-for="DataHora" class="form-control" />
+                <span asp-validation-for="DataHora" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Odometro" class="control-label"></label>
                 <input asp-for="Odometro" class="form-control" />
                 <span asp-validation-for="Odometro" class="text-danger"></span>

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core;
 
@@ -57,25 +59,24 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdFornecedor, "fk_Abastecimento_Fornecedor1_idx");
 
-            entity.HasIndex(e => new { e.IdVeiculoPercurso, e.IdPessoaPercurso }, "fk_Abastecimento_Percurso1_idx");
+            entity.HasIndex(e => e.IdPercurso, "fk_Abastecimento_Percurso1_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DataHora)
                 .HasColumnType("datetime")
                 .HasColumnName("dataHora");
             entity.Property(e => e.IdFornecedor).HasColumnName("idFornecedor");
-            entity.Property(e => e.IdPessoaPercurso).HasColumnName("idPessoaPercurso");
-            entity.Property(e => e.IdVeiculoPercurso).HasColumnName("idVeiculoPercurso");
+            entity.Property(e => e.IdPercurso).HasColumnName("idPercurso");
             entity.Property(e => e.Litros).HasColumnName("litros");
             entity.Property(e => e.Odometro).HasColumnName("odometro");
 
             entity.HasOne(d => d.IdFornecedorNavigation).WithMany(p => p.Abastecimentos)
                 .HasForeignKey(d => d.IdFornecedor)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Abastecimento_Fornecedor1");
 
-            entity.HasOne(d => d.IdNavigation).WithMany(p => p.Abastecimentos)
-                .HasForeignKey(d => new { d.IdVeiculoPercurso, d.IdPessoaPercurso })
+            entity.HasOne(d => d.IdPercursoNavigation).WithMany(p => p.Abastecimentos)
+                .HasForeignKey(d => d.IdPercurso)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("fk_Abastecimento_Percurso1");
         });
@@ -199,17 +200,17 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdFornecedorNavigation).WithMany(p => p.Manutencaos)
                 .HasForeignKey(d => d.IdFornecedor)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Manutencao_Fornecedor1");
 
             entity.HasOne(d => d.IdResponsavelNavigation).WithMany(p => p.Manutencaos)
                 .HasForeignKey(d => d.IdResponsavel)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Manutencao_Pessoa1");
 
             entity.HasOne(d => d.IdVeiculoNavigation).WithMany(p => p.Manutencaos)
                 .HasForeignKey(d => d.IdVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Manutencao_Veiculo1");
         });
 
@@ -242,17 +243,17 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdManutencaoNavigation).WithMany(p => p.Manutencaopecainsumos)
                 .HasForeignKey(d => d.IdManutencao)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ManutencaoPecaInsumo_Manutencao1");
 
             entity.HasOne(d => d.IdMarcaPecaInsumoNavigation).WithMany(p => p.Manutencaopecainsumos)
                 .HasForeignKey(d => d.IdMarcaPecaInsumo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ManutencaoPecaInsumo_MarcaPecaInsumo1");
 
             entity.HasOne(d => d.IdPecaInsumoNavigation).WithMany(p => p.Manutencaopecainsumos)
                 .HasForeignKey(d => d.IdPecaInsumo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ManutencaoPecaInsumo_PecaInsumo1");
         });
 
@@ -297,7 +298,7 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdMarcaVeiculoNavigation).WithMany(p => p.Modeloveiculos)
                 .HasForeignKey(d => d.IdMarcaVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ModeloVeiculo_MarcaVeiculo");
         });
 
@@ -327,7 +328,7 @@ public partial class FrotaContext : DbContext
 
         modelBuilder.Entity<Percurso>(entity =>
         {
-            entity.HasKey(e => new { e.IdVeiculo, e.IdPessoa }).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("percurso");
 
@@ -335,14 +336,15 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdVeiculo, "fk_VeiculoPessoa_Veiculo1_idx");
 
-            entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
-            entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DataHoraRetorno)
                 .HasColumnType("datetime")
                 .HasColumnName("dataHoraRetorno");
             entity.Property(e => e.DataHoraSaida)
                 .HasColumnType("datetime")
                 .HasColumnName("dataHoraSaida");
+            entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+            entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
             entity.Property(e => e.LatitudeChegada).HasColumnName("latitudeChegada");
             entity.Property(e => e.LatitudePartida).HasColumnName("latitudePartida");
             entity.Property(e => e.LocalChegada)
@@ -361,12 +363,12 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdPessoaNavigation).WithMany(p => p.Percursos)
                 .HasForeignKey(d => d.IdPessoa)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPessoa_Pessoa1");
 
             entity.HasOne(d => d.IdVeiculoNavigation).WithMany(p => p.Percursos)
                 .HasForeignKey(d => d.IdVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPessoa_Veiculo1");
         });
 
@@ -420,12 +422,12 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Pessoas)
                 .HasForeignKey(d => d.IdFrota)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Pessoa_Frota1");
 
             entity.HasOne(d => d.IdPapelPessoaNavigation).WithMany(p => p.Pessoas)
                 .HasForeignKey(d => d.IdPapelPessoa)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Pessoa_PapelPessoa1");
         });
 
@@ -451,12 +453,12 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdPessoaNavigation).WithMany(p => p.Solicitacaomanutencaos)
                 .HasForeignKey(d => d.IdPessoa)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPessoa_Pessoa2");
 
             entity.HasOne(d => d.IdVeiculoNavigation).WithMany(p => p.Solicitacaomanutencaos)
                 .HasForeignKey(d => d.IdVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPessoa_Veiculo2");
         });
 
@@ -501,11 +503,17 @@ public partial class FrotaContext : DbContext
 
             entity.ToTable("veiculo");
 
+            entity.HasIndex(e => e.Chassi, "chassi_UNIQUE").IsUnique();
+
             entity.HasIndex(e => e.IdFrota, "fk_Veiculo_Frota1_idx");
 
             entity.HasIndex(e => e.IdModeloVeiculo, "fk_Veiculo_ModeloVeiculo1_idx");
 
             entity.HasIndex(e => e.IdUnidadeAdministrativa, "fk_Veiculo_UnidadeAdministrativa1_idx");
+
+            entity.HasIndex(e => e.Placa, "placa_UNIQUE").IsUnique();
+
+            entity.HasIndex(e => e.Renavan, "renavan_UNIQUE").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Ano).HasColumnName("ano");
@@ -544,17 +552,17 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Veiculos)
                 .HasForeignKey(d => d.IdFrota)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Veiculo_Frota1");
 
             entity.HasOne(d => d.IdModeloVeiculoNavigation).WithMany(p => p.Veiculos)
                 .HasForeignKey(d => d.IdModeloVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Veiculo_ModeloVeiculo1");
 
             entity.HasOne(d => d.IdUnidadeAdministrativaNavigation).WithMany(p => p.Veiculos)
                 .HasForeignKey(d => d.IdUnidadeAdministrativa)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Veiculo_UnidadeAdministrativa1");
         });
 
@@ -581,12 +589,12 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdPecaInsumoNavigation).WithMany(p => p.Veiculopecainsumos)
                 .HasForeignKey(d => d.IdPecaInsumo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPecaInsumo_PecaInsumo1");
 
             entity.HasOne(d => d.IdVeiculoNavigation).WithMany(p => p.Veiculopecainsumos)
                 .HasForeignKey(d => d.IdVeiculo)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_VeiculoPecaInsumo_Veiculo1");
         });
 
@@ -613,7 +621,7 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdPessoaResponsavelNavigation).WithMany(p => p.Vistoria)
                 .HasForeignKey(d => d.IdPessoaResponsavel)
-                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Vistoria_Pessoa1");
         });
 
