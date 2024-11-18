@@ -27,8 +27,7 @@ namespace Service.Tests
 				new Abastecimento
 				{
 					Id = 1,
-					IdVeiculoPercurso = 1,
-					IdPessoaPercurso = 1,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-07-02"),
 					Odometro = 10000,
 					Litros = 50,
@@ -37,8 +36,7 @@ namespace Service.Tests
 				new Abastecimento
 				{
 					Id = 2,
-					IdVeiculoPercurso = 2,
-					IdPessoaPercurso = 1,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-06-11"),
 					Odometro = 20000,
 					Litros = 60,
@@ -47,8 +45,7 @@ namespace Service.Tests
 				new Abastecimento
 				{
 					Id = 3,
-					IdVeiculoPercurso = 1,
-					IdPessoaPercurso = 2,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-08-12"),
 					Odometro = 25000,
 					Litros = 100,
@@ -68,8 +65,7 @@ namespace Service.Tests
 				new Abastecimento
 				{
 					Id = 4,
-					IdVeiculoPercurso = 1,
-					IdPessoaPercurso = 2,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-10-18"),
 					Odometro = 25800,
 					Litros = 90,

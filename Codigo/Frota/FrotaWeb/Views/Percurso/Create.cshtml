@@ -1,0 +1,98 @@
+﻿@model FrotaWeb.Models.PercursoViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>PercursoViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdVeiculo" class="control-label"></label>
+                <input asp-for="IdVeiculo" class="form-control" />
+                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPessoa" class="control-label"></label>
+                <input asp-for="IdPessoa" class="form-control" />
+                <span asp-validation-for="IdPessoa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataHoraSaida" class="control-label"></label>
+                <input asp-for="DataHoraSaida" class="form-control" />
+                <span asp-validation-for="DataHoraSaida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataHoraRetorno" class="control-label"></label>
+                <input asp-for="DataHoraRetorno" class="form-control" />
+                <span asp-validation-for="DataHoraRetorno" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocalPartida" class="control-label"></label>
+                <input asp-for="LocalPartida" class="form-control" />
+                <span asp-validation-for="LocalPartida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LatitudePartida" class="control-label"></label>
+                <input asp-for="LatitudePartida" class="form-control" />
+                <span asp-validation-for="LatitudePartida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LongitudePartida" class="control-label"></label>
+                <input asp-for="LongitudePartida" class="form-control" />
+                <span asp-validation-for="LongitudePartida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocalChegada" class="control-label"></label>
+                <input asp-for="LocalChegada" class="form-control" />
+                <span asp-validation-for="LocalChegada" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LatitudeChegada" class="control-label"></label>
+                <input asp-for="LatitudeChegada" class="form-control" />
+                <span asp-validation-for="LatitudeChegada" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LongitudeChegada" class="control-label"></label>
+                <input asp-for="LongitudeChegada" class="form-control" />
+                <span asp-validation-for="LongitudeChegada" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OdometroInicial" class="control-label"></label>
+                <input asp-for="OdometroInicial" class="form-control" />
+                <span asp-validation-for="OdometroInicial" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OdometroFinal" class="control-label"></label>
+                <input asp-for="OdometroFinal" class="form-control" />
+                <span asp-validation-for="OdometroFinal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Motivo" class="control-label"></label>
+                <input asp-for="Motivo" class="form-control" />
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
