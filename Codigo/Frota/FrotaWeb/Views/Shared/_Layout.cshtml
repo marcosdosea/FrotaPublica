@@ -1,135 +1,126 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>FrotaPública</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/navBar.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
 </head>
 <body>
 	<div class="wrapper d-flex align-items-stretch">
-		<nav id="sidebar" class="active">
-			<div class="custom-menu">
-				<button type="button" id="sidebarCollapse" class="btn btn-primary">
-					<i class="fa fa-bars"></i>
-					<span class="sr-only">Toggle Menu</span>
-				</button>
-			</div>
-			<div class="p-4">
-				<h1 class="fs-2"><a asp-area="" asp-controller="Home" asp-action="Index" class="logo">FrotaWeb</a></h1>
-				<ul class="list-unstyled components mb-5">
-					<partial name="_LoginPartial" />
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-							<i class="fa fa-home mr-3"></i>Página Inicial
-						</a>
-					</li>
-					<li>
-						<a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-							<i class="fa fa-wrench mr-3"></i>Manutenção
-						</a>
-						<ul class="collapse list-unstyled" id="pageSubmenu">
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="Solicitacaomanutencao" asp-action="Index">
-									<i class="fa fa-clipboard mr-3"></i>Solicitar Manutenção
-								</a>
-							</li>
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="Manutencao" asp-action="Index">
-									<i class="fa fa-wrench mr-3"></i>Manutenção
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-							<i class="fa fa-briefcase mr-3"></i>Peças e Insumos
-						</a>
-						<ul class="collapse list-unstyled" id="homeSubmenu">
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="PecaInsumo" asp-action="Index">
-									<i class="fa fa-cogs mr-3"></i>Peças
-								</a>
-							</li>
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="MarcaPecaInsumo" asp-action="Index">
-									<i class="fa fa-tag mr-3"></i>Marcas
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-							<i class="fa fa-car mr-3"></i>Veículos
-						</a>
-						<ul class="collapse list-unstyled" id="pageSubmenu">
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="Abastecimento" asp-action="Index">
-									<i class="fa fa-tachometer mr-3"></i>Abastecimento
-								</a>
-							</li>
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="MarcaVeiculo" asp-action="Index">
-									<i class="fa fa-tag mr-3"></i>Marcas de Veículo
-								</a>
-							</li>
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="ModeloVeiculo" asp-action="Index">
-									<i class="fa fa-car mr-3"></i>Modelos de Veículo
-								</a>
-							</li>
-							<li>
-								<a class="nav-link" asp-area="" asp-controller="Veiculo" asp-action="Index">
-									<i class=" fa fa-bus mr-3"></i>Veículos
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Pessoa" asp-action="Index">
-							<i class="fa fa-id-card mr-3"></i>Condutores
-						</a>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index">
-							<i class="fa fa-truck mr-3"></i>Frota
-						</a>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Fornecedor" asp-action="Index">
-							<i class="fa fa-pie-chart mr-3"></i>Fornecedor
-						</a>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Frota" asp-action="Index">
-							<i class="fa fa-line-chart mr-3"></i>Relatórios
-						</a>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="Vistoria" asp-action="Index">
-							<i class="fa fa-clipboard-check mr-3"></i>Vistoria
-						</a>
-					</li>
-					<li>
-						<a class="nav-link" asp-area="" asp-controller="UnidadeAdministrativa" asp-action="Index">
-							<i class="fa fa-building mr-3"></i>Unidade Administrativa
-						</a>
-					</li>
-				</ul>
-				<div class="footer mt-auto text-center">
-					<button type="button" class="btn btn-danger btn-block" data-bs-toggle="modal" data-bs-target="#sairModal">
-						<i class="fa fa-sign-out"></i> Sair
-					</button>
-					<br />
-					@($"@{DateTime.Now.Year} FrotaPública ")
-				</div>
-			</div>
-		</nav>
+        <aside class="sidebar">
+            <button class="toggle" type="button" onclick="toggleOpen()">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+            <div class="inner">
+                <div class="header">
+                    <img src="~/img/logo.svg" class="logo" />
+                    <h1>Frota</h1>
+                </div>
+                <nav class="menu">
+                    <a></a>
+                    <button id="Home" type="button" onclick="window.location.href='@Url.Action("Index", "Home")';">
+                        <span class="material-symbols-outlined">home</span>
+                        <p>Página Inicial</p>
+                    </button>
+                    <a></a>
+                    <button id="Manutencao" type="button" onclick="toggleSubmenu('manutencao-submenu')">
+                        <span class="material-symbols-outlined">build</span>
+                        <p>Manutenção</p>
+                    </button>
+                    <!--expande manutenção-->
+                    <div class="submenu" id="manutencao-submenu">
+                        <a></a>
+                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Solicitacaomanutencao")';">
+                            <p>Solicitar Manutenção</p>
+                        </button>
+                        <a></a>
+                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Manutencao")';">
+                            <p>Manutenção</p>
+                        </button>
+                    </div>
+                    <a></a>
+                    <button id="Pecas" type="button" onclick="toggleSubmenu('pecasInsumos-submenu')">
+                        <span class="material-symbols-outlined">settings</span>
+                        <p>Peças e Insumos</p>
+                    </button>
+                    <!--expande peças e insumos-->
+                    <div class="submenu" id="pecasInsumos-submenu">
+                        <a></a>
+                        <button type="button" onclick="window.location.href='@Url.Action("Index", "PecaInsumo")';">
+                            <p>Peças</p>
+                        </button>
+                        <a></a>
+                        <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaPecaInsumo")';">
+                            <p>Marcas</p>
+                        </button>
+                    </div>
+                    <a></a>
+                    <button id="Veiculo" type="button" onclick="toggleSubmenu('veiculos-submenu')">
+                        <span class="material-symbols-outlined">directions_car</span>
+                        <p>Veículos</p>
+                    </button>
+                    <!--expande veiculos-->
+                    <div class="submenu" id="veiculos-submenu">
+                        <button id="Veiculo-submenu" type="button" onclick="window.location.href='@Url.Action("Index", "Veiculo")';">
+                            <p>Veículos</p>
+                        </button>
+                        <button id="Abastecimento-submenu" type="button" onclick="window.location.href='@Url.Action("Index", "Abastecimento")';">
+                            <p>Abastecimentos</p>
+                        </button>
+                        <button id="MarcaVeiculo-submenu" type="button" onclick="window.location.href='@Url.Action("Index", "MarcaVeiculo")';">
+                            <p>Marcas de Veículos</p>
+                        </button>
+                        <button id="ModeloVeiculo-submenu" type="button" onclick="window.location.href='@Url.Action("Index", "ModeloVeiculo")';">
+                            <p>Modelos de Veículos</p>
+                        </button>
+                    </div>
+                    <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
+                        <span class="material-symbols-outlined">badge</span>
+                        <p>Condutores</p>
+                    </button>
+                    <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <p>Frota</p>
+                    </button>
+                    <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
+                        <span class="material-symbols-outlined">package_2</span>
+                        <p>Fornecedores</p>
+                    </button>
+                    <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
+                        <span class="material-symbols-outlined">space_dashboard</span>
+                        <p>Relatórios</p>
+                    </button>
+                    <button id="Vistoria" type="button" onclick="window.location.href='@Url.Action("Index", "Vistoria")';">
+                        <span class="material-symbols-outlined">playlist_add_check</span>
+                        <p>Vistoria</p>
+                    </button>
+                    <button id="UnidadeAdministrativa" type="button" onclick="window.location.href='@Url.Action("Index", "UnidadeAdministrativa")';">
+                        <span class="material-symbols-outlined">apartment</span>
+                        <p>Unidade Administrativa</p>
+                    </button>
+                </nav>
+                <!--botão login-->
+                <div class="login-button">
+                    <a>
+                        <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
+                        <p class="profile-link">Perfil</p>
+                    </a>
+                    <a class="logout-link" data-bs-toggle="modal" data-bs-target="#sairModal">
+                        <span class="material-symbols-outlined" style="margin-right: 22px;">logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
 		<!-- Page Content -->
-		<div id="content" class="p-4 p-md-5 pt-5">
+		<div id="content">
 			<div class="container">
 				<main role="main" class="pb-3">
 					@RenderBody()
@@ -157,10 +148,11 @@
 			</div>
 		</div>
 	</div>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/home.js" asp-append-version="true"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script type="text/javascript" src="~/js/navBar.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/home.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
