@@ -198,11 +198,11 @@
 			color: #000;
 		}
 
-		#password-container, #email-container {
+		.container-input-icon, .container-input-icon {
 			position: relative;
 		}
 
-			#password-container > input, #email-container > input {
+			.container-input-icon > input, .container-input-icon > input {
 				width: 100%;
 				padding-right: 40px;
 			}
@@ -230,12 +230,15 @@
 
 			.right-section {
 				width: 100%;
+				padding: 8px;
 			}
 
 			.form-container {
 				border: 2px solid #0C69AB;
 				border-radius: 10px;
 				padding: 20px;
+				margin-top: 8px;
+				margin-bottom: 8px;
 			}
 
 			.register-link {
@@ -257,14 +260,14 @@
 				<div asp-validation-summary="ModelOnly" class="messages"></div>
 				<div class="form">
 					<p>Email</p>
-					<div id="email-container">
-						<input type="email" asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+					<div class="container-input-icon">
+						<input type="email" asp-for="Input.Email" class="form-control" autocomplete="email" required aria-required="true" />
 						<i id="email-icon" class="fa fa-envelope" aria-hidden="true"></i>
 					</div>
 					<span asp-validation-for="Input.Email" class="messages"></span>
 					<p>Senha</p>
-					<div id="password-container">
-						<input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+					<div class="container-input-icon">
+						<input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="current-password" required aria-required="true" />
 						<i id="eye-icon" class="fa fa-eye cor" aria-hidden="true"></i>
 					</div>
 					<span asp-validation-for="Input.Password" class="messages"></span>
