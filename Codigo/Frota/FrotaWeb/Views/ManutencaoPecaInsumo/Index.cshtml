@@ -1,0 +1,72 @@
+﻿@model IEnumerable<FrotaWeb.Models.ManutencaoPecaInsumoViewModel>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.IdManutencao)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.IdPecaInsumo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.IdMarcaPecaInsumo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Quantidade)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MesesGarantia)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.KmGarantia)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ValorIndividual)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Subtotal)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.IdManutencao)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.IdPecaInsumo)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.IdMarcaPecaInsumo)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Quantidade)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MesesGarantia)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.KmGarantia)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.ValorIndividual)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Subtotal)
+				</td>
+				<td>
+					@Html.ActionLink("Edit", "Edit", new { id = item.IdManutencao }) |
+					@Html.ActionLink("Details", "Details", new { id = item.IdManutencao }) |
+					@Html.ActionLink("Delete", "Delete", new { id = item.IdManutencao })
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
