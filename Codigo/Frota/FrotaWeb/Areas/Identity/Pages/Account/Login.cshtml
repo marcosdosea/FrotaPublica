@@ -6,6 +6,7 @@
 	Layout = null;
 }
 <head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 	<style>
 		header, #sidebar {
 			display: none;
@@ -197,6 +198,30 @@
 			color: #000;
 		}
 
+		.container-input-icon, .container-input-icon {
+			position: relative;
+		}
+
+			.container-input-icon > input, .container-input-icon > input {
+				width: 100%;
+				padding-right: 40px;
+			}
+
+		#eye-icon {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			cursor: pointer;
+			color: #0C69AB;
+		}
+
+		#email-icon {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			color: #0C69AB;
+		}
+
 		@@media screen and (max-width: 930px) {
 			.left-section {
 				width: 0%;
@@ -205,12 +230,15 @@
 
 			.right-section {
 				width: 100%;
+				padding: 8px;
 			}
 
 			.form-container {
 				border: 2px solid #0C69AB;
 				border-radius: 10px;
 				padding: 20px;
+				margin-top: 8px;
+				margin-bottom: 8px;
 			}
 
 			.register-link {
@@ -232,10 +260,16 @@
 				<div asp-validation-summary="ModelOnly" class="messages"></div>
 				<div class="form">
 					<p>Email</p>
-					<input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+					<div class="container-input-icon">
+						<input type="email" asp-for="Input.Email" class="form-control" autocomplete="email" required aria-required="true" />
+						<i id="email-icon" class="fa fa-envelope" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.Email" class="messages"></span>
 					<p>Senha</p>
-					<input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+					<div class="container-input-icon">
+						<input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="current-password" required aria-required="true" />
+						<i id="eye-icon" class="fa fa-eye cor" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.Password" class="messages"></span>
 					<label id="lembrar">
 						<input asp-for="Input.RememberMe" type="checkbox">
@@ -251,7 +285,7 @@
 		</form>
 	</section>
 </div>
-
+<script src="~/js/authentication.js"></script>
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
 }

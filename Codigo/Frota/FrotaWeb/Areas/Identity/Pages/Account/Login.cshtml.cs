@@ -66,6 +66,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
 			[Required(ErrorMessage = "O email é obrigatório")]
+			[StringLength(256, ErrorMessage = "O email não pode ter mais de 256 caracteres.")]
 			[EmailAddress]
 			public string Email { get; set; }
 
@@ -74,6 +75,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
 			[Required(ErrorMessage = "A senha é obrigatória")]
+			[StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
 			[DataType(DataType.Password)]
 			public string Password { get; set; }
 

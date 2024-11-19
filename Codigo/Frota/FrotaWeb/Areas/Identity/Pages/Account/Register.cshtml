@@ -5,6 +5,7 @@
 	Layout = null;
 }
 <head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 	<style>
 		header, #sidebar {
 			display: none;
@@ -190,6 +191,30 @@
 				margin: 0;
 			}
 
+		.container-input-icon {
+			position: relative;
+		}
+
+			.container-input-icon > input, .container-input-icon > input {
+				width: 100%;
+				padding-right: 40px;
+			}
+
+		#eye-icon, #eye-icon-2 {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			cursor: pointer;
+			color: #0C69AB;
+		}
+
+		#email-icon, #user-icon {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			color: #0C69AB;
+		}
+
 		@@media screen and (max-width: 930px) {
 			.left-section {
 				width: 0%;
@@ -198,7 +223,7 @@
 
 			.right-section {
 				width: 100%;
-				padding-bottom: 10px;
+				padding: 30px;
 				height: auto;
 			}
 
@@ -206,8 +231,6 @@
 				border: 2px solid #0C69AB;
 				border-radius: 10px;
 				padding: 20px;
-				margin-top: 40px;
-				margin-bottom: 10px;
 			}
 
 			#login-link {
@@ -229,16 +252,28 @@
 				<div class="form">
 					<div asp-validation-summary="ModelOnly" class="messages"></div>
 					<p>Nome</p>
-					<input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" />
+					<div class="container-input-icon">
+						<input asp-for="Input.UserName" class="form-control" autocomplete="username" required aria-required="true" />
+						<i id="user-icon" class="fa fa-user" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.UserName" class="messages"></span>
 					<p>Email</p>
-					<input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+					<div class="container-input-icon">
+						<input type="email" asp-for="Input.Email" class="form-control" autocomplete="email" required aria-required="true" />
+						<i id="email-icon" class="fa fa-envelope" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.Email" class="messages"></span>
 					<p>Senha</p>
-					<input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
+					<div class="container-input-icon">
+						<input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="new-password" required aria-required="true" />
+						<i id="eye-icon" class="fa fa-eye cor" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.Password" class="messages"></span>
 					<p>Confirmar Senha</p>
-					<input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+					<div class="container-input-icon">
+						<input id="confirm-password" type="password" asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" required aria-required="true" />
+						<i id="eye-icon-2" class="fa fa-eye cor" aria-hidden="true"></i>
+					</div>
 					<span asp-validation-for="Input.ConfirmPassword" class="messages"></span>
 					<button id="registerSubmit" type="submit">Registrar-se</button>
 				</div>
@@ -249,7 +284,7 @@
 		</form>
 	</section>
 </div>
-
+<script src="~/js/authentication.js"></script>
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
 }
