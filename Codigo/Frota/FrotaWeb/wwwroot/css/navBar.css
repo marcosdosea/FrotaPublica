@@ -9,8 +9,8 @@
 
 body {
     margin: 0;
-    background: #D2E5F2;
-    color: #021E35;
+    background-color: #D2E5F2;
+    color: #171717;
     font-family: "Euclid Circular A", "Poppins";
 }
 
@@ -40,10 +40,29 @@ body {
 
     .sidebar.open {
         width: var(--width-open);
+
     }
+
+/* Remove as bordas de foco de links e botões */
+button:focus, a:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Ajuste as bordas caso precise de alguma visualização de foco */
+button:focus-visible, a:focus-visible {
+    outline: none; /* Ou ajuste ao estilo desejado */
+    box-shadow: none;
+}
+
 
 button {
     outline: none; /* Remove o contorno padrão ao focar ou clicar */
+}
+
+p {
+    text-align: left; /* Ajuste o alinhamento ao padrão desejado */
+    border: none; /* Remova bordas */
 }
 
 button.toggle {
@@ -62,6 +81,10 @@ button.toggle {
     border: #D7E7FC solid 4px; /* Cor da borda do ícone */
     transition: 0.3s;
 }
+
+    button.toggle:focus {
+        outline: none;
+    }
 
 .toggle:hover {
     color: #021E35; /* Cor do ícone ao passar o mouse */
@@ -141,6 +164,10 @@ button.toggle {
         transition: 0.3s;
     }
 
+    .sidebar .menu button:focus {
+        outline: none;
+    }
+
         .sidebar .menu button p {
             margin: auto;
             margin-left: 0px;
@@ -182,33 +209,42 @@ button.toggle {
 }
 
 .login-button {
-    position: absolute;
     display: flex;
     flex-direction: row;
     left: 0px;
-    bottom: 20px;
-    gap: 16px;
     align-items: center;
     justify-content: space-between;
     height: 56px;
-    width: 260px;
+    width: var(--width-closed);
     font-size: 14px;
     text-transform: capitalize;
     line-height: 1;
     color: inherit;
     cursor: pointer;
     opacity: 0.8;
-    transition: 0.3s;
+    transition: width 0.8s, opacity 0.3s;
+}
+
+.sidebar.open .login-button {
+    width: var(--width-open); /* A largura expandida */
 }
 
     .login-button a {
         display: flex;
+        text-decoration: none;
         flex-direction: row;
         align-items: center;
     }
 
+    .login-button a:hover {
+        text-decoration: none;
+    }
+    
+
         .login-button a p {
-            margin-left: 10px;
+            max-width: 140px;
+            overflow: hidden;
+            margin-left: 15px;
             font-weight: 600;
         }
 
@@ -216,8 +252,21 @@ button.toggle {
     margin: auto;
 }
 
-.sidebar:not(.open) .profile-link,
-.sidebar:not(.open) .logout-link {
+.manage-link {
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #0C69AB;
+}
+
+.sidebar.open .logout-link,
+.sidebar.open .profile-link {
+    display: block;
+}
+
+.sidebar:not(.open) .logout-link,
+.sidebar:not(.open) .profile-link {
     display: none;
 }
 

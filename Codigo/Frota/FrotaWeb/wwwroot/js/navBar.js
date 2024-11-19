@@ -103,9 +103,6 @@ function toggleSubmenu(id) {
 // Adiciona evento para retração da sidebar e fechamento de submenus
 document.querySelector(".sidebar-toggle").addEventListener("click", () => {
     const isSidebarClosing = sidebar.classList.contains("open");
-    if (isSidebarClosing) {
-        // Fecha todos os submenus ao retraí-la
-        closeAllSubmenus();
-    }
+    closeAllSubmenus();
     toggleOpen();
 });
