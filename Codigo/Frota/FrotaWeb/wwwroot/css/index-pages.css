@@ -1,0 +1,179 @@
+﻿.column-10 {
+    width: 10%; /* Coluna com 10% de largura */
+}
+
+.column-15 {
+    width: 15%; /* Coluna com 10% de largura */
+}
+
+.column-20 {
+    width: 20%; /* Coluna com 20% de largura */
+}
+
+.column-30 {
+    width: 30%; /* Coluna com 30% de largura */
+}
+
+.column-40 {
+    width: 40%; /* Coluna com 40% de largura */
+}
+
+.column-50 {
+    width: 50%; /* Coluna com 50% de largura */
+}
+
+.column-60 {
+    width: 60%; /* Coluna com 60% de largura */
+}
+
+.column-70 {
+    width: 70%; /* Coluna com 70% de largura */
+}
+
+.column-80 {
+    width: 80%; /* Coluna com 80% de largura */
+}
+
+.column-90 {
+    width: 90%; /* Coluna com 90% de largura */
+}
+
+.column-100 {
+    width: 100%; /* Coluna com 100% de largura */
+}
+
+
+
+/* Estilização genérica para páginas */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+}
+
+/* Título da página */
+.titulo-pagina {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+    .titulo-pagina .voltar {
+        height: 60px;
+        font-size: 20px;
+        color: #171717;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .titulo-pagina h1 {
+        height: 50px;
+        font-size: 30px;
+        font-weight: 700;
+        margin: 0;
+        color: #333;
+    }
+
+/* Botão Criar */
+.acoes .btn-primario {
+    background-color: #ffffff;
+    color: #171717;
+    border: none;
+    border-radius: 8px;
+    height: 40px;
+    width: 160px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 17px;
+    transition: background-color 0.3s;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+    .acoes .btn-primario:hover {
+        background-color: #0C69AB;
+        color: #ffffff;
+        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+/* Estilo da Tabela */
+.tabela {
+    width: 100%; /* A tabela ocupa 100% do espaço do contêiner */
+    max-width: 100%; /* Garante que ela não exceda o contêiner */
+    border-collapse: collapse;
+    border-radius: 10px; /* Arredonda os cantos */
+    overflow: hidden; /* Garante que o arredondamento funcione */
+    table-layout: fixed; /* Controla a largura das colunas */
+}
+
+    .tabela thead th {
+        background-color: #0C69AB;
+        color: #fff;
+        text-align: left;
+        font-size: 16px;
+        padding: 10px;
+        white-space: nowrap; /* Evita quebra de linha no cabeçalho */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Adiciona "..." caso o texto exceda */
+    }
+
+    .tabela tbody td {
+        white-space: nowrap; /* Impede a quebra de linha */
+        overflow: hidden; /* Oculta o conteúdo que excede */
+        text-overflow: ellipsis; /* Adiciona "..." no final do texto ocultado */
+        font-size: 15px;
+        height: 45px;
+        font-weight: 500;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+    }
+
+    .tabela tbody tr:nth-child(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .tabela tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    .tabela thead th:last-child,
+    .tabela tbody td:last-child {
+        text-align: center; /* Centraliza o conteúdo (opcional) */
+    }
+
+    /* Primeira coluna com centralização */
+    .tabela tbody td:first-child {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Última coluna com espaçamento entre itens */
+    .tabela tbody td:last-child {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .tabela tbody tr:nth-child(even) {
+        background-color: #E7E7E7; /* Cor para linhas pares */
+    }
+
+
+/* Ícones de ações */
+.icone {
+    margin-right: 10px;
+    color: #007bff;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+    .icone:hover {
+        color: #0056b3;
+    }

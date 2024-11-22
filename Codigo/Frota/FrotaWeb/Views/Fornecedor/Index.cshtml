@@ -1,126 +1,80 @@
 ﻿@model IEnumerable<FrotaWeb.Models.FornecedorViewModel>
 
-    @{
-    ViewData["Title"] = "Index";
-    }
+<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
 
-    <head>
-        <link rel="stylesheet" href="~/css/Fornecedor/style_fornecedor_index.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    </head>
-
-    <body>
-        <header class="main_header">
-            <h1 class="section_title">Fornecedores</h1>
-            <a asp-action="Create"><i class="fas fa-plus"></i>Adicionar Fornecedor</a>
-        </header>
-        <main class="main_content container">
-            <div class="content">
-                <div class="style-tabela">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Id)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Nome)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Cnpj)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Cep)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Rua)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Bairro)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Numero)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Complemento)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Cidade)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Estado)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Latitude)
-                                </th>
-                                <th class="top center">
-                                    @Html.DisplayNameFor(model => model.Longitude)
-                                </th>
-                                <th class="top center">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Id)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Nome)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cnpj)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cep)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Rua)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Bairro)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Numero)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Complemento)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Cidade)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Estado)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Latitude)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Longitude)
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("Edit", "Fornecedor", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
-                                        <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                                    </a>
-                                    <a href="@Url.Action("Details", "Fornecedor", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
-                                        <i class="fa fa-eye cor" aria-hidden="true"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", "Fornecedor", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
-                                        <i class="fa fa-trash cor" aria-hidden="true"></i>
-                                    </a>
-                                </td>
-                            </tr>
-        }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="clear">
-                </div>
-            </div>
-        </main>
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/js/Fornecedor/jscript_fornecedor_index.js"></script>
-    </body>
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Fornecedores</h1>
+        <div class="acoes">
+            <a asp-action="Create" class="btn btn-primario">Criar</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th class="column-10">
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th class="column-30">
+                        @Html.DisplayNameFor(model => model.Nome)
+                    </th>
+                    <th class="column-15">
+                        @Html.DisplayNameFor(model => model.Cnpj)
+                    </th>
+                    <th class="">
+                        @Html.DisplayNameFor(model => model.Cep)
+                    </th>
+                    <th class="">
+                        @Html.DisplayNameFor(model => model.Cidade)
+                    </th>
+                    <th class="column-10">
+                        @Html.DisplayNameFor(model => model.Estado)
+                    </th>
+                    <th class="column-15">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Nome)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cnpj)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cep)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cidade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Fornecedor", new { id = item.Id })" class="edit" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Details", "Fornecedor", new { id = item.Id })" class="details" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "Fornecedor", new { id = item.Id })" class="delete" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>
