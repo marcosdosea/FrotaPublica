@@ -11,29 +11,24 @@ namespace FrotaWeb.Models
         public uint Id { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
-        [DisplayName("código do veículo")]
-        public uint IdVeiculoPercurso { get; set; }
+        [DisplayName("Código do percurso")]
+        public uint IdPercurso { get; set; }
 
-        [Required(ErrorMessage = "O {0} é obrigatório")]
-        [DisplayName("código do pessoa")]
-        public uint IdPessoaPercurso { get; set; }
+		[Required(ErrorMessage = "O {0} é obrigatório")]
+		[DisplayName("Código do fornecedor")]
+		public uint IdFornecedor { get; set; }
 
-        [DataType(DataType.DateTime)]
-        [Required(ErrorMessage = "A {0} é obrigatório")]
-        [DisplayName("data do abastecimento")]
+		[DataType(DataType.DateTime)]
+        [Required(ErrorMessage = "A {0} é obrigatória")]
+        [DisplayName("Data do abastecimento")]
         public DateTime DataHora { get; set; }
 
-        [Required(ErrorMessage = "A {0} é obrigatório")]
-        [DisplayName("leitura do odômetro")]
+        [Required(ErrorMessage = "A {0} é obrigatória")]
+        [DisplayName("Leitura do odômetro")]
         public int Odometro { get; set; }
 
-        [Required(ErrorMessage = "Os {0} é obrigatório")]
+        [Required(ErrorMessage = "Os {0} são obrigatórios")]
         [DisplayName("Litros Abastecidos")]
         public int Litros { get; set; }
-
-        [Required(ErrorMessage = "O {0} é obrigatório")]
-        [DisplayName("código do fornecedor")]
-        public uint IdFornecedor { get; set; }
-
     }
 }

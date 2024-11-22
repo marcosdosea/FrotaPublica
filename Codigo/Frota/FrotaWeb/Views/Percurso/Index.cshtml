@@ -1,0 +1,113 @@
+﻿@model IEnumerable<FrotaWeb.Models.PercursoViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdVeiculo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdPessoa)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraSaida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHoraRetorno)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocalPartida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LatitudePartida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LongitudePartida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocalChegada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LatitudeChegada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LongitudeChegada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OdometroInicial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OdometroFinal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Motivo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdVeiculo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdPessoa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraSaida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHoraRetorno)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocalPartida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LatitudePartida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LongitudePartida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocalChegada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LatitudeChegada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LongitudeChegada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OdometroInicial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OdometroFinal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Motivo)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

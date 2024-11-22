@@ -2,64 +2,290 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "FrotaWeb";
+	ViewData["Title"] = "FrotaWeb";
+	Layout = null;
 }
 <head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+	<style>
+		header, #sidebar {
+			display: none;
+		}
 
-    <style>
-        header, #sidebar {
-            display: none;
-        }
+		footer {
+			background-color: #08448c;
+		}
 
-        body {
-            background: linear-gradient(50deg, white 95%, #08448c 5%);
-        }
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
 
-        footer {
-            background-color: #08448c;
-        }
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background-color: #e6f0fa;
+		}
 
-    </style>
+		.container {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: row;
+			width: 100vw;
+			background-color: #D9E9F4;
+		}
 
+		.left-section {
+			position: relative;
+			width: 60%;
+			height: 100vh;
+		}
+
+			.left-section img {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+		.right-section {
+			height: 100vh;
+			width: 40%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.form-container {
+			width: 300px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: #D9E9F4;
+		}
+
+		.right-section img {
+			width: 150px;
+			height: auto;
+			margin: 15px;
+		}
+
+		.form {
+			width: 100%;
+			max-width: 350px;
+			display: flex;
+			flex-direction: column;
+		}
+
+			.form p {
+				height: 35px;
+				font-size: 18px;
+				display: flex;
+				flex-direction: column;
+				text-align: left;
+				justify-content: center;
+				font-weight: 600;
+			}
+
+			.form input {
+				padding: 10px;
+				font-size: 1em;
+				border: 1px solid rgba(0, 0, 0, 0.25);
+				border-radius: 5px;
+				background-color: #fff;
+			}
+
+				.form input:focus {
+					border: 1px solid #ccc;
+					outline: none;
+					border-color: #0C69AB;
+				}
+
+			.form a {
+				text-align: left;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				height: 40px;
+				font-size: 17px;
+				color: #0C69AB;
+				text-decoration: none;
+				font-weight: 600;
+			}
+
+				.form a:hover {
+					color: #000000;
+				}
+
+			.form button {
+				margin-top: 23px;
+				margin-bottom: 23px;
+				margin-left: 10%;
+				margin-right: 10%;
+				padding: 10px;
+				font-size: 1em;
+				color: white;
+				background-color: #0C69AB;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+			}
+
+				.form button:hover {
+					background-color: #155cb0;
+				}
+
+		.register-link {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			margin-top: 20px;
+			font-size: 16px;
+			color: #000000;
+			font-weight: 600;
+			width: 100%;
+			text-align: center;
+		}
+
+			.register-link div {
+				margin-top: 5px;
+				text-align: center;
+			}
+
+			.register-link a {
+				margin-left: 5px;
+				color: #1a73e8;
+				text-decoration: none;
+			}
+
+				.register-link a:hover {
+					color: #000000;
+				}
+
+		.messages {
+			color: red;
+			text-align: center;
+			padding-top: 5px;
+			padding-bottom: 5px;
+		}
+
+			.messages li {
+				list-style-type: none;
+				padding-left: 0;
+				margin: 0;
+			}
+
+		#lembrar {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 15px;
+			margin-top: 15px;
+			color: #000;
+		}
+
+		.container-input-icon, .container-input-icon {
+			position: relative;
+		}
+
+			.container-input-icon > input, .container-input-icon > input {
+				width: 100%;
+				padding-right: 40px;
+			}
+
+		#eye-icon {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			cursor: pointer;
+			color: #0C69AB;
+		}
+
+		#email-icon {
+			position: absolute;
+			right: 10px;
+			top: calc(50% - 7px);
+			color: #0C69AB;
+		}
+
+		@@media screen and (max-width: 930px) {
+			.left-section {
+				width: 0%;
+				height: 50vh;
+			}
+
+			.right-section {
+				width: 100%;
+				padding: 8px;
+			}
+
+			.form-container {
+				border: 2px solid #0C69AB;
+				border-radius: 10px;
+				padding: 20px;
+				margin-top: 8px;
+				margin-bottom: 8px;
+			}
+
+			.register-link {
+				margin-top: 15px;
+				position: relative;
+				bottom: 0;
+			}
+		}
+	</style>
 </head>
-
-<br>
-<br>
-<br>
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-            <form id="account" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-floating">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                    <label asp-for="Input.Email" class="form-label">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
-                    <label asp-for="Input.Password" class="form-label">Senha</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div>
-                     <p></p>
-                </div>
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary" style="background-color:#08448c"><i class="fa fa-sign-in me-2"></i>Entrar</button>
-                </div>
-                <div>
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Esqueci minha senha?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrar novo utilizador</a>
-                    </p>
-
-                </div>
-            </form>
-    </div>
+<div class="container">
+	<div class="left-section">
+		<img src="~/img/background-login.png" alt="background" />
+	</div>
+	<section class="right-section">
+		<form id="account" method="post">
+			<div class="form-container">
+				<img src="~/img/logo.png" alt="Frota logo" />
+				<div asp-validation-summary="ModelOnly" class="messages"></div>
+				<div class="form">
+					<p>Email</p>
+					<div class="container-input-icon">
+						<input type="email" asp-for="Input.Email" class="form-control" autocomplete="email" required aria-required="true" />
+						<i id="email-icon" class="fa fa-envelope" aria-hidden="true"></i>
+					</div>
+					<span asp-validation-for="Input.Email" class="messages"></span>
+					<p>Senha</p>
+					<div class="container-input-icon">
+						<input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="current-password" required aria-required="true" />
+						<i id="eye-icon" class="fa fa-eye cor" aria-hidden="true"></i>
+					</div>
+					<span asp-validation-for="Input.Password" class="messages"></span>
+					<label id="lembrar">
+						<input asp-for="Input.RememberMe" type="checkbox">
+						<span>Lembrar de mim?</span>
+					</label>
+					<button id="login-submit" type="submit">Entrar</button>
+				</div>
+				<div class="register-link">
+					<a asp-page="./ForgotPassword">Esqueceu a senha?</a>
+					<div>Não tem uma conta?<a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registre-se</a></div>
+				</div>
+			</div>
+		</form>
+	</section>
 </div>
-
+<script src="~/js/authentication.js"></script>
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+	<partial name="_ValidationScriptsPartial" />
 }

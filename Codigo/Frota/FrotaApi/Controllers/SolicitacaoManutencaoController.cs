@@ -11,9 +11,9 @@ namespace FrotaApi.Controllers
     public class SolicitacaoManutencaoController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ISolicitacaomanutencaoService _service;
+        private readonly ISolicitacaoManutencaoService _service;
 
-        SolicitacaoManutencaoController(ISolicitacaomanutencaoService service, IMapper mapper)
+        SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper)
         {
             _mapper = mapper;
             _service = service;
@@ -32,7 +32,7 @@ namespace FrotaApi.Controllers
         [HttpGet("{id}")]
         public ActionResult Get(uint id)
         {
-            Solicitacaomanutencao solicitacao = _service.Get(id);
+            var solicitacao = _service.Get(id);
             if(solicitacao == null)
                 return NotFound();
 
@@ -40,7 +40,7 @@ namespace FrotaApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] SolicitacaomanutencaoViewModel solicitacaoModel)
+        public ActionResult Post([FromBody] SolicitacaoManutencaoViewModel solicitacaoModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Dados Inválidos.");
@@ -52,7 +52,7 @@ namespace FrotaApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(uint id, [FromBody] SolicitacaomanutencaoViewModel solicitacaoModel)
+        public ActionResult Put(uint id, [FromBody] SolicitacaoManutencaoViewModel solicitacaoModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Dados Inválidos.");
@@ -68,7 +68,7 @@ namespace FrotaApi.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(uint id)
         {
-            Solicitacaomanutencao solicitacao = _service.Get(id);
+            var solicitacao = _service.Get(id);
             if(solicitacao == null)
                 return NotFound();
 

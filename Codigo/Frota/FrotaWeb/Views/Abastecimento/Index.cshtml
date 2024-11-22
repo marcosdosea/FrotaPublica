@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Abastecimento</h1>
+<h1>Index</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary" style="background-color:#08448c">Novo Abastecimento</a>
+    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -16,13 +16,19 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.IdPercurso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdFornecedor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHora)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Odometro)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Litros)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHora)
             </th>
             <th></th>
         </tr>
@@ -34,13 +40,19 @@
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.IdPercurso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdFornecedor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHora)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Odometro)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Litros)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHora)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

@@ -23,9 +23,9 @@ namespace Service.Tests
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            var frotas = new List<Frota>
+            var frotas = new List<Frotum>
             {
-                new Frota
+                new Frotum
                 {
                     Id = 1,
                     Nome = "Transportes Oliveira",
@@ -38,7 +38,7 @@ namespace Service.Tests
                     Cidade = "São Paulo",
                     Estado = "SP"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 2,
                     Nome = "Logística Santos",
@@ -51,7 +51,7 @@ namespace Service.Tests
                     Cidade = "Rio de Janeiro",
                     Estado = "RJ"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 3,
                     Nome = "Expresso Litoral",
@@ -64,7 +64,7 @@ namespace Service.Tests
                     Cidade = "Salvador",
                     Estado = "BA"
                 },
-                new Frota
+                new Frotum
                 {
                     Id = 4,
                     Nome = "Carga Pesada Ltda",
@@ -88,7 +88,7 @@ namespace Service.Tests
         {
             //Act
             frotaService!.Create(
-                new Frota
+                new Frotum
                 {
                     Id = 5,
                     Nome = "Transportadora Rápida",
@@ -149,7 +149,7 @@ namespace Service.Tests
             //Act
             var listaFrota = frotaService!.GetAll();
             //Assert
-            Assert.IsInstanceOfType(listaFrota, typeof(IEnumerable<Frota>));
+            Assert.IsInstanceOfType(listaFrota, typeof(IEnumerable<Frotum>));
             Assert.IsNotNull(listaFrota);
             Assert.AreEqual(4, listaFrota.Count());
             Assert.AreEqual((uint)1, listaFrota.First().Id);

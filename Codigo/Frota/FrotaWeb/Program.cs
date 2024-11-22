@@ -31,6 +31,8 @@ namespace FrotaWeb
 			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
 			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
 			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
+			builder.Services.AddTransient<IPercursoService, PercursoService>();
+			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
 
 			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -63,7 +65,7 @@ namespace FrotaWeb
 
 					// Default User settings.
 					options.User.AllowedUserNameCharacters =
-							"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+							"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+!^ ";
 					options.User.RequireUniqueEmail = false;
 
 					// Default Lockout settings

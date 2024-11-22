@@ -7,9 +7,9 @@ public partial class Abastecimento
 {
     public uint Id { get; set; }
 
-    public uint IdVeiculoPercurso { get; set; }
+    public uint IdFornecedor { get; set; }
 
-    public uint IdPessoaPercurso { get; set; }
+    public uint IdPercurso { get; set; }
 
     public DateTime DataHora { get; set; }
 
@@ -17,9 +17,7 @@ public partial class Abastecimento
 
     public int Litros { get; set; }
 
-    public uint IdFornecedor { get; set; }
-
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 
-    public virtual Percurso IdNavigation { get; set; } = null!;
+    public virtual Percurso IdPercursoNavigation { get; set; } = null!;
 }

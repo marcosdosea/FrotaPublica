@@ -156,8 +156,7 @@ namespace FrotaWeb.Controllers.Tests
 			return new AbastecimentoViewModel
 			{
 				Id = 1,
-				IdVeiculoPercurso = 1,
-				IdPessoaPercurso = 1,
+				IdPercurso = 1,
 				DataHora = DateTime.Parse("2021-07-02"),
 				Odometro = 10000,
 				Litros = 50,
@@ -170,8 +169,7 @@ namespace FrotaWeb.Controllers.Tests
 			return new Abastecimento
 			{
 				Id = 1,
-				IdVeiculoPercurso = 1,
-				IdPessoaPercurso = 1,
+				IdPercurso = 1,
 				DataHora = DateTime.Parse("2021-07-02"),
 				Odometro = 10000,
 				Litros = 50,
@@ -186,8 +184,7 @@ namespace FrotaWeb.Controllers.Tests
 				new Abastecimento
 				{
 					Id = 1,
-					IdVeiculoPercurso = 1,
-					IdPessoaPercurso = 1,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-07-02"),
 					Odometro = 10000,
 					Litros = 50,
@@ -196,8 +193,7 @@ namespace FrotaWeb.Controllers.Tests
 				new Abastecimento
 				{
 					Id = 2,
-					IdVeiculoPercurso = 2,
-					IdPessoaPercurso = 1,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-06-11"),
 					Odometro = 20000,
 					Litros = 60,
@@ -206,8 +202,7 @@ namespace FrotaWeb.Controllers.Tests
 				new Abastecimento
 				{
 					Id = 3,
-					IdVeiculoPercurso = 1,
-					IdPessoaPercurso = 2,
+					IdPercurso = 1,
 					DataHora = DateTime.Parse("2021-08-12"),
 					Odometro = 25000,
 					Litros = 100,
