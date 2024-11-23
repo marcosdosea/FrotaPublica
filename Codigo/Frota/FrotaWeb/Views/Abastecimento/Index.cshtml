@@ -1,65 +1,72 @@
 ﻿@model IEnumerable<FrotaWeb.Models.AbastecimentoViewModel>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdPercurso)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdFornecedor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataHora)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Odometro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Litros)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdPercurso)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdFornecedor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataHora)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odometro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Litros)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Abastecimentos</h1>
+        <div class="acoes">
+            <a asp-action="Create" class="btn btn-primario">Criar</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdPercurso)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdFornecedor)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DataHora)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Odometro)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Litros)
+                    </th>
+                    <th class="column-15"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdPercurso)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdFornecedor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DataHora)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Odometro)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Litros)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>

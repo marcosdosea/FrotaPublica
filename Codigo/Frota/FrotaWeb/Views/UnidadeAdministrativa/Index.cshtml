@@ -1,16 +1,25 @@
 ﻿@model IEnumerable<FrotaWeb.Models.UnidadeAdministrativaViewModel>
 
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
 
-<main class="container mt-4">
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Unidades Administrativas</h1>
+        <div class="acoes">
+            <a asp-action="Create" class="btn btn-primario">Criar</a>
+        </div>
+    </div>
     <div class="table-responsive">
-        <table class="table tabela-listra table-hover table-bordered">
+        <table class="tabela">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.Nome)</th>
                     <th>@Html.DisplayNameFor(model => model.Cep)</th>
                     <th>@Html.DisplayNameFor(model => model.Numero)</th>
-                    <th></th>
+                    <th class="column-15"></th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -35,8 +44,5 @@
                 }
             </tbody>
         </table>
-    </div>
-    <div>
-        <a asp-action="Create" class="btn btn-primary">Adicionar</a>
     </div>
 </main>
