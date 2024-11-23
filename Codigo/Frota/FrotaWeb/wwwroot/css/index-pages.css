@@ -34,6 +34,10 @@
     width: 80%; /* Coluna com 80% de largura */
 }
 
+.column-85 {
+    width: 85%; /* Coluna com 80% de largura */
+}
+
 .column-90 {
     width: 90%; /* Coluna com 90% de largura */
 }
@@ -156,8 +160,6 @@ body {
 
     /* Última coluna com espaçamento entre itens */
     .tabela tbody td:last-child {
-        display: flex;
-        justify-content: space-around;
     }
 
     .tabela tbody tr:nth-child(even) {
@@ -167,9 +169,11 @@ body {
 
 /* Ícones de ações */
 .icone {
-    margin-right: 10px;
     color: #007bff;
-    font-size: 18px;
+    margin-left: 7px;
+    margin-right: 7px;
+    height: 15px;
+    font-size: 15px;
     text-decoration: none;
     transition: color 0.3s;
 }

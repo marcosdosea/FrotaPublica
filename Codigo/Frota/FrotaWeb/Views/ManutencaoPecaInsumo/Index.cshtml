@@ -72,9 +72,15 @@
 							@Html.DisplayFor(modelItem => item.Subtotal)
 						</td>
 						<td>
-							@Html.ActionLink("Edit", "Edit", new { id = item.IdManutencao }) |
-							@Html.ActionLink("Details", "Details", new { id = item.IdManutencao }) |
-							@Html.ActionLink("Delete", "Delete", new { id = item.IdManutencao })
+							<a href="@Url.Action("Edit", "ManutencaoPecaInsumo", new { id = item.IdManutencao })" class="edit icone" title="Editar" data-toggle="tooltip">
+								<i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Details", "ManutencaoPecaInsumo", new { id = item.IdManutencao })" class="details icone" title="Detalhes" data-toggle="tooltip">
+								<i class="fa fa-eye cor" aria-hidden="true"></i>
+							</a>
+							<a href="@Url.Action("Delete", "ManutencaoPecaInsumo", new { id = item.IdManutencao })" class="delete icone" title="Excluir" data-toggle="tooltip">
+								<i class="fa fa-trash cor" aria-hidden="true"></i>
+							</a>
 						</td>
 					</tr>
 				}

@@ -32,14 +32,14 @@
                         <td>@Html.DisplayFor(modelItem => item.Cor)</td>
                         <td>@Html.DisplayFor(modelItem => item.Status)</td>
                         <td>
-                            <a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="icone">
-                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
                             </a>
-                            <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="icone">
-                                <i class="fa fa-pencil-alt" aria-hidden="true"></i>
+                            <a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
                             </a>
-                            <a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="icone">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            <a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
                             </a>
                         </td>
                     </tr>
