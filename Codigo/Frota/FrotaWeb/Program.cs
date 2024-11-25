@@ -31,7 +31,8 @@ namespace FrotaWeb
 			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
 			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
 			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
-			builder.Services.AddTransient<IVeiculoPecaInsumoService, VeiculoPecaInsumoService>();
+      builder.Services.AddTransient<IPercursoService, PercursoService>();
+			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
 
 			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

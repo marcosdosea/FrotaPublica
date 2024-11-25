@@ -26,6 +26,7 @@ html {
 body {
     margin-bottom: 60px;
     min-height: 100vh;
+    background-color: #D2E5F2;
 }
 
 .my-button {

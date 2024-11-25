@@ -1,7 +1,12 @@
-﻿namespace Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Core;
 
 public partial class Percurso
 {
+    public uint Id { get; set; }
+
     public uint IdVeiculo { get; set; }
 
     public uint IdPessoa { get; set; }
