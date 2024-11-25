@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,6 +68,23 @@ namespace Service
         {
             return context.Veiculos.AsNoTracking();
         }
-    }
+
+		public IEnumerable<VeiculoDTO> GetVeiculoDTO()
+        {
+            var veiculoDTO = from veiculo in context.Veiculos
+                             join modelo in context.Modeloveiculos
+                             on veiculo.IdModeloVeiculo equals modelo.Id
+                             orderby veiculo.Id
+                             select new VeiculoDTO
+                             {
+                                 Id = veiculo.Id,
+                                 Modelo = modelo.Nome,
+                                 Cor = veiculo.Cor,
+                                 Placa = veiculo.Placa,
+                                 Ano = veiculo.Ano
+                             };
+            return veiculoDTO.ToList();
+        }
+	}
 }
 
