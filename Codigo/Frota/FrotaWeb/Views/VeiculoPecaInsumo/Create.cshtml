@@ -1,0 +1,86 @@
+﻿@model FrotaWeb.Models.VeiculoPecaInsumoViewModel
+@using Core.DTO
+@using Core
+
+@{
+    ViewData["Title"] = "Create";
+    var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
+    var pecainsumos = ViewData["PecaInsumos"] as IEnumerable<Pecainsumo> ?? Enumerable.Empty<Pecainsumo>();
+}
+
+<h1>Create</h1>
+
+<h4>VeiculoPecaInsumoViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IdVeiculo" class="control-label"></label>
+                <select asp-for="IdVeiculo" class="custom-select select2">
+                    @if (!veiculos.Any())
+                    {
+                        <option value="" disabled selected hidden>Veiculo</option>
+                    }
+                    else
+                    {
+                        foreach (var veiculo in veiculos)
+                        {
+                            <option value="@veiculo.Id">@veiculo.Placa</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPecaInsumo" class="control-label"></label>
+                <select asp-for="IdPecaInsumo" class="custom-select select2">
+                    @if (!pecainsumos.Any())
+                    {
+                        <option value="" disabled selected hidden>Peça Insumo</option>
+                    }
+                    else
+                    {
+                        foreach (var pecaInsumo in pecainsumos)
+                        {
+                            <option value="@pecaInsumo.Id">@pecaInsumo.Descricao</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="IdPecaInsumo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataFinalGarantia" class="control-label"></label>
+                <input asp-for="DataFinalGarantia" class="form-control" />
+                <span asp-validation-for="DataFinalGarantia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KmFinalGarantia" class="control-label"></label>
+                <input asp-for="KmFinalGarantia" class="form-control" />
+                <span asp-validation-for="KmFinalGarantia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataProximaTroca" class="control-label"></label>
+                <input asp-for="DataProximaTroca" class="form-control" />
+                <span asp-validation-for="DataProximaTroca" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KmProximaTroca" class="control-label"></label>
+                <input asp-for="KmProximaTroca" class="form-control" />
+                <span asp-validation-for="KmProximaTroca" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

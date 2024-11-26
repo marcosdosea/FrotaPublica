@@ -1,0 +1,61 @@
+﻿@model FrotaWeb.Models.VeiculoPecaInsumoViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    var viewModel = new VeiculoPecaInsumoViewModel();
+    viewModel = Model;
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>VeiculoPecaInsumoViewModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdVeiculo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdVeiculo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdPecaInsumo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdPecaInsumo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataFinalGarantia)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataFinalGarantia)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KmFinalGarantia)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KmFinalGarantia)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataProximaTroca)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataProximaTroca)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KmProximaTroca)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KmProximaTroca)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-controller="VeiculoPecaInsumo"
+       asp-action="Edit"
+       asp-route-idVeiculo="@viewModel.IdVeiculo"
+       asp-route-idPecaInsumo="@viewModel.IdPecaInsumo">
+        <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+    </a>
+    <a asp-action="Index">Back to List</a>
+</div>
