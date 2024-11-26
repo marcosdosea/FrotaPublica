@@ -27,10 +27,14 @@ namespace FrotaWeb.Controllers
 			return View(manutencoesPecaInsumoViewModel);
 		}
 
-		// GET: ManutencaoPecaInsumoController/Details/5
-		public ActionResult Details(uint id)
+		// GET: ManutencaoPecaInsumoController/Details/5/6
+		public ActionResult Details(uint idManutencao, uint idPecaInsumo)
 		{
-			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(id);
+			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(idManutencao, idPecaInsumo);
+			if(manutencaoPecaInsumo == null)
+			{
+				return NotFound();
+			}
 			var manutencaoPecaInsumoViewModel = mapper.Map<ManutencaoPecaInsumoViewModel>(manutencaoPecaInsumo);
 			return View(manutencaoPecaInsumoViewModel);
 		}
@@ -54,10 +58,10 @@ namespace FrotaWeb.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		// GET: ManutencaoPecaInsumoController/Edit/5
-		public ActionResult Edit(uint id)
+		// GET: ManutencaoPecaInsumoController/Edit/5/6
+		public ActionResult Edit(uint idManutencao, uint idPecaInsumo)
 		{
-			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(id);
+			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(idManutencao, idPecaInsumo);
 			var manutencaoPecaInsumoViewModel = mapper.Map<ManutencaoPecaInsumoViewModel>(manutencaoPecaInsumo);
 			return View(manutencaoPecaInsumoViewModel);
 		}
@@ -65,7 +69,7 @@ namespace FrotaWeb.Controllers
 		// POST: ManutencaoPecaInsumoController/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit(uint id, ManutencaoPecaInsumoViewModel manutencaoPecaInsumoViewModel)
+		public ActionResult Edit(uint idManutencao, ManutencaoPecaInsumoViewModel manutencaoPecaInsumoViewModel)
 		{
 			if (ModelState.IsValid)
 			{
@@ -75,10 +79,10 @@ namespace FrotaWeb.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		// GET: ManutencaoPecaInsumoController/Delete/5
-		public ActionResult Delete(uint id)
+		// GET: ManutencaoPecaInsumoController/Delete/5/6
+		public ActionResult Delete(uint idManutencao, uint idPecaInsumo)
 		{
-			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(id);
+			var manutencaoPecaInsumo = manutencaoPecaInsumoService.Get(idManutencao, idPecaInsumo);
 			var manutencaoPecaInsumoViewModel = mapper.Map<ManutencaoPecaInsumoViewModel>(manutencaoPecaInsumo);
 			return View(manutencaoPecaInsumoViewModel);
 		}
@@ -86,9 +90,9 @@ namespace FrotaWeb.Controllers
 		// POST: ManutencaoPecaInsumoController/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(uint id, ManutencaoPecaInsumoViewModel manutencaoPecaInsumoViewModel)
+		public ActionResult Delete(uint idManutencao, ManutencaoPecaInsumoViewModel manutencaoPecaInsumoViewModel)
 		{
-			manutencaoPecaInsumoService.Delete(id);
+			manutencaoPecaInsumoService.Delete(idManutencao, manutencaoPecaInsumoViewModel.IdPecaInsumo);
 			return RedirectToAction(nameof(Index));
 		}
 	}

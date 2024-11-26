@@ -4,8 +4,8 @@
 	{
 		uint Create(Manutencaopecainsumo manutencaoPecaInsumo);
 		void Edit(Manutencaopecainsumo manutencaoPecaInsumo);
-		void Delete(uint id);
-		Manutencaopecainsumo? Get(uint id);
+		void Delete(uint idManutencao, uint idPecaInsumo);
+		Manutencaopecainsumo? Get(uint idManutencao, uint idPecaInsumo);
 		IEnumerable<Manutencaopecainsumo> GetAll();
 	}
 }

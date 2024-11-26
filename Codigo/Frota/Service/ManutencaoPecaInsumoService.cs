@@ -28,10 +28,12 @@ namespace Service
 		/// <summary>
 		/// Exclui uma manutencão de peça/insumo da base de dados
 		/// </summary>
-		/// <param name="id"></param>
-		public void Delete(uint id)
+		/// <param name="idManutencao">O id da manutenção</param>
+		/// <param name="idPecaInsumo">O id da peça/insumo</param>
+		public void Delete(uint idManutencao, uint idPecaInsumo)
 		{
-			var manutencaoPecaInsumo = context.Manutencaopecainsumos.Find(id);
+			var manutencaoPecaInsumo = context.Manutencaopecainsumos
+			  .FirstOrDefault(manutencaopPecaInsumo => manutencaopPecaInsumo.IdManutencao == idManutencao && manutencaopPecaInsumo.IdPecaInsumo == idPecaInsumo);
 			if (manutencaoPecaInsumo != null)
 			{
 				context.Remove(manutencaoPecaInsumo);
@@ -52,11 +54,13 @@ namespace Service
 		/// <summary>
 		/// Obter uma manutencão de peça/insumo pelo id
 		/// </summary>
-		/// <param name="id"></param>
+		/// <param name="idManutencao">O id da manutenção</param>
+		/// <param name="idPecaInsumo">O id da peça/insumo</param>
 		/// <returns></returns>
-		public Manutencaopecainsumo? Get(uint id)
+		public Manutencaopecainsumo? Get(uint idManutencao, uint idPecaInsumo)
 		{
-			return context.Manutencaopecainsumos.Find(id);
+			return context.Manutencaopecainsumos
+			  .FirstOrDefault(manutencaopPecaInsumo => manutencaopPecaInsumo.IdManutencao == idManutencao && manutencaopPecaInsumo.IdPecaInsumo == idPecaInsumo);
 		}
 
 		/// <summary>
