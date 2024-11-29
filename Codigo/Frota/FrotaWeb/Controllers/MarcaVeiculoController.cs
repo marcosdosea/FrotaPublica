@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-	[Authorize]
-	public class MarcaVeiculoController : Controller
+    [Authorize(Roles = "ADMINISTRADOR")]
+    public class MarcaVeiculoController : Controller
 	{
 		private readonly IMarcaVeiculoService _service;
 		private readonly IMapper mapper;
