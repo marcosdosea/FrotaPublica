@@ -7,7 +7,7 @@ using Service;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "GESTOR, MECÂNICO")]
     public class ManutencaoController : Controller
     {
         private readonly IManutencaoService manutencaoService;

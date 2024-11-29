@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-	[Authorize]
-	public class VistoriaController : Controller
+    [Authorize(Roles = "GESTOR, MOTORISTA")]
+    public class VistoriaController : Controller
 	{
 		private readonly IVistoriaService vistoriaService;
 		private readonly IMapper mapper;

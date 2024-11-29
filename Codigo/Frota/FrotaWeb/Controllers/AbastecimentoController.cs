@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FrotaWeb.Controllers
 {
 
-    [Authorize]
+    [Authorize(Roles = "GESTOR, MOTORISTA")]
     public class AbastecimentoController : Controller
     {
         private readonly IAbastecimentoService _abastecimentoService;

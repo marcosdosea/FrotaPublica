@@ -2,12 +2,14 @@
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service;
+
 
 namespace FrotaWeb.Controllers
 {
-	public class UnidadeAdministrativaController : Controller
+    [Authorize(Roles = "GESTOR")]
+    public class UnidadeAdministrativaController : Controller
 	{
 		private readonly IUnidadeAdministrativaService unidadeAdministrativaService;
 		private readonly IMapper mapper;

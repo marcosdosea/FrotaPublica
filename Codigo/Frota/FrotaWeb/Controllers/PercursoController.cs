@@ -3,15 +3,12 @@ using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.PortableExecutable;
-using System.Text.RegularExpressions;
 
 namespace FrotaWeb.Controllers
 {
-	[Authorize]
-	public class PercursoController : Controller
+    [Authorize(Roles = "GESTOR, MOTORISTA")]
+    public class PercursoController : Controller
 	{
 		private readonly IPercursoService percursoService;
 		private readonly IMapper mapper;
