@@ -4,6 +4,12 @@
 @inject SignInManager<UsuarioIdentity> SignInManager
 @inject UserManager<UsuarioIdentity> UserManager
 
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var email = user?.Email;
+    var userName = email?.Split('@')[0];
+}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -113,7 +119,7 @@
                     <div class="login-button">
                         <a class="manage-link" asp-area="Identity" asp-page="/Account/Manage/Index">
                             <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
-                            <p class="profile-link">@UserManager.GetUserName(User)</p>
+                            <p class="profile-link">@userName</p>
                         </a>
                         <a class="logout-link" data-bs-toggle="modal" data-bs-target="#sairModal">
                             <span class="material-symbols-outlined" style="margin-right: 22px;">logout</span>
