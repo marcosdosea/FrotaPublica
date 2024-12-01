@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Util;
 
 
 namespace FrotaWeb.Areas.Identity.Pages.Account
@@ -66,19 +67,19 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 		/// </summary>
 		public class InputModel
 		{
-			/// <summary>
-			/// Guardar o nome do usuário
-			/// </summary>
-			[RegularExpression(@"^[A-Za-zÀ-ÖØ-öø-ÿ]{2,}(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$", ErrorMessage = "Nome inválido")]
-			[StringLength(256, ErrorMessage = "O nome não pode ter mais de 256 caracteres.")]
-			[Required(ErrorMessage = "O nome é obrigatório")]
-			public string UserName { get; set; }
+            /// <summary>
+            /// Guardar o nome do usuário
+            /// </summary>
+            [CPF(ErrorMessage = "O cpf informado não é válido")]
+            [Required(ErrorMessage = "O cpf é obrigatório")]
+            [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter 11 caracteres")]
+            public string UserName { get; set; }
 
-			/// <summary>
-			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-			///     directly from your code. This API may change or be removed in future releases.
-			/// </summary>
-			[Required(ErrorMessage = "O email é obrigatório")]
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required(ErrorMessage = "O email é obrigatório")]
 			[StringLength(256, ErrorMessage = "O email não pode ter mais de 256 caracteres.")]
 			[EmailAddress]
 			[Display(Name = "Email")]

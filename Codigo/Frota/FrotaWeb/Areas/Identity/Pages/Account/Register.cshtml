@@ -251,9 +251,9 @@
 				<img src="~/img/logo.png" alt="Frota logo" />
 				<div class="form">
 					<div asp-validation-summary="ModelOnly" class="messages"></div>
-					<p>Nome</p>
+					<p>Cpf</p>
 					<div class="container-input-icon">
-						<input asp-for="Input.UserName" class="form-control" autocomplete="username" required aria-required="true" />
+						<input type="text" asp-for="Input.UserName" class="form-control" maxlength="11" required aria-required="true" />
 						<i id="user-icon" class="fa fa-user" aria-hidden="true"></i>
 					</div>
 					<span asp-validation-for="Input.UserName" class="messages"></span>

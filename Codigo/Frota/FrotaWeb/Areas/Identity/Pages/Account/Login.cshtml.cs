@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Util;
 
 namespace FrotaWeb.Areas.Identity.Pages.Account
 {
@@ -69,10 +70,10 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required(ErrorMessage = "O email é obrigatório")]
-            [StringLength(256, ErrorMessage = "O email não pode ter mais de 256 caracteres.")]
-            [EmailAddress]
-            public string Email { get; set; }
+            [CPF(ErrorMessage = "O cpf informado não é válido")]
+            [Required(ErrorMessage = "O cpf é obrigatório")]
+            [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter 11 caracteres")]
+            public string UserName { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -118,7 +119,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var user = userManager.Users.SingleOrDefault(u => u.Email.ToLower() == Input.Email.ToLower());
+                var user = userManager.Users.SingleOrDefault(u => u.UserName == Input.UserName);
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
