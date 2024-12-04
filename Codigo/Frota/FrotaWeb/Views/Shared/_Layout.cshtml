@@ -8,6 +8,11 @@
     var user = await UserManager.GetUserAsync(User);
     var email = user?.Email;
     var userName = email?.Split('@')[0];
+    string roleUser = "";
+    @foreach (var role in User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role))
+    {
+        roleUser = role.Value;
+    }
 }
 
 <!DOCTYPE html>
@@ -42,80 +47,105 @@
                         <span class="material-symbols-outlined">home</span>
                         <p>Página Inicial</p>
                     </button>
-                    
-                    <button id="Manutencao" type="button" onclick="toggleSubmenu('manutencao-submenu')">
-                        <span class="material-symbols-outlined">build</span>
-                        <p>Manutenção</p>
-                    </button>
-                    <!--expande manutenção-->
-                    <div class="submenu" id="manutencao-submenu">
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Solicitacaomanutencao")';">
-                            <p>Solicitar Manutenção</p>
-                        </button>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Manutencao")';">
+                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Mecânico")
+                    {
+                        <button id="Manutencao" type="button" onclick="toggleSubmenu('manutencao-submenu')">
+                            <span class="material-symbols-outlined">build</span>
                             <p>Manutenção</p>
                         </button>
-                    </div>
+                        <!--expande manutenção-->
+                        <div class="submenu" id="manutencao-submenu">
+                            @if (roleUser == "Gestor" || roleUser == "Motorista"){
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Solicitacaomanutencao")';">
+                                    <p>Solicitar Manutenção</p>
+                                </button>
+                            }
+                            @if (roleUser == "Gestor" || roleUser == "Mecânico"){
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Manutencao")';">
+                                    <p>Manutenção</p>
+                                </button>
+                            }
+                        </div>
+                    }
                     <a></a>
-                    <button id="Pecas" type="button" onclick="toggleSubmenu('pecasInsumos-submenu')">
-                        <span class="material-symbols-outlined">settings</span>
-                        <p>Peças e Insumos</p>
-                    </button>
-                    <!--expande peças e insumos-->
-                    <div class="submenu" id="pecasInsumos-submenu">
-                        <a></a>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "PecaInsumo")';">
-                            <p>Peças</p>
+                    @if (roleUser == "Administrador"){
+                        <button id="Pecas" type="button" onclick="toggleSubmenu('pecasInsumos-submenu')">
+                            <span class="material-symbols-outlined">settings</span>
+                            <p>Peças e Insumos</p>
                         </button>
-                        <a></a>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaPecaInsumo")';">
-                            <p>Marcas</p>
-                        </button>
-                    </div>
+                        <!--expande peças e insumos-->
+                        <div class="submenu" id="pecasInsumos-submenu">
+                            <a></a>
+                            <button type="button" onclick="window.location.href='@Url.Action("Index", "PecaInsumo")';">
+                                <p>Peças</p>
+                            </button>
+                            <a></a>
+                            <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaPecaInsumo")';">
+                                <p>Marcas</p>
+                            </button>
+                        </div>
+                    }
                     <a></a>
-                    <button id="Veiculo" type="button" onclick="toggleSubmenu('veiculos-submenu')">
-                        <span class="material-symbols-outlined">directions_car</span>
-                        <p>Veículos</p>
-                    </button>
-                    <!--expande veiculos-->
-                    <div class="submenu" id="veiculos-submenu">
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Veiculo")';">
+                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Administrador"){
+                        <button id="Veiculo" type="button" onclick="toggleSubmenu('veiculos-submenu')">
+                            <span class="material-symbols-outlined">directions_car</span>
                             <p>Veículos</p>
                         </button>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "Abastecimento")';">
-                            <p>Abastecimentos</p>
+                        <!--expande veiculos-->
+                        <div class="submenu" id="veiculos-submenu">
+                            @if (roleUser == "Gestor")
+                            {
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Veiculo")';">
+                                    <p>Veículos</p>
+                                </button>
+                            }
+                            @if (roleUser == "Gestor" || roleUser == "Motorista")
+                            {
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Abastecimento")';">
+                                    <p>Abastecimentos</p>
+                                </button>
+                            }
+                            @if (roleUser == "Administrador")
+                            {
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaVeiculo")';">
+                                    <p>Marcas de Veículos</p>
+                                </button>
+                                <button type="button" onclick="window.location.href='@Url.Action("Index", "ModeloVeiculo")';">
+                                    <p>Modelos de Veículos</p>
+                                </button>
+                            }
+                        </div>
+                    }
+                    @if (roleUser == "Gestor"){
+                        <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
+                            <span class="material-symbols-outlined">badge</span>
+                            <p>Condutores</p>
                         </button>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaVeiculo")';">
-                            <p>Marcas de Veículos</p>
+                        <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
+                            <span class="material-symbols-outlined">package_2</span>
+                            <p>Fornecedores</p>
                         </button>
-                        <button type="button" onclick="window.location.href='@Url.Action("Index", "ModeloVeiculo")';">
-                            <p>Modelos de Veículos</p>
+                        <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
+                            <span class="material-symbols-outlined">space_dashboard</span>
+                            <p>Relatórios</p>
                         </button>
-                    </div>
-                    <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
-                        <span class="material-symbols-outlined">badge</span>
-                        <p>Condutores</p>
-                    </button>
-                    <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
-                        <span class="material-symbols-outlined">local_shipping</span>
-                        <p>Frota</p>
-                    </button>
-                    <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
-                        <span class="material-symbols-outlined">package_2</span>
-                        <p>Fornecedores</p>
-                    </button>
-                    <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
-                        <span class="material-symbols-outlined">space_dashboard</span>
-                        <p>Relatórios</p>
-                    </button>
-                    <button id="Vistoria" type="button" onclick="window.location.href='@Url.Action("Index", "Vistoria")';">
-                        <span class="material-symbols-outlined">playlist_add_check</span>
-                        <p>Vistoria</p>
-                    </button>
-                    <button id="UnidadeAdministrativa" type="button" onclick="window.location.href='@Url.Action("Index", "UnidadeAdministrativa")';">
-                        <span class="material-symbols-outlined">apartment</span>
-                        <p>Unidade Administrativa</p>
-                    </button>
+                        <button id="UnidadeAdministrativa" type="button" onclick="window.location.href='@Url.Action("Index", "UnidadeAdministrativa")';">
+                            <span class="material-symbols-outlined">apartment</span>
+                            <p>Unidade Administrativa</p>
+                        </button>
+                    }
+                    @if (roleUser == "Administrador"){
+                        <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
+                            <span class="material-symbols-outlined">local_shipping</span>
+                            <p>Frota</p>
+                        </button>
+                    }
+                    @if (roleUser == "Gestor" || roleUser == "Motorista"){
+                        <button id="Vistoria" type="button" onclick="window.location.href='@Url.Action("Index", "Vistoria")';">
+                            <span class="material-symbols-outlined">playlist_add_check</span>
+                            <p>Vistoria</p>
+                        </button>
+                    }
                     <div class="login-button">
                         <a class="manage-link" asp-area="Identity" asp-page="/Account/Manage/Index">
                             <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
