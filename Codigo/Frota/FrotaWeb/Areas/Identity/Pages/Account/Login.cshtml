@@ -215,7 +215,7 @@
             color: #0C69AB;
         }
 
-        #email-icon {
+        #user-icon {
             position: absolute;
             right: 10px;
             top: calc(50% - 7px);
@@ -261,8 +261,8 @@
                 <div class="form">
                     <p>Cpf</p>
                     <div class="container-input-icon">
-                        <input type="text" asp-for="Input.UserName" class="form-control" maxlength="11" required aria-required="true" />
-                        <i id="email-icon" class="fa fa-envelope" aria-hidden="true"></i>
+                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="form-control" maxlength="14" required aria-required="true" />
+                        <i id="user-icon" class="fa fa-user" aria-hidden="true"></i>
                     </div>
                     <span asp-validation-for="Input.UserName" class="messages"></span>
                     <p>Senha</p>

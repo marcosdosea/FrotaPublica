@@ -72,7 +72,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
             /// </summary>
             [CPF(ErrorMessage = "O cpf informado não é válido")]
             [Required(ErrorMessage = "O cpf é obrigatório")]
-            [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter 11 caracteres")]
+            [StringLength(14, MinimumLength = 14, ErrorMessage = "O cpf deve ter 11 caracteres")]
             public string UserName { get; set; }
 
             /// <summary>
@@ -119,7 +119,8 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var user = userManager.Users.SingleOrDefault(u => u.UserName == Input.UserName);
+                var userName = Input.UserName.Replace(".", "").Replace("-", "");
+                var user = userManager.Users.SingleOrDefault(u => u.UserName == userName);
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);

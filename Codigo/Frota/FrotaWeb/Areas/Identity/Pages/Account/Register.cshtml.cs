@@ -72,7 +72,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
             /// </summary>
             [CPF(ErrorMessage = "O cpf informado não é válido")]
             [Required(ErrorMessage = "O cpf é obrigatório")]
-            [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve ter 11 caracteres")]
+            [StringLength(14, MinimumLength = 14, ErrorMessage = "O cpf deve ter 11 caracteres")]
             public string UserName { get; set; }
 
             /// <summary>
@@ -125,7 +125,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
 
 				await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
 				await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-				user.UserName = Input.UserName;
+				user.UserName = Input.UserName.Replace(".", "").Replace("-", "");
 				var result = await _userManager.CreateAsync(user, Input.Password);
 
 				if (result.Succeeded)
