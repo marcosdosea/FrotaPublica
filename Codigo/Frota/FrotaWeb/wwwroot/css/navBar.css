@@ -28,6 +28,7 @@ body {
 
 .sidebar {
     position: absolute;
+    z-index: 15;
     top: 15px;
     left: 15px;
     bottom: 15px;
@@ -36,6 +37,7 @@ body {
     background: #ffffff; /* Cor de fundo da barra lateral */
     transition: width 0.3s;
     box-shadow: 0 0 10px rgb(0 0 0 / 10%); /* Sombra do ícone */
+    border: 0.5px solid #ccc;
 }
 
     .sidebar.open {

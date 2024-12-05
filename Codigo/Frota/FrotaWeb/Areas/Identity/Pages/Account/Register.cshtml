@@ -253,7 +253,7 @@
 					<div asp-validation-summary="ModelOnly" class="messages"></div>
 					<p>Cpf</p>
 					<div class="container-input-icon">
-						<input type="text" asp-for="Input.UserName" class="form-control" maxlength="11" required aria-required="true" />
+						<input id="cpf-input" type="text" asp-for="Input.UserName" class="form-control" maxlength="14" required aria-required="true" />
 						<i id="user-icon" class="fa fa-user" aria-hidden="true"></i>
 					</div>
 					<span asp-validation-for="Input.UserName" class="messages"></span>
