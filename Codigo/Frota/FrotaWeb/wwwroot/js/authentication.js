@@ -26,3 +26,13 @@ inputCpf.addEventListener('keypress', () => {
         inputCpf.value += '-'
     }
 })
+
+inputCpf.addEventListener('keydown', (e) => {
+    let inputValue = inputCpf.value;
+    if (e.key === 'Backspace') {
+        const lastChar = inputValue.charAt(inputValue.length - 1);
+        if (lastChar === '.' || lastChar === '-') {
+            inputCpf.value = inputValue.slice(0, -1);
+        }
+    }
+})
