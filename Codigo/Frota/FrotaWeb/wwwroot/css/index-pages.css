@@ -192,18 +192,23 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-radius: 8px;
-    overflow: hidden;
 }
-    .navigation-pages li:first-child {
-        border-top-left-radius: 8px; /* Arredonda o canto superior esquerdo */
-        border-bottom-left-radius: 8px; /* Arredonda o canto inferior esquerdo */
+    .navigation-pages button {
+        background-color: #0C69AB;
+        border: none;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-content: center;
     }
+        .navigation-pages button:hover {
+            background-color: #013759;
+        }
 
-    .navigation-pages li:last-child {
-        border-top-right-radius: 8px; /* Arredonda o canto superior direito */
-        border-bottom-right-radius: 8px; /* Arredonda o canto inferior direito */
-    }
+        .navigation-pages button span {
+            color: #fff;
+            font-weight: 600;
+        }
 
 .page-item {
     list-style: none;
@@ -213,7 +218,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    margin: 0px;
+    margin-right: 1px;
 }
 
 
@@ -222,6 +227,7 @@ body {
     color: #fff;
     border-radius: 8px;
     font-weight: 600;
+    margin: 0px;
     text-decoration: none;
     outline: none;
     box-shadow: none;
@@ -239,11 +245,11 @@ body {
         align-items: center;
     }
 
-    .page-item:active a {
-        background-color: #0C69AB; /* Destaque para o botão ativo */
-        cursor: default; /* Cursor padrão para botão ativo */
-        border-radius: 8px;
-    }
+.page-item.active a {
+    background-color: #000; /* Destaque para o botão ativo */
+    cursor: default; /* Cursor padrão para botão ativo */
+    border-radius: 8px;
+}
 
     .page-item:disabled {
         list-style: none;
@@ -264,4 +270,5 @@ body {
         background-color: #fff;
         border-radius: 8px;
         height: 30px;
+        margin-left: 2px;
     }

@@ -28,7 +28,7 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa")]
         public ActionResult Index([FromRoute] int page = 0)
         {
-            int length = 20;
+            int length = 15;
             var listaPessoas = pessoaService.GetAll()
                 .Skip(length * page)
                 .Take(length)

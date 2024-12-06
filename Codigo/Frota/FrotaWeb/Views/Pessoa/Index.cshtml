@@ -49,9 +49,12 @@
         </table>
     </div>
     <nav class="navigation-pages">
-        <li id="arrow" class="page-item @(ViewBag.CurrentPage == 0 ? "disabled" : "")">
-            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = ViewBag.CurrentPage - 1 })"><span class="material-symbols-outlined">arrow_back</span></a>
-        </li>
+        @if(ViewBag.CurrentPage != 0){
+            <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = ViewBag.CurrentPage - 1 })';">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+        }
+        
 
         @for (int i = 0; i < ViewBag.TotalPages; i++)
         {
@@ -63,13 +66,13 @@
             </li>
         }
 
-        <li id="arrow" class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages - 1 ? "disabled" : "")">
-            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = ViewBag.CurrentPage + 1 })"><span class="material-symbols-outlined">arrow_forward</span></a>
-        </li>
-
+        @if (ViewBag.CurrentPage != ViewBag.TotalPages - 1){
+            <button id="arrow" type="button" class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages - 1 ? "disabled" : "")" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = ViewBag.CurrentPage + 1 })';">
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+        }
         <div></div>
     </nav>
-    
 </main>
 
 @section Scripts {
