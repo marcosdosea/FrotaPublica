@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "GESTOR, MOTORISTA")]
+    [Authorize(Roles = "Gestor, Motorista")]
     public class PercursoController : Controller
 	{
 		private readonly IPercursoService percursoService;
@@ -18,10 +18,19 @@ namespace FrotaWeb.Controllers
 			this.mapper = mapper;
 		}
 		// GET: PercursoController
-		public ActionResult Index()
+		public ActionResult Index(int page = 0)
 		{
-			var listaPercurso = percursoService.GetAll();
-			var listaPercursoModel = mapper.Map<List<PercursoViewModel>>(listaPercurso);
+			int length = 15;
+			var listaPercursos = percursoService.GetAll()
+								.Skip(page * length)
+								.Take(length)
+								.ToList();
+			var totalPercursos = percursoService.GetAll().Count();
+			var totalPages = (int)Math.Ceiling((double)totalPercursos / length);
+
+			ViewBag.CurrentPage = page;
+			ViewBag.TotalPages = totalPages;
+			var listaPercursoModel = mapper.Map<List<PercursoViewModel>>(listaPercursos);
 			return View(listaPercursoModel);
 		}
 
