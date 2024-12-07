@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "GESTOR")]
+    [Authorize(Roles = "Gestor")]
     public class VeiculoController : Controller
     {
         private readonly IVeiculoService veiculoService;
@@ -26,10 +26,23 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: Veiculo
-        public ActionResult Index()
+        [Route ("Veiculo/Index/{page}")]
+        [Route ("Veiculo/{page}")]
+        [Route ("Veiculo")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
-            var veiculos = veiculoService.GetAll();
-            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(veiculos);
+            int length = 15;
+            var listaVeiculos = veiculoService.GetAll()
+                                .Skip(page * length)
+                                .Take(length)
+                                .ToList();
+
+            var totalVeiculos = veiculoService.GetAll().Count();
+            var totalPages = (int)Math.Ceiling((double)totalVeiculos / length);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(listaVeiculos);
             return View(veiculosViewModel);
         }
 

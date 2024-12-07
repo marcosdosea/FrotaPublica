@@ -47,4 +47,31 @@
             </tbody>
         </table>
     </div>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav class="navigation-pages">
+            @if (ViewBag.CurrentPage != 0)
+            {
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Veiculo", new { page = ViewBag.CurrentPage - 1 })';">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+            }
+            @for (int i = 0; i < ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    @{
+                        var numeroPageLast = i + 1;
+                    }
+                    <a class="page-link" href="@Url.Action("Index", "Veiculo", new { page = i })">@numeroPageLast</a>
+                </li>
+            }
+            @if (ViewBag.CurrentPage != ViewBag.TotalPages - 1)
+            {
+                <button id="arrow" type="button" class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages - 1 ? "disabled" : "")" onclick="window.location.href='@Url.Action("Index", "Veiculo", new { page = ViewBag.CurrentPage + 1 })';">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            }
+            <div></div>
+        </nav>
+    }
 </main>
