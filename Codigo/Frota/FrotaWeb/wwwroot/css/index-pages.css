@@ -219,6 +219,8 @@ body {
     align-items: center;
     cursor: pointer;
     margin-right: 1px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 
