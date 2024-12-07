@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "ADMINISTRADOR")]
+    [Authorize(Roles = "Administrador")]
     public class MarcaPecaInsumoController : Controller
     {
         private readonly IMarcaPecaInsumoService _marcaPecaInsumoService;
