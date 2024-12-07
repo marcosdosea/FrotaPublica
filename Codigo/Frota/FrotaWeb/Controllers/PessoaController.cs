@@ -4,12 +4,13 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace FrotaWeb.Controllers
 {
 
-    [Authorize(Roles = "GESTOR")]
+    [Authorize(Roles = "Gestor")]
     public class PessoaController : Controller
     {
         private readonly IPessoaService pessoaService;
@@ -22,12 +23,28 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: PessoaController
-        public ActionResult Index()
+        [Route("Pessoa/Index/{page}")]
+        [Route("Pessoa/{page}")]
+        [Route("Pessoa")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
-            var listaPessoas = pessoaService.GetAll();
+            int length = 15;
+            var listaPessoas = pessoaService.GetAll()
+                .Skip(length * page)
+                .Take(length)
+                .ToList();
+
+            var totalPessoas = pessoaService.GetAll().Count();
+            var totalPages = (int)Math.Ceiling((double)totalPessoas / length);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             var listaPessoasModel = mapper.Map<List<PessoaViewModel>>(listaPessoas);
             return View(listaPessoasModel);
-        }
+        } 
+
+
 
         // GET: PessoaController/Details/5
         public ActionResult Details(uint id)
@@ -93,5 +110,8 @@ namespace FrotaWeb.Controllers
             pessoaService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+
+
+       
     }
 }

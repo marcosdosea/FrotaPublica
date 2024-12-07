@@ -6,7 +6,7 @@ const submenus = document.querySelectorAll('.submenu');
 
 // Listas de controllers para cada submenu
 const veiculosControllers = ["Veiculo", "Abastecimento", "MarcaVeiculo", "ModeloVeiculo"];
-const manutencaoControllers = ["Solicitacaomanutencao", "Manutencao"];
+const manutencaoControllers = ["Solicitacaomanutencao", "Manutencao", "ManutencaoPecaInsumo"];
 const pecasInsumosControllers = ["PecaInsumo", "MarcaPecaInsumo"];
 
 // Obtém o caminho da URL (ex: "/Veiculo")
