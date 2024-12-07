@@ -16,9 +16,12 @@ namespace FrotaWeb.Controllers
 		{
 			this.percursoService = percursoService;
 			this.mapper = mapper;
-		}
-		// GET: PercursoController
-		public ActionResult Index(int page = 0)
+        }
+        // GET: PercursoController
+        [Route("Percurso/Index/{page}")]
+        [Route("Percurso/{page}")]
+        [Route("Percurso")]
+        public ActionResult Index([FromRoute]int page = 0)
 		{
 			int length = 15;
 			var listaPercursos = percursoService.GetAll()
