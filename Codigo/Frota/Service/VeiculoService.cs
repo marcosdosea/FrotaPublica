@@ -2,16 +2,21 @@
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Service
 {
     public class VeiculoService : IVeiculoService
     {
         private readonly FrotaContext context;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public VeiculoService(FrotaContext context)
+        public VeiculoService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
         {
             this.context = context;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -66,10 +71,27 @@ namespace Service
         /// <returns></returns>
         public IEnumerable<Veiculo> GetAll()
         {
-            return context.Veiculos.AsNoTracking();
+            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+            if (string.IsNullOrEmpty(cpf))
+                throw new UnauthorizedAccessException("Usuário não autenticado.");
+
+            var idFrota = context.Pessoas
+                                 .AsNoTracking()
+                                 .Where(p => p.Cpf == cpf)
+                                 .Select(p => p.IdFrota)
+                                 .FirstOrDefault();
+
+            if (idFrota == 0)
+                throw new InvalidOperationException("Frota não encontrada para o usuário autenticado.");
+
+            return context.Veiculos
+                          .AsNoTracking()
+                          .Where(v => v.IdFrota == idFrota)
+                          .ToList();
         }
 
-		public IEnumerable<VeiculoDTO> GetVeiculoDTO()
+        public IEnumerable<VeiculoDTO> GetVeiculoDTO()
         {
             var veiculoDTO = from veiculo in context.Veiculos
                              join modelo in context.Modeloveiculos
