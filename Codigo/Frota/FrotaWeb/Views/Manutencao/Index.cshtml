@@ -99,4 +99,76 @@
             </tbody>
         </table>
     </div>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav class="navigation-pages">
+            <div></div>
+            @if(ViewBag.TotalPages > 10){
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Manutencao", new { page = 0 })';">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                @if (ViewBag.CurrentPage < 5){
+                    @for (int i = 0; i < 9; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
+                {
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                }
+                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5){
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                }
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Manutencao", new { page = ViewBag.TotalPages -1 })';">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            }
+            @if (ViewBag.TotalPages <= 10)
+            {
+                @for (int i = 0; i < ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        @{
+                            var numeroPageLast = i + 1;
+                        }
+                        <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                    </li>
+                }
+            }
+        </nav>
+    }
 </main>
