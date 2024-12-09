@@ -193,6 +193,7 @@ body {
     flex-direction: row;
     align-items: center;
 }
+
     .navigation-pages button {
         background-color: #0C69AB;
         border: none;
@@ -201,6 +202,7 @@ body {
         justify-content: center;
         align-content: center;
     }
+
         .navigation-pages button:hover {
             background-color: #013759;
         }
@@ -240,12 +242,12 @@ body {
     height: 100%; /* Preenche o botão */
 }
 
-    .page-item span {
-        font-size: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+.page-item span {
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .page-item.active a {
     background-color: #000; /* Destaque para o botão ativo */
@@ -253,24 +255,24 @@ body {
     border-radius: 8px;
 }
 
-    .page-item:disabled {
-        list-style: none;
-        background-color: red;
-        pointer-events: none;
-        cursor: not-allowed;
-    }
+.page-item:disabled {
+    list-style: none;
+    background-color: red;
+    pointer-events: none;
+    cursor: not-allowed;
+}
 
-    .page-item.disabled a {
-        background-color: #0C69AB; /* Cor cinza para desabilitado */
-        pointer-events: none; /* Desativa interatividade */
-        cursor: not-allowed; /* Mostra cursor de não permitido */
-        border-radius: 8px;
-    }
+.page-item.disabled a {
+    background-color: #0C69AB; /* Cor cinza para desabilitado */
+    pointer-events: none; /* Desativa interatividade */
+    cursor: not-allowed; /* Mostra cursor de não permitido */
+    border-radius: 8px;
+}
 
-    .navigation-pages div {
-        flex-grow: 1; 
-        background-color: #fff;
-        border-radius: 8px;
-        height: 30px;
-        margin-left: 2px;
-    }
+.navigation-pages div {
+    flex-grow: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    height: 30px;
+    margin-right: 4px;
+}
