@@ -268,10 +268,11 @@ body {
     cursor: not-allowed; /* Mostra cursor de não permitido */
     border-radius: 8px;
 }
-    .navigation-pages div {
-        flex-grow: 1; 
-        background-color: #fff;
-        border-radius: 8px;
-        height: 30px;
-        margin-right: 4px;
-    }
+
+.navigation-pages div {
+    flex-grow: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    height: 30px;
+    margin-right: 4px;
+}
