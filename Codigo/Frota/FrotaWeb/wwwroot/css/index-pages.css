@@ -249,7 +249,6 @@ body {
     align-items: center;
 }
 
-
 .page-item.active a {
     background-color: #000; /* Destaque para o botão ativo */
     cursor: default; /* Cursor padrão para botão ativo */
