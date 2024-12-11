@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "GESTOR")]
+    [Authorize(Roles = "Gestor")]
     public class FornecedorController : Controller
     {
 
