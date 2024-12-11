@@ -7,7 +7,7 @@ using Service;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "GESTOR, MECÂNICO")]
+    [Authorize(Roles = "Gestor, Mecânico")]
     public class ManutencaoController : Controller
     {
         private readonly IManutencaoService manutencaoService;
@@ -20,10 +20,22 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: ManutencaoController
-        public ActionResult Index()
+        [Route("Manutencao/Index/{page}")]
+        [Route("Manutencao/{page}")]
+        [Route("Manutencao")]
+        public ActionResult Index([FromRoute]int page = 0)
         {
-            var listaManutencao = manutencaoService.GetAll();
-            var listaManutencaoViewModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencao);
+            int length = 15;
+            var listaManutencoes = manutencaoService.GetAll()
+                                    .Skip(page * length)
+                                    .Take(length)
+                                    .ToList();
+            var totalManutencoes = manutencaoService.GetAll().Count();
+            var totalPages = (int)Math.Ceiling((double)totalManutencoes / length);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            var listaManutencaoViewModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencoes);
             return View(listaManutencaoViewModel);
         }
 
