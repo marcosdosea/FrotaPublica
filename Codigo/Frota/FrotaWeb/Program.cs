@@ -31,10 +31,11 @@ namespace FrotaWeb
 			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
 			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
 			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
-      builder.Services.AddTransient<IPercursoService, PercursoService>();
+			builder.Services.AddTransient<IPercursoService, PercursoService>();
 			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
+            builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 			var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
 
