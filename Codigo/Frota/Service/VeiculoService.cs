@@ -11,12 +11,12 @@ namespace Service
     public class VeiculoService : IVeiculoService
     {
         private readonly FrotaContext context;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IFrotaService frotaService;
 
-        public VeiculoService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
+        public VeiculoService(FrotaContext context, IFrotaService frotaService)
         {
             this.context = context;
-            this.httpContextAccessor = httpContextAccessor;
+            this.frotaService = frotaService;
         }
 
         /// <summary>
@@ -71,25 +71,31 @@ namespace Service
         /// <returns></returns>
         public IEnumerable<Veiculo> GetAll()
         {
-            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
+            uint idFrota = frotaService.GetFrotaByUser();
 
-            if (string.IsNullOrEmpty(cpf))
-                throw new UnauthorizedAccessException("Usuário não autenticado.");
+            return context.Veiculos
+                          .AsNoTracking()
+                          .Where(v => v.IdFrota == idFrota);
+        }
 
-            var idFrota = context.Pessoas
-                                 .AsNoTracking()
-                                 .Where(p => p.Cpf == cpf)
-                                 .Select(p => p.IdFrota)
-                                 .FirstOrDefault();
-
-            if (idFrota == 0)
-                throw new InvalidOperationException("Frota não encontrada para o usuário autenticado.");
+        /// <summary>
+        /// Obtém uma lista parcial de veículos para realizar a paginação
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="lenght"></param>
+        /// <returns>Lista de veículos</returns>
+        public IEnumerable<Veiculo> GetPaged(int page, int lenght)
+        {
+            uint idFrota = frotaService.GetFrotaByUser();
 
             return context.Veiculos
                           .AsNoTracking()
                           .Where(v => v.IdFrota == idFrota)
-                          .ToList();
+                          .Skip(page * lenght)
+                          .Take(lenght);
         }
+
+
 
         public IEnumerable<VeiculoDTO> GetVeiculoDTO()
         {
