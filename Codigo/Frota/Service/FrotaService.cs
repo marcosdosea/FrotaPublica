@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,12 @@ namespace Service
 	{
 		private readonly FrotaContext context;
 
-		public FrotaService(FrotaContext context)
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public FrotaService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
 		{
 			this.context = context;
+			this.httpContextAccessor = httpContextAccessor;
 		}
 		/// <summary>
 		/// Adionar nova frota na base de dados
@@ -68,11 +72,36 @@ namespace Service
 			return context.Frota.Find(idFrota);
 
 		}
+
 		/// <summary>
-		/// Obter a lista de frota cadastradas
+		/// Obter o id da frota através do usuário autenticado
 		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<Frotum> GetAll()
+		/// <returns>Id do Frota</returns>
+		/// <exception cref="UnauthorizedAccessException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+        public uint GetFrotaByUser()
+        {
+            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+            if (string.IsNullOrEmpty(cpf))
+                throw new UnauthorizedAccessException("Usuário não autenticado.");
+
+            var idFrota = context.Pessoas
+                                 .AsNoTracking()
+                                 .Where(p => p.Cpf == cpf)
+                                 .Select(p => p.IdFrota)
+                                 .FirstOrDefault();
+
+            if (idFrota == 0)
+                throw new InvalidOperationException("Frota não encontrada para o usuário autenticado.");
+            return idFrota;
+        }
+
+        /// <summary>
+        /// Obter a lista de frota cadastradas
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Frotum> GetAll()
 		{
 			return context.Frota.AsNoTracking();
 		}

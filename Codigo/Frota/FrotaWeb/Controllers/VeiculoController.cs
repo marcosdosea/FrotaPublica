@@ -32,10 +32,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0)
         {
             int length = 15;
-            var listaVeiculos = veiculoService.GetAll()
-                                .Skip(page * length)
-                                .Take(length)
-                                .ToList();
+            var listaVeiculos = veiculoService.GetPaged(page, length).ToList();
 
             var totalVeiculos = veiculoService.GetAll().Count();
             var totalPages = (int)Math.Ceiling((double)totalVeiculos / length);
@@ -56,6 +53,7 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: Veiculo/Create
+        [Route("Veiculo/Create")]
         public ActionResult Create()
         {
             ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica();
