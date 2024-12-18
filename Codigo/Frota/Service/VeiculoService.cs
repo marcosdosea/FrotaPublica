@@ -96,7 +96,10 @@ namespace Service
         }
 
 
-
+        /// <summary>
+        /// Obtém uma listagem simplificada de veículos
+        /// </summary>
+        /// <returns>Retorna uma listagem de VeiculosDTO</returns>
         public IEnumerable<VeiculoDTO> GetVeiculoDTO()
         {
             var veiculoDTO = from veiculo in context.Veiculos
