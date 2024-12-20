@@ -4,6 +4,7 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service;
 
 namespace FrotaWeb.Controllers
 {
@@ -11,25 +12,35 @@ namespace FrotaWeb.Controllers
     [Authorize(Roles = "Gestor, Motorista")]
     public class AbastecimentoController : Controller
     {
-        private readonly IAbastecimentoService _abastecimentoService;
-        private readonly IMapper _mapper;
+        private readonly IAbastecimentoService abastecimentoService;
+        private readonly IMapper mapper;
 
         public AbastecimentoController(IAbastecimentoService abastecimentoService, IMapper mapper)
         {
-            _mapper = mapper;
-            _abastecimentoService = abastecimentoService;
+            this.mapper = mapper;
+            this.abastecimentoService = abastecimentoService;
         }
         // GET: AbastecimentoController
-        public ActionResult Index()
+        [Route("Abastecimento/Index/{page}")]
+        [Route("Abastecimento/{page}")]
+        [Route("Abastecimento")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
-            var listAbastecimento = _abastecimentoService.GetAll();
-            var listView = _mapper.Map<List<AbastecimentoViewModel>>(listAbastecimento);
-            return View(listView);
+            int length = 15;
+            var listaAbastecimentos = abastecimentoService.GetPaged(page, length).ToList();
+
+            var totalAbastecimentos = abastecimentoService.GetAll().Count();
+            var totalPages = (int)Math.Ceiling((double)totalAbastecimentos / length);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            var abastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
+            return View(abastecimentosViewModel);
         }
 
         public ActionResult Abastecer(AbastecimentoViewModel abastecimento)
         {
-            var _abastecimento = _mapper.Map<Abastecimento>(abastecimento);
+            var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
 
             return View();
 
@@ -37,12 +48,13 @@ namespace FrotaWeb.Controllers
         // GET: AbastecimentoController/Details/5
         public ActionResult Details(uint id)
         {
-            var abastecimento = _abastecimentoService.Get(id);
-            var abastecimentoView = _mapper.Map<AbastecimentoViewModel>(abastecimento);
+            var abastecimento = abastecimentoService.Get(id);
+            var abastecimentoView = mapper.Map<AbastecimentoViewModel>(abastecimento);
             return View(abastecimentoView);
         }
 
         // GET: AbastecimentoController/Create
+        [Route("Abastecimento/Create")]
         public ActionResult Create()
         {
             return View();
@@ -55,8 +67,8 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var _abastecimento = _mapper.Map<Abastecimento>(abastecimento);
-                _abastecimentoService.Create(_abastecimento);
+                var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
+                abastecimentoService.Create(_abastecimento);
             }
 
             return RedirectToAction(nameof(Index));
@@ -65,8 +77,8 @@ namespace FrotaWeb.Controllers
         // GET: AbastecimentoController/Edit/5
         public ActionResult Edit(uint id)
         {
-            var abastecimento = _abastecimentoService.Get(id);
-            var abastecimentoView = _mapper.Map<AbastecimentoViewModel>(abastecimento);
+            var abastecimento = abastecimentoService.Get(id);
+            var abastecimentoView = mapper.Map<AbastecimentoViewModel>(abastecimento);
             return View(abastecimentoView);
         }
 
@@ -77,8 +89,8 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var _abastecimento = _mapper.Map<Abastecimento>(abastecimento);
-                _abastecimentoService.Create(_abastecimento);
+                var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
+                abastecimentoService.Create(_abastecimento);
             }
 
             return RedirectToAction(nameof(Index));
@@ -87,8 +99,8 @@ namespace FrotaWeb.Controllers
         // GET: AbastecimentoController/Delete/5
         public ActionResult Delete(uint id)
         {
-            var abastecimento = _abastecimentoService.Get(id);
-            var abastecimentoViewModel = _mapper.Map<AbastecimentoViewModel>(abastecimento);
+            var abastecimento = abastecimentoService.Get(id);
+            var abastecimentoViewModel = mapper.Map<AbastecimentoViewModel>(abastecimento);
             return View(abastecimentoViewModel);
         }
 
@@ -97,7 +109,7 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, AbastecimentoViewModel abastecimento)
         {
-            _abastecimentoService.Delete(id);
+            abastecimentoService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

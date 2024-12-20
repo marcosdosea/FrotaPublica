@@ -73,5 +73,13 @@ namespace Service
         {
             return context.Abastecimentos.AsNoTracking();
         }
+
+        public IEnumerable<Abastecimento> GetPaged(int page, int lenght)
+        {
+            return context.Abastecimentos
+                          .AsNoTracking()
+                          .Skip(page * lenght)
+                          .Take(lenght);
+        }
     }
 }
