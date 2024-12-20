@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Core;
 using Core.Service;
-using FrotaWeb.Models;
-using Microsoft.AspNetCore.Mvc;
+using FrotaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FrotaApi.Controllers
 {

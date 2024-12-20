@@ -1,10 +1,9 @@
-﻿using AutoMapper;
-using Core.Service;
+﻿using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using Core;
-using Microsoft.AspNetCore.Mvc;
-using FrotaWeb.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Core.Service;
+using FrotaApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FrotaApi.Controllers
 {
