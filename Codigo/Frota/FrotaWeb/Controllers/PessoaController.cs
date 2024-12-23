@@ -29,10 +29,7 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0)
         {
             int length = 15;
-            var listaPessoas = pessoaService.GetAll()
-                .Skip(length * page)
-                .Take(length)
-                .ToList();
+            var listaPessoas = pessoaService.GetPaged(page, length);
 
             var totalPessoas = pessoaService.GetAll().Count();
             var totalPages = (int)Math.Ceiling((double)totalPessoas / length);
@@ -42,9 +39,7 @@ namespace FrotaWeb.Controllers
 
             var listaPessoasModel = mapper.Map<List<PessoaViewModel>>(listaPessoas);
             return View(listaPessoasModel);
-        } 
-
-
+        }
 
         // GET: PessoaController/Details/5
         public ActionResult Details(uint id)

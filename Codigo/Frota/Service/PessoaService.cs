@@ -12,10 +12,12 @@ namespace Service
 	public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
+        private readonly IFrotaService frotaService;
 
-        public PessoaService(FrotaContext context)
+        public PessoaService(FrotaContext context, IFrotaService frotaService)
         {
             this.context = context;
+            this.frotaService = frotaService;
         }
         /// <summary>
         /// Cadastra uma nova pessoa
@@ -69,6 +71,17 @@ namespace Service
         public IEnumerable<Pessoa> GetAll()
         {
             return context.Pessoas.AsNoTracking();
+        }
+
+        public IEnumerable<Pessoa> GetPaged(int page, int lenght)
+        {
+            uint idFrota = frotaService.GetFrotaByUser();
+
+            return context.Pessoas
+                          .Where(v => v.IdFrota == idFrota)
+                          .AsNoTracking()
+                          .Skip(page * lenght)
+                          .Take(lenght);
         }
     }
 }
