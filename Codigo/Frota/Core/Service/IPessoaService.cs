@@ -7,5 +7,7 @@
         void Delete(uint idPessoa);
         IEnumerable<Pessoa> GetAll();
         Pessoa? Get(uint idPessoa);
-	}
+        IEnumerable<Pessoa> GetPaged(int page, int lenght);
+
+    }
 }
