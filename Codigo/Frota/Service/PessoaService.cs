@@ -70,18 +70,27 @@ namespace Service
         /// <returns></returns>
         public IEnumerable<Pessoa> GetAll()
         {
-            return context.Pessoas.AsNoTracking();
+            uint idFrota = frotaService.GetFrotaByUser();
+            return context.Pessoas.Where(f => f.IdFrota == idFrota).AsNoTracking();
         }
 
-        public IEnumerable<Pessoa> GetPaged(int page, int lenght)
+        public IEnumerable<Pessoa> GetPaged(int page, int lenght, out int totalResults, string search = null)
         {
             uint idFrota = frotaService.GetFrotaByUser();
 
-            return context.Pessoas
-                          .Where(v => v.IdFrota == idFrota)
-                          .AsNoTracking()
-                          .Skip(page * lenght)
-                          .Take(lenght);
+            var query = context.Pessoas
+                               .Where(f => f.IdFrota == idFrota)
+                               .AsNoTracking();
+
+            if(!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(s => s.Nome.ToLower().Contains(search.ToLower()));
+            }
+
+            totalResults = query.Count();
+
+            return query.Skip(page * lenght)
+                        .Take(lenght);
         }
     }
 }

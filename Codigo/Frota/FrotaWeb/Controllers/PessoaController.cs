@@ -26,16 +26,19 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa/Index/{page}")]
         [Route("Pessoa/{page}")]
         [Route("Pessoa")]
-        public ActionResult Index([FromRoute] int page = 0)
+        public ActionResult Index([FromRoute] int page = 0, string search = null)
         {
-            int length = 15;
-            var listaPessoas = pessoaService.GetPaged(page, length);
+            int length = 13;
+            int totalResultados;
+            var listaPessoas = pessoaService.GetPaged(page, length, out totalResultados, search).ToList();
 
             var totalPessoas = pessoaService.GetAll().Count();
-            var totalPages = (int)Math.Ceiling((double)totalPessoas / length);
+            var totalPages = (int)Math.Ceiling((double)totalResultados / length);
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
+            ViewBag.Search = search;
+            ViewBag.Resultados = listaPessoas.Count();
 
             var listaPessoasModel = mapper.Map<List<PessoaViewModel>>(listaPessoas);
             return View(listaPessoasModel);

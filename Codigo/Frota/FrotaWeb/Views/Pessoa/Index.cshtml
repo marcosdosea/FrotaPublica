@@ -1,7 +1,11 @@
 ﻿@model IEnumerable<FrotaWeb.Models.PessoaViewModel>
+@{
+    string textSearch = ViewBag.Search;
+}
 
 <link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
 <link rel="stylesheet" type="text/css" href="~/lib/datatable/css/jquery.dataTables.min.css" />
+<script src="~/lib/datatable/js/jquery.dataTables.min.js"></script>
 
 <main class="main_content container">
     <div class="titulo-pagina">
@@ -11,6 +15,14 @@
         <h1>Condutores</h1>
         <div class="acoes">
             <a asp-action="Create" class="btn btn-primario">Criar</a>
+            <form method="get" action="@Url.Action("Index", "Pessoa", new {page = 0})">
+                <input type="text" id="search" name="search" value="@ViewBag.Search" placeholder="Procurar..." />
+                <button type="submit">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </button>
+            </form>
         </div>
     </div>
     <div class="table-responsive">
@@ -51,10 +63,12 @@
     @if (ViewBag.TotalPages > 1)
     {
         <nav class="navigation-pages">
-            <div></div>
+            <div>
+                <p>Exibindo @ViewBag.Resultados resultados</p>
+            </div>
             @if (ViewBag.TotalPages > 10)
             {
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = 0 })';">
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = 0, search = textSearch })';">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
                 @if (ViewBag.CurrentPage < 5)
@@ -65,7 +79,7 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i, search = textSearch })">@numeroPageLast</a>
                         </li>
                     }
                     <li class="page-item">
@@ -83,7 +97,7 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i, search = textSearch })">@numeroPageLast</a>
                         </li>
                     }
                 }
@@ -98,14 +112,14 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i, search = textSearch })">@numeroPageLast</a>
                         </li>
                     }
                     <li class="page-item">
                         <a class="page-link">...</a>
                     </li>
                 }
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = ViewBag.TotalPages -1 })';">
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Pessoa", new { page = ViewBag.TotalPages -1, search = textSearch })';">
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             }
@@ -117,7 +131,7 @@
                         @{
                             var numeroPageLast = i + 1;
                         }
-                        <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i })">@numeroPageLast</a>
+                        <a class="page-link" href="@Url.Action("Index", "Pessoa", new { page = i, search = textSearch })">@numeroPageLast</a>
                     </li>
                 }
             }
@@ -131,6 +145,18 @@
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        $(document).ready(function () {
+            $('#indexPessoa').DataTable({
+            paging: false, // Desativa paginação
+            searching: false, // Desativa pesquisa
+            info: false, // Remove informações como "Mostrando X de Y"
+            ordering: true, // Mantém a ordenação
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.1/i18n/pt-BR.json"
+            }
+        });
         });
     </script>
 }
