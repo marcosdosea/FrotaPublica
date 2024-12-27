@@ -178,6 +178,20 @@ body {
                 display: none;
             }
         }
+.acoes form select {
+    height: 40px;
+    background-color: #ffffff;
+    border: 0px solid #0C69AB;
+    border-radius: 8px;
+    width: 100px;
+    text-align: center;
+    margin-right: 5px;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.acoes form select:focus {
+    outline: none;
+}
 
 /* Estilo da Tabela */
 .tabela {

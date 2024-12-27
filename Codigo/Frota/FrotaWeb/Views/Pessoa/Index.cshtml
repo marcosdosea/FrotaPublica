@@ -16,6 +16,11 @@
         <div class="acoes">
             <a asp-action="Create" class="btn btn-primario">Criar</a>
             <form method="get" action="@Url.Action("Index", "Pessoa", new {page = 0})">
+                <select id="filterBy" name="filterBy" value="@ViewBag.Search">
+                    <option value="Nome">Nome</option>
+                    <option value="Cpf">CPF</option>
+                    <option value="Cidade">Cidade</option>
+                </select>
                 <input type="text" id="search" name="search" value="@ViewBag.Search" placeholder="Procurar..." />
                 <button type="submit">
                     <span class="material-symbols-outlined">
@@ -32,7 +37,7 @@
 					<th>@Html.DisplayNameFor(model => model.Nome)</th>
 					<th>@Html.DisplayNameFor(model => model.Cpf)</th>
 					<th>@Html.DisplayNameFor(model => model.Estado)</th>
-					<th>@Html.DisplayNameFor(model => model.Ativo)</th>
+					<th>@Html.DisplayNameFor(model => model.StatusAtivo)</th>
 					<th class="column-15"></th>
 				</tr>
 			</thead>
@@ -43,7 +48,7 @@
 						<td>@Html.DisplayFor(modelItem => item.Nome)</td>
 						<td>@Html.DisplayFor(modelItem => item.Cpf)</td>
 						<td>@Html.DisplayFor(modelItem => item.Estado)</td>
-						<td>@Html.DisplayFor(modelItem => item.Ativo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.StatusAtivo)</td>
 						<td>
 							<a href="@Url.Action("Edit", "Pessoa", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
 								<i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
