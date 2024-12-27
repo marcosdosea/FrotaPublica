@@ -7,10 +7,19 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema Frota
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `Frota` ;
+
+-- -----------------------------------------------------
+-- Schema Frota
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Frota` DEFAULT CHARACTER SET utf8 ;
+USE `Frota` ;
 
 -- -----------------------------------------------------
 -- Table `__efmigrationshistory`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `__efmigrationshistory` ;
+
 CREATE TABLE IF NOT EXISTS `__efmigrationshistory` (
   `MigrationId` VARCHAR(150) NOT NULL,
   `ProductVersion` VARCHAR(32) NOT NULL,
@@ -22,6 +31,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `frota`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `frota` ;
+
 CREATE TABLE IF NOT EXISTS `frota` (
   `id` INT(11) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(50) NOT NULL,
@@ -36,13 +47,14 @@ CREATE TABLE IF NOT EXISTS `frota` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `cnpj_UNIQUE` (`cnpj` ASC))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `fornecedor`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `fornecedor` ;
+
 CREATE TABLE IF NOT EXISTS `fornecedor` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(50) NOT NULL,
@@ -73,6 +85,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `marcaVeiculo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `marcaVeiculo` ;
+
 CREATE TABLE IF NOT EXISTS `marcaVeiculo` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(50) NOT NULL,
@@ -85,13 +99,14 @@ CREATE TABLE IF NOT EXISTS `marcaVeiculo` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `modeloVeiculo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `modeloVeiculo` ;
+
 CREATE TABLE IF NOT EXISTS `modeloVeiculo` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idMarcaVeiculo` INT(10) UNSIGNED NOT NULL,
@@ -110,13 +125,14 @@ CREATE TABLE IF NOT EXISTS `modeloVeiculo` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `unidadeAdministrativa`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `unidadeAdministrativa` ;
+
 CREATE TABLE IF NOT EXISTS `unidadeAdministrativa` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(50) NOT NULL,
@@ -138,13 +154,14 @@ CREATE TABLE IF NOT EXISTS `unidadeAdministrativa` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `veiculo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `veiculo` ;
+
 CREATE TABLE IF NOT EXISTS `veiculo` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `placa` VARCHAR(10) NOT NULL,
@@ -178,25 +195,27 @@ CREATE TABLE IF NOT EXISTS `veiculo` (
     FOREIGN KEY (`idUnidadeAdministrativa`)
     REFERENCES `unidadeAdministrativa` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 58
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `papelPessoa`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `papelPessoa` ;
+
 CREATE TABLE IF NOT EXISTS `papelPessoa` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `papel` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `pessoa`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `pessoa` ;
+
 CREATE TABLE IF NOT EXISTS `pessoa` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `cpf` VARCHAR(11) NOT NULL,
@@ -222,13 +241,14 @@ CREATE TABLE IF NOT EXISTS `pessoa` (
     FOREIGN KEY (`idPapelPessoa`)
     REFERENCES `papelPessoa` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `abastecimento`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `abastecimento` ;
+
 CREATE TABLE IF NOT EXISTS `abastecimento` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idFornecedor` INT(10) UNSIGNED NOT NULL,
@@ -268,6 +288,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetroles`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetroles` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetroles` (
   `Id` VARCHAR(255) NOT NULL,
   `Name` VARCHAR(256) NULL DEFAULT NULL,
@@ -282,6 +304,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetroleclaims`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetroleclaims` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetroleclaims` (
   `Id` INT(11) NOT NULL AUTO_INCREMENT,
   `RoleId` VARCHAR(255) NOT NULL,
@@ -300,6 +324,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetusers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetusers` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetusers` (
   `Id` VARCHAR(255) NOT NULL,
   `UserName` VARCHAR(256) NOT NULL,
@@ -327,6 +353,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetuserclaims`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetuserclaims` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetuserclaims` (
   `Id` INT(11) NOT NULL AUTO_INCREMENT,
   `UserId` VARCHAR(255) NOT NULL,
@@ -345,6 +373,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetuserlogins`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetuserlogins` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetuserlogins` (
   `LoginProvider` VARCHAR(128) NOT NULL,
   `ProviderKey` VARCHAR(128) NOT NULL,
@@ -363,6 +393,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetuserroles`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetuserroles` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetuserroles` (
   `UserId` VARCHAR(255) NOT NULL,
   `RoleId` VARCHAR(255) NOT NULL,
@@ -383,6 +415,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `aspnetusertokens`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `aspnetusertokens` ;
+
 CREATE TABLE IF NOT EXISTS `aspnetusertokens` (
   `UserId` VARCHAR(255) NOT NULL,
   `LoginProvider` VARCHAR(128) NOT NULL,
@@ -400,6 +434,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `manutencao`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `manutencao` ;
+
 CREATE TABLE IF NOT EXISTS `manutencao` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idVeiculo` INT(10) UNSIGNED NOT NULL,
@@ -438,6 +474,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `marcaPecainsumo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `marcaPecainsumo` ;
+
 CREATE TABLE IF NOT EXISTS `marcaPecainsumo` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(50) NOT NULL,
@@ -450,13 +488,14 @@ CREATE TABLE IF NOT EXISTS `marcaPecainsumo` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 216
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `pecainsumo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `pecainsumo` ;
+
 CREATE TABLE IF NOT EXISTS `pecainsumo` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(50) NOT NULL,
@@ -471,13 +510,14 @@ CREATE TABLE IF NOT EXISTS `pecainsumo` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `manutencaoPecainsumo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `manutencaoPecainsumo` ;
+
 CREATE TABLE IF NOT EXISTS `manutencaoPecainsumo` (
   `idManutencao` INT(10) UNSIGNED NOT NULL,
   `idPecaInsumo` INT(10) UNSIGNED NOT NULL,
@@ -507,6 +547,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `percurso`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `percurso` ;
+
 CREATE TABLE IF NOT EXISTS `percurso` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idVeiculo` INT(10) UNSIGNED NOT NULL,
@@ -538,6 +580,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `solicitacaoManutencao`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `solicitacaoManutencao` ;
+
 CREATE TABLE IF NOT EXISTS `solicitacaoManutencao` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `idVeiculo` INT(10) UNSIGNED NOT NULL,
@@ -561,13 +605,14 @@ CREATE TABLE IF NOT EXISTS `solicitacaoManutencao` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `veiculoPecainsumo`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `veiculoPecainsumo` ;
+
 CREATE TABLE IF NOT EXISTS `veiculoPecainsumo` (
   `idVeiculo` INT(10) UNSIGNED NOT NULL,
   `idPecaInsumo` INT(10) UNSIGNED NOT NULL,
@@ -591,6 +636,8 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `vistoria`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `vistoria` ;
+
 CREATE TABLE IF NOT EXISTS `vistoria` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `data` DATETIME NOT NULL,
@@ -603,7 +650,6 @@ CREATE TABLE IF NOT EXISTS `vistoria` (
     FOREIGN KEY (`idPessoaResponsavel`)
     REFERENCES `pessoa` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
