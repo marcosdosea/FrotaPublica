@@ -17,6 +17,7 @@ namespace FrotaWeb.Controllers
 
         public IActionResult Index()
         {
+            int? frotaId = HttpContext.Session.GetInt32("FrotaId");
             return View();
         }
 
