@@ -13,6 +13,10 @@ public partial class Modeloveiculo
 
     public int CapacidadeTanque { get; set; }
 
+    public uint IdFrota { get; set; }
+
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
+
     public virtual Marcaveiculo IdMarcaVeiculoNavigation { get; set; } = null!;
 
     public virtual ICollection<Veiculo> Veiculos { get; set; } = new List<Veiculo>();

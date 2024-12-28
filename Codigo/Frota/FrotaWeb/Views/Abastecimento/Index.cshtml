@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<FrotaWeb.Models.AbastecimentoViewModel>
 
 <link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
+<link href="~/lib/datatables/css/datatables.min.css" rel="stylesheet" />
 
 <main class="main_content container">
     <div class="titulo-pagina">
@@ -13,7 +14,7 @@
         </div>
     </div>
     <div class="table-responsive">
-        <table class="tabela">
+        <table id="tableAbastecimentos" class="tabela">
             <thead>
                 <tr>
                     <th>
@@ -37,117 +38,89 @@
                     <th class="column-15"></th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IdPercurso)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IdFornecedor)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DataHora)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Odometro)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Litros)
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Abastecimento", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
-                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Details", "Abastecimento", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", "Abastecimento", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
-                                <i class="fa fa-trash cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
-    @if (ViewBag.TotalPages > 1)
-    {
-        <nav class="navigation-pages">
-            <div></div>
-            @if (ViewBag.TotalPages > 10)
-            {
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Abastecimento", new { page = 0 })';">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-                @if (ViewBag.CurrentPage < 5)
-                {
-                    @for (int i = 0; i < 9; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                }
-                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
-                {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                }
-                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5)
-                {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                }
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Abastecimento", new { page = ViewBag.TotalPages -1 })';">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            }
-            @if (ViewBag.TotalPages <= 10)
-            {
-                @for (int i = 0; i < ViewBag.TotalPages; i++)
-                {
-                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        @{
-                            var numeroPageLast = i + 1;
-                        }
-                        <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                    </li>
-                }
-            }
-        </nav>
-    }
 </main>
+
+
+@section Scripts {
+    <script src="~/lib/datatables/js/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tableAbastecimentos').DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "pageLength": 5,
+                "lengthMenu": [
+                    [5, 10, 20, -1],
+                    [5, 10, 20, "Todos"]
+                ],
+                "ajax": {
+                    "url": "/Abastecimento/GetDataPage",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets": [1],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets": [2],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets": [3],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets": [4],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets":  [5],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                },
+                {
+                    "targets":  [6],
+                    "visible": true,
+                    "searchable": false,
+                    "orderable": false
+                }],
+                "columns": [
+                    { "data": "id", "name": "Id", "autoWidth": true },
+                    { "data": "idPercurso", "name": "Id Percuso", "autoWidth": true },
+                    { "data": "idFornecedor", "name": "Id Fornecedor", "autoWidth": true },
+                    { "data": "dataHora", "name": "Data Hora", "autoWidth": true },
+                    { "data": "odometro", "name": "Odometro", "autoWidth": true },
+                    { "data": "litros", "name": "Litros", "autoWidth": true },
+                    {
+                        "render": function (data, type, full, meta) {
+                            return '<a class="btn btn-info" href="/Abastecimento/Edit/' + full.id + '">Editar</a> ' +
+                                '<a class="btn btn-danger" href="/Abastecimento/Delete/' + full.id + '">Excluir</a>'; }
+                    },
+                ],
+                language: {
+                    url: "lib/datatables/js/pt-br.json",
+                }
+            });
+        });
+    </script>
+}

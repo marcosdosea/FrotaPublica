@@ -15,6 +15,10 @@ public partial class Solicitacaomanutencao
 
     public string DescricaoProblema { get; set; } = null!;
 
+    public uint IdFrota { get; set; }
+
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
+
     public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
 
     public virtual Veiculo IdVeiculoNavigation { get; set; } = null!;

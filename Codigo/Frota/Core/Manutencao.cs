@@ -25,7 +25,11 @@ public partial class Manutencao
 
     public string Status { get; set; } = null!;
 
+    public uint IdFrota { get; set; }
+
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
+
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual Pessoa IdResponsavelNavigation { get; set; } = null!;
 

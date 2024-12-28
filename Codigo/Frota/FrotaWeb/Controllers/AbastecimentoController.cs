@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,21 +22,18 @@ namespace FrotaWeb.Controllers
             this.abastecimentoService = abastecimentoService;
         }
         // GET: AbastecimentoController
-        [Route("Abastecimento/Index/{page}")]
-        [Route("Abastecimento/{page}")]
-        [Route("Abastecimento")]
         public ActionResult Index([FromRoute] int page = 0)
         {
-            int length = 15;
-            var listaAbastecimentos = abastecimentoService.GetPaged(page, length).ToList();
+            var listaAbastecimentos = abastecimentoService.GetAll();
+            var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
+            return View(listaAbastecimentosViewModel);
+        }
 
-            var totalAbastecimentos = abastecimentoService.GetAll().Count();
-            var totalPages = (int)Math.Ceiling((double)totalAbastecimentos / length);
-
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            var abastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
-            return View(abastecimentosViewModel);
+        [HttpPost]
+        public IActionResult GetDataPage(DatatableRequest request)
+        {
+            var response = abastecimentoService.GetDataPage(request);
+            return Json(response);
         }
 
         public ActionResult Abastecer(AbastecimentoViewModel abastecimento)
