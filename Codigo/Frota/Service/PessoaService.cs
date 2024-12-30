@@ -1,15 +1,11 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Service
 {
-	public class PessoaService : IPessoaService
+    public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
         private readonly IFrotaService frotaService;
@@ -19,6 +15,7 @@ namespace Service
             this.context = context;
             this.frotaService = frotaService;
         }
+
         /// <summary>
         /// Cadastra uma nova pessoa
         /// </summary>
@@ -31,6 +28,7 @@ namespace Service
             context.SaveChanges();
             return pessoa.Id;
         }
+
         /// <summary>
         /// Exclui uma pessoa na base de dados
         /// </summary>
@@ -39,9 +37,13 @@ namespace Service
         public void Delete(uint idPessoa)
         {
             var pessoa = context.Pessoas.Find(idPessoa);
-            context.Remove(pessoa);
-            context.SaveChanges();
+            if (pessoa != null)
+            {
+                context.Remove(pessoa);
+                context.SaveChanges();
+            }
         }
+
         /// <summary>
         /// Edita uma pessoa na base de dados
         /// </summary>
@@ -52,6 +54,7 @@ namespace Service
             context.Update(pessoa);
             context.SaveChanges();
         }
+
         /// <summary>
         /// Busca uma pessoa cadastrada
         /// </summary>
@@ -61,7 +64,6 @@ namespace Service
         public Pessoa Get(uint idPessoa)
         {
             return context.Pessoas.Find(idPessoa);
-            
         }
 
         /// <summary>
@@ -71,7 +73,10 @@ namespace Service
         public IEnumerable<Pessoa> GetAll()
         {
             uint idFrota = frotaService.GetFrotaByUser();
-            return context.Pessoas.Where(f => f.IdFrota == idFrota).AsNoTracking();
+            return context.Pessoas
+                          .AsNoTracking()
+                          .Where(f => f.IdFrota == idFrota)
+                          .OrderBy(f => f.Id);
         }
 
         public IEnumerable<Pessoa> GetPaged(int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome")
@@ -82,7 +87,7 @@ namespace Service
                                .Where(f => f.IdFrota == idFrota)
                                .AsNoTracking();
 
-            if(!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search))
             {
                 switch (filterBy.ToLower())
                 {

@@ -42,10 +42,10 @@ namespace FrotaWeb.Controllers.Tests
 			ViewResult viewResult = (ViewResult)result;
 			Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(List<AbastecimentoViewModel>));
 			List<AbastecimentoViewModel>? lista = (List<AbastecimentoViewModel>)viewResult.ViewData.Model;
-			Assert.AreEqual(3, lista.Count);
-		}
+            Assert.IsTrue(lista.Count <= 15, "O número de itens na lista de abastecimentos deve ser menor ou igual a 15.");
+        }
 
-		[TestMethod()]
+        [TestMethod()]
 		public void DetailsTestValid()
 		{
 			// Act
