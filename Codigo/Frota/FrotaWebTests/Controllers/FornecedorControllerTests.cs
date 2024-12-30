@@ -14,7 +14,7 @@ namespace FrotaWeb.Controllers.Tests
         private static FornecedorController? fornecedorController;
 
         [TestInitialize]
-        public void Initializ()
+        public void Initialize()
         {
             // Arrange
             var mockFornecedorService = new Mock<IFornecedorService>();
