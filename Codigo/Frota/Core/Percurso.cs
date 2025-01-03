@@ -33,8 +33,6 @@ public partial class Percurso
 
     public string? Motivo { get; set; }
 
-    public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
-
     public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
 
     public virtual Veiculo IdVeiculoNavigation { get; set; } = null!;

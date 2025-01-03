@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Datatables;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,30 +22,20 @@ namespace FrotaWeb.Controllers
             this.abastecimentoService = abastecimentoService;
         }
         // GET: AbastecimentoController
-        [Route("Abastecimento/Index/{page}")]
-        [Route("Abastecimento/{page}")]
-        [Route("Abastecimento")]
         public ActionResult Index([FromRoute] int page = 0)
         {
-            int length = 15;
-            var listaAbastecimentos = abastecimentoService.GetPaged(page, length).ToList();
-
-            var totalAbastecimentos = abastecimentoService.GetAll().Count();
-            var totalPages = (int)Math.Ceiling((double)totalAbastecimentos / length);
-
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            var abastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
-            return View(abastecimentosViewModel);
+            var listaAbastecimentos = abastecimentoService.GetAll();
+            var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
+            return View(listaAbastecimentosViewModel);
         }
 
-        public ActionResult Abastecer(AbastecimentoViewModel abastecimento)
+        [HttpPost]
+        public IActionResult GetDataPage(DatatableRequest request)
         {
-            var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-
-            return View();
-
+            var response = abastecimentoService.GetDataPage(request);
+            return Json(response);
         }
+
         // GET: AbastecimentoController/Details/5
         public ActionResult Details(uint id)
         {
@@ -54,7 +45,6 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: AbastecimentoController/Create
-        [Route("Abastecimento/Create")]
         public ActionResult Create()
         {
             return View();
@@ -90,7 +80,7 @@ namespace FrotaWeb.Controllers
             if (ModelState.IsValid)
             {
                 var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-                abastecimentoService.Create(_abastecimento);
+                abastecimentoService.Edit(_abastecimento);
             }
 
             return RedirectToAction(nameof(Index));

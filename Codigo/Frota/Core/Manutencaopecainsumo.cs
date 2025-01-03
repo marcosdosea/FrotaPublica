@@ -9,7 +9,7 @@ public partial class Manutencaopecainsumo
 
     public uint IdPecaInsumo { get; set; }
 
-    public uint IdMarcaPecaInsumo { get; set; }
+    public uint? IdMarcaPecaInsumo { get; set; }
 
     public float Quantidade { get; set; }
 
@@ -23,7 +23,7 @@ public partial class Manutencaopecainsumo
 
     public virtual Manutencao IdManutencaoNavigation { get; set; } = null!;
 
-    public virtual Marcapecainsumo IdMarcaPecaInsumoNavigation { get; set; } = null!;
+    public virtual Marcapecainsumo? IdMarcaPecaInsumoNavigation { get; set; }
 
     public virtual Pecainsumo IdPecaInsumoNavigation { get; set; } = null!;
 }

@@ -9,15 +9,23 @@ public partial class Abastecimento
 
     public uint IdFornecedor { get; set; }
 
-    public uint IdPercurso { get; set; }
+    public uint IdVeiculo { get; set; }
+
+    public uint IdFrota { get; set; }
+
+    public uint IdPessoa { get; set; }
 
     public DateTime DataHora { get; set; }
 
     public int Odometro { get; set; }
 
-    public int Litros { get; set; }
+    public decimal Litros { get; set; }
 
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 
-    public virtual Percurso IdPercursoNavigation { get; set; } = null!;
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
+
+    public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
+
+    public virtual Veiculo IdVeiculoNavigation { get; set; } = null!;
 }

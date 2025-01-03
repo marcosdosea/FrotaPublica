@@ -1,11 +1,5 @@
 ﻿@model FrotaWeb.Models.AbastecimentoViewModel
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>Edit</h1>
-
 <h4>AbastecimentoViewModel</h4>
 <hr />
 <div class="row">
@@ -13,19 +7,14 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdPercurso" class="control-label"></label>
-                <input asp-for="IdPercurso" class="form-control" />
-                <span asp-validation-for="IdPercurso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="IdFornecedor" class="control-label"></label>
                 <input asp-for="IdFornecedor" class="form-control" />
                 <span asp-validation-for="IdFornecedor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdVeiculo" class="control-label"></label>
+                <input asp-for="IdVeiculo" class="form-control" />
+                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DataHora" class="control-label"></label>
