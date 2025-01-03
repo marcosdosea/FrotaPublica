@@ -75,7 +75,7 @@ namespace Service
 
             return context.Veiculos
                           .AsNoTracking()
-                          .Where(v => v.IdFrota == idFrota);
+                          .Where(v => v.IdFrota == idFrota).OrderBy(v => v.Id);
         }
 
         /// <summary>
@@ -116,6 +116,6 @@ namespace Service
                              };
             return veiculoDTO.ToList();
         }
-	}
+    }
 }
 

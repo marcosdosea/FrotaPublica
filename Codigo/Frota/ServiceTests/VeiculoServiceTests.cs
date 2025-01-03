@@ -1,5 +1,7 @@
-﻿using Core;
+﻿using System.Security.Claims;
+using Core;
 using Core.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Tests
@@ -27,7 +29,7 @@ namespace Service.Tests
 				new Veiculo
 				{
 					Id = 1,
-					Placa = "ABC1234",
+					Placa = "JSD8135",
 					Chassi = "9BWZZZ377VT004251",
 					Cor = "Branco",
 					IdModeloVeiculo = 2,
@@ -45,11 +47,11 @@ namespace Service.Tests
 				new Veiculo
 				{
 					Id = 2,
-					Placa = "XYZ5678",
+					Placa = "MTM7627",
 					Chassi = "8AFZZZ407WT004352",
 					Cor = "Preto",
 					IdModeloVeiculo = 3,
-					IdFrota = 2,
+					IdFrota = 1,
 					IdUnidadeAdministrativa = 4,
 					Odometro = 25000,
 					Status = "Em Manutenção",
@@ -63,7 +65,7 @@ namespace Service.Tests
 				new Veiculo
 				{
 					Id = 3,
-					Placa = "JKL9012",
+					Placa = "HPQ8748",
 					Chassi = "7FBZZZ322VT009867",
 					Cor = "Prata",
 					IdModeloVeiculo = 1,
@@ -79,9 +81,92 @@ namespace Service.Tests
 					DataReferenciaValor = DateTime.Parse("2023-10-10")
 				}
 			};
-			context.AddRange(veiculos);
+
+            var frotas = new List<Frotum>
+            {
+                new Frotum
+                {
+                    Id = 1,
+                    Nome = "Transportes Oliveira",
+                    Cnpj = "12345678000199",
+                    Cep = "12345678",
+                    Rua = "Avenida Principal",
+                    Bairro = "Centro",
+                    Numero = "100",
+                    Complemento = "Sala 201",
+                    Cidade = "São Paulo",
+                    Estado = "SP"
+                },
+                new Frotum
+                {
+                    Id = 2,
+                    Nome = "Logística Santos",
+                    Cnpj = "98765432000188",
+                    Cep = "98765432",
+                    Rua = "Rua das Flores",
+                    Bairro = "Vila Nova",
+                    Numero = "250",
+                    Complemento = "Galpão 3",
+                    Cidade = "Rio de Janeiro",
+                    Estado = "RJ"
+                },
+                new Frotum
+                {
+                    Id = 3,
+                    Nome = "Expresso Litoral",
+                    Cnpj = "45612378000122",
+                    Cep = "54321098",
+                    Rua = "Avenida Atlântica",
+                    Bairro = "Boa Vista",
+                    Numero = "300",
+                    Complemento = null,
+                    Cidade = "Salvador",
+                    Estado = "BA"
+                },
+            };
+
+			Pessoa pessoa = new Pessoa
+			{
+				Id = 1,
+				Cpf = "78766537070",
+				Nome = "Guilherme Lima",
+				Cep = "12345000",
+				Rua = "Rua A",
+				Bairro = "Bairro A",
+				Numero = "100",
+				Complemento = "Casa 1",
+				Cidade = "Cidade A",
+				Estado = "SP",
+				IdFrota = 1,
+				IdPapelPessoa = 1,
+				Ativo = 1
+			};
+
+            context.AddRange(pessoa);
+            context.SaveChanges();
+
+            context.AddRange(frotas);
+            context.SaveChanges();
+
+            context.AddRange(veiculos);
 			context.SaveChanges();
-			veiculoService = new VeiculoService(context);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, "78766537070"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim(ClaimTypes.Role, "Administrador")
+            };
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuthentication"));
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = principal
+                }
+            };
+
+            veiculoService = new VeiculoService(context, new FrotaService(context, httpContextAccessor));
 		}
 
 		[TestMethod()]
@@ -96,7 +181,7 @@ namespace Service.Tests
 					Chassi = "6G1ZZZ999XT009876",
 					Cor = "Azul",
 					IdModeloVeiculo = 4,
-					IdFrota = 2,
+					IdFrota = 1,
 					IdUnidadeAdministrativa = 6,
 					Odometro = 15000,
 					Status = "Ativo",
@@ -110,7 +195,7 @@ namespace Service.Tests
 			);
 
 			// Assert
-			Assert.AreEqual(4, veiculoService.GetAll().Count());
+			Assert.AreEqual(3, veiculoService.GetAll().Count());
 			var veiculo = veiculoService.Get(4);
 			Assert.AreEqual("DEF4567", veiculo!.Placa);
 			Assert.AreEqual("6G1ZZZ999XT009876", veiculo.Chassi);
@@ -122,7 +207,7 @@ namespace Service.Tests
 			// Act
 			veiculoService!.Delete(2);
 			// Assert
-			Assert.AreEqual(2, veiculoService.GetAll().Count());
+			Assert.AreEqual(1, veiculoService.GetAll().Count());
 			var veiculo = veiculoService.Get(2);
 			Assert.AreEqual(null, veiculo);
 		}
@@ -147,7 +232,7 @@ namespace Service.Tests
 		{
 			var veiculo = veiculoService!.Get(1);
 			Assert.IsNotNull(veiculo);
-			Assert.AreEqual("ABC1234", veiculo.Placa);
+			Assert.AreEqual("JSD8135", veiculo.Placa);
 			Assert.AreEqual("9BWZZZ377VT004251", veiculo.Chassi);
 		}
 
@@ -159,9 +244,9 @@ namespace Service.Tests
 			// Assert
 			Assert.IsInstanceOfType(listaVeiculo, typeof(IEnumerable<Veiculo>));
 			Assert.IsNotNull(listaVeiculo);
-			Assert.AreEqual(3, listaVeiculo.Count());
+			Assert.AreEqual(2, listaVeiculo.Count());
 			Assert.AreEqual((uint)1, listaVeiculo.First().Id);
-			Assert.AreEqual("ABC1234", listaVeiculo.First().Placa);
+			Assert.AreEqual("JSD8135", listaVeiculo.First().Placa);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Tests
@@ -80,7 +81,11 @@ namespace Service.Tests
             };
             context.AddRange(frotas);
             context.SaveChanges();
-            frotaService = new FrotaService(context);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            frotaService = new FrotaService(context, httpContextAccessor);
         }
 
         [TestMethod()]
