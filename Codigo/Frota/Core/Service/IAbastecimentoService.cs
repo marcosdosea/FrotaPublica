@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.Datatables;
+
+namespace Core.Service
 {
     public interface IAbastecimentoService
     {
@@ -8,5 +10,6 @@
         Abastecimento? Get(uint idAbastecimento);
         IEnumerable<Abastecimento> GetPaged(int page, int lenght);
         IEnumerable<Abastecimento> GetAll();
+        DatatableResponse<Abastecimento> GetDataPage(DatatableRequest request);
     }
 }

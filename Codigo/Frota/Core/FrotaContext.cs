@@ -49,6 +49,7 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abastecimento>(entity =>
@@ -59,15 +60,25 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdFornecedor, "fk_Abastecimento_Fornecedor1_idx");
 
-            entity.HasIndex(e => e.IdPercurso, "fk_Abastecimento_Percurso1_idx");
+            entity.HasIndex(e => e.IdFrota, "fk_abastecimento_frota1_idx");
+
+            entity.HasIndex(e => e.IdPessoa, "fk_abastecimento_pessoa1_idx");
+
+            entity.HasIndex(e => e.IdVeiculo, "fk_abastecimento_veiculo1_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DataHora)
                 .HasColumnType("datetime")
                 .HasColumnName("dataHora");
             entity.Property(e => e.IdFornecedor).HasColumnName("idFornecedor");
-            entity.Property(e => e.IdPercurso).HasColumnName("idPercurso");
-            entity.Property(e => e.Litros).HasColumnName("litros");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
+            entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
+            entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
+            entity.Property(e => e.Litros)
+                .HasPrecision(10)
+                .HasColumnName("litros");
             entity.Property(e => e.Odometro).HasColumnName("odometro");
 
             entity.HasOne(d => d.IdFornecedorNavigation).WithMany(p => p.Abastecimentos)
@@ -75,10 +86,20 @@ public partial class FrotaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Abastecimento_Fornecedor1");
 
-            entity.HasOne(d => d.IdPercursoNavigation).WithMany(p => p.Abastecimentos)
-                .HasForeignKey(d => d.IdPercurso)
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Abastecimentos)
+                .HasForeignKey(d => d.IdFrota)
                 .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("fk_Abastecimento_Percurso1");
+                .HasConstraintName("fk_abastecimento_frota1");
+
+            entity.HasOne(d => d.IdPessoaNavigation).WithMany(p => p.Abastecimentos)
+                .HasForeignKey(d => d.IdPessoa)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_abastecimento_pessoa1");
+
+            entity.HasOne(d => d.IdVeiculoNavigation).WithMany(p => p.Abastecimentos)
+                .HasForeignKey(d => d.IdVeiculo)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_abastecimento_veiculo1");
         });
 
         modelBuilder.Entity<Fornecedor>(entity =>
@@ -89,7 +110,12 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.Cnpj, "cnpj_UNIQUE").IsUnique();
 
+            entity.HasIndex(e => e.IdFrota, "fk_fornecedor_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Ativo)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("ativo");
             entity.Property(e => e.Bairro)
                 .HasMaxLength(50)
                 .HasColumnName("bairro");
@@ -108,6 +134,9 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Estado)
                 .HasMaxLength(2)
                 .HasColumnName("estado");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.Latitude).HasColumnName("latitude");
             entity.Property(e => e.Longitude).HasColumnName("longitude");
             entity.Property(e => e.Nome)
@@ -119,6 +148,11 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Rua)
                 .HasMaxLength(50)
                 .HasColumnName("rua");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Fornecedors)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_fornecedor_frota1");
         });
 
         modelBuilder.Entity<Frotum>(entity =>
@@ -173,6 +207,8 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdVeiculo, "fk_Manutencao_Veiculo1_idx");
 
+            entity.HasIndex(e => e.IdFrota, "fk_manutencao_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Comprovante)
                 .HasColumnType("blob")
@@ -181,6 +217,9 @@ public partial class FrotaContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("dataHora");
             entity.Property(e => e.IdFornecedor).HasColumnName("idFornecedor");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.IdResponsavel).HasColumnName("idResponsavel");
             entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
             entity.Property(e => e.Status)
@@ -202,6 +241,11 @@ public partial class FrotaContext : DbContext
                 .HasForeignKey(d => d.IdFornecedor)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Manutencao_Fornecedor1");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Manutencaos)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_manutencao_frota1");
 
             entity.HasOne(d => d.IdResponsavelNavigation).WithMany(p => p.Manutencaos)
                 .HasForeignKey(d => d.IdResponsavel)
@@ -248,7 +292,6 @@ public partial class FrotaContext : DbContext
 
             entity.HasOne(d => d.IdMarcaPecaInsumoNavigation).WithMany(p => p.Manutencaopecainsumos)
                 .HasForeignKey(d => d.IdMarcaPecaInsumo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ManutencaoPecaInsumo_MarcaPecaInsumo1");
 
             entity.HasOne(d => d.IdPecaInsumoNavigation).WithMany(p => p.Manutencaopecainsumos)
@@ -263,10 +306,20 @@ public partial class FrotaContext : DbContext
 
             entity.ToTable("marcapecainsumo");
 
+            entity.HasIndex(e => e.Idfrota, "fk_marcaPecainsumo_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Descricao)
                 .HasMaxLength(50)
                 .HasColumnName("descricao");
+            entity.Property(e => e.Idfrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idfrota");
+
+            entity.HasOne(d => d.IdfrotaNavigation).WithMany(p => p.Marcapecainsumos)
+                .HasForeignKey(d => d.Idfrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_marcaPecainsumo_frota1");
         });
 
         modelBuilder.Entity<Marcaveiculo>(entity =>
@@ -275,10 +328,20 @@ public partial class FrotaContext : DbContext
 
             entity.ToTable("marcaveiculo");
 
+            entity.HasIndex(e => e.IdFrota, "fk_marcaVeiculo_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
                 .HasColumnName("nome");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Marcaveiculos)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_marcaVeiculo_frota1");
         });
 
         modelBuilder.Entity<Modeloveiculo>(entity =>
@@ -289,12 +352,22 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdMarcaVeiculo, "fk_ModeloVeiculo_MarcaVeiculo_idx");
 
+            entity.HasIndex(e => e.IdFrota, "fk_modeloVeiculo_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CapacidadeTanque).HasColumnName("capacidadeTanque");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.IdMarcaVeiculo).HasColumnName("idMarcaVeiculo");
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
                 .HasColumnName("nome");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Modeloveiculos)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_modeloVeiculo_frota1");
 
             entity.HasOne(d => d.IdMarcaVeiculoNavigation).WithMany(p => p.Modeloveiculos)
                 .HasForeignKey(d => d.IdMarcaVeiculo)
@@ -320,10 +393,26 @@ public partial class FrotaContext : DbContext
 
             entity.ToTable("pecainsumo");
 
+            entity.HasIndex(e => e.IdFrota, "fk_pecainsumo_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Descricao)
                 .HasMaxLength(50)
                 .HasColumnName("descricao");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
+            entity.Property(e => e.KmGarantia)
+                .HasDefaultValueSql("'5000'")
+                .HasColumnName("kmGarantia");
+            entity.Property(e => e.MesesGarantia)
+                .HasDefaultValueSql("'12'")
+                .HasColumnName("mesesGarantia");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Pecainsumos)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_pecainsumo_frota1");
         });
 
         modelBuilder.Entity<Percurso>(entity =>
@@ -441,6 +530,8 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdVeiculo, "fk_VeiculoPessoa_Veiculo2_idx");
 
+            entity.HasIndex(e => e.IdFrota, "fk_solicitacaoManutencao_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DataSolicitacao)
                 .HasColumnType("datetime")
@@ -448,8 +539,16 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.DescricaoProblema)
                 .HasMaxLength(500)
                 .HasColumnName("descricaoProblema");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
             entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Solicitacaomanutencaos)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_solicitacaoManutencao_frota1");
 
             entity.HasOne(d => d.IdPessoaNavigation).WithMany(p => p.Solicitacaomanutencaos)
                 .HasForeignKey(d => d.IdPessoa)
@@ -468,6 +567,8 @@ public partial class FrotaContext : DbContext
 
             entity.ToTable("unidadeadministrativa");
 
+            entity.HasIndex(e => e.IdFrota, "fk_unidadeAdministrativa_frota1_idx");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Bairro)
                 .HasMaxLength(50)
@@ -484,6 +585,9 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Estado)
                 .HasMaxLength(2)
                 .HasColumnName("estado");
+            entity.Property(e => e.IdFrota)
+                .HasColumnType("int(11) unsigned zerofill")
+                .HasColumnName("idFrota");
             entity.Property(e => e.Latitude).HasColumnName("latitude");
             entity.Property(e => e.Longitude).HasColumnName("longitude");
             entity.Property(e => e.Nome)
@@ -495,6 +599,11 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Rua)
                 .HasMaxLength(50)
                 .HasColumnName("rua");
+
+            entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Unidadeadministrativas)
+                .HasForeignKey(d => d.IdFrota)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_unidadeAdministrativa_frota1");
         });
 
         modelBuilder.Entity<Veiculo>(entity =>

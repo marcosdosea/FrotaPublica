@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,13 @@ namespace Service
     {
         private readonly FrotaContext context;
         private readonly IFrotaService frotaService;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PessoaService(FrotaContext context, IFrotaService frotaService)
+        public PessoaService(FrotaContext context, IFrotaService frotaService, IHttpContextAccessor httpContextAccessor)
         {
             this.context = context;
             this.frotaService = frotaService;
+            this.httpContextAccessor = httpContextAccessor;
         }
         /// <summary>
         /// Cadastra uma nova pessoa
@@ -72,6 +75,24 @@ namespace Service
         {
             uint idFrota = frotaService.GetFrotaByUser();
             return context.Pessoas.Where(f => f.IdFrota == idFrota).AsNoTracking();
+        }
+
+        public uint GetPessoaIdUser()
+        {
+            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+            if (string.IsNullOrEmpty(cpf))
+                throw new UnauthorizedAccessException("Usuário não autenticado.");
+
+            var idPessoa = context.Pessoas
+                                 .AsNoTracking()
+                                 .Where(p => p.Cpf == cpf)
+                                 .Select(p => p.Id)
+                                 .FirstOrDefault();
+
+            if (idPessoa == 0)
+                throw new InvalidOperationException("Pessoa não encontrada para o usuário autenticado.");
+            return idPessoa;
         }
 
         public IEnumerable<Pessoa> GetPaged(int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome")

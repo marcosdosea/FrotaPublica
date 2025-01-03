@@ -29,7 +29,13 @@ public partial class Fornecedor
 
     public int? Longitude { get; set; }
 
+    public uint IdFrota { get; set; }
+
+    public sbyte Ativo { get; set; }
+
     public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
+
+    public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual ICollection<Manutencao> Manutencaos { get; set; } = new List<Manutencao>();
 }
