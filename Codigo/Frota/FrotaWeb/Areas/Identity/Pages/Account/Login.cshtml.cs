@@ -16,6 +16,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Util;
+using Core.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Components;
 
 namespace FrotaWeb.Areas.Identity.Pages.Account
 {
@@ -24,12 +28,16 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
         private readonly SignInManager<UsuarioIdentity> _signInManager;
         private readonly UserManager<UsuarioIdentity> userManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IFrotaService frotaService;
+        private UserManager<UsuarioIdentity> UserManager { get; set; }
 
-        public LoginModel(SignInManager<UsuarioIdentity> signInManager, UserManager<UsuarioIdentity> userManager, ILogger<LoginModel> logger)
+
+        public LoginModel(SignInManager<UsuarioIdentity> signInManager, UserManager<UsuarioIdentity> userManager, ILogger<LoginModel> logger, IFrotaService frotaService)
         {
             _signInManager = signInManager;
             this.userManager = userManager;
             _logger = logger;
+            this.frotaService = frotaService;
         }
 
 
@@ -126,6 +134,21 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
                     var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
+                        // Persistir o id da frota na sessão
+                        int idFrotaDoUsuario = (int)frotaService.GetFrotaByUsername(user.UserName);
+                        HttpContext.Session.SetInt32("FrotaId", idFrotaDoUsuario);
+
+                        // Atualizar ou adicionar a claim personalizada no banco de dados
+                        var existingClaim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "FrotaId");
+                        if (existingClaim != null)
+                        {
+                            await userManager.RemoveClaimAsync(user, existingClaim);
+                        }
+                        await userManager.AddClaimAsync(user, new Claim("FrotaId", idFrotaDoUsuario.ToString()));
+
+                        // Reautenticar o usuário para carregar as novas claims
+                        await _signInManager.SignInAsync(user, isPersistent: true);
+
                         _logger.LogInformation("User logged in.");
                         return LocalRedirect(returnUrl);
                     }

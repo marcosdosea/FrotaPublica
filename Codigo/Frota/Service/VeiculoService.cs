@@ -24,7 +24,7 @@ namespace Service
         /// </summary>
         /// <param name="veiculo"></param>
         /// <returns></returns>
-        public uint Create(Veiculo veiculo)
+        public uint Create(Veiculo veiculo, int idFrota)
         {
             context.Add(veiculo);
             context.SaveChanges();
@@ -49,7 +49,7 @@ namespace Service
         /// Altera os dados da veiculo na base de dados
         /// </summary>
         /// <param name="veiculo"></param>
-        public void Edit(Veiculo veiculo)
+        public void Edit(Veiculo veiculo, int idFrota)
         {
             context.Update(veiculo);
             context.SaveChanges();
@@ -69,10 +69,8 @@ namespace Service
         /// Obter a lista de veiculo cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Veiculo> GetAll()
+        public IEnumerable<Veiculo> GetAll(int idFrota)
         {
-            uint idFrota = frotaService.GetFrotaByUser();
-
             return context.Veiculos
                           .AsNoTracking()
                           .Where(v => v.IdFrota == idFrota).OrderBy(v => v.Id);
@@ -84,10 +82,8 @@ namespace Service
         /// <param name="page"></param>
         /// <param name="lenght"></param>
         /// <returns>Lista de veículos</returns>
-        public IEnumerable<Veiculo> GetPaged(int page, int lenght)
+        public IEnumerable<Veiculo> GetPaged(int page, int lenght, int idFrota)
         {
-            uint idFrota = frotaService.GetFrotaByUser();
-
             return context.Veiculos
                           .AsNoTracking()
                           .Where(v => v.IdFrota == idFrota)
@@ -100,9 +96,10 @@ namespace Service
         /// Obtém uma listagem simplificada de veículos
         /// </summary>
         /// <returns>Retorna uma listagem de VeiculosDTO</returns>
-        public IEnumerable<VeiculoDTO> GetVeiculoDTO()
+        public IEnumerable<VeiculoDTO> GetVeiculoDTO(int idFrota)
         {
             var veiculoDTO = from veiculo in context.Veiculos
+                             where veiculo.IdFrota == idFrota
                              join modelo in context.Modeloveiculos
                              on veiculo.IdModeloVeiculo equals modelo.Id
                              orderby veiculo.Id

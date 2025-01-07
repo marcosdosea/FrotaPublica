@@ -1,5 +1,4 @@
 ﻿using Core;
-using Core.Datatables;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,9 +27,9 @@ namespace Service
         /// </summary>
         /// <param name="abastecimento"></param>
         /// <returns></returns>
-        public uint Create(Abastecimento abastecimento)
+        public uint Create(Abastecimento abastecimento, int idFrota)
         {
-            abastecimento.IdFrota = frotaService.GetFrotaByUser();
+            abastecimento.IdFrota = (uint)idFrota;
             abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
             context.Add(abastecimento);
             context.SaveChanges();
@@ -55,10 +54,10 @@ namespace Service
         /// Altera os dados da veiculo na base de dados
         /// </summary>
         /// <param name="abastecimento"></param>
-        public void Edit(Abastecimento abastecimento)
+        public void Edit(Abastecimento abastecimento, int idFrota)
         {
             abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
-            abastecimento.IdFrota = frotaService.GetFrotaByUser();
+            abastecimento.IdFrota = (uint)idFrota;
             context.Update(abastecimento);
             context.SaveChanges();
 
@@ -78,44 +77,15 @@ namespace Service
         /// Obter a lista de abastecimentos cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Abastecimento> GetAll()
+        public IEnumerable<Abastecimento> GetAll(int idFrota)
         {
-            return context.Abastecimentos.AsNoTracking();
+            return context.Abastecimentos.Where(abastecimento => abastecimento.IdFrota == idFrota).AsNoTracking();
         }
 
-        public DatatableResponse<Abastecimento> GetDataPage(DatatableRequest request)
-        {
-            uint idFrota = frotaService.GetFrotaByUser();
-            var abastecimentos = context.Abastecimentos.Where(abastecimentos => abastecimentos.IdFrota == idFrota).AsNoTracking();
-
-            var totalResults = abastecimentos.Count();
-
-            if (request.Search != null && request.Search.GetValueOrDefault("value") != null)
-            {
-                abastecimentos = abastecimentos.Where(abastecimentos => abastecimentos.Id.ToString().Contains(request.Search.GetValueOrDefault("value")));
-            }
-
-            if (request.Order != null && request.Order[0].GetValueOrDefault("column").Equals("0"))
-            {
-                if (request.Order[0].GetValueOrDefault("dir").Equals("asc"))
-                    abastecimentos = abastecimentos.OrderBy(abastecimentos => abastecimentos.Id);
-                else
-                    abastecimentos = abastecimentos.OrderByDescending(abastecimentos => abastecimentos.Id);
-            }
-            int countRecordsFiltered = abastecimentos.Count();
-            abastecimentos = abastecimentos.Skip(request.Start).Take(request.Length);
-            return new DatatableResponse<Abastecimento>
-            {
-                Data = abastecimentos.ToList(),
-                Draw = request.Draw,
-                RecordsFiltered = countRecordsFiltered,
-                RecordsTotal = totalResults
-            };
-        }
-
-        public IEnumerable<Abastecimento> GetPaged(int page, int lenght)
+        public IEnumerable<Abastecimento> GetPaged(int page, int lenght, int idFrota)
         {
             return context.Abastecimentos
+                          .Where(abastecimento => abastecimento.IdFrota == idFrota)
                           .AsNoTracking()
                           .Skip(page * lenght)
                           .Take(lenght);

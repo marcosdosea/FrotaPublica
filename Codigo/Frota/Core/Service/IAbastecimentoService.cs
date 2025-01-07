@@ -1,15 +1,12 @@
-﻿using Core.Datatables;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
     public interface IAbastecimentoService
     {
-        uint Create(Abastecimento abastecimento);
-        void Edit(Abastecimento abastecimento);
+        uint Create(Abastecimento abastecimento, int idFrota);
+        void Edit(Abastecimento abastecimento, int idFrota);
         void Delete(uint idAbastecimento);
         Abastecimento? Get(uint idAbastecimento);
-        IEnumerable<Abastecimento> GetPaged(int page, int lenght);
-        IEnumerable<Abastecimento> GetAll();
-        DatatableResponse<Abastecimento> GetDataPage(DatatableRequest request);
+        IEnumerable<Abastecimento> GetPaged(int page, int lenght, int idFrota);
+        IEnumerable<Abastecimento> GetAll(int idFrota);
     }
 }

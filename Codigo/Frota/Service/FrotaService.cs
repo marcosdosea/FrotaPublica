@@ -35,7 +35,7 @@ namespace Service
         /// </summary>
         /// <param name="idFrota"></param>
         /// <returns>retorna verdadeiro se o registro for removido</returns>
-        public bool Delete(uint idFrota)
+        public bool Delete(int idFrota)
         {
             var frota = context.Frota.Find(idFrota);
             if (frota != null)
@@ -62,35 +62,32 @@ namespace Service
         /// </summary>
         /// <param name="idFrota"></param>
         /// <returns>retorna o objeto ou um valor nulo</returns>
-        public Frotum? Get(uint idFrota)
+        public Frotum? Get(int idFrota)
         {
             return context.Frota.Find(idFrota);
 
         }
 
         /// <summary>
-        /// Obter o id da frota através do usuário autenticado
+        /// Método para obter o id da frota do usuário que fizer a autenticação
         /// </summary>
-        /// <returns>Id do Frota</returns>
+        /// <param name="username"></param>
+        /// <returns>id da frota</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public uint GetFrotaByUser()
+        public uint GetFrotaByUsername(string username)
         {
-            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+                throw new UnauthorizedAccessException("Usuário não encontrado.");
 
-            if (string.IsNullOrEmpty(cpf))
-            {
-                throw new UnauthorizedAccessException("Usuário não autenticado.");
-            }
             var idFrota = context.Pessoas
                                  .AsNoTracking()
-                                 .Where(p => p.Cpf == cpf)
+                                 .Where(p => p.Cpf == username)
                                  .Select(p => p.IdFrota)
                                  .FirstOrDefault();
+
             if (idFrota == 0)
-            {
                 throw new InvalidOperationException("Frota não encontrada para o usuário autenticado.");
-            }
             return idFrota;
         }
 
