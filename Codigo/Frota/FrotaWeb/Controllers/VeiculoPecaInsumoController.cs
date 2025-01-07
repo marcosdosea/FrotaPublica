@@ -44,6 +44,10 @@ namespace FrotaWeb.Controllers
         public ActionResult Create()
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             ViewData["Veiculos"] = this.veiculoService.GetVeiculoDTO(idFrota);
             ViewData["PecaInsumos"] = this.pecaInsumoService.GetAll();
             return View();

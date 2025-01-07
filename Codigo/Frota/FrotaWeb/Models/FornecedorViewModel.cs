@@ -48,5 +48,10 @@ namespace FrotaWeb.Models
 
         public int? Longitude { get; set; }
 
+        public uint IdFrota { get; set; }
+
+        [DisplayName("Status de atividade")]
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        public sbyte Ativo { get; set; }
     }
 }

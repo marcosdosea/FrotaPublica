@@ -9,13 +9,11 @@ namespace Service
     public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
-        private readonly IFrotaService frotaService;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PessoaService(FrotaContext context, IFrotaService frotaService, IHttpContextAccessor httpContextAccessor)
+        public PessoaService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
         {
             this.context = context;
-            this.frotaService = frotaService;
             this.httpContextAccessor = httpContextAccessor;
         }
 
@@ -78,9 +76,8 @@ namespace Service
         public IEnumerable<Pessoa> GetAll(int idFrota)
         {
             return context.Pessoas
-                          .AsNoTracking()
                           .Where(f => f.IdFrota == idFrota)
-                          .OrderBy(f => f.Id);
+                          .AsNoTracking();
         }
 
         public uint GetPessoaIdUser()

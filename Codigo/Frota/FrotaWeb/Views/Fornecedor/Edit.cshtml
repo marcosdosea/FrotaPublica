@@ -1,10 +1,4 @@
-@model FrotaWeb.Models.FornecedorViewModel
-
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>Edit</h1>
+Ôªø@model FrotaWeb.Models.FornecedorViewModel
 
 <h4>FornecedorViewModel</h4>
 <hr />
@@ -12,11 +6,6 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Cnpj" class="control-label"></label>
                 <input asp-for="Cnpj" class="form-control" id="cnpjInput" />
@@ -73,6 +62,11 @@
                 <span asp-validation-for="Longitude" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Ativo" class="control-label"></label>
+                <input asp-for="Ativo" class="form-control" />
+                <span asp-validation-for="Ativo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -92,7 +86,6 @@
         document.getElementById('cnpjInput').addEventListener('change', function () {
             var cnpj = this.value.trim();
             cnpj = cnpj.replace(/[^\d]+/g, '');
-
             if (cnpj.length === 14) {
                 fetch(`/Fornecedor/ConsultaCnpj?cnpj=${cnpj}`, {
                     method: 'GET',
@@ -117,12 +110,12 @@
                             document.getElementById('estadoInput').value = data.uf;
                             document.getElementById('cepInput').value = data.cep.replace(/[^\d]/g, '');
                         } else {
-                            alert('CNPJ n„o encontrado.');
+                            alert('CNPJ n√£o encontrado.');
                         }
                     })
                     .catch(error => console.error('Erro:', error));
             } else {
-                alert('CNPJ inv·lido. Certifique-se de que possui 14 dÌgitos.');
+                alert('CNPJ inv√°lido. Certifique-se de que possui 14 d√≠gitos.');
             }
         });
     </script>

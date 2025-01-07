@@ -22,8 +22,9 @@ namespace Service
         /// </summary>
         /// <param name="frota"></param>
         /// <returns></returns>
-        public uint Create(Fornecedor fornecedor)
+        public uint Create(Fornecedor fornecedor, int idFrota)
         {
+            fornecedor.IdFrota = (uint)idFrota;
             context.Add(fornecedor);
             context.SaveChanges();
             return fornecedor.Id;
@@ -50,8 +51,9 @@ namespace Service
         /// Alterar os dados da frota na base de dados
         /// </summary>
         /// <param name="frota"></param>
-        public void Edit(Fornecedor fornecedor)
+        public void Edit(Fornecedor fornecedor, int idFrota)
         {
+            fornecedor.IdFrota = (uint)idFrota;
             context.Update(fornecedor);
             context.SaveChanges();
         }
@@ -69,9 +71,11 @@ namespace Service
         /// Obter a lista de frota cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Fornecedor> GetAll()
+        public IEnumerable<Fornecedor> GetAll(int idFrota)
         {
-            return context.Fornecedors.AsNoTracking();
+            return context.Fornecedors
+                          .Where(fornecedor => fornecedor.IdFrota == idFrota)
+                          .AsNoTracking();
         }
     }
 }
