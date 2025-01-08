@@ -25,12 +25,17 @@ namespace FrotaWeb.Controllers
         [Route("Manutencao")]
         public ActionResult Index([FromRoute]int page = 0)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             int length = 15;
-            var listaManutencoes = manutencaoService.GetAll()
+            var listaManutencoes = manutencaoService.GetAll(idFrota)
                                     .Skip(page * length)
                                     .Take(length)
                                     .ToList();
-            var totalManutencoes = manutencaoService.GetAll().Count();
+            var totalManutencoes = manutencaoService.GetAll(idFrota).Count();
             var totalPages = (int)Math.Ceiling((double)totalManutencoes / length);
 
             ViewBag.CurrentPage = page;
@@ -60,8 +65,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencaoService.Create(manutencao);
+                manutencaoService.Create(manutencao, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -81,8 +91,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencaoService.Edit(manutencao);
+                manutencaoService.Edit(manutencao, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }

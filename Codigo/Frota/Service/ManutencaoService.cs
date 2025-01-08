@@ -9,11 +9,11 @@ namespace Service
     /// </summary>
     public class ManutencaoService : IManutencaoService
     {
-        private readonly FrotaContext _context;
+        private readonly FrotaContext context;
 
         public ManutencaoService(FrotaContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         /// <summary>
@@ -21,10 +21,11 @@ namespace Service
         /// </summary>
         /// <param name="manutencao">Instância de Manutencao</param>
         /// <returns>Id da Manutencao</returns>
-        public uint Create(Manutencao manutencao)
+        public uint Create(Manutencao manutencao, int idFrota)
         {
-            _context.Add(manutencao);
-            _context.SaveChanges();
+            manutencao.IdFrota = (uint)idFrota;
+            context.Add(manutencao);
+            context.SaveChanges();
             return manutencao.Id;
         }
 
@@ -34,11 +35,11 @@ namespace Service
         /// <param name="id">Id do Manutencao</param>
         public void Delete(uint id)
         {
-            var entity = _context.Manutencaos.Find(id);
+            var entity = context.Manutencaos.Find(id);
             if (entity != null)
             {
-                _context.Remove(entity);
-                _context.SaveChanges();
+                context.Remove(entity);
+                context.SaveChanges();
             }
         }
 
@@ -46,10 +47,11 @@ namespace Service
         /// Editar dados do Manutencao na base de dados
         /// </summary>
         /// <param name="manutencao">Instância de Manutencao</param>
-        public void Edit(Manutencao manutencao)
+        public void Edit(Manutencao manutencao, int idFrota)
         {
-            _context.Update(manutencao);
-            _context.SaveChanges();
+            manutencao.IdFrota = (uint)idFrota;
+            context.Update(manutencao);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -59,16 +61,18 @@ namespace Service
         /// <returns>Instância de Manutencao ou null, caso não exista</returns>
         public Manutencao? Get(uint id)
         {
-            return _context.Manutencaos.Find(id);
+            return context.Manutencaos.Find(id);
         }
 
         /// <summary>
         /// Obter todos os Manutencao da base de dados
         /// </summary>
         /// <returns>Lista de todos os Manutencao</returns>
-        public IEnumerable<Manutencao> GetAll()
+        public IEnumerable<Manutencao> GetAll(int idFrota)
         {
-            return _context.Manutencaos.AsNoTracking();
+            return context.Manutencaos
+                          .Where(manutencao => manutencao.IdFrota == idFrota)
+                          .AsNoTracking();
         }
     }
 }
