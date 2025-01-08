@@ -28,5 +28,7 @@ public class SolicitacaoManutencaoViewModel
     [StringLength(500, ErrorMessage = "A {0} pode ter no máximo 500 caracteres")]
     public string DescricaoProblema { get; set; } = null!;
 
+    public uint IdFrota { get; set; }
+
 }
 

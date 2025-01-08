@@ -6,11 +6,11 @@ namespace Service;
 
 public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
 {
-    private readonly FrotaContext _context;
+    private readonly FrotaContext context;
 
     public SolicitacaoManutencaoService(FrotaContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     /// <summary>
@@ -20,10 +20,11 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// <returns>
     /// Retorna o número identificador da nova solicitação.
     /// </returns>
-    public uint Create(Solicitacaomanutencao solicitacao)
+    public uint Create(Solicitacaomanutencao solicitacao, int idFrota)
     {
-        _context.Add(solicitacao);
-        _context.SaveChanges();
+        solicitacao.IdFrota = (uint)idFrota;
+        context.Add(solicitacao);
+        context.SaveChanges();
 
         return solicitacao.Id;
     }
@@ -32,10 +33,11 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// Modifica uma solicitação de manutenção.
     /// </summary>
     /// <param name="solicitacao">Solicitação modificada.</param>
-    public void Edit(Solicitacaomanutencao solicitacao)
+    public void Edit(Solicitacaomanutencao solicitacao, int idFrota)
     {
-        _context.Update(solicitacao);
-        _context.SaveChanges();
+        solicitacao.IdFrota = (uint)idFrota;
+        context.Update(solicitacao);
+        context.SaveChanges();
     }
 
     /// <summary>
@@ -44,13 +46,13 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// <param name="idSolicitacao">Identificador da solicitação.</param>
     public void Delete(uint idSolicitacao)
     {
-        var _solicitacao = _context.Solicitacaomanutencaos.Find(idSolicitacao);
+        var _solicitacao = context.Solicitacaomanutencaos.Find(idSolicitacao);
 
         if (_solicitacao == null)
             return;
 
-        _context.Remove(_solicitacao);
-        _context.SaveChanges();
+        context.Remove(_solicitacao);
+        context.SaveChanges();
     }
 
     /// <summary>
@@ -62,7 +64,7 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// </returns>
     public Solicitacaomanutencao? Get(uint idSolicitacao)
     {
-        return _context.Solicitacaomanutencaos.Find(idSolicitacao);
+        return context.Solicitacaomanutencaos.Find(idSolicitacao);
     }
 
     /// <summary>
@@ -71,9 +73,11 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// <returns>
     /// Retorna uma lista contendo todas as solicitações de manutenção.
     /// </returns>
-    public IEnumerable<Solicitacaomanutencao> GetAll()
+    public IEnumerable<Solicitacaomanutencao> GetAll(int idFrota)
     {
-        return _context.Solicitacaomanutencaos.AsNoTracking();
+        return context.Solicitacaomanutencaos
+                      .Where(solicitacao => solicitacao.IdFrota == idFrota)
+                      .AsNoTracking();
     }
 
     /// <summary>
@@ -83,10 +87,11 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// <returns>
     /// Retorna uma lista de solicitações para uma determinada data.
     /// </returns>
-    public IEnumerable<Solicitacaomanutencao> GetByData(DateTime data)
+    public IEnumerable<Solicitacaomanutencao> GetByData(DateTime data, int idFrota)
     {
         var query =
-            from solicitacao in _context.Solicitacaomanutencaos
+            from solicitacao in context.Solicitacaomanutencaos
+            where solicitacao.IdFrota == idFrota
             where solicitacao.DataSolicitacao.CompareTo(data) == 0
             select solicitacao;
 
@@ -101,10 +106,11 @@ public class SolicitacaoManutencaoService : ISolicitacaoManutencaoService
     /// <returns>
     /// Retorna uma lista de solicitações para uma determinado período de tempo.
     /// </returns>
-    public IEnumerable<Solicitacaomanutencao> GetEntreData(DateTime dataInicio, DateTime dataFim)
+    public IEnumerable<Solicitacaomanutencao> GetEntreData(DateTime dataInicio, DateTime dataFim, int idFrota)
     {
         var query =
-            from solicitacao in _context.Solicitacaomanutencaos
+            from solicitacao in context.Solicitacaomanutencaos
+            where solicitacao.IdFrota == idFrota
             where solicitacao.DataSolicitacao.CompareTo(dataInicio) >= 0
             where solicitacao.DataSolicitacao.CompareTo(dataFim) <= 0
             select solicitacao;
