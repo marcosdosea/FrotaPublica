@@ -37,7 +37,8 @@ namespace Service.Tests
                     Cidade = "Cidade A",
                     Estado = "SP",
                     Latitude = -23.571234f,
-                    Longitude = -46.453333f
+                    Longitude = -46.453333f,
+                    IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
@@ -51,7 +52,8 @@ namespace Service.Tests
                     Cidade = "Cidade B",
                     Estado = "RJ",
                     Latitude = -22.561234f,
-                    Longitude = -44.323333f
+                    Longitude = -44.323333f,
+                    IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
@@ -65,7 +67,8 @@ namespace Service.Tests
                     Cidade = "Cidade C",
                     Estado = "MG",
                     Latitude = -24.561234f,
-                    Longitude = -45.323333f
+                    Longitude = -45.323333f,
+                    IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
@@ -79,7 +82,8 @@ namespace Service.Tests
                     Cidade = "Cidade D",
                     Estado = "BA",
                     Latitude = -25.561234f,
-                    Longitude = -46.323333f
+                    Longitude = -46.323333f,
+                    IdFrota = 1
                 }
             };
             context.AddRange(unidades);
@@ -104,11 +108,12 @@ namespace Service.Tests
                     Cidade = "Cidade E",
                     Estado = "RS",
                     Latitude = -26.561234f,
-                    Longitude = -47.323333f
-                }
+                    Longitude = -47.323333f,
+                    IdFrota = 1
+                }, 1 //id da frota
             );
             // Assert
-            Assert.AreEqual(5, unidadeAdministrativaService.GetAll().Count());
+            Assert.AreEqual(5, unidadeAdministrativaService.GetAll(1).Count());
             var unidade = unidadeAdministrativaService.Get(5);
             Assert.AreEqual("Unidade E", unidade!.Nome);
             Assert.AreEqual("54321000", unidade.Cep);
@@ -120,7 +125,7 @@ namespace Service.Tests
             // Act
             unidadeAdministrativaService!.Delete(2);
             // Assert
-            Assert.AreEqual(3, unidadeAdministrativaService.GetAll().Count());
+            Assert.AreEqual(3, unidadeAdministrativaService.GetAll(1).Count());
             var unidade = unidadeAdministrativaService.Get(2);
             Assert.AreEqual(null, unidade);
         }
@@ -132,7 +137,7 @@ namespace Service.Tests
             var unidade = unidadeAdministrativaService!.Get(3);
             unidade!.Nome = "Unidade C Alterada";
             unidade.Cep = "67890001";
-            unidadeAdministrativaService.Edit(unidade);
+            unidadeAdministrativaService.Edit(unidade, 1);
             // Assert
             unidade = unidadeAdministrativaService.Get(3);
             Assert.AreEqual("Unidade C Alterada", unidade!.Nome);
@@ -152,7 +157,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var listaUnidade = unidadeAdministrativaService!.GetAll();
+            var listaUnidade = unidadeAdministrativaService!.GetAll(1);
             // Assert
             Assert.IsInstanceOfType(listaUnidade, typeof(IEnumerable<Unidadeadministrativa>));
             Assert.IsNotNull(listaUnidade);
@@ -165,7 +170,7 @@ namespace Service.Tests
         public void GetAllOrdemAlfabeticaTest()
         {
             // Act
-            var listaUnidade = unidadeAdministrativaService!.GetAllOrdemAlfabetica();
+            var listaUnidade = unidadeAdministrativaService!.GetAllOrdemAlfabetica(1);
             // Assert
             Assert.IsInstanceOfType(listaUnidade, typeof(IEnumerable<UnidadeAdministrativaDTO>));
             Assert.IsNotNull(listaUnidade);

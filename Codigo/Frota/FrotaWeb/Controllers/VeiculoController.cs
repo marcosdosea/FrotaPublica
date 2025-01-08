@@ -63,7 +63,12 @@ namespace FrotaWeb.Controllers
         [Route("Veiculo/Create")]
         public ActionResult Create()
         {
-            ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
 			ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
 			ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica();
 			return View();

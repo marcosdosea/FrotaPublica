@@ -4,11 +4,11 @@ namespace Core.Service
 {
     public interface IUnidadeAdministrativaService
     {
-        uint Create(Unidadeadministrativa unidadeAdministrativa);
-        void Edit(Unidadeadministrativa unidadeAdministrativa);
+        uint Create(Unidadeadministrativa unidadeAdministrativa, int idFrota);
+        void Edit(Unidadeadministrativa unidadeAdministrativa, int idFrota);
         void Delete(uint id);
         Unidadeadministrativa? Get(uint id);
-        IEnumerable<Unidadeadministrativa> GetAll();
-        IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica();
+        IEnumerable<Unidadeadministrativa> GetAll(int idFrota);
+        IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(int idFrota);
 	}
 }
