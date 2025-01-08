@@ -15,6 +15,8 @@ namespace FrotaWeb.Models
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string Nome { get; set; } = null!;
 
+        public uint IdFrota { get; set; }
+
         [Cep]
         [StringLength(8, MinimumLength = 8, ErrorMessage = "O {0} deve possuir 8 dígitos")]
         public string? Cep { get; set; }

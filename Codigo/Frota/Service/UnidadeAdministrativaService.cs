@@ -19,8 +19,9 @@ namespace Service
 		/// </summary>
 		/// <param name="unidadeAdministrativa"></param>
 		/// <returns></returns>
-		public uint Create(Unidadeadministrativa unidadeAdministrativa)
+		public uint Create(Unidadeadministrativa unidadeAdministrativa, int idFrota)
 		{
+			unidadeAdministrativa.IdFrota = (uint)idFrota;
 			context.Add(unidadeAdministrativa);
 			context.SaveChanges();
 			return unidadeAdministrativa.Id;
@@ -44,8 +45,9 @@ namespace Service
 		/// Alterar os dados da unidade na base de dados
 		/// </summary>
 		/// <param name="unidadeAdministrativa"></param>
-		public void Edit(Unidadeadministrativa unidadeAdministrativa)
+		public void Edit(Unidadeadministrativa unidadeAdministrativa, int idFrota)
 		{
+			unidadeAdministrativa.IdFrota = (uint)idFrota;
 			context.Update(unidadeAdministrativa);
 			context.SaveChanges();
 		}
@@ -64,18 +66,21 @@ namespace Service
 		/// Obter a lista de unidades cadastradas
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Unidadeadministrativa> GetAll()
+		public IEnumerable<Unidadeadministrativa> GetAll(int idFrota)
 		{
-			return context.Unidadeadministrativas.AsNoTracking();
+			return context.Unidadeadministrativas
+						  .Where(frota => frota.IdFrota == idFrota)
+						  .AsNoTracking();
 		}
 
 		/// <summary>
 		/// Obter a lista de unidades cadastradas em ordem alfabética
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica()
+		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(int idFrota)
 		{
 			var unidadeAdministrativaDTO = from unidadeAdministrativa in context.Unidadeadministrativas
+										   where unidadeAdministrativa.IdFrota == idFrota
 										   orderby unidadeAdministrativa.Nome
 										   select new UnidadeAdministrativaDTO
 										   {

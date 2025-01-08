@@ -23,7 +23,12 @@ namespace FrotaWeb.Controllers
 		// GET: UnidadeAdministrativa
 		public ActionResult Index()
 		{
-			var unidades = unidadeAdministrativaService.GetAll();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            var unidades = unidadeAdministrativaService.GetAll(idFrota);
 			var unidadesViewModel = mapper.Map<List<UnidadeAdministrativaViewModel>>(unidades);
 			return View(unidadesViewModel);
 		}
@@ -49,8 +54,13 @@ namespace FrotaWeb.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
-				unidadeAdministrativaService.Create(unidade);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+                var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
+				unidadeAdministrativaService.Create(unidade, idFrota);
 			}
 
 			return RedirectToAction(nameof(Index));
@@ -71,8 +81,13 @@ namespace FrotaWeb.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
-				unidadeAdministrativaService.Edit(unidade);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+                var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
+				unidadeAdministrativaService.Edit(unidade, idFrota);
 			}
 
 			return RedirectToAction(nameof(Index));
