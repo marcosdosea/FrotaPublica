@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Core;
-using Core.Datatables;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -24,16 +23,10 @@ namespace FrotaWeb.Controllers
         // GET: AbastecimentoController
         public ActionResult Index([FromRoute] int page = 0)
         {
-            var listaAbastecimentos = abastecimentoService.GetAll();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            var listaAbastecimentos = abastecimentoService.GetAll(idFrota);
             var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
             return View(listaAbastecimentosViewModel);
-        }
-
-        [HttpPost]
-        public IActionResult GetDataPage(DatatableRequest request)
-        {
-            var response = abastecimentoService.GetDataPage(request);
-            return Json(response);
         }
 
         // GET: AbastecimentoController/Details/5
@@ -53,12 +46,14 @@ namespace FrotaWeb.Controllers
         // POST: AbastecimentoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(AbastecimentoViewModel abastecimento)
+        public ActionResult Create(AbastecimentoViewModel abastecimentoViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+
             if (ModelState.IsValid)
             {
-                var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-                abastecimentoService.Create(_abastecimento);
+                var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
+                abastecimentoService.Create(abastecimento, idFrota);
             }
 
             return RedirectToAction(nameof(Index));
@@ -75,12 +70,14 @@ namespace FrotaWeb.Controllers
         // POST: AbastecimentoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(uint id, AbastecimentoViewModel abastecimento)
+        public ActionResult Edit(uint id, AbastecimentoViewModel abastecimentoViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+
             if (ModelState.IsValid)
             {
-                var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-                abastecimentoService.Edit(_abastecimento);
+                var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
+                abastecimentoService.Edit(abastecimento, idFrota);
             }
 
             return RedirectToAction(nameof(Index));
@@ -97,7 +94,7 @@ namespace FrotaWeb.Controllers
         // POST: AbastecimentoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(uint id, AbastecimentoViewModel abastecimento)
+        public ActionResult Delete(uint id, AbastecimentoViewModel abastecimentoViewModel)
         {
             abastecimentoService.Delete(id);
             return RedirectToAction(nameof(Index));

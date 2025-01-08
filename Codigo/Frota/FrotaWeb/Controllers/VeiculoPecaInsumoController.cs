@@ -14,6 +14,7 @@ namespace FrotaWeb.Controllers
         private readonly IMapper mapper;
         private readonly IVeiculoService veiculoService;
         private readonly IPecaInsumoService pecaInsumoService;
+        
 
         public VeiculoPecaInsumoController(IVeiculoPecaInsumoService service, IMapper mapper, IVeiculoService veiculoService, IPecaInsumoService pecaInsumoService)
         {
@@ -42,7 +43,8 @@ namespace FrotaWeb.Controllers
         // GET: VeiculoPecaInsumoController/Create
         public ActionResult Create()
         {
-            ViewData["Veiculos"] = this.veiculoService.GetVeiculoDTO();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = this.veiculoService.GetVeiculoDTO(idFrota);
             ViewData["PecaInsumos"] = this.pecaInsumoService.GetAll();
             return View();
         }

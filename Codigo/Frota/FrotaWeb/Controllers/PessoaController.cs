@@ -15,6 +15,7 @@ namespace FrotaWeb.Controllers
     {
         private readonly IPessoaService pessoaService;
         private readonly IMapper mapper;
+        
 
         public PessoaController(IPessoaService pessoaService, IMapper mapper)
         {
@@ -28,11 +29,12 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa")]
         public ActionResult Index([FromRoute] int page = 0, string search = null, string filterBy = "Nome")
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             int length = 13;
             int totalResultados;
-            var listaPessoas = pessoaService.GetPaged(page, length, out totalResultados, search, filterBy).ToList();
+            var listaPessoas = pessoaService.GetPaged(idFrota, page, length, out totalResultados, search, filterBy).ToList();
 
-            var totalPessoas = pessoaService.GetAll().Count();
+            var totalPessoas = pessoaService.GetAll(idFrota).Count();
             var totalPages = (int)Math.Ceiling((double)totalResultados / length);
 
             ViewBag.CurrentPage = page;
@@ -68,10 +70,12 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(PessoaViewModel pessoaModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+
             if (ModelState.IsValid)
             {
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
-                pessoaService.Create(pessoa);
+                pessoaService.Create(pessoa, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -89,10 +93,12 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, PessoaViewModel pessoaModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+
             if (ModelState.IsValid)
             {
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
-                pessoaService.Edit(pessoa);
+                pessoaService.Edit(pessoa, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }

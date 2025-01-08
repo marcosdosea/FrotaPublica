@@ -32,7 +32,7 @@ namespace FrotaWeb.Controllers
         // GET: FrotaController/Details/5
         public ActionResult Details(uint id)
         {
-            Frotum frota = frotaService.Get(id);
+            Frotum frota = frotaService.Get((int)id);
             var frotaModel = mapper.Map<FrotaViewModel>(frota);
             return View(frotaModel);
         }
@@ -67,7 +67,7 @@ namespace FrotaWeb.Controllers
         [HttpGet]
         public ActionResult Edit(uint id)
         {
-            var frota = frotaService.Get(id);
+            var frota = frotaService.Get((int)id);
             var frotaModel = mapper.Map<FrotaViewModel>(frota);
             return View(frotaModel);
         }
@@ -96,7 +96,7 @@ namespace FrotaWeb.Controllers
         [HttpGet]
         public ActionResult Delete(uint id)
         {
-            Frotum frota = frotaService.Get(id);
+            Frotum frota = frotaService.Get((int)id);
             var frotaModel = mapper.Map<FrotaViewModel>(frota);
             return View(frotaModel);
         }
@@ -108,7 +108,7 @@ namespace FrotaWeb.Controllers
         {
             try
             {
-                frotaService.Delete(id);
+                frotaService.Delete((int)id);
                 return RedirectToAction(nameof(Index));
             }
             catch

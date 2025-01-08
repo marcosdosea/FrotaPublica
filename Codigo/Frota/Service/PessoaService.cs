@@ -25,8 +25,9 @@ namespace Service
         /// <param name="pessoa"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public uint Create(Pessoa pessoa)
+        public uint Create(Pessoa pessoa, int idFrota)
         {
+            pessoa.IdFrota = (uint)idFrota;
             context.Add(pessoa);
             context.SaveChanges();
             return pessoa.Id;
@@ -52,8 +53,9 @@ namespace Service
         /// </summary>
         /// <param name="pessoa"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public void Edit(Pessoa pessoa)
+        public void Edit(Pessoa pessoa, int idFrota)
         {
+            pessoa.IdFrota = (uint)idFrota;
             context.Update(pessoa);
             context.SaveChanges();
         }
@@ -73,9 +75,8 @@ namespace Service
         /// Busca todas as pessoas cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Pessoa> GetAll()
+        public IEnumerable<Pessoa> GetAll(int idFrota)
         {
-            uint idFrota = frotaService.GetFrotaByUser();
             return context.Pessoas
                           .AsNoTracking()
                           .Where(f => f.IdFrota == idFrota)
@@ -100,10 +101,8 @@ namespace Service
             return idPessoa;
         }
 
-        public IEnumerable<Pessoa> GetPaged(int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome")
+        public IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome")
         {
-            uint idFrota = frotaService.GetFrotaByUser();
-
             var query = context.Pessoas
                                .Where(f => f.IdFrota == idFrota)
                                .AsNoTracking();

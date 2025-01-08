@@ -4,6 +4,7 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace FrotaWeb.Controllers
 {
@@ -31,10 +32,12 @@ namespace FrotaWeb.Controllers
         [Route ("Veiculo")]
         public ActionResult Index([FromRoute] int page = 0)
         {
-            int length = 15;
-            var listaVeiculos = veiculoService.GetPaged(page, length).ToList();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
 
-            var totalVeiculos = veiculoService.GetAll().Count();
+            int length = 15;
+            var listaVeiculos = veiculoService.GetPaged(page, length, idFrota).ToList();
+
+            var totalVeiculos = veiculoService.GetAll(idFrota).Count();
             var totalPages = (int)Math.Ceiling((double)totalVeiculos / length);
 
             ViewBag.CurrentPage = page;
@@ -67,9 +70,10 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(VeiculoViewModel veiculoViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (ModelState.IsValid) {
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Create(veiculo);
+                veiculoService.Create(veiculo, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -87,9 +91,10 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, VeiculoViewModel veiculoViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (ModelState.IsValid) {
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Edit(veiculo);
+                veiculoService.Edit(veiculo, idFrota);
             }
 
             return RedirectToAction(nameof(Index));

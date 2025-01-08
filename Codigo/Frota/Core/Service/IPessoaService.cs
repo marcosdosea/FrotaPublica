@@ -2,12 +2,12 @@
 {
     public interface IPessoaService
     {
-        uint Create(Pessoa pessoa);
-        void Edit(Pessoa pessoa);
+        uint Create(Pessoa pessoa, int idFrota);
+        void Edit(Pessoa pessoa, int idFrota);
         void Delete(uint idPessoa);
-        IEnumerable<Pessoa> GetAll();
+        IEnumerable<Pessoa> GetAll(int idFrota);
         Pessoa? Get(uint idPessoa);
         uint GetPessoaIdUser();
-        IEnumerable<Pessoa> GetPaged(int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome");
+        IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome");
     }
 }
