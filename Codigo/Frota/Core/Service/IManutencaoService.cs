@@ -10,10 +10,10 @@ namespace Service
 {
     public interface IManutencaoService
     {
-        uint Create(Manutencao manutencao);
-        void Edit(Manutencao manutencao);
+        uint Create(Manutencao manutencao, int idFrota);
+        void Edit(Manutencao manutencao, int idFrota);
         void Delete(uint id);
         Manutencao? Get(uint id);
-        IEnumerable<Manutencao> GetAll();
+        IEnumerable<Manutencao> GetAll(int idFrota);
     }
 }

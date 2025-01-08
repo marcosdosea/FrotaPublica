@@ -46,5 +46,6 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         public string Status { get; set; } = null!;
 
+        public uint IdFrota { get; set; }
     }
 }
