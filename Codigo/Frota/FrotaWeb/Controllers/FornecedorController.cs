@@ -109,24 +109,5 @@ namespace FrotaWeb.Controllers
             fornecedorService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
-
-        [HttpGet]
-        public async Task<IActionResult> ConsultaCnpj(string cnpj)
-        {
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
-                var response = await client.GetAsync($"https://www.receitaws.com.br/v1/cnpj/{cnpj}");
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    return Content(content, "application/json");
-                }
-                else
-                {
-                    return BadRequest("Erro ao consultar CNPJ.");
-                }
-            }
-        }
     }
 }
