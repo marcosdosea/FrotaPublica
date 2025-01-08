@@ -1,10 +1,4 @@
-@model FrotaWeb.Models.FornecedorViewModel
-
-@{
-    ViewData["Title"] = "Cadastro de Fornecedor";
-}
-
-<h1>Create</h1>
+Ôªø@model FrotaWeb.Models.FornecedorViewModel
 
 <h4>FornecedorViewModel</h4>
 <hr />
@@ -12,11 +6,6 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Cnpj" class="control-label"></label>
                 <input asp-for="Cnpj" class="form-control" id="cnpjInput" />
@@ -44,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Numero" class="control-label"></label>
-                <input asp-for="Numero" class="form-control" id="numeroInput"/>
+                <input asp-for="Numero" class="form-control" id="numeroInput" />
                 <span asp-validation-for="Numero" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -54,12 +43,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Cidade" class="control-label"></label>
-                <input asp-for="Cidade" class="form-control" id="cidadeInput"/>
+                <input asp-for="Cidade" class="form-control" id="cidadeInput" />
                 <span asp-validation-for="Cidade" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" id="estadoInput"/>
+                <input asp-for="Estado" class="form-control" id="estadoInput" />
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -73,6 +62,11 @@
                 <span asp-validation-for="Longitude" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Ativo" class="control-label"></label>
+                <input asp-for="Ativo" class="form-control" />
+                <span asp-validation-for="Ativo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -84,7 +78,9 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
         document.getElementById('cnpjInput').addEventListener('change', function () {
@@ -114,12 +110,12 @@
                             document.getElementById('estadoInput').value = data.uf;
                             document.getElementById('cepInput').value = data.cep.replace(/[^\d]/g, '');
                         } else {
-                            alert('CNPJ n„o encontrado.');
+                            alert('CNPJ n√£o encontrado.');
                         }
                     })
                     .catch(error => console.error('Erro:', error));
             } else {
-                alert('CNPJ inv·lido. Certifique-se de que possui 14 dÌgitos.');
+                alert('CNPJ inv√°lido. Certifique-se de que possui 14 d√≠gitos.');
             }
         });
     </script>

@@ -24,6 +24,10 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0)
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             var listaAbastecimentos = abastecimentoService.GetAll(idFrota);
             var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
             return View(listaAbastecimentosViewModel);
@@ -48,10 +52,13 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(AbastecimentoViewModel abastecimentoViewModel)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
                 abastecimentoService.Create(abastecimento, idFrota);
             }
@@ -72,10 +79,13 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, AbastecimentoViewModel abastecimentoViewModel)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
                 abastecimentoService.Edit(abastecimento, idFrota);
             }

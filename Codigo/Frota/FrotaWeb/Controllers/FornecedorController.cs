@@ -23,7 +23,13 @@ namespace FrotaWeb.Controllers
         // GET: FornecedorController
         public ActionResult Index()
         {
-            var listaFornecedor = fornecedorService.GetAll();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
+            var listaFornecedor = fornecedorService.GetAll(idFrota);
             var listaFornecedorModel = mapper.Map<List<FornecedorViewModel>>(listaFornecedor);
             return View(listaFornecedorModel);
         }
@@ -49,8 +55,14 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                fornecedorService.Create(fornecedor);
+                fornecedorService.Create(fornecedor, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -70,8 +82,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                fornecedorService.Edit(fornecedor);
+                fornecedorService.Edit(fornecedor, idFrota);
             }
             return RedirectToAction(nameof(Index));
         }

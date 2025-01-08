@@ -30,6 +30,10 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0, string search = null, string filterBy = "Nome")
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             int length = 13;
             int totalResultados;
             var listaPessoas = pessoaService.GetPaged(idFrota, page, length, out totalResultados, search, filterBy).ToList();
@@ -70,10 +74,13 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(PessoaViewModel pessoaModel)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 pessoaService.Create(pessoa, idFrota);
             }
@@ -93,10 +100,13 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, PessoaViewModel pessoaModel)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 pessoaService.Edit(pessoa, idFrota);
             }
