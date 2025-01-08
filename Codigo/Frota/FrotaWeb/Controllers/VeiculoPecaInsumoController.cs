@@ -14,7 +14,7 @@ namespace FrotaWeb.Controllers
         private readonly IMapper mapper;
         private readonly IVeiculoService veiculoService;
         private readonly IPecaInsumoService pecaInsumoService;
-        
+
 
         public VeiculoPecaInsumoController(IVeiculoPecaInsumoService service, IMapper mapper, IVeiculoService veiculoService, IPecaInsumoService pecaInsumoService)
         {
@@ -43,13 +43,13 @@ namespace FrotaWeb.Controllers
         // GET: VeiculoPecaInsumoController/Create
         public ActionResult Create()
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
             }
-            ViewData["Veiculos"] = this.veiculoService.GetVeiculoDTO(idFrota);
-            ViewData["PecaInsumos"] = this.pecaInsumoService.GetAll();
+            ViewData["Veiculos"] = this.veiculoService.GetVeiculoDTO((int)idFrota);
+            ViewData["PecaInsumos"] = this.pecaInsumoService.GetAll(idFrota);
             return View();
         }
 
@@ -58,7 +58,7 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(VeiculoPecaInsumoViewModel veiculoPecaInsumoModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var veiculoPecaInsumo = mapper.Map<Veiculopecainsumo>(veiculoPecaInsumoModel);
                 veiculoPecaInsumoService.Create(veiculoPecaInsumo);
