@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
     public interface IPecaInsumoService
     {
@@ -13,6 +6,6 @@ namespace Core.Service
         void Edit(Pecainsumo pecainsumo);
         void Delete(uint idPeca);
         Pecainsumo? Get(uint idPeca);
-        IEnumerable<Pecainsumo> GetAll();
+        IEnumerable<Pecainsumo> GetAll(uint idFrota);
     }
 }

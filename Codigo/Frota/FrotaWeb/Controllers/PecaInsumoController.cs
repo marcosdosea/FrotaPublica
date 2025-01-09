@@ -3,7 +3,6 @@ using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
@@ -19,10 +18,16 @@ namespace FrotaWeb.Controllers
             _pecaInsumoService = pecaInsumoService;
             _mapper = mapper;
         }
+
         // GET: PecaInsumoController
         public ActionResult Index()
         {
-            var listaPeca = _pecaInsumoService.GetAll();
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            var listaPeca = _pecaInsumoService.GetAll(idFrota);            
             var listaPecaModel = _mapper.Map<List<PecaInsumoViewModel>>(listaPeca);
             return View(listaPecaModel);
         }
@@ -30,7 +35,7 @@ namespace FrotaWeb.Controllers
         // GET: PecaInsumoController/Details/5
         public ActionResult Details(uint id)
         {
-            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            Pecainsumo? pecainsumo = _pecaInsumoService.Get(id);
             PecaInsumoViewModel pecainsumoModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
             return View(pecainsumoModel);
         }
@@ -48,7 +53,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var peca = _mapper.Map<Pecainsumo>(model);
+                peca.IdFrota = idFrota;
                 _pecaInsumoService.Create(peca);
             }
             return RedirectToAction(nameof(Index));
@@ -57,7 +68,7 @@ namespace FrotaWeb.Controllers
         // GET: PecaInsumoController/Edit/5
         public ActionResult Edit(uint id)
         {
-            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            Pecainsumo? pecainsumo = _pecaInsumoService.Get(id);
             PecaInsumoViewModel pecaInsumoViewModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
             return View(pecaInsumoViewModel);
         }
@@ -69,7 +80,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
                 var peca = _mapper.Map<Pecainsumo>(model);
+                peca.IdFrota = idFrota;
                 _pecaInsumoService.Edit(peca);
             }
             return RedirectToAction(nameof(Index));
@@ -78,7 +95,7 @@ namespace FrotaWeb.Controllers
         // GET: PecaInsumoController/Delete/5
         public ActionResult Delete(uint id)
         {
-            Pecainsumo pecainsumo = _pecaInsumoService.Get(id);
+            Pecainsumo? pecainsumo = _pecaInsumoService.Get(id);
             PecaInsumoViewModel pecaInsumoViewModel = _mapper.Map<PecaInsumoViewModel>(pecainsumo);
             return View(pecaInsumoViewModel);
         }

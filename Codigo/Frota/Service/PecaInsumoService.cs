@@ -1,11 +1,6 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -16,6 +11,7 @@ namespace Service
         {
             _context = context;
         }
+
         public uint Create(Pecainsumo pecainsumo)
         {
             _context.Add(pecainsumo);
@@ -26,8 +22,11 @@ namespace Service
         public void Delete(uint idPeca)
         {
             var pecainsumo = _context.Pecainsumos.Find(idPeca);
-            _context.Remove(pecainsumo);
-            _context.SaveChanges();
+            if (pecainsumo != null)
+            {
+                _context.Remove(pecainsumo);
+                _context.SaveChanges();
+            }
         }
 
         public void Edit(Pecainsumo pecainsumo)
@@ -41,9 +40,9 @@ namespace Service
             return _context.Pecainsumos.Find(idPeca);
         }
 
-        public IEnumerable<Pecainsumo> GetAll()
+        public IEnumerable<Pecainsumo> GetAll(uint idFrota)
         {
-            return _context.Pecainsumos.AsNoTracking();
+            return _context.Pecainsumos.Where(pecainsumo => pecainsumo.IdFrota == idFrota).AsNoTracking();
         }
     }
 }
