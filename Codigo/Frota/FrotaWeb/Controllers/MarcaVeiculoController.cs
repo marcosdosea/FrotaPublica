@@ -22,7 +22,12 @@ namespace FrotaWeb.Controllers
 		// GET: MarcaVeiculo
 		public ActionResult Index()
 		{
-			var marcaVeiculos = _service.GetAll();
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            var marcaVeiculos = _service.GetAll(idFrota);
 			var marcaVeiculosViewModel = mapper.Map<List<MarcaVeiculoViewModel>>(marcaVeiculos);
 			return View(marcaVeiculosViewModel);
 		}
@@ -49,8 +54,13 @@ namespace FrotaWeb.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
-				_service.Create(marcaVeiculo);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+                var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
+				_service.Create(marcaVeiculo, idFrota);
 			}
 
 			return RedirectToAction(nameof(Index));
@@ -72,8 +82,13 @@ namespace FrotaWeb.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
-				_service.Edit(marcaVeiculo);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+                var marcaVeiculo = mapper.Map<Marcaveiculo>(marcaVeiculoViewModel);
+				_service.Edit(marcaVeiculo, idFrota);
 			}
 
 			return RedirectToAction(nameof(Index));

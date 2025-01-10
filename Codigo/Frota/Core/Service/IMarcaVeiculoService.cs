@@ -9,10 +9,10 @@ namespace Core.Service
 {
     public interface IMarcaVeiculoService
     {
-		uint Create(Marcaveiculo frota);
-		void Edit(Marcaveiculo frota);
+		uint Create(Marcaveiculo frota, int idFrota);
+		void Edit(Marcaveiculo frota, int idFrota);
 		void Delete(uint idFrota);
 		Marcaveiculo? Get(uint idFrota);
-		IEnumerable<Marcaveiculo> GetAll();
+		IEnumerable<Marcaveiculo> GetAll(int idFrota);
 	}
 }
