@@ -8,8 +8,7 @@ namespace Core.Service
         void Edit(Modeloveiculo modeloVeiculo);
         void Delete(uint id);
         Modeloveiculo? Get(uint idVeiculo);
-        IEnumerable<Modeloveiculo> GetAll();
-        IEnumerable<ModeloVeiculoDTO> GetAllOrdemAlfabetica();
-
-	}
+        IEnumerable<Modeloveiculo> GetAll(uint idFrota);
+        IEnumerable<ModeloVeiculoDTO> GetAllOrdemAlfabetica(uint idFrota);
+    }
 }

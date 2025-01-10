@@ -24,7 +24,7 @@ namespace Service
         /// </summary>
         /// <param name="veiculo"></param>
         /// <returns></returns>
-        public uint Create(Veiculo veiculo, int idFrota)
+        public uint Create(Veiculo veiculo, uint idFrota)
         {
             context.Add(veiculo);
             context.SaveChanges();
@@ -49,7 +49,7 @@ namespace Service
         /// Altera os dados da veiculo na base de dados
         /// </summary>
         /// <param name="veiculo"></param>
-        public void Edit(Veiculo veiculo, int idFrota)
+        public void Edit(Veiculo veiculo)
         {
             context.Update(veiculo);
             context.SaveChanges();
@@ -69,7 +69,7 @@ namespace Service
         /// Obter a lista de veiculo cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Veiculo> GetAll(int idFrota)
+        public IEnumerable<Veiculo> GetAll(uint idFrota)
         {
             return context.Veiculos
                           .AsNoTracking()
@@ -82,7 +82,7 @@ namespace Service
         /// <param name="page"></param>
         /// <param name="lenght"></param>
         /// <returns>Lista de veículos</returns>
-        public IEnumerable<Veiculo> GetPaged(int page, int lenght, int idFrota)
+        public IEnumerable<Veiculo> GetPaged(int page, int lenght, uint idFrota)
         {
             return context.Veiculos
                           .AsNoTracking()
