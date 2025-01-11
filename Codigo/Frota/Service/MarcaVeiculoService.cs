@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace Service
 {
@@ -17,8 +18,9 @@ namespace Service
 		/// </summary>
 		/// <param name="marcaVeiculo"></param>
 		/// <returns></returns>
-		public uint Create(Marcaveiculo marcaVeiculo)
+		public uint Create(Marcaveiculo marcaVeiculo, int idFrota)
 		{
+			marcaVeiculo.IdFrota = (uint)idFrota;
 			context.Add(marcaVeiculo);
 			context.SaveChanges();
 			return marcaVeiculo.Id;
@@ -39,9 +41,10 @@ namespace Service
 		/// Alterar os dados da veiculo na base de dados
 		/// </summary>
 		/// <param name="marcaVeiculo"></param>
-		public void Edit(Marcaveiculo marcaVeiculo)
+		public void Edit(Marcaveiculo marcaVeiculo, int idFrota)
 		{
-			context.Update(marcaVeiculo);
+			marcaVeiculo.IdFrota = (uint)idFrota;
+            context.Update(marcaVeiculo);
 			context.SaveChanges();
 		}
 
@@ -59,9 +62,11 @@ namespace Service
 		/// Obter a lista de veiculo cadastradas
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Marcaveiculo> GetAll()
+		public IEnumerable<Marcaveiculo> GetAll(int idFrota)
 		{
-			return context.Marcaveiculos;
+			return context.Marcaveiculos
+						  .Where(marca => marca.IdFrota == idFrota)
+						  .AsNoTracking();
 		}
 	}
 }
