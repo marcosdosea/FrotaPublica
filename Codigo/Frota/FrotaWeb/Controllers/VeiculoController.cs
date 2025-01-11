@@ -32,7 +32,7 @@ namespace FrotaWeb.Controllers
         [Route ("Veiculo")]
         public ActionResult Index([FromRoute] int page = 0)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
@@ -63,14 +63,14 @@ namespace FrotaWeb.Controllers
         [Route("Veiculo/Create")]
         public ActionResult Create()
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
             }
             ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
 			ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-			ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica();
+			ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
 			return View();
         }
 
@@ -81,7 +81,7 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
                 if (idFrota == 0)
                 {
                     return Redirect("/Identity/Account/Login");
@@ -107,15 +107,9 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Edit(veiculo, idFrota);
+                veiculoService.Edit(veiculo);
             }
-
             return RedirectToAction(nameof(Index));
         }
 

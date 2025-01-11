@@ -8,7 +8,7 @@ namespace Core.Service
         void Edit(Unidadeadministrativa unidadeAdministrativa, int idFrota);
         void Delete(uint id);
         Unidadeadministrativa? Get(uint id);
-        IEnumerable<Unidadeadministrativa> GetAll(int idFrota);
-        IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(int idFrota);
+        IEnumerable<Unidadeadministrativa> GetAll(uint idFrota);
+        IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(uint idFrota);
 	}
 }

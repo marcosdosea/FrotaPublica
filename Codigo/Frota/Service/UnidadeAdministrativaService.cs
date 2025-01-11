@@ -66,7 +66,7 @@ namespace Service
 		/// Obter a lista de unidades cadastradas
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Unidadeadministrativa> GetAll(int idFrota)
+		public IEnumerable<Unidadeadministrativa> GetAll(uint idFrota)
 		{
 			return context.Unidadeadministrativas
 						  .Where(frota => frota.IdFrota == idFrota)
@@ -77,7 +77,7 @@ namespace Service
 		/// Obter a lista de unidades cadastradas em ordem alfabética
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(int idFrota)
+		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(uint idFrota)
 		{
 			var unidadeAdministrativaDTO = from unidadeAdministrativa in context.Unidadeadministrativas
 										   where unidadeAdministrativa.IdFrota == idFrota

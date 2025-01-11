@@ -4,12 +4,12 @@ namespace Core.Service
 {
     public interface IVeiculoService
     {
-        uint Create(Veiculo veiculo, int idFrota);
-        void Edit(Veiculo veiculo, int idFrota);
+        uint Create(Veiculo veiculo, uint idFrota);
+        void Edit(Veiculo veiculo);
         void Delete(uint idVeiculo);
         Veiculo? Get(uint idVeiculo);
-        IEnumerable<Veiculo> GetPaged(int page, int lenght, int idFrota);
-        IEnumerable<Veiculo> GetAll(int idFrota);
+        IEnumerable<Veiculo> GetPaged(int page, int lenght, uint idFrota);
+        IEnumerable<Veiculo> GetAll(uint idFrota);
         IEnumerable<VeiculoDTO> GetVeiculoDTO(int idFrota);
     }
 }

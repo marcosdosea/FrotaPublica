@@ -2,7 +2,6 @@
 using FrotaWeb.Models;
 using Core.Service;
 using Microsoft.AspNetCore.Mvc;
-using Service;
 using Core;
 using Microsoft.AspNetCore.Authorization;
 
@@ -36,7 +35,12 @@ namespace FrotaWeb.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var listaModelVeiculos = _modeloveiculoservice.GetAll();
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            if (idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            var listaModelVeiculos = _modeloveiculoservice.GetAll(idFrota);
             var ModelVeiculos = _mapper.Map<List<ModeloVeiculoViewModel>>(listaModelVeiculos);
             return View(ModelVeiculos);
         }
@@ -60,8 +64,14 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var entity = _mapper.Map<Modeloveiculo>(model);
-                _modeloveiculoservice.Create(entity);
+                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+                if (idFrota == 0)
+                {
+                    return Redirect("/Identity/Account/Login");
+                }
+                var modeloVeiculo = _mapper.Map<Modeloveiculo>(model);
+                modeloVeiculo.IdFrota = idFrota;
+                _modeloveiculoservice.Create(modeloVeiculo);
             }
             return RedirectToAction(nameof(Index));
         }

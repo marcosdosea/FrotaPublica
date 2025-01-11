@@ -23,7 +23,7 @@ namespace FrotaWeb.Controllers
 		// GET: UnidadeAdministrativa
 		public ActionResult Index()
 		{
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
