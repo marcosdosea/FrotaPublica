@@ -15,5 +15,12 @@ namespace FrotaWeb.Models
         [DisplayName("Descrição")]
         public string? Descricao { get; set; }
 
+        [Required(ErrorMessage = "A {0} é obrigatória.")]
+        [DisplayName("Garantia (Meses)")]
+        public int MesesGarantia { get; set; } = 12;
+
+        [Required(ErrorMessage = "A {0} é obrigatória.")]
+        [DisplayName("Garantia (Km)")]
+        public int KmGarantia { get; set; } = 5000;
     }
 }
