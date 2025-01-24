@@ -8,6 +8,6 @@
         IEnumerable<Pessoa> GetAll(int idFrota);
         Pessoa? Get(uint idPessoa);
         uint GetPessoaIdUser();
-        IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome");
+        IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome");
     }
 }
