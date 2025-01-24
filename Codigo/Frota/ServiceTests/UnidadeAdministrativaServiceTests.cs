@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System.Runtime.ConstrainedExecution;
+using Core;
 using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
@@ -28,62 +29,62 @@ namespace Service.Tests
                 new Unidadeadministrativa
                 {
                     Id = 1,
-                    Nome = "Unidade A",
-                    Cep = "12345000",
-                    Rua = "Rua A",
-                    Bairro = "Bairro A",
-                    Numero = "100",
-                    Complemento = "Prédio 1",
-                    Cidade = "Cidade A",
-                    Estado = "SP",
-                    Latitude = -23.571234f,
-                    Longitude = -46.453333f,
+                    Nome = "Logística Norte",
+                    Cep = "59625400",
+                    Rua = "Avenida Jorge Coelho de Andrade",
+                    Bairro = "Presidente Costa e Silva",
+                    Complemento = null,
+                    Numero = "12",
+                    Cidade = null,
+                    Estado = null,
+                    Latitude = null,
+                    Longitude = null,
                     IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
                     Id = 2,
-                    Nome = "Unidade B",
-                    Cep = "54321000",
-                    Rua = "Rua B",
-                    Bairro = "Bairro B",
-                    Numero = "200",
-                    Complemento = "Andar 2",
-                    Cidade = "Cidade B",
-                    Estado = "RJ",
-                    Latitude = -22.561234f,
-                    Longitude = -44.323333f,
+                    Nome = "Operacional Sul",
+                    Cep = "68909166",
+                    Rua = "Sérgio Mendes",
+                    Bairro = "Boné Azul",
+                    Complemento = "Próximo a padaria Camilinha",
+                    Numero = "28",
+                    Cidade = "Macapá",
+                    Estado = "AP",
+                    Latitude = (float) 0.082705,
+                    Longitude = (float) -51.0741820,
                     IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
                     Id = 3,
-                    Nome = "Unidade C",
-                    Cep = "67890000",
-                    Rua = "Rua C",
-                    Bairro = "Bairro C",
-                    Numero = "300",
-                    Complemento = "Prédio 3",
-                    Cidade = "Cidade C",
-                    Estado = "MG",
-                    Latitude = -24.561234f,
-                    Longitude = -45.323333f,
-                    IdFrota = 1
+                    Nome = "Distribuição Leste",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Complemento = null,
+                    Numero = null,
+                    Cidade = null,
+                    Estado = null,
+                    Latitude = null,
+                    Longitude = null,
+                    IdFrota = 2
                 },
                 new Unidadeadministrativa
                 {
                     Id = 4,
-                    Nome = "Unidade D",
-                    Cep = "98765000",
-                    Rua = "Rua D",
-                    Bairro = "Bairro D",
-                    Numero = "400",
-                    Complemento = "Bloco 4",
-                    Cidade = "Cidade D",
-                    Estado = "BA",
-                    Latitude = -25.561234f,
-                    Longitude = -46.323333f,
-                    IdFrota = 1
+                    Nome = "Distribuição Leste",
+                    Cep = "59072240",
+                    Rua = "Santo Euzébio",
+                    Bairro = "Felipe Camarão",
+                    Complemento = null,
+                    Numero = "12",
+                    Cidade = "Natal",
+                    Estado = "RN",
+                    Latitude = null,
+                    Longitude = null,
+                    IdFrota = 2
                 }
             };
             context.AddRange(unidades);
@@ -99,24 +100,24 @@ namespace Service.Tests
                 new Unidadeadministrativa
                 {
                     Id = 5,
-                    Nome = "Unidade E",
-                    Cep = "54321000",
-                    Rua = "Rua E",
-                    Bairro = "Bairro E",
-                    Numero = "500",
-                    Complemento = "Prédio 5",
-                    Cidade = "Cidade E",
-                    Estado = "RS",
-                    Latitude = -26.561234f,
-                    Longitude = -47.323333f,
-                    IdFrota = 1
-                }, 1 //id da frota
+                    Nome = "Frota Central",
+                    Cep = "20765090",
+                    Rua = null,
+                    Bairro = null,
+                    Complemento = null,
+                    Numero = "28",
+                    Cidade = "Rio de Janeiro",
+                    Estado = "RJ",
+                    Latitude = (float)-22.90818,
+                    Longitude = (float)-43.18251,
+                },
+                2
             );
             // Assert
-            Assert.AreEqual(5, unidadeAdministrativaService.GetAll(1).Count());
+            Assert.AreEqual(2, unidadeAdministrativaService.GetAll(1).Count());
             var unidade = unidadeAdministrativaService.Get(5);
-            Assert.AreEqual("Unidade E", unidade!.Nome);
-            Assert.AreEqual("54321000", unidade.Cep);
+            Assert.AreEqual("Frota Central", unidade!.Nome);
+            Assert.AreEqual("20765090", unidade.Cep);
         }
 
         [TestMethod()]
@@ -125,7 +126,7 @@ namespace Service.Tests
             // Act
             unidadeAdministrativaService!.Delete(2);
             // Assert
-            Assert.AreEqual(3, unidadeAdministrativaService.GetAll(1).Count());
+            Assert.AreEqual(1, unidadeAdministrativaService.GetAll(1).Count());
             var unidade = unidadeAdministrativaService.Get(2);
             Assert.AreEqual(null, unidade);
         }
@@ -135,13 +136,13 @@ namespace Service.Tests
         {
             // Act
             var unidade = unidadeAdministrativaService!.Get(3);
-            unidade!.Nome = "Unidade C Alterada";
-            unidade.Cep = "67890001";
-            unidadeAdministrativaService.Edit(unidade, 1);
+            unidade!.Nome = "Manutenção Zona Norte";
+            unidade.Cep = "59114231";
+            unidadeAdministrativaService.Edit(unidade, 2);
             // Assert
             unidade = unidadeAdministrativaService.Get(3);
-            Assert.AreEqual("Unidade C Alterada", unidade!.Nome);
-            Assert.AreEqual("67890001", unidade.Cep);
+            Assert.AreEqual("Manutenção Zona Norte", unidade!.Nome);
+            Assert.AreEqual("59114231", unidade.Cep);
         }
 
         [TestMethod()]
@@ -149,8 +150,8 @@ namespace Service.Tests
         {
             var unidade = unidadeAdministrativaService!.Get(1);
             Assert.IsNotNull(unidade);
-            Assert.AreEqual("Unidade A", unidade.Nome);
-            Assert.AreEqual("12345000", unidade.Cep);
+            Assert.AreEqual("Logística Norte", unidade.Nome);
+            Assert.AreEqual("59625400", unidade.Cep);
         }
 
         [TestMethod()]
@@ -161,9 +162,9 @@ namespace Service.Tests
             // Assert
             Assert.IsInstanceOfType(listaUnidade, typeof(IEnumerable<Unidadeadministrativa>));
             Assert.IsNotNull(listaUnidade);
-            Assert.AreEqual(4, listaUnidade.Count());
+            Assert.AreEqual(2, listaUnidade.Count());
             Assert.AreEqual((uint)1, listaUnidade.First().Id);
-            Assert.AreEqual("Unidade A", listaUnidade.First().Nome);
+            Assert.AreEqual("Logística Norte", listaUnidade.First().Nome);
         }
 
         [TestMethod()]
@@ -174,9 +175,9 @@ namespace Service.Tests
             // Assert
             Assert.IsInstanceOfType(listaUnidade, typeof(IEnumerable<UnidadeAdministrativaDTO>));
             Assert.IsNotNull(listaUnidade);
-            Assert.AreEqual(4, listaUnidade.Count());
+            Assert.AreEqual(2, listaUnidade.Count());
             Assert.AreEqual((uint)1, listaUnidade.First().Id);
-            Assert.AreEqual("Unidade A", listaUnidade.First().Nome);
+            Assert.AreEqual("Logística Norte", listaUnidade.First().Nome);
         }
     }
 }

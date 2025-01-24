@@ -64,7 +64,7 @@ namespace Service
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Pessoa Get(uint idPessoa)
+        public Pessoa? Get(uint idPessoa)
         {
             return context.Pessoas.Find(idPessoa);
         }

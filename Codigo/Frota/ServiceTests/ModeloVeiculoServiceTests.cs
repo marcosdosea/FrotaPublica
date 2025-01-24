@@ -25,11 +25,46 @@ namespace Service.Tests
 
             var veiculos = new List<Modeloveiculo>
             {
-                new Modeloveiculo { Id = 1, IdMarcaVeiculo = 101, Nome = "Modelo A", CapacidadeTanque = 50 },
-                new Modeloveiculo { Id = 2, IdMarcaVeiculo = 102, Nome = "Modelo B", CapacidadeTanque = 60 },
-                new Modeloveiculo { Id = 3, IdMarcaVeiculo = 103, Nome = "Modelo C", CapacidadeTanque = 45 },
-                new Modeloveiculo { Id = 4, IdMarcaVeiculo = 104, Nome = "Modelo D", CapacidadeTanque = 55 },
-                new Modeloveiculo { Id = 5, IdMarcaVeiculo = 105, Nome = "Modelo E", CapacidadeTanque = 65 }
+                new Modeloveiculo
+                {
+                    Id = 1,
+                    IdMarcaVeiculo = 101,
+                    Nome = "Cargo 1119",
+                    CapacidadeTanque = 50,
+                    IdFrota = 1
+                },
+                new Modeloveiculo
+                {
+                    Id = 2,
+                    IdMarcaVeiculo = 102,
+                    Nome = "Sprinter",
+                    CapacidadeTanque = 60,
+                    IdFrota = 1
+                },
+                new Modeloveiculo
+                {
+                    Id = 3,
+                    IdMarcaVeiculo = 103,
+                    Nome = "Fiorino",
+                    CapacidadeTanque = 45,
+                    IdFrota = 2
+                },
+                new Modeloveiculo
+                {
+                    Id = 4,
+                    IdMarcaVeiculo = 104,
+                    Nome = "Master",
+                    CapacidadeTanque = 55,
+                    IdFrota = 2
+                },
+                new Modeloveiculo
+                {
+                    Id = 5,
+                    IdMarcaVeiculo = 105,
+                    Nome = "Kombi",
+                    CapacidadeTanque = 65,
+                    IdFrota = 3
+                }
             };
 
             context.AddRange(veiculos);
@@ -46,15 +81,16 @@ namespace Service.Tests
                 {
                     Id = 6,
                     IdMarcaVeiculo = 106,
-                    Nome = "Modelo F",
-                    CapacidadeTanque = 70
+                    Nome = "Hilux",
+                    CapacidadeTanque = 70,
+                    IdFrota = 3
                 }
             );
             // Assert
-            Assert.AreEqual(6, modeloVeiculoService.GetAll().Count());
+            Assert.AreEqual(2, modeloVeiculoService.GetAll(1).Count());
             var modeloVeiculo = modeloVeiculoService.Get(6);
             Assert.IsNotNull(modeloVeiculo);
-            Assert.AreEqual("Modelo F", modeloVeiculo.Nome);
+            Assert.AreEqual("Hilux", modeloVeiculo.Nome);
         }
 
         [TestMethod()]
@@ -73,12 +109,12 @@ namespace Service.Tests
         {
             // Act
             var modeloVeiculo = modeloVeiculoService!.Get(2);
-            modeloVeiculo!.Nome = "Modelo G";
+            modeloVeiculo!.Nome = "Pajeiro";
             modeloVeiculo.CapacidadeTanque = 75;
             modeloVeiculoService.Edit(modeloVeiculo);
             // Assert
             modeloVeiculo = modeloVeiculoService.Get(2);
-            Assert.AreEqual("Modelo G", modeloVeiculo!.Nome);
+            Assert.AreEqual("Pajeiro", modeloVeiculo!.Nome);
             Assert.AreEqual(75, modeloVeiculo.CapacidadeTanque);
         }
 
@@ -89,30 +125,30 @@ namespace Service.Tests
             var modeloVeiculo = modeloVeiculoService!.Get(3);
             // Assert
             Assert.IsNotNull(modeloVeiculo);
-            Assert.AreEqual("Modelo C", modeloVeiculo!.Nome);
+            Assert.AreEqual("Fiorino", modeloVeiculo!.Nome);
         }
 
         [TestMethod()]
         public void GetAllTest()
         {
             // Act
-            var listaModeloVeiculo = modeloVeiculoService!.GetAll();
+            var listaModeloVeiculo = modeloVeiculoService!.GetAll(1);
             // Assert
             Assert.IsInstanceOfType(listaModeloVeiculo, typeof(IEnumerable<Modeloveiculo>));
             Assert.IsNotNull(listaModeloVeiculo);
-            Assert.AreEqual(5, listaModeloVeiculo.Count());
+            Assert.AreEqual(2, listaModeloVeiculo.Count());
         }
 
         [TestMethod()]
         public void GetAllOrdemAlfabeticaTest()
         {
             // Act
-            var listaModeloVeiculoDTO = modeloVeiculoService!.GetAllOrdemAlfabetica();
+            var listaModeloVeiculoDTO = modeloVeiculoService!.GetAllOrdemAlfabetica(1);
             // Assert
             Assert.IsInstanceOfType(listaModeloVeiculoDTO, typeof(IEnumerable<ModeloVeiculoDTO>));
             Assert.IsNotNull(listaModeloVeiculoDTO);
-            Assert.AreEqual(5, listaModeloVeiculoDTO.Count());
-            Assert.AreEqual("Modelo A", listaModeloVeiculoDTO.First().Nome);
+            Assert.AreEqual(2, listaModeloVeiculoDTO.Count());
+            Assert.AreEqual("Cargo 1119", listaModeloVeiculoDTO.First().Nome);
         }
     }
 }

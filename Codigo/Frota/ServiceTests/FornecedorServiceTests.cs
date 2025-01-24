@@ -1,5 +1,4 @@
 ﻿using Core;
-using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,70 +23,74 @@ namespace Service.Tests
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            var fornecedores =  new List<Fornecedor>
+            var fornecedores = new List<Fornecedor>
             {
                 new Fornecedor
                 {
                     Id = 1,
-                    Nome = "Fornecedor A",
-                    Cnpj = "12345678901234",
-                    Cep = "12345000",
-                    Rua = "Rua A",
-                    Bairro = "Bairro A",
-                    Numero = "100",
-                    Complemento = "Sala 1",
-                    Cidade = "Cidade A",
-                    Estado = "SP",
-                    Latitude = -23571234,
-                    Longitude = -46453333
+                    Nome = "AutoParts Express",
+                    Cnpj = "97234939000152",
+                    Cep = "48770971",
+                    Rua = "Rua Principal",
+                    Bairro = "Canto",
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Teofilândia",
+                    Estado = "BA",
+                    Latitude = -114861,
+                    Longitude = -389735,
+                    IdFrota = 1
                 },
                 new Fornecedor
                 {
                     Id = 2,
-                    Nome = "Fornecedor B",
-                    Cnpj = "98765432109876",
-                    Cep = "54321000",
-                    Rua = "Rua B",
-                    Bairro = "Bairro B",
-                    Numero = "200",
+                    Nome = "FuelPro Distribuidora",
+                    Cnpj = "84555003000181",
+                    Cep = "69068420",
+                    Rua = "Rua 14",
+                    Bairro = "Raiz",
+                    Numero = "16",
                     Complemento = "Andar 2",
-                    Cidade = "Cidade B",
-                    Estado = "RJ",
-                    Latitude = -22561234,
-                    Longitude = -44323333
+                    Cidade = "Manaus",
+                    Estado = "AM",
+                    Latitude = -312149,
+                    Longitude = -599969,
+                    IdFrota = 2
                 },
                 new Fornecedor
                 {
                     Id = 3,
-                    Nome = "Fornecedor C",
-                    Cnpj = "11223344556677",
-                    Cep = "67890000",
-                    Rua = "Rua C",
-                    Bairro = "Bairro C",
-                    Numero = "300",
-                    Complemento = "Prédio 3",
-                    Cidade = "Cidade C",
-                    Estado = "MG",
-                    Latitude = -24561234,
-                    Longitude = -45323333
+                    Nome = "MaxFleet Services",
+                    Cnpj = "10803495000140",
+                    Cep = "27960168",
+                    Rua = "Travessa Matias Barbosa",
+                    Bairro = "Macaé",
+                    Numero = "20",
+                    Complemento = null,
+                    Cidade = "Macaé",
+                    Estado = "RG",
+                    Latitude = -22383873,
+                    Longitude = -417826,
+                    IdFrota = 2
                 },
                 new Fornecedor
                 {
                     Id = 4,
-                    Nome = "Fornecedor D",
-                    Cnpj = "22334455667788",
-                    Cep = "98765000",
-                    Rua = "Rua D",
-                    Bairro = "Bairro D",
+                    Nome = "RoadSafe Pneus",
+                    Cnpj = "53933822000191",
+                    Cep = "97545050",
+                    Rua = "Rua Álvaro Ignácio de Medeiros",
+                    Bairro = "Atlântida",
                     Numero = "400",
-                    Complemento = "Bloco 4",
-                    Cidade = "Cidade D",
-                    Estado = "BA",
-                    Latitude = -25561234,
-                    Longitude = -46323333
+                    Complemento = null,
+                    Cidade = "Alegrete",
+                    Estado = "RS",
+                    Latitude = -255612,
+                    Longitude = -463233,
+                    IdFrota = 3,
+                    Ativo = 0
                 }
             };
-
             context.AddRange(fornecedores);
             context.SaveChanges();
             fornecedorService = new FornecedorService(context);
@@ -101,24 +104,26 @@ namespace Service.Tests
                 new Fornecedor
                 {
                     Id = 5,
-                    Nome = "Fornecedor E",
-                    Cnpj = "33445566778899",
-                    Cep = "76543210",
-                    Rua = "Rua E",
-                    Bairro = "Bairro E",
-                    Numero = "500",
-                    Complemento = "Sala 5",
-                    Cidade = "Cidade E",
-                    Estado = "RS",
-                    Latitude = -26561234,
-                    Longitude = -47323333
-                }
+                    Nome = "TrackLine Logística",
+                    Cnpj = "24926018000187",
+                    Cep = "65907502",
+                    Rua = "Rua Quinze de Novembro",
+                    Bairro = "Nova Imperatriz",
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Imperatriz",
+                    Estado = "MA",
+                    Latitude = -551671,
+                    Longitude = -474772,
+                    IdFrota = 3
+                },
+                3
             );
             //Assert
-            Assert.AreEqual(5, fornecedorService.GetAll().Count());
+            Assert.AreEqual(2, fornecedorService.GetAll(3).Count());
             var fornecedor = fornecedorService.Get(5);
-            Assert.AreEqual("Fornecedor E", fornecedor!.Nome);
-            Assert.AreEqual("33445566778899", fornecedor.Cnpj);
+            Assert.AreEqual("TrackLine Logística", fornecedor!.Nome);
+            Assert.AreEqual("24926018000187", fornecedor.Cnpj);
         }
 
         [TestMethod()]
@@ -127,7 +132,7 @@ namespace Service.Tests
             //Act
             fornecedorService!.Delete(2);
             //Assert
-            Assert.AreEqual(3, fornecedorService.GetAll().Count());
+            Assert.AreEqual(1, fornecedorService.GetAll(2).Count());
             var fornecedor = fornecedorService.Get(2);
             Assert.AreEqual(null, fornecedor);
         }
@@ -137,13 +142,13 @@ namespace Service.Tests
         {
             //Act
             var fornecedor = fornecedorService!.Get(3);
-            fornecedor!.Nome = "Fornecedor C Ltda";
-            fornecedor.Cnpj = "11223344556677";
-            fornecedorService.Edit(fornecedor);
+            fornecedor!.Nome = "ItaPecas Ltda";
+            fornecedor.Cnpj = "22557763000170";
+            fornecedorService.Edit(fornecedor, 2);
             //Assert
             fornecedor = fornecedorService.Get(3);
-            Assert.AreEqual("Fornecedor C Ltda", fornecedor!.Nome);
-            Assert.AreEqual("11223344556677", fornecedor.Cnpj);
+            Assert.AreEqual("ItaPecas Ltda", fornecedor!.Nome);
+            Assert.AreEqual("22557763000170", fornecedor.Cnpj);
 
         }
 
@@ -152,21 +157,21 @@ namespace Service.Tests
         {
             var fornecedor = fornecedorService!.Get(1);
             Assert.IsNotNull(fornecedor);
-            Assert.AreEqual("Fornecedor A", fornecedor!.Nome);
-            Assert.AreEqual("12345678901234", fornecedor.Cnpj);
+            Assert.AreEqual("AutoParts Express", fornecedor!.Nome);
+            Assert.AreEqual("97234939000152", fornecedor.Cnpj);
         }
 
         [TestMethod()]
         public void GetAllTest()
         {
             //Act
-            var listaFornecedor = fornecedorService!.GetAll();
+            var listaFornecedor = fornecedorService!.GetAll(3);
             //Assert
             Assert.IsInstanceOfType(listaFornecedor, typeof(IEnumerable<Fornecedor>));
             Assert.IsNotNull(listaFornecedor);
-            Assert.AreEqual(4, listaFornecedor.Count());
-            Assert.AreEqual((uint)1, listaFornecedor.First().Id);
-            Assert.AreEqual("Fornecedor A", listaFornecedor.First().Nome);
+            Assert.AreEqual(1, listaFornecedor.Count());
+            Assert.AreEqual((uint)4, listaFornecedor.First().Id);
+            Assert.AreEqual("RoadSafe Pneus", listaFornecedor.First().Nome);
         }
     }
 }
