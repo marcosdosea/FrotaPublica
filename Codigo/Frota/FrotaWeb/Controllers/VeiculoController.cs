@@ -87,7 +87,8 @@ namespace FrotaWeb.Controllers
                     return Redirect("/Identity/Account/Login");
                 }
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Create(veiculo, idFrota);
+                veiculo.IdFrota = idFrota;
+                veiculoService.Create(veiculo);
             }
             return RedirectToAction(nameof(Index));
         }

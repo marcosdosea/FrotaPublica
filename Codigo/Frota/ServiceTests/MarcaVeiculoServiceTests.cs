@@ -28,17 +28,20 @@ namespace Service.Tests
                 new Marcaveiculo
                 {
                     Id = 1,
-                    Nome = "Volkswagen"
+                    Nome = "Volkswagen",
+                    IdFrota = 1
                 },
                 new Marcaveiculo
                 {
                     Id = 2,
-                    Nome = "Chevrolet"
+                    Nome = "Chevrolet",
+                    IdFrota = 1
                 },
                 new Marcaveiculo
                 {
                     Id = 3,
-                    Nome = "Ford"
+                    Nome = "Ford",
+                    IdFrota = 2
                 }
             };
 
@@ -55,11 +58,12 @@ namespace Service.Tests
                 new Marcaveiculo
                 {
                     Id = 4,
-                    Nome = "Fiat"
-                }
+                    Nome = "Fiat",
+                },
+                2
             );
             // Assert
-            Assert.AreEqual(4, marcaVeiculoService!.GetAll().Count());
+            Assert.AreEqual(2, marcaVeiculoService!.GetAll(2).Count());
             var marca = marcaVeiculoService!.Get(4);
             Assert.AreEqual("Fiat", marca!.Nome);
         }
@@ -70,7 +74,7 @@ namespace Service.Tests
             // Act
             marcaVeiculoService!.Delete(1);
             // Assert
-            Assert.AreEqual(2, marcaVeiculoService!.GetAll().Count());
+            Assert.AreEqual(1, marcaVeiculoService!.GetAll(1).Count());
             var marca = marcaVeiculoService!.Get(1);
             Assert.AreEqual(null, marca);
         }
@@ -81,7 +85,7 @@ namespace Service.Tests
             // Act
             var marca = marcaVeiculoService!.Get(3);
             marca!.Nome = "Ferrari";
-            marcaVeiculoService!.Edit(marca);
+            marcaVeiculoService!.Edit(marca, 2);
             // Assert
             marca = marcaVeiculoService!.Get(3);
             Assert.AreEqual("Ferrari", marca!.Nome);
@@ -101,11 +105,11 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var listaMarcas = marcaVeiculoService!.GetAll();
+            var listaMarcas = marcaVeiculoService!.GetAll(1);
             // Assert
             Assert.IsInstanceOfType(listaMarcas, typeof(IEnumerable<Marcaveiculo>));
             Assert.IsNotNull(listaMarcas);
-            Assert.AreEqual(3, listaMarcas.Count());
+            Assert.AreEqual(2, listaMarcas.Count());
         }
     }
 }

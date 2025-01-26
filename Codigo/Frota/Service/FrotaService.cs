@@ -1,7 +1,6 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service
@@ -10,12 +9,9 @@ namespace Service
     {
         private readonly FrotaContext context;
 
-        private readonly IHttpContextAccessor httpContextAccessor;
-
-        public FrotaService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
+        public FrotaService(FrotaContext context)
         {
             this.context = context;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -37,7 +33,7 @@ namespace Service
         /// <returns>retorna verdadeiro se o registro for removido</returns>
         public bool Delete(int idFrota)
         {
-            var frota = context.Frota.Find(idFrota);
+            var frota = context.Frota.Find((uint)idFrota);
             if (frota != null)
             {
                 context.Remove(frota);
@@ -64,7 +60,7 @@ namespace Service
         /// <returns>retorna o objeto ou um valor nulo</returns>
         public Frotum? Get(int idFrota)
         {
-            return context.Frota.Find(idFrota);
+            return context.Frota.Find((uint)idFrota);
 
         }
 

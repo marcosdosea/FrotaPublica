@@ -1,7 +1,6 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Tests
@@ -30,62 +29,58 @@ namespace Service.Tests
                 {
                     Id = 1,
                     Nome = "Transportes Oliveira",
-                    Cnpj = "12345678000199",
-                    Cep = "12345678",
-                    Rua = "Avenida Principal",
-                    Bairro = "Centro",
-                    Numero = "100",
-                    Complemento = "Sala 201",
-                    Cidade = "São Paulo",
-                    Estado = "SP"
+                    Cnpj = "26243946000172",
+                    Cep = "79080170",
+                    Rua = "Américo Carlos da Costa",
+                    Bairro = "Jardim América",
+                    Numero = "103",
+                    Complemento = null,
+                    Cidade = "Campo Grande",
+                    Estado = "MS"
                 },
                 new Frotum
                 {
                     Id = 2,
                     Nome = "Logística Santos",
-                    Cnpj = "98765432000188",
-                    Cep = "98765432",
-                    Rua = "Rua das Flores",
-                    Bairro = "Vila Nova",
-                    Numero = "250",
-                    Complemento = "Galpão 3",
-                    Cidade = "Rio de Janeiro",
+                    Cnpj = "98103198000133",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
                     Estado = "RJ"
                 },
                 new Frotum
                 {
                     Id = 3,
                     Nome = "Expresso Litoral",
-                    Cnpj = "45612378000122",
-                    Cep = "54321098",
-                    Rua = "Avenida Atlântica",
-                    Bairro = "Boa Vista",
-                    Numero = "300",
+                    Cnpj = "50806346000150",
+                    Cep = "81460090",
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
                     Complemento = null,
-                    Cidade = "Salvador",
-                    Estado = "BA"
+                    Cidade = "Curitiba",
+                    Estado = "PR"
                 },
                 new Frotum
                 {
                     Id = 4,
                     Nome = "Carga Pesada Ltda",
-                    Cnpj = "32165498000177",
-                    Cep = "67890123",
-                    Rua = "Rua do Porto",
-                    Bairro = "Industrial",
-                    Numero = "75",
-                    Complemento = "Bloco B",
-                    Cidade = "Curitiba",
-                    Estado = "PR"
+                    Cnpj = "39612223000145",
+                    Cep = "60832120",
+                    Rua = "Nova Olímpia",
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Fortaleza",
+                    Estado = "CE"
                 }
             };
             context.AddRange(frotas);
             context.SaveChanges();
-            var httpContextAccessor = new HttpContextAccessor
-            {
-                HttpContext = new DefaultHttpContext()
-            };
-            frotaService = new FrotaService(context, httpContextAccessor);
+            frotaService = new FrotaService(context);
         }
 
         [TestMethod()]
@@ -97,21 +92,21 @@ namespace Service.Tests
                 {
                     Id = 5,
                     Nome = "Transportadora Rápida",
-                    Cnpj = "65498732000166",
-                    Cep = "76543210",
-                    Rua = "Avenida dos Expedicionários",
-                    Bairro = "Jardim das Flores",
-                    Numero = "150",
-                    Complemento = "Sala 301",
-                    Cidade = "Belo Horizonte",
-                    Estado = "MG"
+                    Cnpj = "09802206000100",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Cuiabá",
+                    Estado = "MT"
                 }
             );
             //Assert
             Assert.AreEqual(5, frotaService.GetAll().Count());
             var frota = frotaService.Get(5);
             Assert.AreEqual("Transportadora Rápida", frota!.Nome);
-            Assert.AreEqual("65498732000166", frota.Cnpj);
+            Assert.AreEqual("09802206000100", frota.Cnpj);
         }
 
         [TestMethod()]
@@ -131,12 +126,12 @@ namespace Service.Tests
             //Act
             var frota = frotaService!.Get(3);
             frota!.Nome = "Expresso Litoral S/A";
-            frota.Cnpj = "45612378000122";
+            frota.Cnpj = "84616529000124";
             frotaService.Edit(frota);
             //Assert
             frota = frotaService.Get(3);
             Assert.AreEqual("Expresso Litoral S/A", frota!.Nome);
-            Assert.AreEqual("45612378000122", frota.Cnpj);
+            Assert.AreEqual("84616529000124", frota.Cnpj);
         }
 
         [TestMethod()]
@@ -145,7 +140,7 @@ namespace Service.Tests
             var frota = frotaService!.Get(1);
             Assert.IsNotNull(frota);
             Assert.AreEqual("Transportes Oliveira", frota.Nome);
-            Assert.AreEqual("12345678000199", frota.Cnpj);
+            Assert.AreEqual("26243946000172", frota.Cnpj);
         }
 
         [TestMethod()]
@@ -159,6 +154,7 @@ namespace Service.Tests
             Assert.AreEqual(4, listaFrota.Count());
             Assert.AreEqual((uint)1, listaFrota.First().Id);
             Assert.AreEqual("Transportes Oliveira", listaFrota.First().Nome);
+            Assert.AreEqual("26243946000172", listaFrota.First().Cnpj);
         }
 
         [TestMethod()]

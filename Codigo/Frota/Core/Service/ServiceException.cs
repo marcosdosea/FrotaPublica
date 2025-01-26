@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json;
 
 namespace Core.Service
 {
@@ -19,8 +19,14 @@ namespace Core.Service
 
         }
 
-        protected ServiceException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public string Serialize()
         {
+            return JsonSerializer.Serialize(this);
+        }
+
+        public static ServiceException? Deserialize(string json)
+        {
+            return JsonSerializer.Deserialize<ServiceException>(json);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Core;
-using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,17 +27,20 @@ namespace Service.Tests
                 new Marcapecainsumo
                 {
                     Id = 1,
-                    Descricao = "Bosch"
+                    Descricao = "Bosch",
+                    Idfrota = 1
                 },
                 new Marcapecainsumo
                 {
                     Id = 2,
-                    Descricao = "Delphi"
+                    Descricao = "Delphi",
+                    Idfrota = 1
                 },
                 new Marcapecainsumo
                 {
                     Id = 3,
-                    Descricao = "MTE-Thomson"
+                    Descricao = "MTE-Thomson",
+                    Idfrota = 2
                 }
             };
 
@@ -56,14 +58,15 @@ namespace Service.Tests
                 new Marcapecainsumo
                 {
                     Id = 4,
-                    Descricao = "teste"
-                }    
+                    Descricao = "Valeo",
+                    Idfrota = 2
+                }
             );
             // Assert
             Assert.AreEqual(4, context!.Marcapecainsumos.Count());
             var marcapecainsumo = marcaPecaInsumoService.Get(4);
             Assert.IsNotNull(marcapecainsumo);
-            Assert.AreEqual("teste", marcapecainsumo!.Descricao);
+            Assert.AreEqual("Valeo", marcapecainsumo!.Descricao);
         }
 
         [TestMethod()]
@@ -82,11 +85,11 @@ namespace Service.Tests
         {
             // Act
             var marcapecainsumo = marcaPecaInsumoService!.Get(3);
-            marcapecainsumo!.Descricao = "teste";
+            marcapecainsumo!.Descricao = "Magneti Marelli";
             marcaPecaInsumoService.Edit(marcapecainsumo);
             // Assert
             marcapecainsumo = marcaPecaInsumoService.Get(3);
-            Assert.AreEqual("teste", marcapecainsumo!.Descricao);
+            Assert.AreEqual("Magneti Marelli", marcapecainsumo!.Descricao);
         }
 
         [TestMethod()]

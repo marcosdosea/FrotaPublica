@@ -1,24 +1,17 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
     public class AbastecimentoService : IAbastecimentoService
     {
         private readonly FrotaContext context;
-        private readonly IFrotaService frotaService;
         private readonly IPessoaService pessoaService;
 
-        public AbastecimentoService(FrotaContext context, IFrotaService frotaService, IPessoaService pessoaService)
+        public AbastecimentoService(FrotaContext context, IPessoaService pessoaService)
         {
             this.context = context;
-            this.frotaService = frotaService;
             this.pessoaService = pessoaService;
         }
 

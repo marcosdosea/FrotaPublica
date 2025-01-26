@@ -3,20 +3,16 @@ using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Service
 {
     public class VeiculoService : IVeiculoService
     {
         private readonly FrotaContext context;
-        private readonly IFrotaService frotaService;
 
-        public VeiculoService(FrotaContext context, IFrotaService frotaService)
+        public VeiculoService(FrotaContext context)
         {
             this.context = context;
-            this.frotaService = frotaService;
         }
 
         /// <summary>
@@ -24,7 +20,7 @@ namespace Service
         /// </summary>
         /// <param name="veiculo"></param>
         /// <returns></returns>
-        public uint Create(Veiculo veiculo, uint idFrota)
+        public uint Create(Veiculo veiculo)
         {
             context.Add(veiculo);
             context.SaveChanges();

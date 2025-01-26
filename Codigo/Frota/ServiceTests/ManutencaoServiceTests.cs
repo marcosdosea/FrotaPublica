@@ -11,7 +11,7 @@ namespace Service.Tests
         private FrotaContext? context;
         private IManutencaoService? manutencaoService;
 
-        [TestInitialize()] 
+        [TestInitialize()]
         public void Initialize()
         {
             // Arrange
@@ -34,8 +34,9 @@ namespace Service.Tests
                     ValorPecas = 1500.50m,
                     ValorManutencao = 500.75m,
                     Tipo = "Preventiva",
-                    Comprovante = null, // ou um array de bytes para simular um comprovante
-                    Status = "Concluído"
+                    Comprovante = null,
+                    Status = "Concluído",
+                    IdFrota = 1
                 },
                 new Manutencao
                 {
@@ -48,7 +49,8 @@ namespace Service.Tests
                     ValorManutencao = 150.25m,
                     Tipo = "Corretiva",
                     Comprovante = null,
-                    Status = "Pendente"
+                    Status = "Pendente",
+                    IdFrota = 1
                 },
                 new Manutencao
                 {
@@ -61,7 +63,8 @@ namespace Service.Tests
                     ValorManutencao = 250.00m,
                     Tipo = "Preventiva",
                     Comprovante = null,
-                    Status = "Em Andamento"
+                    Status = "Em Andamento",
+                    IdFrota = 2
                 }
             };
             context.AddRange(manutencoes);
@@ -84,10 +87,12 @@ namespace Service.Tests
                 ValorManutencao = 250.00m,
                 Tipo = "Preventiva",
                 Comprovante = null,
-                Status = "Em Andamento"
-            });
+                Status = "Em Andamento",
+            },
+                2
+            );
             // Assert
-            Assert.AreEqual(4, manutencaoService.GetAll().Count());
+            Assert.AreEqual(2, manutencaoService.GetAll(2).Count());
             var manutencao = manutencaoService.Get(4);
             Assert.AreEqual("Preventiva", manutencao!.Tipo);
             Assert.AreEqual(3003m, manutencao.IdResponsavel);
@@ -99,7 +104,7 @@ namespace Service.Tests
             // Act
             manutencaoService!.Delete(2);
             // Assert
-            Assert.AreEqual(2, manutencaoService.GetAll().Count());
+            Assert.AreEqual(1, manutencaoService.GetAll(1).Count());
             var manutencao = manutencaoService.Get(2);
             Assert.AreEqual(null, manutencao);
         }
@@ -111,7 +116,7 @@ namespace Service.Tests
             var manutencao = manutencaoService!.Get(3);
             manutencao!.ValorPecas = 1000.00m;
             manutencao.ValorManutencao = 500.00m;
-            manutencaoService.Edit(manutencao);
+            manutencaoService.Edit(manutencao, 2);
             // Assert
             manutencao = manutencaoService.Get(3);
             Assert.AreEqual(1000.00m, manutencao!.ValorPecas);
@@ -134,11 +139,11 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var listaManutencao = manutencaoService!.GetAll();
+            var listaManutencao = manutencaoService!.GetAll(1);
             // Assert
             Assert.IsInstanceOfType(listaManutencao, typeof(IEnumerable<Manutencao>));
             Assert.IsNotNull(listaManutencao);
-            Assert.AreEqual(3, listaManutencao.Count());
+            Assert.AreEqual(2, listaManutencao.Count());
             Assert.AreEqual((uint)1, listaManutencao.First().Id);
         }
     }

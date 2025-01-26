@@ -64,7 +64,7 @@ namespace Service
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Pessoa Get(uint idPessoa)
+        public Pessoa? Get(uint idPessoa)
         {
             return context.Pessoas.Find(idPessoa);
         }
@@ -98,7 +98,7 @@ namespace Service
             return idPessoa;
         }
 
-        public IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string search = null, string filterBy = "Nome")
+        public IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome")
         {
             var query = context.Pessoas
                                .Where(f => f.IdFrota == idFrota)
@@ -106,16 +106,19 @@ namespace Service
 
             if (!string.IsNullOrEmpty(search))
             {
+                string searchLower = search.ToLower();
                 switch (filterBy.ToLower())
                 {
                     case "cpf":
-                        query = query.Where(s => s.Cpf.ToLower().Contains(search.ToLower()));
+                        query = query.Where(s => s.Cpf.ToLower().Contains(searchLower));
                         break;
                     case "cidade":
-                        query = query.Where(s => s.Cidade.ToLower().Contains(search.ToLower()));
+                        query = query.Where(s =>
+                                             (s.Cidade != null && s.Cidade.ToLower().Contains(searchLower)) ||
+                                             s.Nome.ToLower().Contains(searchLower));
                         break;
                     default:
-                        query = query.Where(s => s.Nome.ToLower().Contains(search.ToLower()));
+                        query = query.Where(s => s.Nome.ToLower().Contains(searchLower));
                         break;
                 }
             }

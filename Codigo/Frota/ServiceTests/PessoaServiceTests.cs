@@ -32,28 +32,12 @@ namespace Service.Tests
                     Id = 1,
                     Cpf = "78766537070",
                     Nome = "Guilherme Lima",
-                    Cep = "12345000",
-                    Rua = "Rua A",
-                    Bairro = "Bairro A",
-                    Numero = "100",
-                    Complemento = "Casa 1",
-                    Cidade = "Cidade A",
-                    Estado = "SP",
-                    IdFrota = 1,
-                    IdPapelPessoa = 1,
-                    Ativo = 1
-                },
-                new Pessoa
-                {
-                    Id = 2,
-                    Cpf = "87637838005",
-                    Nome = "Kauã Oliveira",
-                    Cep = "54321000",
-                    Rua = "Rua B",
-                    Bairro = null,
-                    Numero = "200",
+                    Cep = "16203585068",
+                    Rua = "Francisco Gomes",
+                    Bairro = "Nova Cidade",
                     Complemento = null,
-                    Cidade = "Cidade B",
+                    Numero = "12",
+                    Cidade = "Itaboraí",
                     Estado = "RJ",
                     IdFrota = 1,
                     IdPapelPessoa = 1,
@@ -61,33 +45,49 @@ namespace Service.Tests
                 },
                 new Pessoa
                 {
+                    Id = 2,
+                    Cpf = "06130691025",
+                    Nome = "Kauã Oliveira",
+                    Cep = "79002800",
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
+                    Estado = "MS",
+                    IdFrota = 1,
+                    IdPapelPessoa = 1,
+                    Ativo = 1
+                },
+                new Pessoa
+                {
                     Id = 3,
-                    Cpf = "85566853072",
+                    Cpf = "20551985054",
                     Nome = "Igor Andrade",
-                    Cep = "67890000",
-                    Rua = "Rua C",
-                    Bairro = "Bairro C",
-                    Numero = "300",
-                    Complemento = "Prédio 3",
-                    Cidade = "Cidade C",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
                     Estado = "MG",
-                    IdFrota = 3,
+                    IdFrota = 2,
                     IdPapelPessoa = 1,
                     Ativo = 0
                 },
                 new Pessoa
                 {
                     Id = 4,
-                    Cpf = "98713875043",
+                    Cpf = "95832085078",
                     Nome = "Marcos Santana",
-                    Cep = "98765000",
-                    Rua = "Rua D",
-                    Bairro = "Bairro D",
-                    Numero = "400",
-                    Complemento = "Bloco 4",
-                    Cidade = "Cidade D",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Aiquara",
                     Estado = "BA",
-                    IdFrota = 4,
+                    IdFrota = 3,
                     IdPapelPessoa = 1,
                     Ativo = 1
                 }
@@ -99,69 +99,68 @@ namespace Service.Tests
                 {
                     Id = 1,
                     Nome = "Transportes Oliveira",
-                    Cnpj = "12345678000199",
-                    Cep = "12345678",
-                    Rua = "Avenida Principal",
-                    Bairro = "Centro",
-                    Numero = "100",
-                    Complemento = "Sala 201",
-                    Cidade = "São Paulo",
-                    Estado = "SP"
+                    Cnpj = "26243946000172",
+                    Cep = "79080170",
+                    Rua = "Américo Carlos da Costa",
+                    Bairro = "Jardim América",
+                    Numero = "103",
+                    Complemento = null,
+                    Cidade = "Campo Grande",
+                    Estado = "MS"
                 },
                 new Frotum
                 {
                     Id = 2,
                     Nome = "Logística Santos",
-                    Cnpj = "98765432000188",
-                    Cep = "98765432",
-                    Rua = "Rua das Flores",
-                    Bairro = "Vila Nova",
-                    Numero = "250",
-                    Complemento = "Galpão 3",
-                    Cidade = "Rio de Janeiro",
+                    Cnpj = "98103198000133",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
                     Estado = "RJ"
                 },
                 new Frotum
                 {
                     Id = 3,
                     Nome = "Expresso Litoral",
-                    Cnpj = "45612378000122",
-                    Cep = "54321098",
-                    Rua = "Avenida Atlântica",
-                    Bairro = "Boa Vista",
-                    Numero = "300",
+                    Cnpj = "50806346000150",
+                    Cep = "81460090",
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
                     Complemento = null,
-                    Cidade = "Salvador",
-                    Estado = "BA"
+                    Cidade = "Curitiba",
+                    Estado = "PR"
                 },
                 new Frotum
                 {
                     Id = 4,
                     Nome = "Carga Pesada Ltda",
-                    Cnpj = "32165498000177",
-                    Cep = "67890123",
-                    Rua = "Rua do Porto",
-                    Bairro = "Industrial",
-                    Numero = "75",
-                    Complemento = "Bloco B",
-                    Cidade = "Curitiba",
-                    Estado = "PR"
+                    Cnpj = "39612223000145",
+                    Cep = "60832120",
+                    Rua = "Nova Olímpia",
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Fortaleza",
+                    Estado = "CE"
                 }
             };
 
             context.AddRange(frotas);
-            context.SaveChanges();
-
             context.AddRange(pessoas);
+
             context.SaveChanges();
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "78766537070"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(ClaimTypes.Role, "Administrador") 
+                new Claim(ClaimTypes.Role, "Administrador")
             };
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuthentication"));
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "TesteAutenticacao"));
             var httpContextAccessor = new HttpContextAccessor
             {
                 HttpContext = new DefaultHttpContext
@@ -170,7 +169,7 @@ namespace Service.Tests
                 }
             };
 
-            pessoaService = new PessoaService(context, new FrotaService(context, httpContextAccessor));
+            pessoaService = new PessoaService(context, httpContextAccessor);
         }
 
         [TestMethod()]
@@ -181,25 +180,24 @@ namespace Service.Tests
                 new Pessoa
                 {
                     Id = 5,
-                    Cpf = "40187344094",
+                    Cpf = "48483971038",
                     Nome = "Jonatha Gabriel",
-                    Cep = "76543210",
-                    Rua = "Rua E",
-                    Bairro = "Bairro E",
-                    Numero = "500",
-                    Complemento = "Casa 5",
-                    Cidade = "Cidade E",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
                     Estado = "PR",
-                    IdFrota = 1,
                     IdPapelPessoa = 1,
                     Ativo = 1
-                }
+                },
+                3
             );
-
             // Assert
-            Assert.AreEqual(3, pessoaService.GetAll().Count());
+            Assert.AreEqual(2, pessoaService.GetAll(1).Count());
             var pessoa = pessoaService.Get(5);
-            Assert.AreEqual("40187344094", pessoa!.Cpf);
+            Assert.AreEqual("48483971038", pessoa!.Cpf);
             Assert.AreEqual("Jonatha Gabriel", pessoa.Nome);
         }
 
@@ -209,7 +207,7 @@ namespace Service.Tests
             // Act
             pessoaService!.Delete(2);
             // Assert
-            Assert.AreEqual(1, pessoaService.GetAll().Count());
+            Assert.AreEqual(1, pessoaService.GetAll(1).Count());
             var pessoa = pessoaService.Get(2);
             Assert.AreEqual(null, pessoa);
         }
@@ -218,12 +216,12 @@ namespace Service.Tests
         public void EditTest()
         {
             // Act
-            var pessoa = pessoaService!.Get(2);
+            var pessoa = pessoaService!.Get(4);
             pessoa!.Cidade = "Mossoró";
             pessoa.Estado = "RN";
-            pessoaService.Edit(pessoa);
+            pessoaService.Edit(pessoa, 3);
             // Assert
-            pessoa = pessoaService.Get(2);
+            pessoa = pessoaService.Get(4);
             Assert.AreEqual("Mossoró", pessoa!.Cidade);
             Assert.AreEqual("RN", pessoa.Estado);
         }
@@ -241,13 +239,13 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var listaPessoa = pessoaService!.GetAll();
+            var listaPessoa = pessoaService!.GetAll(3);
             // Assert
             Assert.IsInstanceOfType(listaPessoa, typeof(IEnumerable<Pessoa>));
             Assert.IsNotNull(listaPessoa);
-            Assert.AreEqual(2, listaPessoa.Count());
-            Assert.AreEqual((uint)1, listaPessoa.First().Id);
-            Assert.AreEqual("78766537070", listaPessoa.First().Cpf);
+            Assert.AreEqual(1, listaPessoa.Count());
+            Assert.AreEqual((uint)4, listaPessoa.First().Id);
+            Assert.AreEqual("95832085078", listaPessoa.First().Cpf);
         }
     }
 }

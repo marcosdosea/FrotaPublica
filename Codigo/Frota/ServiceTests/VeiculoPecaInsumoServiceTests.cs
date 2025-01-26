@@ -1,13 +1,6 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Tests
 {
@@ -91,8 +84,8 @@ namespace Service.Tests
         public void DeleteTest()
         {
             // Act
-            var veiculoPecaInsumo = service.Get(2, 102);
-            service!.Delete(veiculoPecaInsumo);
+            var veiculoPecaInsumo = service!.Get(2, 102);
+            service!.Delete(veiculoPecaInsumo!);
             // Assert
             Assert.AreEqual(2, service.GetAll().Count());
             var veiculoPecaInsumoDeletado = service.Get(2, 102);

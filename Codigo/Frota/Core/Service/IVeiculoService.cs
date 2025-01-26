@@ -4,7 +4,7 @@ namespace Core.Service
 {
     public interface IVeiculoService
     {
-        uint Create(Veiculo veiculo, uint idFrota);
+        uint Create(Veiculo veiculo);
         void Edit(Veiculo veiculo);
         void Delete(uint idVeiculo);
         Veiculo? Get(uint idVeiculo);
