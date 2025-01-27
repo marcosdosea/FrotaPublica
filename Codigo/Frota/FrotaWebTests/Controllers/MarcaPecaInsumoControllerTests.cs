@@ -131,7 +131,7 @@ namespace FrotaWeb.Controllers.Tests
 			Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(MarcaPecaInsumoViewModel));
 			MarcaPecaInsumoViewModel marcaPecaInsumoViewModel = (MarcaPecaInsumoViewModel)viewResult.ViewData.Model;
 			Assert.AreEqual("Cofap", marcaPecaInsumoViewModel.Descricao);
-		}
+        }
 
 		[TestMethod()]
 		public void DeleteTestGetValid()
@@ -151,7 +151,7 @@ namespace FrotaWeb.Controllers.Tests
 			{
 				Id = 1,
 				Descricao = "Cofap",
-			};
+            };
 
 		}
 
@@ -161,7 +161,8 @@ namespace FrotaWeb.Controllers.Tests
 			{
 				Id = 1,
 				Descricao = "Cofap",
-			};
+                Idfrota = 1
+            };
 		}
 
 		private IEnumerable<Marcapecainsumo> GetTestMarcasPecasInsumos()
@@ -172,17 +173,20 @@ namespace FrotaWeb.Controllers.Tests
 				{
 					Id = 1,
 					Descricao = "Cofap",
-				},
+                    Idfrota = 1
+                },
 				new Marcapecainsumo
 				{
 					Id = 2,
 					Descricao = "Bosch",
-				},
+                    Idfrota = 2
+                },
 				new Marcapecainsumo
 				{
 					Id = 3,
 					Descricao = "Metal Leve",
-				}
+                    Idfrota = 3
+                }
 			};
 		}
 	}

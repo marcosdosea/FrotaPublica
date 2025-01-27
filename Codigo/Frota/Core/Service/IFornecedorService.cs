@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
     public interface IFornecedorService
     {
@@ -13,5 +7,6 @@ namespace Core.Service
         bool Delete(uint idFornecedor);
         Fornecedor? Get(uint idFornecedor);
         IEnumerable<Fornecedor> GetAll(int idFrota);
+        Task<(bool Success, string Data)> ConsultaCnpj(string cnpj);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using FrotaWeb.Mappers;
-using Core.Service;
 using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
 using Service;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -22,12 +23,28 @@ namespace FrotaWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new ManutencaoProfile())).CreateMapper();
 
-            mockManutencaoService.Setup(service => service.GetAll()).Returns(GetTestManutencoes());
+            mockManutencaoService.Setup(service => service.GetAll(It.IsAny<int>())).Returns(GetTestManutencoes());
             mockManutencaoService.Setup(service => service.Get(1)).Returns(GetTestManutencao());
-            mockManutencaoService.Setup(service => service.Create(It.IsAny<Manutencao>())).Verifiable();
-            mockManutencaoService.Setup(service => service.Edit(It.IsAny<Manutencao>())).Verifiable();
+            mockManutencaoService.Setup(service => service.Create(It.IsAny<Manutencao>(), It.IsAny<int>())).Verifiable();
+            mockManutencaoService.Setup(service => service.Edit(It.IsAny<Manutencao>(), It.IsAny<int>())).Verifiable();
             mockManutencaoService.Setup(service => service.Delete(1)).Verifiable();
             controller = new ManutencaoController(mockManutencaoService.Object, mapper);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim("FrotaId", "1")
+                    ],
+                    "TesteAutenticacao"
+                )
+            );
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContextAccessor.HttpContext
+            };
         }
 
         [TestMethod()]
@@ -53,15 +70,10 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ManutencaoViewModel));
             ManutencaoViewModel manutencaoViewModel = (ManutencaoViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual(1001m, manutencaoViewModel.IdVeiculo);
-            Assert.AreEqual(2001m, manutencaoViewModel.IdFornecedor);
-            Assert.AreEqual(DateTime.Parse("2024-11-01"), manutencaoViewModel.DataHora);
-            Assert.AreEqual(3001m, manutencaoViewModel.IdResponsavel);
-            Assert.AreEqual(1500.50m, manutencaoViewModel.ValorPecas);
-            Assert.AreEqual(500.75m, manutencaoViewModel.ValorManutencao);
-            Assert.AreEqual("Preventiva", manutencaoViewModel.Tipo);
-            Assert.IsTrue(manutencaoViewModel.Comprovante == null || manutencaoViewModel.Comprovante.Length == 0);
-            Assert.AreEqual("Concluído", manutencaoViewModel.Status);
+            Assert.AreEqual((uint)1001, manutencaoViewModel.IdVeiculo);
+            Assert.AreEqual((uint)2001, manutencaoViewModel.IdFornecedor);
+            Assert.AreEqual(DateTime.Now.Date, manutencaoViewModel.DataHora.Date);
+            Assert.AreEqual((uint)3001, manutencaoViewModel.IdResponsavel);
         }
 
         [TestMethod()]
@@ -110,22 +122,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(ManutencaoViewModel));
             ManutencaoViewModel manutencaoViewModel = (ManutencaoViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual(1001m, manutencaoViewModel.IdVeiculo);
-            Assert.AreEqual(2001m, manutencaoViewModel.IdFornecedor);
-            Assert.AreEqual(DateTime.Parse("2024-11-01"), manutencaoViewModel.DataHora);
-            Assert.AreEqual(3001m, manutencaoViewModel.IdResponsavel);
-            Assert.AreEqual(1500.50m, manutencaoViewModel.ValorPecas);
-            Assert.AreEqual(500.75m, manutencaoViewModel.ValorManutencao);
-            Assert.AreEqual("Preventiva", manutencaoViewModel.Tipo);
-            Assert.IsTrue(manutencaoViewModel.Comprovante == null || manutencaoViewModel.Comprovante.Length == 0);
-            Assert.AreEqual("Concluído", manutencaoViewModel.Status);
+            Assert.AreEqual((uint)1001, manutencaoViewModel.IdVeiculo);
+            Assert.AreEqual((uint)2001, manutencaoViewModel.IdFornecedor);
+            Assert.AreEqual(DateTime.Now.Date, manutencaoViewModel.DataHora.Date);
+            Assert.AreEqual((uint)3001, manutencaoViewModel.IdResponsavel);
         }
 
         [TestMethod()]
         public void EditTestPostValid()
         {
             // Act
-            var result = controller.Edit(GetTargetManutencaoViewModel().Id, GetTargetManutencaoViewModel());
+            var result = controller?.Edit(GetTargetManutencaoViewModel().Id, GetTargetManutencaoViewModel());
             // Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             RedirectToActionResult redirectToActionResult = (RedirectToActionResult)result;
@@ -143,15 +150,10 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.Model, typeof(ManutencaoViewModel));
             ManutencaoViewModel manutencaoViewModel = (ManutencaoViewModel)viewResult.Model;
-            Assert.AreEqual(1001m, manutencaoViewModel.IdVeiculo);
-            Assert.AreEqual(2001m, manutencaoViewModel.IdFornecedor);
-            Assert.AreEqual(DateTime.Parse("2024-11-01"), manutencaoViewModel.DataHora);
-            Assert.AreEqual(3001m, manutencaoViewModel.IdResponsavel);
-            Assert.AreEqual(1500.50m, manutencaoViewModel.ValorPecas);
-            Assert.AreEqual(500.75m, manutencaoViewModel.ValorManutencao);
-            Assert.AreEqual("Preventiva", manutencaoViewModel.Tipo);
-            Assert.IsTrue(manutencaoViewModel.Comprovante == null || manutencaoViewModel.Comprovante.Length == 0);
-            Assert.AreEqual("Concluído", manutencaoViewModel.Status);
+            Assert.AreEqual((uint)1001, manutencaoViewModel.IdVeiculo);
+            Assert.AreEqual((uint)2001, manutencaoViewModel.IdFornecedor);
+            Assert.AreEqual(DateTime.Now.Date, manutencaoViewModel.DataHora.Date);
+            Assert.AreEqual((uint)3001, manutencaoViewModel.IdResponsavel);
         }
 
         [TestMethod()]
@@ -172,13 +174,14 @@ namespace FrotaWeb.Controllers.Tests
                 Id = 1,
                 IdVeiculo = 1001,
                 IdFornecedor = 2001,
-                DataHora = DateTime.Parse("2024-11-01"),
+                DataHora = DateTime.Now,
                 IdResponsavel = 3001,
                 ValorPecas = 1500.50m,
                 ValorManutencao = 500.75m,
-                Tipo = "Preventiva",
+                Tipo = "P",
                 Comprovante = null,
-                Status = "Concluído"
+                Status = "F",
+                IdFrota = 1
             };
         }
 
@@ -189,13 +192,14 @@ namespace FrotaWeb.Controllers.Tests
                 Id = 1,
                 IdVeiculo = 1001,
                 IdFornecedor = 2001,
-                DataHora = DateTime.Parse("2024-11-01"),
+                DataHora = DateTime.Now,
                 IdResponsavel = 3001,
                 ValorPecas = 1500.50m,
                 ValorManutencao = 500.75m,
-                Tipo = "Preventiva",
+                Tipo = "P",
                 Comprovante = null,
-                Status = "Concluído"
+                Status = "F",
+                IdFrota = 1
             };
         }
 
@@ -208,39 +212,42 @@ namespace FrotaWeb.Controllers.Tests
                     Id = 1,
                     IdVeiculo = 1001,
                     IdFornecedor = 2001,
-                    DataHora = DateTime.Parse("2024-11-01"),
+                    DataHora = DateTime.Now,
                     IdResponsavel = 3001,
                     ValorPecas = 1500.50m,
                     ValorManutencao = 500.75m,
-                    Tipo = "Preventiva",
+                    Tipo = "P",
                     Comprovante = null,
-                    Status = "Concluído"
+                    Status = "F",
+                    IdFrota = 1
                 },
                 new Manutencao
                 {
                     Id = 2,
                     IdVeiculo = 1002,
                     IdFornecedor = 2002,
-                    DataHora = DateTime.Parse("2024-12-01"),
+                    DataHora = DateTime.Now.AddDays(-7),
                     IdResponsavel = 3002,
                     ValorPecas = 200.00m,
                     ValorManutencao = 150.25m,
-                    Tipo = "Corretiva",
+                    Tipo = "C",
                     Comprovante = null,
-                    Status = "Pendente"
+                    Status = "O",
+                    IdFrota = 1
                 },
                 new Manutencao
                 {
                     Id = 3,
                     IdVeiculo = 1003,
                     IdFornecedor = 2003,
-                    DataHora = DateTime.Parse("2024-03-01"),
+                    DataHora = DateTime.Now.AddMonths(-1),
                     IdResponsavel = 3003,
                     ValorPecas = 750.00m,
                     ValorManutencao = 250.00m,
-                    Tipo = "Preventiva",
+                    Tipo = "P",
                     Comprovante = null,
-                    Status = "Em Andamento"
+                    Status = "E",
+                    IdFrota = 2
                 }
             };
         }

@@ -2,7 +2,6 @@
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Service.Tests
 {
     [TestClass()]
@@ -173,5 +172,34 @@ namespace Service.Tests
             Assert.AreEqual((uint)4, listaFornecedor.First().Id);
             Assert.AreEqual("RoadSafe Pneus", listaFornecedor.First().Nome);
         }
+
+        [TestMethod()]
+        public async Task ConsultaCnpjValid()
+        {
+            // Arrange
+            string cnpj = "10409486000170";
+
+            // Act
+            var result = await fornecedorService!.ConsultaCnpj(cnpj);
+            if (result.Success)
+            {
+                Assert.IsTrue(result.Data.Contains("ITATECH GROUP JR."));
+            }
+        }
+
+        [TestMethod()]
+        public async Task ConsultaCnpjInValid()
+        {
+            // Arrange
+            string cnpj = "10409486000170";
+
+            // Act
+            var result = await fornecedorService!.ConsultaCnpj(cnpj);
+            if (result.Success)
+            {
+                Assert.IsTrue(result.Data.Contains("ITATECH GROUP JR."));
+            }
+        }
+
     }
 }

@@ -5,9 +5,8 @@ using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -23,11 +22,27 @@ namespace FrotaWeb.Controllers.Tests
             var mockUnidadeAdministrativaService = new Mock<IUnidadeAdministrativaService>();
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new UnidadeAdministrativaProfile())).CreateMapper();
-            mockUnidadeAdministrativaService.Setup(service => service.GetAll()).Returns(GetTestUnidadesAdministrativas());
+            mockUnidadeAdministrativaService.Setup(service => service.GetAll(It.IsAny<uint>())).Returns(GetTestUnidadesAdministrativas());
             mockUnidadeAdministrativaService.Setup(service => service.Get(1)).Returns(GetTargetUnidadeAdministrativa());
-            mockUnidadeAdministrativaService.Setup(service => service.Edit(It.IsAny<Unidadeadministrativa>())).Verifiable();
-            mockUnidadeAdministrativaService.Setup(service => service.Create(It.IsAny<Unidadeadministrativa>())).Verifiable();
+            mockUnidadeAdministrativaService.Setup(service => service.Edit(It.IsAny<Unidadeadministrativa>(), It.IsAny<int>())).Verifiable();
+            mockUnidadeAdministrativaService.Setup(service => service.Create(It.IsAny<Unidadeadministrativa>(), It.IsAny<int>())).Verifiable();
             controller = new UnidadeAdministrativaController(mockUnidadeAdministrativaService.Object, mapper);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim("FrotaId", "1")
+                    ],
+                    "TesteAutenticacao"
+                )
+            );
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContextAccessor.HttpContext
+            };
 
         }
 
@@ -54,16 +69,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(UnidadeAdministrativaViewModel));
             UnidadeAdministrativaViewModel unidadeViewModel = (UnidadeAdministrativaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Unidade A", unidadeViewModel.Nome);
-            Assert.AreEqual("12345000", unidadeViewModel.Cep);
-            Assert.AreEqual("Rua A", unidadeViewModel.Rua);
-            Assert.AreEqual("Bairro A", unidadeViewModel.Bairro);
-            Assert.AreEqual("100", unidadeViewModel.Numero);
-            Assert.AreEqual("Prédio 1", unidadeViewModel.Complemento);
-            Assert.AreEqual("Cidade A", unidadeViewModel.Cidade);
-            Assert.AreEqual("SP", unidadeViewModel.Estado);
-            Assert.AreEqual(-23.571234f, unidadeViewModel.Latitude);
-            Assert.AreEqual(-46.453333f, unidadeViewModel.Longitude);
+            Assert.AreEqual("Logística Norte", unidadeViewModel.Nome);
+            Assert.AreEqual("59625400", unidadeViewModel.Cep);
+            Assert.AreEqual("Avenida Jorge Coelho de Andrade", unidadeViewModel.Rua);
+            Assert.AreEqual("Presidente Costa e Silva", unidadeViewModel.Bairro);
+            Assert.AreEqual("12", unidadeViewModel.Numero);
+            Assert.AreEqual(null, unidadeViewModel.Complemento);
+            Assert.AreEqual(null, unidadeViewModel.Cidade);
+            Assert.AreEqual(null, unidadeViewModel.Estado);
+            Assert.AreEqual(null, unidadeViewModel.Latitude);
+            Assert.AreEqual(null, unidadeViewModel.Longitude);
+            Assert.AreEqual((uint)1, unidadeViewModel.IdFrota);
         }
 
         [TestMethod()]
@@ -113,16 +129,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(UnidadeAdministrativaViewModel));
             UnidadeAdministrativaViewModel unidadeViewModel = (UnidadeAdministrativaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Unidade A", unidadeViewModel.Nome);
-            Assert.AreEqual("12345000", unidadeViewModel.Cep);
-            Assert.AreEqual("Rua A", unidadeViewModel.Rua);
-            Assert.AreEqual("Bairro A", unidadeViewModel.Bairro);
-            Assert.AreEqual("100", unidadeViewModel.Numero);
-            Assert.AreEqual("Prédio 1", unidadeViewModel.Complemento);
-            Assert.AreEqual("Cidade A", unidadeViewModel.Cidade);
-            Assert.AreEqual("SP", unidadeViewModel.Estado);
-            Assert.AreEqual(-23.571234f, unidadeViewModel.Latitude);
-            Assert.AreEqual(-46.453333f, unidadeViewModel.Longitude);
+            Assert.AreEqual("Logística Norte", unidadeViewModel.Nome);
+            Assert.AreEqual("59625400", unidadeViewModel.Cep);
+            Assert.AreEqual("Avenida Jorge Coelho de Andrade", unidadeViewModel.Rua);
+            Assert.AreEqual("Presidente Costa e Silva", unidadeViewModel.Bairro);
+            Assert.AreEqual("12", unidadeViewModel.Numero);
+            Assert.AreEqual(null, unidadeViewModel.Complemento);
+            Assert.AreEqual(null, unidadeViewModel.Cidade);
+            Assert.AreEqual(null, unidadeViewModel.Estado);
+            Assert.AreEqual(null, unidadeViewModel.Latitude);
+            Assert.AreEqual(null, unidadeViewModel.Longitude);
+            Assert.AreEqual((uint)1, unidadeViewModel.IdFrota);
         }
 
         [TestMethod()]
@@ -147,16 +164,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(UnidadeAdministrativaViewModel));
             UnidadeAdministrativaViewModel unidadeViewModel = (UnidadeAdministrativaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Unidade A", unidadeViewModel.Nome);
-            Assert.AreEqual("12345000", unidadeViewModel.Cep);
-            Assert.AreEqual("Rua A", unidadeViewModel.Rua);
-            Assert.AreEqual("Bairro A", unidadeViewModel.Bairro);
-            Assert.AreEqual("100", unidadeViewModel.Numero);
-            Assert.AreEqual("Prédio 1", unidadeViewModel.Complemento);
-            Assert.AreEqual("Cidade A", unidadeViewModel.Cidade);
-            Assert.AreEqual("SP", unidadeViewModel.Estado);
-            Assert.AreEqual(-23.571234f, unidadeViewModel.Latitude);
-            Assert.AreEqual(-46.453333f, unidadeViewModel.Longitude);
+            Assert.AreEqual("Logística Norte", unidadeViewModel.Nome);
+            Assert.AreEqual("59625400", unidadeViewModel.Cep);
+            Assert.AreEqual("Avenida Jorge Coelho de Andrade", unidadeViewModel.Rua);
+            Assert.AreEqual("Presidente Costa e Silva", unidadeViewModel.Bairro);
+            Assert.AreEqual("12", unidadeViewModel.Numero);
+            Assert.AreEqual(null, unidadeViewModel.Complemento);
+            Assert.AreEqual(null, unidadeViewModel.Cidade);
+            Assert.AreEqual(null, unidadeViewModel.Estado);
+            Assert.AreEqual(null, unidadeViewModel.Latitude);
+            Assert.AreEqual(null, unidadeViewModel.Longitude);
+            Assert.AreEqual((uint)1, unidadeViewModel.IdFrota);
         }
 
         [TestMethod()]
@@ -176,16 +194,17 @@ namespace FrotaWeb.Controllers.Tests
             return new UnidadeAdministrativaViewModel
             {
                 Id = 1,
-                Nome = "Unidade A",
-                Cep = "12345000",
-                Rua = "Rua A",
-                Bairro = "Bairro A",
-                Numero = "100",
-                Complemento = "Prédio 1",
-                Cidade = "Cidade A",
-                Estado = "SP",
-                Latitude = -23.571234f,
-                Longitude = -46.453333f
+                Nome = "Logística Norte",
+                Cep = "59625400",
+                Rua = "Avenida Jorge Coelho de Andrade",
+                Bairro = "Presidente Costa e Silva",
+                Complemento = null,
+                Numero = "12",
+                Cidade = null,
+                Estado = null,
+                Latitude = null,
+                Longitude = null,
+                IdFrota = 1
             };
         }
 
@@ -194,16 +213,17 @@ namespace FrotaWeb.Controllers.Tests
             return new Unidadeadministrativa
             {
                 Id = 1,
-                Nome = "Unidade A",
-                Cep = "12345000",
-                Rua = "Rua A",
-                Bairro = "Bairro A",
-                Numero = "100",
-                Complemento = "Prédio 1",
-                Cidade = "Cidade A",
-                Estado = "SP",
-                Latitude = -23.571234f,
-                Longitude = -46.453333f
+                Nome = "Logística Norte",
+                Cep = "59625400",
+                Rua = "Avenida Jorge Coelho de Andrade",
+                Bairro = "Presidente Costa e Silva",
+                Complemento = null,
+                Numero = "12",
+                Cidade = null,
+                Estado = null,
+                Latitude = null,
+                Longitude = null,
+                IdFrota = 1
             };
         }
 
@@ -214,58 +234,62 @@ namespace FrotaWeb.Controllers.Tests
                 new Unidadeadministrativa
                 {
                     Id = 1,
-                    Nome = "Unidade A",
-                    Cep = "12345000",
-                    Rua = "Rua A",
-                    Bairro = "Bairro A",
-                    Numero = "100",
-                    Complemento = "Prédio 1",
-                    Cidade = "Cidade A",
-                    Estado = "SP",
-                    Latitude = -23.571234f,
-                    Longitude = -46.453333f
+                    Nome = "Logística Norte",
+                    Cep = "59625400",
+                    Rua = "Avenida Jorge Coelho de Andrade",
+                    Bairro = "Presidente Costa e Silva",
+                    Complemento = null,
+                    Numero = "12",
+                    Cidade = null,
+                    Estado = null,
+                    Latitude = null,
+                    Longitude = null,
+                    IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
                     Id = 2,
-                    Nome = "Unidade B",
-                    Cep = "54321000",
-                    Rua = "Rua B",
-                    Bairro = "Bairro B",
-                    Numero = "200",
-                    Complemento = "Andar 2",
-                    Cidade = "Cidade B",
-                    Estado = "RJ",
-                    Latitude = -22.561234f,
-                    Longitude = -44.323333f
+                    Nome = "Operacional Sul",
+                    Cep = "68909166",
+                    Rua = "Sérgio Mendes",
+                    Bairro = "Boné Azul",
+                    Complemento = "Próximo a padaria Camilinha",
+                    Numero = "28",
+                    Cidade = "Macapá",
+                    Estado = "AP",
+                    Latitude = (float) 0.082705,
+                    Longitude = (float) -51.0741820,
+                    IdFrota = 1
                 },
                 new Unidadeadministrativa
                 {
                     Id = 3,
-                    Nome = "Unidade C",
-                    Cep = "67890000",
-                    Rua = "Rua C",
-                    Bairro = "Bairro C",
-                    Numero = "300",
-                    Complemento = "Prédio 3",
-                    Cidade = "Cidade C",
-                    Estado = "MG",
-                    Latitude = -24.561234f,
-                    Longitude = -45.323333f
+                    Nome = "Distribuição Leste",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Complemento = null,
+                    Numero = null,
+                    Cidade = null,
+                    Estado = null,
+                    Latitude = null,
+                    Longitude = null,
+                    IdFrota = 2
                 },
                 new Unidadeadministrativa
                 {
                     Id = 4,
-                    Nome = "Unidade D",
-                    Cep = "98765000",
-                    Rua = "Rua D",
-                    Bairro = "Bairro D",
-                    Numero = "400",
-                    Complemento = "Bloco 4",
-                    Cidade = "Cidade D",
-                    Estado = "BA",
-                    Latitude = -25.561234f,
-                    Longitude = -46.323333f
+                    Nome = "Distribuição Leste",
+                    Cep = "59072240",
+                    Rua = "Santo Euzébio",
+                    Bairro = "Felipe Camarão",
+                    Complemento = null,
+                    Numero = "12",
+                    Cidade = "Natal",
+                    Estado = "RN",
+                    Latitude = null,
+                    Longitude = null,
+                    IdFrota = 2
                 }
             };
         }

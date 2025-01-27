@@ -37,7 +37,7 @@ namespace Service.Tests
                     Status = "D",
                     Ano = 2020,
                     Modelo = 2021,
-                    Renavan = "12345678901",
+                    Renavan = "76697382320",
                     VencimentoIpva = DateTime.Parse("2024-03-15"),
                     Valor = 45000.00m,
                     DataReferenciaValor = DateTime.Parse("2023-11-01")
@@ -55,7 +55,7 @@ namespace Service.Tests
                     Status = "M",
                     Ano = 2019,
                     Modelo = 2020,
-                    Renavan = "98765432109",
+                    Renavan = "20995281259",
                     VencimentoIpva = DateTime.Parse("2024-06-30"),
                     Valor = 35000.00m,
                     DataReferenciaValor = DateTime.Parse("2023-09-15")
@@ -73,7 +73,7 @@ namespace Service.Tests
                     Status = "D",
                     Ano = 2021,
                     Modelo = 2022,
-                    Renavan = "11223344556",
+                    Renavan = "89592407448",
                     VencimentoIpva = DateTime.Parse("2024-12-10"),
                     Valor = 55000.00m,
                     DataReferenciaValor = DateTime.Parse("2023-10-10")
@@ -104,7 +104,7 @@ namespace Service.Tests
                     Status = "I",
                     Ano = 2018,
                     Modelo = 2019,
-                    Renavan = "22334455667",
+                    Renavan = "71996985823",
                     VencimentoIpva = DateTime.Parse("2024-05-20"),
                     Valor = 40000.00m,
                     DataReferenciaValor = DateTime.Parse("2023-08-01")
