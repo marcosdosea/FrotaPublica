@@ -33,9 +33,9 @@ namespace Service.Tests
                     IdResponsavel = 3001,
                     ValorPecas = 1500.50m,
                     ValorManutencao = 500.75m,
-                    Tipo = "Preventiva",
+                    Tipo = "P",
                     Comprovante = null,
-                    Status = "Concluído",
+                    Status = "F",
                     IdFrota = 1
                 },
                 new Manutencao
@@ -47,9 +47,9 @@ namespace Service.Tests
                     IdResponsavel = 3002,
                     ValorPecas = 200.00m,
                     ValorManutencao = 150.25m,
-                    Tipo = "Corretiva",
+                    Tipo = "C",
                     Comprovante = null,
-                    Status = "Pendente",
+                    Status = "O",
                     IdFrota = 1
                 },
                 new Manutencao
@@ -61,9 +61,9 @@ namespace Service.Tests
                     IdResponsavel = 3003,
                     ValorPecas = 750.00m,
                     ValorManutencao = 250.00m,
-                    Tipo = "Preventiva",
+                    Tipo = "P",
                     Comprovante = null,
-                    Status = "Em Andamento",
+                    Status = "E",
                     IdFrota = 2
                 }
             };
@@ -85,16 +85,16 @@ namespace Service.Tests
                 IdResponsavel = 3003,
                 ValorPecas = 750.00m,
                 ValorManutencao = 250.00m,
-                Tipo = "Preventiva",
+                Tipo = "P",
                 Comprovante = null,
-                Status = "Em Andamento",
+                Status = "E",
             },
                 2
             );
             // Assert
             Assert.AreEqual(2, manutencaoService.GetAll(2).Count());
             var manutencao = manutencaoService.Get(4);
-            Assert.AreEqual("Preventiva", manutencao!.Tipo);
+            Assert.AreEqual("P", manutencao!.Tipo);
             Assert.AreEqual(3003m, manutencao.IdResponsavel);
         }
 
@@ -130,7 +130,7 @@ namespace Service.Tests
             var manutencao = manutencaoService!.Get(1);
             // Assert
             Assert.IsNotNull(manutencao);
-            Assert.AreEqual("Preventiva", manutencao.Tipo);
+            Assert.AreEqual("P", manutencao.Tipo);
             Assert.AreEqual(1001m, manutencao.IdVeiculo);
             Assert.AreEqual(2001m, manutencao.IdFornecedor);
         }

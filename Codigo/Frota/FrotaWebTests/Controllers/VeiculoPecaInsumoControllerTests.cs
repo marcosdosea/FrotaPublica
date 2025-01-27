@@ -1,18 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FrotaWeb.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using FrotaWeb.Mappers;
 using Core.Service;
 using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -35,6 +30,22 @@ namespace FrotaWeb.Controllers.Tests
             mockVeiculoPecaInsumoService.Setup(service => service.Edit(It.IsAny<Veiculopecainsumo>())).Verifiable();
             mockVeiculoPecaInsumoService.Setup(service => service.Create(It.IsAny<Veiculopecainsumo>())).Verifiable();
             controller = new VeiculoPecaInsumoController(mockVeiculoPecaInsumoService.Object, mapper, mockVeiculoService.Object, mockPecaInsumo.Object);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim("FrotaId", "1")
+                    ],
+                    "TesteAutenticacao"
+                )
+            );
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContextAccessor.HttpContext
+            };
         }
 
         [TestMethod()]
@@ -56,7 +67,7 @@ namespace FrotaWeb.Controllers.Tests
             // Act
             var result = controller!.Details(1, 101);
             // Assert
-            Assert.IsInstanceOfType(result, typeof (ViewResult));
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(VeiculoPecaInsumoViewModel));
             VeiculoPecaInsumoViewModel veiculoPecaInsumoViewModel = (VeiculoPecaInsumoViewModel)viewResult.ViewData.Model;
@@ -138,7 +149,7 @@ namespace FrotaWeb.Controllers.Tests
             // Act
             var result = controller!.Delete(1, 101);
             // Assert
-            Assert.IsInstanceOfType(result, typeof (ViewResult));
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(VeiculoPecaInsumoViewModel));
             VeiculoPecaInsumoViewModel veiculoPecaInsumoViewModel = (VeiculoPecaInsumoViewModel)viewResult.ViewData.Model;

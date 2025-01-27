@@ -5,6 +5,8 @@ using Moq;
 using Core;
 using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -20,11 +22,27 @@ namespace FrotaWeb.Controllers.Tests
             var mockPessoaService = new Mock<IPessoaService>();
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new PessoaProfile())).CreateMapper();
-            mockPessoaService.Setup(service => service.GetAll()).Returns(GetTestPessoas());
+            mockPessoaService.Setup(service => service.GetAll(It.IsAny<int>())).Returns(GetTestPessoas());
             mockPessoaService.Setup(service => service.Get(1)).Returns(GetTargetPessoa());
-            mockPessoaService.Setup(service => service.Edit(It.IsAny<Pessoa>())).Verifiable();
-            mockPessoaService.Setup(service => service.Create(It.IsAny<Pessoa>())).Verifiable();
+            mockPessoaService.Setup(service => service.Edit(It.IsAny<Pessoa>(), It.IsAny<int>())).Verifiable();
+            mockPessoaService.Setup(service => service.Create(It.IsAny<Pessoa>(), It.IsAny<int>())).Verifiable();
             controller = new PessoaController(mockPessoaService.Object, mapper);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim("FrotaId", "1")
+                    ],
+                    "TesteAutenticacao"
+                )
+            );
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContextAccessor.HttpContext
+            };
         }
 
         [TestMethod()]
@@ -50,17 +68,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
             PessoaViewModel pessoaViewModel = (PessoaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Pessoa A", pessoaViewModel.Nome);
-            Assert.AreEqual("12345678901", pessoaViewModel.Cpf);
-            Assert.AreEqual("12345000", pessoaViewModel.Cep);
-            Assert.AreEqual("Rua A", pessoaViewModel.Rua);
-            Assert.AreEqual("Bairro A", pessoaViewModel.Bairro);
-            Assert.AreEqual("100", pessoaViewModel.Numero);
-            Assert.AreEqual("Casa 1", pessoaViewModel.Complemento);
-            Assert.AreEqual("Cidade A", pessoaViewModel.Cidade);
-            Assert.AreEqual("SP", pessoaViewModel.Estado);
-            Assert.AreEqual(101m, pessoaViewModel.IdFrota);
-            Assert.AreEqual(201m, pessoaViewModel.IdPapelPessoa);
+            Assert.AreEqual("Guilherme Lima", pessoaViewModel.Nome);
+            Assert.AreEqual("78766537070", pessoaViewModel.Cpf);
+            Assert.AreEqual("16203585068", pessoaViewModel.Cep);
+            Assert.AreEqual("Francisco Gomes", pessoaViewModel.Rua);
+            Assert.AreEqual("Nova Cidade", pessoaViewModel.Bairro);
+            Assert.AreEqual("12", pessoaViewModel.Numero);
+            Assert.AreEqual(null, pessoaViewModel.Complemento);
+            Assert.AreEqual("Itaboraí", pessoaViewModel.Cidade);
+            Assert.AreEqual("RJ", pessoaViewModel.Estado);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdFrota);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdPapelPessoa);
             Assert.AreEqual(1, pessoaViewModel.Ativo);
 
         }
@@ -111,17 +129,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
             PessoaViewModel pessoaViewModel = (PessoaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Pessoa A", pessoaViewModel.Nome);
-            Assert.AreEqual("12345678901", pessoaViewModel.Cpf);
-            Assert.AreEqual("12345000", pessoaViewModel.Cep);
-            Assert.AreEqual("Rua A", pessoaViewModel.Rua);
-            Assert.AreEqual("Bairro A", pessoaViewModel.Bairro);
-            Assert.AreEqual("100", pessoaViewModel.Numero);
-            Assert.AreEqual("Casa 1", pessoaViewModel.Complemento);
-            Assert.AreEqual("Cidade A", pessoaViewModel.Cidade);
-            Assert.AreEqual("SP", pessoaViewModel.Estado);
-            Assert.AreEqual(101m, pessoaViewModel.IdFrota);
-            Assert.AreEqual(201m, pessoaViewModel.IdPapelPessoa);
+            Assert.AreEqual("Guilherme Lima", pessoaViewModel.Nome);
+            Assert.AreEqual("78766537070", pessoaViewModel.Cpf);
+            Assert.AreEqual("16203585068", pessoaViewModel.Cep);
+            Assert.AreEqual("Francisco Gomes", pessoaViewModel.Rua);
+            Assert.AreEqual("Nova Cidade", pessoaViewModel.Bairro);
+            Assert.AreEqual("12", pessoaViewModel.Numero);
+            Assert.AreEqual(null, pessoaViewModel.Complemento);
+            Assert.AreEqual("Itaboraí", pessoaViewModel.Cidade);
+            Assert.AreEqual("RJ", pessoaViewModel.Estado);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdFrota);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdPapelPessoa);
             Assert.AreEqual(1, pessoaViewModel.Ativo);
         }
 
@@ -147,17 +165,17 @@ namespace FrotaWeb.Controllers.Tests
             ViewResult viewResult = (ViewResult)result;
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(PessoaViewModel));
             PessoaViewModel pessoaViewModel = (PessoaViewModel)viewResult.ViewData.Model;
-            Assert.AreEqual("Pessoa A", pessoaViewModel.Nome);
-            Assert.AreEqual("12345678901", pessoaViewModel.Cpf);
-            Assert.AreEqual("12345000", pessoaViewModel.Cep);
-            Assert.AreEqual("Rua A", pessoaViewModel.Rua);
-            Assert.AreEqual("Bairro A", pessoaViewModel.Bairro);
-            Assert.AreEqual("100", pessoaViewModel.Numero);
-            Assert.AreEqual("Casa 1", pessoaViewModel.Complemento);
-            Assert.AreEqual("Cidade A", pessoaViewModel.Cidade);
-            Assert.AreEqual("SP", pessoaViewModel.Estado);
-            Assert.AreEqual(101m, pessoaViewModel.IdFrota);
-            Assert.AreEqual(201m, pessoaViewModel.IdPapelPessoa);
+            Assert.AreEqual("Guilherme Lima", pessoaViewModel.Nome);
+            Assert.AreEqual("78766537070", pessoaViewModel.Cpf);
+            Assert.AreEqual("16203585068", pessoaViewModel.Cep);
+            Assert.AreEqual("Francisco Gomes", pessoaViewModel.Rua);
+            Assert.AreEqual("Nova Cidade", pessoaViewModel.Bairro);
+            Assert.AreEqual("12", pessoaViewModel.Numero);
+            Assert.AreEqual(null, pessoaViewModel.Complemento);
+            Assert.AreEqual("Itaboraí", pessoaViewModel.Cidade);
+            Assert.AreEqual("RJ", pessoaViewModel.Estado);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdFrota);
+            Assert.AreEqual((uint)1, pessoaViewModel.IdPapelPessoa);
             Assert.AreEqual(1, pessoaViewModel.Ativo);
         }
 
@@ -178,17 +196,17 @@ namespace FrotaWeb.Controllers.Tests
             return new PessoaViewModel
             {
                 Id = 1,
-                Cpf = "12345678901",
-                Nome = "Pessoa A",
-                Cep = "12345000",
-                Rua = "Rua A",
-                Bairro = "Bairro A",
-                Numero = "100",
-                Complemento = "Casa 1",
-                Cidade = "Cidade A",
-                Estado = "SP",
-                IdFrota = 101,
-                IdPapelPessoa = 201,
+                Cpf = "78766537070",
+                Nome = "Guilherme Lima",
+                Cep = "16203585068",
+                Rua = "Francisco Gomes",
+                Bairro = "Nova Cidade",
+                Complemento = null,
+                Numero = "12",
+                Cidade = "Itaboraí",
+                Estado = "RJ",
+                IdFrota = 1,
+                IdPapelPessoa = 1,
                 Ativo = 1
             };
         }
@@ -198,17 +216,17 @@ namespace FrotaWeb.Controllers.Tests
             return new Pessoa
             {
                 Id = 1,
-                Cpf = "12345678901",
-                Nome = "Pessoa A",
-                Cep = "12345000",
-                Rua = "Rua A",
-                Bairro = "Bairro A",
-                Numero = "100",
-                Complemento = "Casa 1",
-                Cidade = "Cidade A",
-                Estado = "SP",
-                IdFrota = 101,
-                IdPapelPessoa = 201,
+                Cpf = "78766537070",
+                Nome = "Guilherme Lima",
+                Cep = "16203585068",
+                Rua = "Francisco Gomes",
+                Bairro = "Nova Cidade",
+                Complemento = null,
+                Numero = "12",
+                Cidade = "Itaboraí",
+                Estado = "RJ",
+                IdFrota = 1,
+                IdPapelPessoa = 1,
                 Ativo = 1
             };
         }
@@ -220,65 +238,65 @@ namespace FrotaWeb.Controllers.Tests
                 new Pessoa
                 {
                     Id = 1,
-                    Cpf = "12345678901",
-                    Nome = "Pessoa A",
-                    Cep = "12345000",
-                    Rua = "Rua A",
-                    Bairro = "Bairro A",
-                    Numero = "100",
-                    Complemento = "Casa 1",
-                    Cidade = "Cidade A",
-                    Estado = "SP",
-                    IdFrota = 101,
-                    IdPapelPessoa = 201,
+                    Cpf = "78766537070",
+                    Nome = "Guilherme Lima",
+                    Cep = "16203585068",
+                    Rua = "Francisco Gomes",
+                    Bairro = "Nova Cidade",
+                    Complemento = null,
+                    Numero = "12",
+                    Cidade = "Itaboraí",
+                    Estado = "RJ",
+                    IdFrota = 1,
+                    IdPapelPessoa = 1,
                     Ativo = 1
                 },
                 new Pessoa
                 {
                     Id = 2,
-                    Cpf = "23456789012",
-                    Nome = "Pessoa B",
-                    Cep = "54321000",
-                    Rua = "Rua B",
-                    Bairro = "Bairro B",
-                    Numero = "200",
-                    Complemento = "Apartamento 2",
-                    Cidade = "Cidade B",
-                    Estado = "RJ",
-                    IdFrota = 102,
-                    IdPapelPessoa = 202,
+                    Cpf = "06130691025",
+                    Nome = "Kauã Oliveira",
+                    Cep = "79002800",
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
+                    Estado = "MS",
+                    IdFrota = 1,
+                    IdPapelPessoa = 1,
                     Ativo = 1
                 },
                 new Pessoa
                 {
                     Id = 3,
-                    Cpf = "34567890123",
-                    Nome = "Pessoa C",
-                    Cep = "67890000",
-                    Rua = "Rua C",
-                    Bairro = "Bairro C",
-                    Numero = "300",
-                    Complemento = "Prédio 3",
-                    Cidade = "Cidade C",
+                    Cpf = "20551985054",
+                    Nome = "Igor Andrade",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = null,
                     Estado = "MG",
-                    IdFrota = 103,
-                    IdPapelPessoa = 203,
+                    IdFrota = 2,
+                    IdPapelPessoa = 1,
                     Ativo = 0
                 },
                 new Pessoa
                 {
                     Id = 4,
-                    Cpf = "45678901234",
-                    Nome = "Pessoa D",
-                    Cep = "98765000",
-                    Rua = "Rua D",
-                    Bairro = "Bairro D",
-                    Numero = "400",
-                    Complemento = "Bloco 4",
-                    Cidade = "Cidade D",
+                    Cpf = "95832085078",
+                    Nome = "Marcos Santana",
+                    Cep = null,
+                    Rua = null,
+                    Bairro = null,
+                    Numero = null,
+                    Complemento = null,
+                    Cidade = "Aiquara",
                     Estado = "BA",
-                    IdFrota = 104,
-                    IdPapelPessoa = 204,
+                    IdFrota = 3,
+                    IdPapelPessoa = 1,
                     Ativo = 1
                 }
             };
