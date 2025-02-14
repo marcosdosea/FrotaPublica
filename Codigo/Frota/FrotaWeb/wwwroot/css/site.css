@@ -176,3 +176,9 @@ body {
             background: #08448c !important;
             border-color: #08448c !important;
         }
+
+/* Modal de Deslogar */
+button.close:focus {
+    outline: none;
+    box-shadow: none;
+}
