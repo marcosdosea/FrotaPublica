@@ -36,13 +36,6 @@ namespace FrotaWeb.Controllers
             return Json(response);
         }
 
-        public ActionResult Abastecer(AbastecimentoViewModel abastecimento)
-        {
-            var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-
-            return View();
-
-        }
         // GET: AbastecimentoController/Details/5
         public ActionResult Details(uint id)
         {
@@ -52,7 +45,6 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: AbastecimentoController/Create
-        [Route("Abastecimento/Create")]
         public ActionResult Create()
         {
             return View();
@@ -88,7 +80,7 @@ namespace FrotaWeb.Controllers
             if (ModelState.IsValid)
             {
                 var _abastecimento = mapper.Map<Abastecimento>(abastecimento);
-                abastecimentoService.Create(_abastecimento);
+                abastecimentoService.Edit(_abastecimento);
             }
 
             return RedirectToAction(nameof(Index));

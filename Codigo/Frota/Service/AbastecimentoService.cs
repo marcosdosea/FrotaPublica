@@ -14,11 +14,13 @@ namespace Service
     {
         private readonly FrotaContext context;
         private readonly IFrotaService frotaService;
+        private readonly IPessoaService pessoaService;
 
-        public AbastecimentoService(FrotaContext context, IFrotaService frotaService)
+        public AbastecimentoService(FrotaContext context, IFrotaService frotaService, IPessoaService pessoaService)
         {
             this.context = context;
             this.frotaService = frotaService;
+            this.pessoaService = pessoaService;
         }
 
         /// <summary>
@@ -28,6 +30,8 @@ namespace Service
         /// <returns></returns>
         public uint Create(Abastecimento abastecimento)
         {
+            abastecimento.IdFrota = frotaService.GetFrotaByUser();
+            abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
             context.Add(abastecimento);
             context.SaveChanges();
             return abastecimento.Id;
@@ -53,6 +57,8 @@ namespace Service
         /// <param name="abastecimento"></param>
         public void Edit(Abastecimento abastecimento)
         {
+            abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
+            abastecimento.IdFrota = frotaService.GetFrotaByUser();
             context.Update(abastecimento);
             context.SaveChanges();
 
