@@ -4,7 +4,8 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace FrotaWeb.Controllers
 {
@@ -14,10 +15,10 @@ namespace FrotaWeb.Controllers
         private readonly IVeiculoService veiculoService;
         private readonly IMapper mapper;
         private readonly IUnidadeAdministrativaService unidadeAdministrativaService;
-		private readonly IFrotaService frotaService;
-		private readonly IModeloVeiculoService modeloVeiculoService;
+        private readonly IFrotaService frotaService;
+        private readonly IModeloVeiculoService modeloVeiculoService;
 
-		public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService)
+        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
@@ -27,9 +28,9 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: Veiculo
-        [Route ("Veiculo/Index/{page}")]
-        [Route ("Veiculo/{page}")]
-        [Route ("Veiculo")]
+        [Route("Veiculo/Index/{page}")]
+        [Route("Veiculo/{page}")]
+        [Route("Veiculo")]
         public ActionResult Index([FromRoute] int page = 0)
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
@@ -55,7 +56,6 @@ namespace FrotaWeb.Controllers
         {
             var veiculo = veiculoService.Get(id);
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
-
             return View(veiculoViewModel);
         }
 
@@ -64,31 +64,38 @@ namespace FrotaWeb.Controllers
         public ActionResult Create()
         {
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
             ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
-			ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-			ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
-			return View();
+            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+            ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
+            return View();
         }
 
         // POST: Veiculo/Create
         [HttpPost]
+        [Route("Veiculo/Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(VeiculoViewModel veiculoViewModel)
         {
             if (ModelState.IsValid)
             {
                 uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
                 veiculo.IdFrota = idFrota;
-                veiculoService.Create(veiculo);
+                TempData["MensagemSucesso"] = "Veículo cadastrado com sucesso!";
+                try
+                {
+                    veiculoService.Create(veiculo);
+                }
+                catch (Exception exception)
+                {
+                    var serviceException = new ServiceException("Erro ao inserir veículo no banco de dados", exception);
+                    ModelState.AddModelError(serviceException.AtributoError!, "Este dado já está cadastrado");
+                    ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
+                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+                    ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
+                    return View(veiculoViewModel);
+                }
+
             }
             return RedirectToAction(nameof(Index));
         }
