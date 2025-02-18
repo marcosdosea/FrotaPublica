@@ -1,11 +1,10 @@
+using System;
 using AutoMapper;
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 
 namespace FrotaWeb.Controllers
 {
@@ -34,10 +33,6 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0)
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
 
             int length = 15;
             var listaVeiculos = veiculoService.GetPaged(page, length, idFrota).ToList();
@@ -65,7 +60,6 @@ namespace FrotaWeb.Controllers
         {
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
-            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
             ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
             return View();
         }
@@ -86,12 +80,10 @@ namespace FrotaWeb.Controllers
                 {
                     veiculoService.Create(veiculo);
                 }
-                catch (Exception exception)
+                catch (ServiceException exception)
                 {
-                    var serviceException = new ServiceException("Erro ao inserir veículo no banco de dados", exception);
-                    ModelState.AddModelError(serviceException.AtributoError!, "Este dado já está cadastrado");
+                    ModelState.AddModelError(exception.AtributoError!, "Este dado já está cadastrado");
                     ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
-                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
                     ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
                     return View(veiculoViewModel);
                 }
@@ -105,6 +97,8 @@ namespace FrotaWeb.Controllers
         {
             var veiculo = veiculoService.Get(id);
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+            ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(veiculoViewModel.IdFrota);
+            ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(veiculoViewModel.IdFrota);
             return View(veiculoViewModel);
         }
 
@@ -115,8 +109,20 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+                veiculoViewModel.IdFrota = idFrota;
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
-                veiculoService.Edit(veiculo);
+                try
+                {
+                    veiculoService.Edit(veiculo);
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, "Este dado já está cadastrado");
+                    ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(veiculo.IdFrota);
+                    ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(veiculo.IdFrota);
+                    return View(veiculoViewModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -134,7 +140,15 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, VeiculoViewModel veiculoViewModel)
         {
-            veiculoService.Delete(id);
+            try
+            {
+                veiculoService.Delete(id);
+                TempData["MensagemSucesso"] = "Veículo removido com sucesso!";
+            }
+            catch (ServiceException exception)
+            {
+                TempData["MensagemError"] = exception.MensagemCustom;
+            }
             return RedirectToAction(nameof(Index));
         }
     }

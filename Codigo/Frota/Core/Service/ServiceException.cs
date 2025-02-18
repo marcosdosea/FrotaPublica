@@ -8,7 +8,8 @@ namespace Core.Service
     [Serializable]
     public class ServiceException : Exception
     {
-        public string? AtributoError { get; set; }
+        public string? AtributoError { get; private set; }
+        public string? MensagemCustom { get; private set; }
 
         public ServiceException()
         {
@@ -36,6 +37,7 @@ namespace Core.Service
 
         public void ProcessarAtualizacaoBanco(Exception exception)
         {
+            this.AtributoError = "";
             switch (exception)
             {
                 case DbUpdateException dbUpdateException:
@@ -47,14 +49,14 @@ namespace Core.Service
                             var match = Regex.Match(mySqlException.Message, expressaoRegularAtributo);
                             this.AtributoError = match.Groups[1].Value;
                         }
+                        else if (mySqlException.Number == 1451)
+                        {
+                            this.MensagemCustom = "Este registro não pode ser excluído";
+                        }
                     }
                     break;
-                default:
-                    this.AtributoError = "Nenhum";
-                    break;
+
             }
         }
-
-
     }
 }

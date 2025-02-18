@@ -20,6 +20,7 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "A {0} é obrigatória")]
         [StringLength(50, ErrorMessage = "A {0} pode ter no máximo 50 caracteres")]
+        [RegularExpression(@"^[A-Za-zÀ-ÿçÇ\s]+$", ErrorMessage = "A {0} deve conter apenas letras")]
         public string Cor { get; set; } = null!;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
@@ -36,15 +37,18 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Odômetro")]
+        [Range(0, 1000000, ErrorMessage = "O {0} deve estar entre 0 e 1.000.000")]
         public int Odometro { get; set; } = 0;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         public string Status { get; set; } = null!;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
+        [Range(1900,3000, ErrorMessage = "O {0} é inválido")]
         public int Ano { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
+        [Range(1900, 3000, ErrorMessage = "O {0} é inválido")]
         public int Modelo { get; set; }
 
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
@@ -54,8 +58,8 @@ namespace FrotaWeb.Models
         public DateTime? VencimentoIpva { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
-        [Range(0, 99999999.99, ErrorMessage = "O {0} deve estar entre 0 e 99.999.999,99.")]
-        public decimal Valor { get; set; }
+        [RegularExpression(@"^\d{1,8}([.,]\d{1,2})?$", ErrorMessage = "O {0} deve estar ente 0 e 99.999.999,99")]
+        public string Valor { get; set; } = null!;
 
         [Required(ErrorMessage = "A {0} é obrigatória")]
         [DisplayName("Data de Referência")]

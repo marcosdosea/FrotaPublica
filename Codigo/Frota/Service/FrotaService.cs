@@ -95,21 +95,5 @@ namespace Service
         {
             return context.Frota.AsNoTracking();
         }
-
-        /// <summary>
-        /// Obter a lista de frotas cadastradas em ordem alfabética
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<FrotaDTO> GetAllOrdemAlfabetica()
-        {
-            var frotaDTO = from frota in context.Frota
-                           orderby frota.Nome
-                           select new FrotaDTO
-                           {
-                               Id = frota.Id,
-                               Nome = frota.Nome
-                           };
-            return frotaDTO.ToList();
-        }
     }
 }
