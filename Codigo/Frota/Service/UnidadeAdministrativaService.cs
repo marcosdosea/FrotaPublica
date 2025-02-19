@@ -79,7 +79,7 @@ namespace Service
 		/// <returns></returns>
 		public IEnumerable<UnidadeAdministrativaDTO> GetAllOrdemAlfabetica(uint idFrota)
 		{
-			var unidadeAdministrativaDTO = from unidadeAdministrativa in context.Unidadeadministrativas
+			var unidadeAdministrativaDTO = from unidadeAdministrativa in context.Unidadeadministrativas.AsNoTracking()
 										   where unidadeAdministrativa.IdFrota == idFrota
 										   orderby unidadeAdministrativa.Nome
 										   select new UnidadeAdministrativaDTO
@@ -88,7 +88,7 @@ namespace Service
 											   Nome = unidadeAdministrativa.Nome
 										   };
 			return unidadeAdministrativaDTO.ToList();
-		}
+        }
 
 	}
 }

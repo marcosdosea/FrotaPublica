@@ -1,10 +1,16 @@
 ﻿using System.Text.Json;
+using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace Core.Service
 {
     [Serializable]
     public class ServiceException : Exception
     {
+        public string? AtributoError { get; private set; }
+        public string? MensagemCustom { get; private set; }
+
         public ServiceException()
         {
         }
@@ -16,7 +22,7 @@ namespace Core.Service
         public ServiceException(string mensagem, Exception inner)
             : base(mensagem, inner)
         {
-
+            this.ProcessarAtualizacaoBanco(inner);
         }
 
         public string Serialize()
@@ -27,6 +33,30 @@ namespace Core.Service
         public static ServiceException? Deserialize(string json)
         {
             return JsonSerializer.Deserialize<ServiceException>(json);
+        }
+
+        public void ProcessarAtualizacaoBanco(Exception exception)
+        {
+            this.AtributoError = "";
+            switch (exception)
+            {
+                case DbUpdateException dbUpdateException:
+                    if (dbUpdateException.InnerException is MySqlException mySqlException)
+                    {
+                        if (mySqlException.Number == 1062)
+                        {
+                            string expressaoRegularAtributo = @"'([^']+)_UNIQUE'";
+                            var match = Regex.Match(mySqlException.Message, expressaoRegularAtributo);
+                            this.AtributoError = match.Groups[1].Value;
+                        }
+                        else if (mySqlException.Number == 1451)
+                        {
+                            this.MensagemCustom = "Este registro não pode ser excluído";
+                        }
+                    }
+                    break;
+
+            }
         }
     }
 }

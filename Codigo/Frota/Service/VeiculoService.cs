@@ -22,8 +22,15 @@ namespace Service
         /// <returns></returns>
         public uint Create(Veiculo veiculo)
         {
-            context.Add(veiculo);
-            context.SaveChanges();
+            try
+            {
+                context.Add(veiculo);
+                context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                throw new ServiceException("Erro ao inserir veículo no banco de dados.", exception);
+            }
             return veiculo.Id;
         }
 
@@ -36,8 +43,15 @@ namespace Service
             var veiculo = context.Veiculos.Find(idVeiculo);
             if (veiculo != null)
             {
-                context.Remove(veiculo);
-                context.SaveChanges();
+                try
+                {
+                    context.Remove(veiculo);
+                    context.SaveChanges();
+                }
+                catch (Exception exception)
+                {
+                    throw new ServiceException("Erro ao excluir veículo no banco de dados.", exception);
+                }
             }
         }
 
@@ -47,8 +61,15 @@ namespace Service
         /// <param name="veiculo"></param>
         public void Edit(Veiculo veiculo)
         {
-            context.Update(veiculo);
-            context.SaveChanges();
+            try
+            {
+                context.Update(veiculo);
+                context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                throw new ServiceException("Erro ao editar veículo no banco de dados.", exception);
+            }
         }
 
         /// <summary>

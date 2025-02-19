@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -51,6 +52,8 @@ namespace FrotaWeb.Controllers.Tests
             {
                 HttpContext = httpContextAccessor.HttpContext
             };
+
+            controller.TempData = new TempDataDictionary(httpContextAccessor.HttpContext, Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod()]
@@ -195,7 +198,7 @@ namespace FrotaWeb.Controllers.Tests
                 Modelo = 2021,
                 Renavan = "76697382320",
                 VencimentoIpva = DateTime.Parse("2024-03-15"),
-                Valor = 45000.00m,
+                Valor = "45000.00",
                 DataReferenciaValor = DateTime.Parse("2023-11-01")
             };
 

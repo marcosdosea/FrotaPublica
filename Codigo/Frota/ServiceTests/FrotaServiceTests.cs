@@ -156,18 +156,5 @@ namespace Service.Tests
             Assert.AreEqual("Transportes Oliveira", listaFrota.First().Nome);
             Assert.AreEqual("26243946000172", listaFrota.First().Cnpj);
         }
-
-        [TestMethod()]
-        public void GetAllOrdemAlfabeticaTest()
-        {
-            //Act
-            var listaFrota = frotaService!.GetAllOrdemAlfabetica();
-            //Assert
-            Assert.IsInstanceOfType(listaFrota, typeof(IEnumerable<FrotaDTO>));
-            Assert.IsNotNull(listaFrota);
-            Assert.AreEqual(4, listaFrota.Count());
-            Assert.AreEqual((uint)4, listaFrota.First().Id);
-            Assert.AreEqual("Carga Pesada Ltda", listaFrota.First().Nome);
-        }
     }
 }

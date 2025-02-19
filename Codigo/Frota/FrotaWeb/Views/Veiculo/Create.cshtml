@@ -3,7 +3,6 @@
 
 @{
 	var unidades = ViewData["Unidades"] as IEnumerable<UnidadeAdministrativaDTO> ?? Enumerable.Empty<UnidadeAdministrativaDTO>();
-	var frotas = ViewData["Frotas"] as IEnumerable<FrotaDTO> ?? Enumerable.Empty<FrotaDTO>();
 	var modelos = ViewData["Modelos"] as IEnumerable<ModeloVeiculoDTO> ?? Enumerable.Empty<ModeloVeiculoDTO>();
 }
 
@@ -40,25 +39,6 @@
 					<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="IdFrota" class="label">Frota</label>
-					<select asp-for="IdFrota" class="custom-select select2">
-						@if (!frotas.Any())
-						{
-							<option value="" disabled selected hidden>Frota</option>
-						}
-						else
-						{
-							foreach (var frota in frotas)
-							{
-								<option value="@frota.Id">@frota.Nome</option>
-							}
-						}
-					</select>
-					<span asp-validation-for="IdFrota" class="text-danger"></span>
-				</div>
-			</div>
 		</div>
 		<div class="row mb-3">
 			<div class="col-md-6">
@@ -80,7 +60,7 @@
 			<div class="col-md-6">
 				<div class="type-container offset-md-1 itens-center">
 					<label asp-for="Valor" class="label">Valor do Veículo</label>
-					<input asp-for="Valor" class="form-control" placeholder="80000" />
+					<input asp-for="Valor" class="form-control" placeholder="80000" maxlength="11" />
 					<span asp-validation-for="Valor" class="text-danger"></span>
 				</div>
 			</div>
