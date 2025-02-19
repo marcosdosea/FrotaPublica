@@ -5,6 +5,7 @@ using Service;
 using Microsoft.AspNetCore.Identity;
 using FrotaWeb.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FrotaWeb.Filter;
 
 namespace FrotaWeb
 {
@@ -15,9 +16,12 @@ namespace FrotaWeb
 			var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<CustomExceptionFilter>();
+            });
 
-			builder.Services.AddTransient<IPessoaService, PessoaService>();
+            builder.Services.AddTransient<IPessoaService, PessoaService>();
 			builder.Services.AddTransient<IFrotaService, FrotaService>();
 			builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
 			builder.Services.AddTransient<IModeloVeiculoService, ModeloVeiculoService>();
