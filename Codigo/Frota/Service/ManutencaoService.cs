@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Service
 {
     /// <summary>
-    /// Manter dados de marcas das peças e insumos no banco de dados
+    /// Manter dados de manutenções de veículos no banco de dados
     /// </summary>
     public class ManutencaoService : IManutencaoService
     {
@@ -17,47 +17,52 @@ namespace Service
         }
 
         /// <summary>
-        /// Criar registro de Manutencao no banco
+        /// Criar registro de manutenção no banco
         /// </summary>
-        /// <param name="manutencao">Instância de Manutencao</param>
-        /// <returns>Id da Manutencao</returns>
-        public uint Create(Manutencao manutencao, int idFrota)
+        /// <param name="manutencao">Instância de manutenção</param>
+        /// <returns>Id da manutenção</returns>
+        public uint Create(Manutencao manutencao)
         {
-            manutencao.IdFrota = (uint)idFrota;
             context.Add(manutencao);
             context.SaveChanges();
             return manutencao.Id;
         }
 
         /// <summary>
-        /// Excluir Manutencao da base de dados
+        /// Excluir manutencão da base de dados
         /// </summary>
-        /// <param name="id">Id do Manutencao</param>
+        /// <param name="id">Id da manutenção</param>
         public void Delete(uint id)
         {
             var entity = context.Manutencaos.Find(id);
             if (entity != null)
             {
-                context.Remove(entity);
-                context.SaveChanges();
+                try
+                {
+                    context.Remove(entity);
+                    context.SaveChanges();
+                }
+                catch (Exception exception)
+                {
+                    throw new ServiceException("Erro ao excluir manutenção no banco de dados.", exception);
+                }
             }
         }
 
         /// <summary>
-        /// Editar dados do Manutencao na base de dados
+        /// Editar dados da manutenção na base de dados
         /// </summary>
-        /// <param name="manutencao">Instância de Manutencao</param>
-        public void Edit(Manutencao manutencao, int idFrota)
+        /// <param name="manutencao">Instância de manutenção</param>
+        public void Edit(Manutencao manutencao)
         {
-            manutencao.IdFrota = (uint)idFrota;
             context.Update(manutencao);
             context.SaveChanges();
         }
 
         /// <summary>
-        /// Obter dados de um Manutencao
+        /// Obter dados de uma manutenção
         /// </summary>
-        /// <param name="id">Id do Manutencao</param>
+        /// <param name="id">Id da manutenção</param>
         /// <returns>Instância de Manutencao ou null, caso não exista</returns>
         public Manutencao? Get(uint id)
         {
@@ -65,10 +70,10 @@ namespace Service
         }
 
         /// <summary>
-        /// Obter todos os Manutencao da base de dados
+        /// Obter todas as manutencões da base de dados
         /// </summary>
-        /// <returns>Lista de todos os Manutencao</returns>
-        public IEnumerable<Manutencao> GetAll(int idFrota)
+        /// <returns>Coleção de objetos Manutencao</returns>
+        public IEnumerable<Manutencao> GetAll(uint idFrota)
         {
             return context.Manutencaos
                           .Where(manutencao => manutencao.IdFrota == idFrota)

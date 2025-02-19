@@ -8,8 +8,8 @@ namespace Core.Service
     [Serializable]
     public class ServiceException : Exception
     {
-        public string? AtributoError { get; private set; }
-        public string? MensagemCustom { get; private set; }
+        public string AtributoError { get; private set; } = string.Empty;
+        public string MensagemCustom { get; private set; } = string.Empty;
 
         public ServiceException()
         {
@@ -37,7 +37,6 @@ namespace Core.Service
 
         public void ProcessarAtualizacaoBanco(Exception exception)
         {
-            this.AtributoError = "";
             switch (exception)
             {
                 case DbUpdateException dbUpdateException:
@@ -55,7 +54,6 @@ namespace Core.Service
                         }
                     }
                     break;
-
             }
         }
     }
