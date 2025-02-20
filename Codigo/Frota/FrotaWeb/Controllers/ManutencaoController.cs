@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core;
+using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,7 @@ namespace FrotaWeb.Controllers
         [Route("Manutencao")]
         public ActionResult Index([FromRoute]int page = 0)
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             int length = 15;
             var listaManutencoes = manutencaoService.GetAll(idFrota)
                                     .Skip(page * length)
@@ -53,6 +50,7 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: ManutencaoController/Create
+        [Route("Manutencao/Create")]
         public ActionResult Create()
         {
             return View();
@@ -60,18 +58,16 @@ namespace FrotaWeb.Controllers
 
         // POST: ManutencaoController/Create
         [HttpPost]
+        [Route("Manutencao/Create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ManutencaoViewModel manutencaoViewModel)
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
+                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
                 var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencaoService.Create(manutencao, idFrota);
+                manutencao.IdFrota = idFrota;
+                manutencaoService.Create(manutencao);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -91,13 +87,9 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
+                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
                 var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencaoService.Edit(manutencao, idFrota);
+                manutencaoService.Edit(manutencao);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -115,7 +107,15 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, ManutencaoViewModel manutencaoViewModel)
         {
-            manutencaoService.Delete(id);
+            try
+            {
+                manutencaoService.Delete(id);
+                TempData["MensagemSucesso"] = "Veículo removido com sucesso!";
+            }
+            catch (ServiceException exception)
+            {
+                TempData["MensagemError"] = exception.MensagemCustom;
+            }
             return RedirectToAction(nameof(Index));
         }
     }

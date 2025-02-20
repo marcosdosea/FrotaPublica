@@ -30,13 +30,13 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Valor das Peças")]
-        [Range(0, 99999999.99, ErrorMessage = "O {0} deve estar entre 0 e 99.999.999,99.")]
-        public decimal ValorPecas { get; set; }
+        [RegularExpression(@"^\d{1,8}([.,]\d{1,2})?$", ErrorMessage = "O {0} deve estar ente 0 e 99.999.999,99")]
+        public string ValorPecas { get; set; } = "0.00";
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Valor da Manutenção")]
-        [Range(0, 99999999.99, ErrorMessage = "O {0} deve estar entre 0 e 99.999.999,99.")]
-        public decimal ValorManutencao { get; set; }
+        [RegularExpression(@"^\d{1,8}([.,]\d{1,2})?$", ErrorMessage = "O {0} deve estar ente 0 e 99.999.999,99")]
+        public string ValorManutencao { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         public string Tipo { get; set; } = null!;
