@@ -30,10 +30,6 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0, string search = null, string filterBy = "Nome")
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
             int length = 13;
             int totalResultados;
             var listaPessoas = pessoaService.GetPaged(idFrota, page, length, out totalResultados, search, filterBy).ToList();
@@ -64,6 +60,7 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: PessoaController/Create
+        [Route("Pessoa/Create")]
         public ActionResult Create()
         {
             return View();
@@ -72,17 +69,21 @@ namespace FrotaWeb.Controllers
         // POST: PessoaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Pessoa/Create")]
         public ActionResult Create(PessoaViewModel pessoaModel)
         {
             if (ModelState.IsValid)
             {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
-                pessoaService.Create(pessoa, idFrota);
+                try
+                {
+                    pessoaService.Create(pessoa, idFrota);
+                } catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    return View(pessoaModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -103,12 +104,16 @@ namespace FrotaWeb.Controllers
             if (ModelState.IsValid)
             {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
-                pessoaService.Edit(pessoa, idFrota);
+                try
+                {
+                    pessoaService.Edit(pessoa, idFrota);
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    return View(pessoaModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -126,7 +131,15 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, PessoaViewModel pessoaModel)
         {
-            pessoaService.Delete(id);
+            try
+            {
+                pessoaService.Delete(id);
+            }
+            catch (ServiceException exception)
+            {
+                ModelState.AddModelError(exception.AtributoError!, "Não foi possível excluir o registro do banco");
+                return View(pessoaModel);
+            }
             return RedirectToAction(nameof(Index));
         }
 
