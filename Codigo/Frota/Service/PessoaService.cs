@@ -1,7 +1,9 @@
 ﻿using Core;
 using Core.Service;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 
 namespace Service
@@ -9,10 +11,12 @@ namespace Service
     public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
+        private readonly UserManager<UsuarioIdentity> userManager;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PessoaService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
+        public PessoaService(FrotaContext context, UserManager<UsuarioIdentity> userManager, IHttpContextAccessor httpContextAccessor)
         {
+            this.userManager = userManager;
             this.context = context;
             this.httpContextAccessor = httpContextAccessor;
         }
@@ -29,6 +33,124 @@ namespace Service
             context.Add(pessoa);
             context.SaveChanges();
             return pessoa.Id;
+        }
+
+        /// <summary>
+        /// Método para realizar o cadastro de um usuário na tabela de usuários do identity
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<UsuarioIdentity> CreateAsync(Pessoa pessoa)
+        {
+            var newUser = new UsuarioIdentity
+            {
+                UserName = pessoa.Cpf,
+                NormalizedUserName = pessoa.Cpf.Replace(".", "").Replace("-", ""),
+                Email = pessoa.Email,
+                PhoneNumber = pessoa.Telefone
+            };
+
+            var result = await userManager.CreateAsync(newUser, pessoa.Cpf);
+
+            if (result.Succeeded)
+            {
+                return newUser;
+            }
+            else
+            {
+                throw new Exception("Falha ao criar o usuário.");
+            }
+        }
+
+        /// <summary>
+        /// Método para realizar o cadastro dos papeis de usuário no identity
+        /// </summary>
+        /// <param name="pessoa"></param>
+        /// <param name="idFrota"></param>
+        /// <param name="papelPessoa"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task CreatePessoaPapelAsync(Pessoa pessoa, int idFrota, string papelPessoa)
+        {
+            uint idPessoa = pessoa.Id;
+            if (Get(pessoa.Id) == null)
+            {
+                idPessoa = Create(pessoa, idFrota);
+            }
+
+            var existingUser = await userManager.FindByNameAsync(pessoa.Cpf);
+
+            if (existingUser == null)
+            {
+                existingUser = await CreateAsync(pessoa);
+            }
+
+            /*var novaInscricao = new Inscricaopessoaevento
+            {
+                IdPessoa = idPessoa,
+                IdEvento = idEvento,
+                IdPapel = idPapel,
+                DataInscricao = DateTime.Now,
+                Status = "S"
+            };
+            _inscricaoService.CreateInscricaoEvento(novaInscricao);*/
+
+
+            if (papelPessoa == "GESTOR")
+            {
+                try
+                {
+                    await userManager.AddClaimAsync(existingUser, new Claim("GESTOR", "true"));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Erro ao adicionar claim de gestor ao usuário: " + e.Message);
+                }
+            }
+            else if (papelPessoa == "ADMINISTRADOR")
+            {
+                try
+                {
+                    await userManager.AddClaimAsync(existingUser, new Claim("ADMINISTRADOR", "true"));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
+                }
+            }
+            else if (papelPessoa == "MOTORISTA")
+            {
+                try
+                {
+                    await userManager.AddClaimAsync(existingUser, new Claim("MOTORISTA", "true"));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
+                }
+            }
+            else 
+            {
+                try
+                {
+                    await userManager.AddClaimAsync(existingUser, new Claim("MECANICO", "true"));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
+                }
+            }
+
+            var isInRole = await userManager.IsInRoleAsync(existingUser, papelPessoa);
+            if (!isInRole)
+            {
+                var roleResult = await userManager.AddToRoleAsync(existingUser, papelPessoa);
+                if (!roleResult.Succeeded)
+                {
+                    throw new Exception("Erro ao associar o papel ao usuário no Identity.");
+                }
+            }
         }
 
         /// <summary>
@@ -127,6 +249,13 @@ namespace Service
 
             return query.Skip(page * lenght)
                         .Take(lenght);
+        }
+
+        public uint FindPapelPessoa(string Papel)
+        {
+            return context.Papelpessoas.Where(papel => papel.Papel.ToUpper() == Papel.ToUpper())
+                                       .Select(papel => papel.Id)
+                                       .FirstOrDefault();
         }
     }
 }

@@ -25,11 +25,15 @@ public partial class Pessoa
 
     public string Estado { get; set; } = null!;
 
-    public uint IdFrota { get; set; }
+    public int IdFrota { get; set; }
 
     public uint IdPapelPessoa { get; set; }
 
     public sbyte Ativo { get; set; }
+
+    public string Email { get; set; } = null!;
+
+    public string Telefone { get; set; } = null!;
 
     public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
 

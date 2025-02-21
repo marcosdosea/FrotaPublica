@@ -1,4 +1,7 @@
-﻿namespace Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Core;
 
 public partial class Unidadeadministrativa
 {
@@ -24,7 +27,7 @@ public partial class Unidadeadministrativa
 
     public float? Longitude { get; set; }
 
-    public uint IdFrota { get; set; }
+    public int IdFrota { get; set; }
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 

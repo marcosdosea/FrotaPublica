@@ -1,4 +1,7 @@
-﻿namespace Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Core;
 
 public partial class Pecainsumo
 {
@@ -10,7 +13,7 @@ public partial class Pecainsumo
 
     public int KmGarantia { get; set; }
 
-    public uint IdFrota { get; set; }
+    public int IdFrota { get; set; }
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 

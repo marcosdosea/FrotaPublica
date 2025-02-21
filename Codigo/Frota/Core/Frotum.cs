@@ -5,7 +5,7 @@ namespace Core;
 
 public partial class Frotum
 {
-    public uint Id { get; set; }
+    public int Id { get; set; }
 
     public string Nome { get; set; } = null!;
 

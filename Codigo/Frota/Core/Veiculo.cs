@@ -15,7 +15,7 @@ public partial class Veiculo
 
     public uint IdModeloVeiculo { get; set; }
 
-    public uint IdFrota { get; set; }
+    public int IdFrota { get; set; }
 
     public uint IdUnidadeAdministrativa { get; set; }
 
