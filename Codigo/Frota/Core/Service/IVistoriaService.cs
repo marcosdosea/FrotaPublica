@@ -12,6 +12,6 @@ namespace Core.Service
 		void Edit(Vistorium vistoria);
 		void Delete(uint id);
 		Vistorium? Get(uint id);
-		IEnumerable<Vistorium> GetAll();
+		IEnumerable<Vistorium> GetAll(uint idFrota);
 	}
 }

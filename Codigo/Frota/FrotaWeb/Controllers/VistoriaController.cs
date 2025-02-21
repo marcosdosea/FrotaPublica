@@ -22,7 +22,8 @@ namespace FrotaWeb.Controllers
 		// GET: Vistoria
 		public ActionResult Index()
 		{
-			var vistorias = vistoriaService.GetAll();
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            var vistorias = vistoriaService.GetAll(idFrota);
 			var vistoriasViewModel = mapper.Map<List<VistoriaViewModel>>(vistorias);
 			return View(vistoriasViewModel);
 		}
@@ -91,6 +92,7 @@ namespace FrotaWeb.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult Delete(uint id, VistoriaViewModel vistoriaViewModel)
 		{
+			TempData["MensagemConfirmacao"] = "Tem certeza que deseja excluir esta vistoria?";
 			vistoriaService.Delete(id);
 			return RedirectToAction(nameof(Index));
 		}
