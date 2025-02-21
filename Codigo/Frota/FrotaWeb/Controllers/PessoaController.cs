@@ -138,7 +138,6 @@ namespace FrotaWeb.Controllers
             catch (ServiceException exception)
             {
                 ModelState.AddModelError(exception.AtributoError!, "Não foi possível excluir o registro do banco");
-                return View(pessoaModel);
             }
             return RedirectToAction(nameof(Index));
         }
