@@ -26,8 +26,15 @@ namespace Service
         public uint Create(Pessoa pessoa, int idFrota)
         {
             pessoa.IdFrota = (uint)idFrota;
-            context.Add(pessoa);
-            context.SaveChanges();
+            try
+            {
+                context.Add(pessoa);
+                context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                throw new ServiceException("Erro ao adicionar pessoa no banco de dados.", exception);
+            }
             return pessoa.Id;
         }
 
@@ -41,8 +48,15 @@ namespace Service
             var pessoa = context.Pessoas.Find(idPessoa);
             if (pessoa != null)
             {
-                context.Remove(pessoa);
-                context.SaveChanges();
+                try
+                {
+                    context.Remove(pessoa);
+                    context.SaveChanges();
+                }
+                catch (Exception exception)
+                {
+                    throw new ServiceException("Erro ao remover pessoa no banco de dados.", exception);
+                }
             }
         }
 
@@ -54,8 +68,15 @@ namespace Service
         public void Edit(Pessoa pessoa, int idFrota)
         {
             pessoa.IdFrota = (uint)idFrota;
-            context.Update(pessoa);
-            context.SaveChanges();
+            try
+            {
+                context.Update(pessoa);
+                context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                throw new ServiceException("Erro ao atualizar informações no banco de dados.", exception);
+            }
         }
 
         /// <summary>

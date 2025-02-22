@@ -31,14 +31,14 @@
             <div class="col-md-6">
                 <div class="type-container offset-md-1 itens-center">
                     <label asp-for="Cep" class="label">Cep</label>
-                    <input asp-for="Cep" class="form-control" placeholder="0000000" />
+                    <input asp-for="Cep" class="form-control" placeholder="00000000" maxlength="9" onblur="buscarCep()" />
                     <span asp-validation-for="Cep" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="type-container offset-md-2 itens-center">
                     <label asp-for="Rua" class="label">Rua</label>
-                    <input asp-for="Rua" class="form-control" placeholder="Rua" />
+                    <input asp-for="Rua" class="form-control" placeholder="Rua" id="Rua" />
                     <span asp-validation-for="Rua" class="text-danger"></span>
                 </div>
             </div>
@@ -47,7 +47,7 @@
             <div class="col-md-6">
                 <div class="type-container offset-md-1 itens-center">
                     <label asp-for="Bairro" class="label">Bairro</label>
-                    <input asp-for="Bairro" class="form-control" placeholder="Bairro" />
+                    <input asp-for="Bairro" class="form-control" placeholder="Bairro" id="Bairro" />
                     <span asp-validation-for="Bairro" class="text-danger"></span>
                 </div>
             </div>
@@ -70,7 +70,7 @@
             <div class="col-md-6">
                 <div class="type-container offset-md-2 itens-center">
                     <label asp-for="Cidade" class="Cidade">Cidade</label>
-                    <input asp-for="Cidade" class="form-control" placeholder="Cidade" />
+                    <input asp-for="Cidade" class="form-control" placeholder="Cidade" id="Cidade" />
                     <span asp-validation-for="Cidade" class="text-danger"></span>
                 </div>
             </div>
@@ -79,7 +79,7 @@
             <div class="col-md-6">
                 <div class="type-container offset-md-1 itens-center">
                     <label asp-for="Estado" class="label">Estado</label>
-                    <input asp-for="Estado" class="form-control" placeholder="Estado" />
+                    <input asp-for="Estado" class="form-control" placeholder="Estado" id="Estado" />
                     <span asp-validation-for="Estado" class="text-danger"></span>
                 </div>
             </div>
@@ -122,4 +122,40 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function buscarCep() {
+            var cep = document.getElementById("Cep").value.replace(/\D/g, ''); // Remove tudo que não for número
+
+            if (cep !== "") {
+                var validacep = /^[0-9]{8}$/; // Validação do formato do CEP
+
+                if (validacep.test(cep)) {
+                    // Limpa os campos antes de preencher
+                    document.getElementById("Rua").value = "...";
+                    document.getElementById("Bairro").value = "...";
+                    document.getElementById("Cidade").value = "...";
+                    document.getElementById("Estado").value = "...";
+
+                    // Fazendo a requisição para a API ViaCEP
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.erro) {
+                                document.getElementById("Rua").value = data.logradouro;
+                                document.getElementById("Bairro").value = data.bairro;
+                                document.getElementById("Cidade").value = data.localidade;
+                                document.getElementById("Estado").value = data.uf;
+                            } else {
+                                alert("CEP não encontrado.");
+                            }
+                        })
+                        .catch(() => {
+                            alert("Erro ao buscar o CEP.");
+                        });
+                } else {
+                    alert("Formato de CEP inválido. Digite um CEP válido com 8 dígitos.");
+                }
+            }
+        }
+    </script>
 }
