@@ -25,7 +25,7 @@ public partial class Pessoa
 
     public string Estado { get; set; } = null!;
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public uint IdPapelPessoa { get; set; }
 

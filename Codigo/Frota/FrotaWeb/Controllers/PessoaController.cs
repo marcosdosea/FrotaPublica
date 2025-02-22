@@ -5,6 +5,7 @@ using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 
 namespace FrotaWeb.Controllers
@@ -70,7 +71,7 @@ namespace FrotaWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Pessoa/Create")]
-        public ActionResult Create(PessoaViewModel pessoaModel)
+        public async Task<ActionResult> Create(PessoaViewModel pessoaModel)
         {
             if (ModelState.IsValid)
             {
@@ -79,6 +80,11 @@ namespace FrotaWeb.Controllers
                 try
                 {
                     pessoaService.Create(pessoa, idFrota);
+                    await pessoaService.CreatePessoaPapelAsync(pessoa, idFrota, pessoaModel.Papel);
+                    var existingUser = await pessoaService.GetUserByCpfAsync(pessoa.Cpf);
+                    var confirmationToken = await pessoaService.GenerateEmailConfirmationTokenAsync(existingUser);
+                    var callbackUrl = Url.Action( nameof(ConfirmEmail), "Pessoa", new { userId = existingUser.Id, token = confirmationToken }, protocol: HttpContext.Request.Scheme);
+                    await emailSender.SendEmailAsync( pessoa.Email, "Confirme seu cadastro", $"Por favor, confirme seu cadastro clicando neste link: <a href='{callbackUrl}'>Confirmar Cadastro</a>");
                 } catch (ServiceException exception)
                 {
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
@@ -86,6 +92,17 @@ namespace FrotaWeb.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var result = await pessoaService.ConfirmEmailAsync(userId, token);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return BadRequest("Erro ao confirmar o e-mail.");
         }
 
         // GET: PessoaController/Edit/5

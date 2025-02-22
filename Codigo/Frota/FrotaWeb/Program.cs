@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using FrotaWeb.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using FrotaWeb.Filter;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Configuration;
 
 namespace FrotaWeb
 {
@@ -36,6 +38,8 @@ namespace FrotaWeb
 			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
 			builder.Services.AddTransient<IPercursoService, PercursoService>();
 			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
+            builder.Services.AddTransient<Core.Service.IEmailSender, EmailSender>();
+            builder.Services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddSession(options =>
@@ -60,7 +64,7 @@ namespace FrotaWeb
 			builder.Services.AddDbContext<IdentityContext>(options =>
 			options.UseMySQL(connectionString));
 
-			builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
+			builder.Services.AddDefaultIdentity<Areas.Identity.Data.UsuarioIdentity>(options =>
 				{
 					// SignIn settings
 					options.SignIn.RequireConfirmedAccount = true;
