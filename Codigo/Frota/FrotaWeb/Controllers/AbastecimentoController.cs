@@ -12,21 +12,21 @@ namespace FrotaWeb.Controllers
     public class AbastecimentoController : Controller
     {
         private readonly IAbastecimentoService abastecimentoService;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IMapper mapper;
+        private readonly IPessoaService pessoaService;
 
-        public AbastecimentoController(IAbastecimentoService abastecimentoService, IMapper mapper)
+        public AbastecimentoController(IAbastecimentoService abastecimentoService, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPessoaService pessoaService)
         {
             this.mapper = mapper;
+            this.httpContextAccessor = httpContextAccessor;
             this.abastecimentoService = abastecimentoService;
+            this.pessoaService = pessoaService;
         }
         // GET: AbastecimentoController
-        public ActionResult Index([FromRoute] int page = 0)
+        public ActionResult Index()
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             var listaAbastecimentos = abastecimentoService.GetAll(idFrota);
             var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
             return View(listaAbastecimentosViewModel);
@@ -53,13 +53,13 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
+                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+                string cpf = httpContextAccessor.HttpContext?.User.Identity?.Name!;
                 var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
-                abastecimentoService.Create(abastecimento, idFrota);
+                abastecimento.IdFrota = idFrota;
+                abastecimento.IdPessoa = pessoaService.GetPessoaByCpf(cpf);
+                abastecimentoService.Create(abastecimento);
+                TempData["MensagemSucesso"] = "Abastecimento cadastrado com sucesso!";
             }
             return RedirectToAction(nameof(Index));
         }
@@ -79,13 +79,11 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
-                }
+                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
                 var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
-                abastecimentoService.Edit(abastecimento, idFrota);
+                abastecimento.IdFrota = idFrota;
+                abastecimentoService.Edit(abastecimento);
+                TempData["MensagemSucesso"] = "Abastecimento alterado com sucesso!";
             }
 
             return RedirectToAction(nameof(Index));
@@ -104,6 +102,7 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, AbastecimentoViewModel abastecimentoViewModel)
         {
+            TempData["MensagemSucesso"] = "Abastecimento removido com sucesso!";
             abastecimentoService.Delete(id);
             return RedirectToAction(nameof(Index));
         }

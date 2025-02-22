@@ -1,6 +1,5 @@
 ﻿using Core;
 using Core.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -9,12 +8,10 @@ namespace Service
     public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PessoaService(FrotaContext context, IHttpContextAccessor httpContextAccessor)
+        public PessoaService(FrotaContext context)
         {
             this.context = context;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -93,7 +90,7 @@ namespace Service
         /// <summary>
         /// Busca todas as pessoas cadastradas
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Uma coleção de pessoas da frota especificada</returns>
         public IEnumerable<Pessoa> GetAll(int idFrota)
         {
             return context.Pessoas
@@ -101,23 +98,20 @@ namespace Service
                           .AsNoTracking();
         }
 
-        public uint GetPessoaIdUser()
+        /// <summary>
+        /// Obtém o Id de uma pessoa a partir do cpf informado
+        /// </summary>
+        /// <param name="cpf">O cpf da pessoa</param>
+        /// <returns>O id da pessoa correspondente ao cpf ou 0 caso não seja encontrada</returns>
+        public uint GetPessoaByCpf(string cpf)
         {
-            var cpf = httpContextAccessor.HttpContext?.User?.Identity?.Name;
-
-            if (string.IsNullOrEmpty(cpf))
-                throw new UnauthorizedAccessException("Usuário não autenticado.");
-
-            var idPessoa = context.Pessoas
-                                 .AsNoTracking()
-                                 .Where(p => p.Cpf == cpf)
-                                 .Select(p => p.Id)
-                                 .FirstOrDefault();
-
-            if (idPessoa == 0)
-                throw new InvalidOperationException("Pessoa não encontrada para o usuário autenticado.");
-            return idPessoa;
+            return context.Pessoas
+                          .AsNoTracking()
+                          .Where(p => p.Cpf == cpf)
+                          .Select(p => p.Id)
+                          .FirstOrDefault();
         }
+
 
         public IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome")
         {
