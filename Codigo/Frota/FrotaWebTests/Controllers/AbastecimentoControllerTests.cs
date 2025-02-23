@@ -82,8 +82,8 @@ namespace FrotaWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AbastecimentoViewModel));
             AbastecimentoViewModel abastecimentoViewModel = (AbastecimentoViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(DateTime.Parse("2021-06-11 14:30:00"), abastecimentoViewModel.DataHora);
-            Assert.AreEqual(15000, abastecimentoViewModel.Odometro);
-            Assert.AreEqual(80, abastecimentoViewModel.Litros);
+            Assert.AreEqual("15000", abastecimentoViewModel.Odometro);
+            Assert.AreEqual("80", abastecimentoViewModel.Litros);
         }
 
         [TestMethod()]
@@ -133,8 +133,8 @@ namespace FrotaWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AbastecimentoViewModel));
             AbastecimentoViewModel abastecimentoViewModel = (AbastecimentoViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(DateTime.Parse("2021-06-11 14:30:00"), abastecimentoViewModel.DataHora);
-            Assert.AreEqual(15000, abastecimentoViewModel.Odometro);
-            Assert.AreEqual(80, abastecimentoViewModel.Litros);
+            Assert.AreEqual("15000", abastecimentoViewModel.Odometro);
+            Assert.AreEqual("80", abastecimentoViewModel.Litros);
         }
 
         [TestMethod()]
@@ -161,8 +161,8 @@ namespace FrotaWeb.Controllers.Tests
             Assert.IsInstanceOfType(viewResult.ViewData.Model, typeof(AbastecimentoViewModel));
             AbastecimentoViewModel abastecimentoViewModel = (AbastecimentoViewModel)viewResult.ViewData.Model;
             Assert.AreEqual(DateTime.Parse("2021-06-11 14:30:00"), abastecimentoViewModel.DataHora);
-            Assert.AreEqual(15000, abastecimentoViewModel.Odometro);
-            Assert.AreEqual(80, abastecimentoViewModel.Litros);
+            Assert.AreEqual("15000", abastecimentoViewModel.Odometro);
+            Assert.AreEqual("80", abastecimentoViewModel.Litros);
         }
 
         [TestMethod()]
@@ -187,8 +187,8 @@ namespace FrotaWeb.Controllers.Tests
                 IdFrota = 1,
                 IdPessoa = 2,
                 DataHora = DateTime.Parse("2021-06-11 14:30:00"),
-                Odometro = 15000,
-                Litros = 80
+                Odometro = "15000",
+                Litros = "80"
             };
         }
 
