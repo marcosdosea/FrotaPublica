@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 
 namespace FrotaWeb.Controllers.Tests
@@ -21,6 +22,7 @@ namespace FrotaWeb.Controllers.Tests
         {
             // Arrange
             var mockAbastecimentoService = new Mock<IAbastecimentoService>();
+            var mockPessoaService = new Mock<IPessoaService>();
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new AbastecimentoProfile())).CreateMapper();
@@ -28,11 +30,13 @@ namespace FrotaWeb.Controllers.Tests
                 .Returns(GetTestAbastecimentos());
             mockAbastecimentoService.Setup(service => service.Get(1))
                 .Returns(GetTargetAbastecimento());
-            mockAbastecimentoService.Setup(service => service.Edit(It.IsAny<Abastecimento>(), 1))
+            mockAbastecimentoService.Setup(service => service.Edit(It.IsAny<Abastecimento>()))
                 .Verifiable();
-            mockAbastecimentoService.Setup(service => service.Create(It.IsAny<Abastecimento>(), 1))
+            mockAbastecimentoService.Setup(service => service.Create(It.IsAny<Abastecimento>()))
                 .Verifiable();
-            controller = new AbastecimentoController(mockAbastecimentoService.Object, mapper);
+
+            mockPessoaService.Setup(service => service.GetPessoaByCpf(It.IsAny<string>())).Returns((string cpf) => 1);
+
             var httpContextAccessor = new HttpContextAccessor
             {
                 HttpContext = new DefaultHttpContext()
@@ -40,15 +44,18 @@ namespace FrotaWeb.Controllers.Tests
             httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
                 new ClaimsIdentity(
                     [
-                        new Claim("FrotaId", "1")
+                        new Claim("FrotaId", "1"),
+                        new Claim("Name", "58928940028")
                     ],
                     "TesteAutenticacao"
                 )
             );
+            controller = new AbastecimentoController(mockAbastecimentoService.Object, httpContextAccessor, mapper, mockPessoaService.Object);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = httpContextAccessor.HttpContext
             };
+            controller.TempData = new TempDataDictionary(httpContextAccessor.HttpContext, Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod()]
