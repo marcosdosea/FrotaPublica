@@ -103,7 +103,7 @@ namespace Service
         /// </summary>
         /// <param name="cpf">O cpf da pessoa</param>
         /// <returns>O id da pessoa correspondente ao cpf ou 0 caso não seja encontrada</returns>
-        public uint GetPessoaByCpf(string cpf)
+        public uint GetIdPessoaByCpf(string cpf)
         {
             return context.Pessoas
                           .AsNoTracking()

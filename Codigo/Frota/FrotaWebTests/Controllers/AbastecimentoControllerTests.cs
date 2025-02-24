@@ -35,7 +35,7 @@ namespace FrotaWeb.Controllers.Tests
             mockAbastecimentoService.Setup(service => service.Create(It.IsAny<Abastecimento>()))
                 .Verifiable();
 
-            mockPessoaService.Setup(service => service.GetPessoaByCpf(It.IsAny<string>())).Returns((string cpf) => 1);
+            mockPessoaService.Setup(service => service.GetIdPessoaByCpf(It.IsAny<string>())).Returns((string cpf) => 1);
 
             var httpContextAccessor = new HttpContextAccessor
             {

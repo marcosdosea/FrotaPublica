@@ -7,7 +7,7 @@
         void Delete(uint idPessoa);
         IEnumerable<Pessoa> GetAll(int idFrota);
         Pessoa? Get(uint idPessoa);
-        uint GetPessoaByCpf(string cpf);
+        uint GetIdPessoaByCpf(string cpf);
         IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome");
     }
 }

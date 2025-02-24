@@ -57,7 +57,7 @@ namespace FrotaWeb.Controllers
                 string cpf = httpContextAccessor.HttpContext?.User.Identity?.Name!;
                 var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
                 abastecimento.IdFrota = idFrota;
-                abastecimento.IdPessoa = pessoaService.GetPessoaByCpf(cpf);
+                abastecimento.IdPessoa = pessoaService.GetIdPessoaByCpf(cpf);
                 abastecimentoService.Create(abastecimento);
                 TempData["MensagemSucesso"] = "Abastecimento cadastrado com sucesso!";
             }
