@@ -76,20 +76,21 @@ namespace Service.Tests
         public void CreateTest()
         {
             // Act
-            manutencaoService!.Create(new Manutencao
-            {
-                Id = 4,
-                IdVeiculo = 1003,
-                IdFornecedor = 2003,
-                DataHora = DateTime.Now.AddMonths(-1),
-                IdResponsavel = 3003,
-                ValorPecas = 750.00m,
-                ValorManutencao = 250.00m,
-                Tipo = "P",
-                Comprovante = null,
-                Status = "E",
-            },
-                2
+            manutencaoService!.Create(
+                new Manutencao
+                {
+                    Id = 4,
+                    IdVeiculo = 1003,
+                    IdFornecedor = 2003,
+                    DataHora = DateTime.Now.AddMonths(-1),
+                    IdResponsavel = 3003,
+                    ValorPecas = 750.00m,
+                    ValorManutencao = 250.00m,
+                    Tipo = "P",
+                    Comprovante = null,
+                    Status = "E",
+                    IdFrota = 2
+                }
             );
             // Assert
             Assert.AreEqual(2, manutencaoService.GetAll(2).Count());
@@ -116,7 +117,7 @@ namespace Service.Tests
             var manutencao = manutencaoService!.Get(3);
             manutencao!.ValorPecas = 1000.00m;
             manutencao.ValorManutencao = 500.00m;
-            manutencaoService.Edit(manutencao, 2);
+            manutencaoService.Edit(manutencao);
             // Assert
             manutencao = manutencaoService.Get(3);
             Assert.AreEqual(1000.00m, manutencao!.ValorPecas);

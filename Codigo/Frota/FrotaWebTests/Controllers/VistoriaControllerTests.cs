@@ -5,6 +5,9 @@ using FrotaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using FrotaWeb.Mappers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Security.Claims;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -21,7 +24,7 @@ namespace FrotaWeb.Controllers.Tests
 
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new VistoriaProfile())).CreateMapper();
-            mockVistoriaService.Setup(service => service.GetAll())
+            mockVistoriaService.Setup(service => service.GetAll(It.IsAny<uint>()))
                 .Returns(GetTestVistorias());
             mockVistoriaService.Setup(service => service.Get(1))
                 .Returns(GetTargetVistoria());
@@ -30,6 +33,24 @@ namespace FrotaWeb.Controllers.Tests
             mockVistoriaService.Setup(service => service.Create(It.IsAny<Vistorium>()))
                 .Verifiable();
             controller = new VistoriaController(mockVistoriaService.Object, mapper);
+            var httpContextAccessor = new HttpContextAccessor
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                    [
+                        new Claim("FrotaId", "1"),
+                                    new Claim("Name", "58928940028")
+                    ],
+                    "TesteAutenticacao"
+                )
+            );
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContextAccessor.HttpContext
+            };
+            controller.TempData = new TempDataDictionary(httpContextAccessor.HttpContext, Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod()]

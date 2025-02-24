@@ -7,23 +7,19 @@ namespace Service
     public class AbastecimentoService : IAbastecimentoService
     {
         private readonly FrotaContext context;
-        private readonly IPessoaService pessoaService;
 
-        public AbastecimentoService(FrotaContext context, IPessoaService pessoaService)
+        public AbastecimentoService(FrotaContext context)
         {
             this.context = context;
-            this.pessoaService = pessoaService;
         }
 
         /// <summary>
         /// Adiciona novo abastecimento na base de dados
         /// </summary>
         /// <param name="abastecimento"></param>
-        /// <returns></returns>
-        public uint Create(Abastecimento abastecimento, int idFrota)
+        /// <returns>Id do veículo criado</returns>
+        public uint Create(Abastecimento abastecimento)
         {
-            abastecimento.IdFrota = (uint)idFrota;
-            abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
             context.Add(abastecimento);
             context.SaveChanges();
             return abastecimento.Id;
@@ -44,13 +40,11 @@ namespace Service
         }
 
         /// <summary>
-        /// Altera os dados da veiculo na base de dados
+        /// Altera os dados de um abastecimento na base de dados
         /// </summary>
         /// <param name="abastecimento"></param>
-        public void Edit(Abastecimento abastecimento, int idFrota)
+        public void Edit(Abastecimento abastecimento)
         {
-            abastecimento.IdPessoa = pessoaService.GetPessoaIdUser();
-            abastecimento.IdFrota = (uint)idFrota;
             context.Update(abastecimento);
             context.SaveChanges();
 
@@ -59,18 +53,19 @@ namespace Service
         /// <summary>
         /// Obter um abastecimento pelo id
         /// </summary>
-        /// <param name="idAbastecimento"></param>
-        /// <returns></returns>
+        /// <param name="idAbastecimento">O id do abastecimento</param>
+        /// <returns>Um objeto que representa o abastecimento</returns>
         public Abastecimento? Get(uint idAbastecimento)
         {
             return context.Abastecimentos.Find(idAbastecimento);
         }
 
         /// <summary>
-        /// Obter a lista de abastecimentos cadastradas
+        /// Obtém a lista de abastecimentos cadastrados para uma frota específica
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Abastecimento> GetAll(int idFrota)
+        /// <param name="idFrota">O id da frota</param>
+        /// <returns>Uma coleção de abastecimentos da frota especificada</returns>
+        public IEnumerable<Abastecimento> GetAll(uint idFrota)
         {
             return context.Abastecimentos.Where(abastecimento => abastecimento.IdFrota == idFrota).AsNoTracking();
         }
