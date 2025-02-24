@@ -15,6 +15,21 @@ const currentPath = window.location.pathname;
 // Extrai o nome da controller (ex: "Veiculo")
 const controllerName = currentPath.split('/')[1]; // Pega o primeiro segmento após o domínio
 
+// Função para ajustar o menu ao redimensionar a tela
+function resize() {
+    if (window.innerWidth >= 768) {
+        // Força o menu a abrir
+        sidebar.classList.add("open");
+    } else {
+        // Força o menu a fechar
+        sidebar.classList.remove("open");
+    }
+}
+
+window.addEventListener("resize", resize);
+
+resize();
+
 // Função para ativar o botão com base na controller
 function activateButton() {
     let activeButton = null;
@@ -52,7 +67,7 @@ activateButton();
 buttons.forEach((button, index) => {
     button.addEventListener("click", () => {
         // Fecha os submenus ao clicar em um botão principal que não expande submenus
-        const isExpander = button.hasAttribute("onclick");
+        const isExpander = button.hasAttribute("onclick") && button.getAttribute("onclick").includes("toggleSubmenu");
         if (!isExpander) {
             closeAllSubmenus();
         }
@@ -79,30 +94,32 @@ function closeAllSubmenus() {
 function toggleSubmenu(id) {
     // Verifica se a sidebar está retraída
     const isSidebarClosed = !sidebar.classList.contains("open");
+    const submenu = document.getElementById(id);
+    const isSubmenuOpen = submenu.classList.contains("open");
 
     if (isSidebarClosed) {
         // Expande a sidebar antes de abrir o submenu
         sidebar.classList.add("open");
     }
 
+    // Se o submenu já está aberto, apenas feche ele
+    if (isSubmenuOpen) {
+        submenu.classList.remove("open");
+        submenu.style.maxHeight = null;
+        return;
+    }
+
     // Fecha todos os submenus antes de abrir o submenu clicado
     closeAllSubmenus();
 
-    // Alterna o submenu clicado
-    const submenu = document.getElementById(id);
-    submenu.classList.toggle("open");
-
-    // Ajusta a altura do submenu para animação (opcional)
-    if (submenu.classList.contains("open")) {
-        submenu.style.maxHeight = submenu.scrollHeight + "px";
-    } else {
-        submenu.style.maxHeight = null;
-    }
+    // Abre o submenu clicado
+    submenu.classList.add("open");
+    submenu.style.maxHeight = submenu.scrollHeight + "px";
 }
 
-// Adiciona evento para retração da sidebar e fechamento de submenus
-document.querySelector(".sidebar-toggle").addEventListener("click", () => {
-    const isSidebarClosing = sidebar.classList.contains("open");
-    closeAllSubmenus();
-    toggleOpen();
-});
+// Adiciona evento de toggle apenas em telas pequenas
+if (window.innerWidth < 768) {
+    toggleButton.addEventListener("click", () => {
+        toggleOpen();
+    });
+}
