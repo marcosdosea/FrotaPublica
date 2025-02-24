@@ -47,6 +47,7 @@ namespace Core.Service
                             string expressaoRegularAtributo = @"(?:\w+\.)?([^']+)_UNIQUE";
                             var match = Regex.Match(mySqlException.Message, expressaoRegularAtributo);
                             this.AtributoError = match.Groups[1].Value;
+                            this.MensagemCustom = "Este dado já está cadastrado";
                         }
                         else if (mySqlException.Number == 1451)
                         {

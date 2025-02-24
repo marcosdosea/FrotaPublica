@@ -82,7 +82,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Este dado já está cadastrado");
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
                     ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
                     return View(veiculoViewModel);
@@ -118,7 +118,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Este dado já está cadastrado");
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(veiculo.IdFrota);
                     ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(veiculo.IdFrota);
                     return View(veiculoViewModel);

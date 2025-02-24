@@ -15,7 +15,7 @@ namespace FrotaWeb.Controllers
     {
         private readonly IPessoaService pessoaService;
         private readonly IMapper mapper;
-        
+
 
         public PessoaController(IPessoaService pessoaService, IMapper mapper)
         {
@@ -79,9 +79,10 @@ namespace FrotaWeb.Controllers
                 try
                 {
                     pessoaService.Create(pessoa, idFrota);
-                } catch (ServiceException exception)
+                }
+                catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     return View(pessoaModel);
                 }
             }
@@ -111,7 +112,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     return View(pessoaModel);
                 }
             }
@@ -137,12 +138,10 @@ namespace FrotaWeb.Controllers
             }
             catch (ServiceException exception)
             {
-                ModelState.AddModelError(exception.AtributoError!, "Não foi possível excluir o registro do banco");
+                TempData["MensagemError"] = exception.MensagemCustom;
             }
             return RedirectToAction(nameof(Index));
         }
 
-
-       
     }
 }
