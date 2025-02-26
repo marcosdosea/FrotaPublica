@@ -1,7 +1,5 @@
-﻿using System.Security.Claims;
-using Core;
+﻿using Core;
 using Core.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Service.Tests
@@ -84,20 +82,8 @@ namespace Service.Tests
 
             context.SaveChanges();
 
-            var httpContextAccessor = new HttpContextAccessor
-            {
-                HttpContext = new DefaultHttpContext()
-            };
-            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(
-                new ClaimsIdentity(
-                    [
-                        new Claim(ClaimTypes.Name, "78766537070")
-                    ],
-                    "TesteAutenticacao"
-                )
-            );
             idFrotaUsuario = pessoa.IdFrota;
-            abastecimentoService = new AbastecimentoService(context, new PessoaService(context, httpContextAccessor));
+            abastecimentoService = new AbastecimentoService(context);
         }
 
         [TestMethod()]
@@ -115,11 +101,10 @@ namespace Service.Tests
                     DataHora = DateTime.Parse("2021-06-23 16:30:00"),
                     Odometro = 35000,
                     Litros = 90,
-                },
-                (int)idFrotaUsuario
+                }
             );
             // Assert
-            Assert.AreEqual(3, abastecimentoService.GetAll((int)idFrotaUsuario).Count());
+            Assert.AreEqual(3, abastecimentoService.GetAll(idFrotaUsuario).Count());
             var abastecimento = abastecimentoService.Get(4);
             Assert.AreEqual(DateTime.Parse("2021-06-23 16:30:00"), abastecimento!.DataHora);
             Assert.AreEqual(35000, abastecimento.Odometro);
@@ -132,7 +117,7 @@ namespace Service.Tests
             // Act
             abastecimentoService!.Delete(2);
             // Assert
-            Assert.AreEqual(1, abastecimentoService.GetAll((int)idFrotaUsuario).Count());
+            Assert.AreEqual(1, abastecimentoService.GetAll(idFrotaUsuario).Count());
             var abastecimento = abastecimentoService.Get(2);
             Assert.AreEqual(null, abastecimento);
         }
@@ -144,7 +129,7 @@ namespace Service.Tests
             var abastecimento = abastecimentoService!.Get(2);
             abastecimento!.Odometro = 36500;
             abastecimento.Litros = 85;
-            abastecimentoService.Edit(abastecimento, (int)idFrotaUsuario);
+            abastecimentoService.Edit(abastecimento);
             //Assert
             abastecimento = abastecimentoService.Get(2);
             Assert.IsNotNull(abastecimento);
@@ -165,7 +150,7 @@ namespace Service.Tests
         public void GetAllTest()
         {
             // Act
-            var listaAbastecimento = abastecimentoService!.GetAll((int)idFrotaUsuario);
+            var listaAbastecimento = abastecimentoService!.GetAll(idFrotaUsuario);
             // Assert
             Assert.IsInstanceOfType(listaAbastecimento, typeof(IEnumerable<Abastecimento>));
             Assert.IsNotNull(listaAbastecimento);
