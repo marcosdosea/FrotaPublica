@@ -119,7 +119,7 @@ function toggleSubmenu(id) {
 
 // Adiciona evento de toggle apenas em telas pequenas
 if (window.innerWidth < 768) {
-    toggleButton.addEventListener("click", () => {
+    buttons[0].addEventListener("click", () => {
         toggleOpen();
     });
 }

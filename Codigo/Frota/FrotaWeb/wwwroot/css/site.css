@@ -26,7 +26,8 @@ html {
 body {
     margin-bottom: 60px;
     min-height: 100vh;
-    background-color: #D2E5F2;
+    font-family: 'Arial', sans-serif !important;
+    background-color: #f8f9fa;
 }
 
 .my-button {
@@ -58,13 +59,13 @@ button.close:focus {
 #content {
     margin-left: 300px;
     transition: margin-left 0.3s ease;
-    width: calc(100% - 360px);
+    width: calc(100% - 325px);
 }
 
 
 .sidebar:not(.open) + #content {
-    margin-left: 80px;
-    width: calc(100% - 80px);
+    margin-left: 64px;
+    width: calc(100% - 64px);
 }
 
 /* Ajustes para telas pequenas */
@@ -77,6 +78,6 @@ button.close:focus {
     .sidebar.open + #content {
         margin-left: 300px;
         transition: margin-left 0.3s ease;
-        width: calc(100% - 360px);
+        width: calc(100% - 300px);
     }
 }
