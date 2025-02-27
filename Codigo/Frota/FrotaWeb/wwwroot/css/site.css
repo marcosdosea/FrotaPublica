@@ -57,27 +57,37 @@ button.close:focus {
 }
 
 #content {
-    margin-left: 300px;
+    margin-left: 305px;
     transition: margin-left 0.3s ease;
-    width: calc(100% - 325px);
+    width: calc(100% - 305px);
 }
 
-
 .sidebar:not(.open) + #content {
-    margin-left: 64px;
-    width: calc(100% - 64px);
+    margin-left: 110px;
+    width: calc(100% - 110px);
 }
 
 /* Ajustes para telas pequenas */
 @media (max-width: 767px) {
     #content {
-        margin-left: 64px;
-        width: calc(100% - 64px);
+        margin-left: 90px;
+        width: calc(100% - 90px);
+        transition: margin-left 0.5s ease;
     }
 
     .sidebar.open + #content {
-        margin-left: 300px;
+        margin-left: 310px;
         transition: margin-left 0.3s ease;
-        width: calc(100% - 300px);
+        width: calc(100% - 310px);
     }
+}
+
+#sairModal .modal-dialog {
+    width: 60%;
+    height: 60%;
+    margin: 30px auto;
+}
+
+.container-main {
+    width: 98%;
 }

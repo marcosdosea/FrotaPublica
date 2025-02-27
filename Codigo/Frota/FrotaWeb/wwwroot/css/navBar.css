@@ -194,6 +194,10 @@ button.toggle {
     cursor: default;
 }
 
+.menu button:hover {
+    cursor: pointer !important;
+}
+
 .sidebar .menu button:hover > span {
     opacity: 1;
 }
@@ -316,13 +320,15 @@ button.toggle {
             border-radius: 4px;
         }
 
+.sidebar:not(.open) .submenu {
+    display: none;
+}
+
 .expand-icon {
     margin-left: auto; /* Move o ícone de expansão para a direita */
 }
 
-.menu button p {
-    font-weight: bold;
-}
+
 
 /* Deixa o menu aberto para telas grades */
 @media (min-width: 768px) {

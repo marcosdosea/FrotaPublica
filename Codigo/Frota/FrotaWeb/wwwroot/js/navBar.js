@@ -1,8 +1,14 @@
 ﻿const sidebar = document.querySelector(".sidebar");
-const toggleOpen = () => sidebar.classList.toggle("open");
 const nav = document.querySelector(".sidebar nav");
 const buttons = document.querySelectorAll('.menu > button');
 const submenus = document.querySelectorAll('.submenu');
+
+const toggleOpen = () => {
+    const isOpen = sidebar.classList.toggle("open");
+    if (!isOpen) {
+        closeAllSubmenus();
+    }
+};
 
 // Listas de controllers para cada submenu
 const veiculosControllers = ["Veiculo", "Abastecimento", "MarcaVeiculo", "ModeloVeiculo"];
@@ -18,11 +24,10 @@ const controllerName = currentPath.split('/')[1]; // Pega o primeiro segmento ap
 // Função para ajustar o menu ao redimensionar a tela
 function resize() {
     if (window.innerWidth >= 768) {
-        // Força o menu a abrir
         sidebar.classList.add("open");
     } else {
-        // Força o menu a fechar
         sidebar.classList.remove("open");
+        closeAllSubmenus();
     }
 }
 
