@@ -1,0 +1,226 @@
+﻿/* Estilização genérica para páginas */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+}
+
+/* Título da página */
+.titulo-pagina {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+    .titulo-pagina .voltar {
+        margin-top: 30px;
+        height: 50px;
+        font-size: 20px;
+        color: #171717;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+.voltar i:hover {
+    color: #0C69AB;
+}
+
+    .titulo-pagina h1 {
+        height: 50px;
+        font-size: 30px;
+        font-weight: 700;
+        margin: 0;
+        color: #333;
+    }
+
+.fomulario {
+    margin-top: 3%;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 900px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.form {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os campos quebrem de linha se necessário */
+    gap: 20px; /* Espaço entre os campos */
+    justify-content: space-between; /* Distribui os campos uniformemente */
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0; /* Evita que os elementos cresçam desproporcionalmente */
+    flex-shrink: 0;
+}
+
+    .form-group.w20 {
+        width: 20%; /* Extra pequeno */
+    }
+
+    .form-group.w40 {
+        width: 40%; /* Pequeno */
+    }
+
+    .form-group.w60 {
+        width: 60%; /* Médio */
+    }
+
+    .form-group.w80 {
+        width: 80%; /* Grande */
+    }
+
+    .form-group.w100 {
+        width: 100%; /* Extra grande */
+    }
+
+
+.form-group label {
+    color: #0C69AB;
+    font-size: 16px;
+    font-weight: 600;
+    height: 20px;
+}
+
+    .form-group input {
+        padding: 10px;
+        font-size: 1em;
+        border: 2px solid rgba(0, 0, 0, 0.25);
+        border-radius: 10px;
+        background-color: #fff;
+        font-size: 18px;
+        color: #000000;
+        height: 45px;
+    }
+
+        .form-group input:focus {
+            border: 2px solid #0C69AB;
+            outline: none;
+            border-color: #0C69AB;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group input::placeholder {
+            font-size: 18px;
+            color: rgba(0, 0, 0, 0.65);
+        }
+
+select.custom-select {
+    border: 2px solid rgba(0, 0, 0, 0.25); /* Define a borda cinza clara */
+    border-radius: 10px; /* Bordas arredondadas */
+    padding: 8px; /* Espaçamento interno */
+    font-size: 16px; /* Tamanho da fonte */
+    background-color: #f9f9f9; /* Fundo leve para melhorar o contraste */
+    color: #333; /* Cor do texto */
+    outline: none; /* Remove o contorno padrão ao clicar */
+    transition: all 0.3s ease; /* Suaviza as interações */
+    height: 45px;
+}
+
+    select.custom-select:focus {
+        border-color: #007bff; /* Cor da borda ao focar */
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Adiciona um efeito de foco */
+        background-color: #fff; /* Fundo branco no foco */
+    }
+
+    .buttons{
+        width: 100%;
+        display: flex;
+        justify-content: end;
+    }
+
+/* Ocultar o input radio completamente */
+.btn-check {
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+/* Ajusta o tamanho e o alinhamento dos botões */
+.btn-group-toggle {
+    height: 50px;
+    display: flex;
+    gap: 10px;
+}
+
+    .btn-group-toggle label{
+        height: 40px;
+    }
+    /* Botões com borda e preenchimento */
+    .btn-group-toggle .btn {
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    /* Ativo */
+    .btn-group-toggle .btn-outline-success {
+        color: #28a745;
+        background-color: #fff;
+        border-color: #28a745;
+    }
+
+        .btn-group-toggle .btn-outline-success:hover,
+        .btn-group-toggle .btn-outline-success:focus {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+    /* Inativo */
+    .btn-group-toggle .btn-outline-danger {
+        color: #dc3545;
+        background-color: #fff;
+        border-color: #dc3545;
+    }
+
+        .btn-group-toggle .btn-outline-danger:hover,
+        .btn-group-toggle .btn-outline-danger:focus {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+/* Botão selecionado */
+.btn-check:checked + .btn {
+    border-color: #007bff;
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Alinhamento da mensagem de erro */
+.text-danger {
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+
+    .buttons input {
+        min-width: 120px;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background-color: #0C69AB;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .buttons input:hover {
+        background-color: #155cb0;
+    }
+

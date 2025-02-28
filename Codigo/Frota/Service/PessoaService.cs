@@ -270,5 +270,18 @@ namespace Service
         {
             return await userManager.FindByNameAsync(cpf);
         }
+
+        public IEnumerable<Papelpessoa> GetPapeisPessoas(string papelUsuarioCadastrante)
+        {
+            if(papelUsuarioCadastrante.ToLower() == "administrador")
+            {
+                return context.Papelpessoas.Where(papel => papel.Papel.ToLower() == "gestor").ToList();
+            }
+            else
+            {
+                return context.Papelpessoas.Where(papel => papel.Papel.ToLower() != "gestor" && papel.Papel.ToLower() != "administrador").ToList();
+            }
+
+        }
     }
 }

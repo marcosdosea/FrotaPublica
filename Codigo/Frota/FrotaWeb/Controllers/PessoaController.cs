@@ -21,13 +21,15 @@ namespace FrotaWeb.Controllers
     {
         private readonly IPessoaService pessoaService;
         private readonly IMapper mapper;
+        private readonly IFrotaService frotaService;
         private readonly UserManager<UsuarioIdentity> userManager;
 
 
-        public PessoaController(IPessoaService pessoaService, IMapper mapper)
+        public PessoaController(IPessoaService pessoaService, IMapper mapper, IFrotaService frotaService)
         {
             this.pessoaService = pessoaService;
             this.mapper = mapper;
+            this.frotaService = frotaService;
         }
 
         // GET: PessoaController
@@ -70,6 +72,11 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa/Create")]
         public ActionResult Create()
         {
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+            ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
+            
+
             return View();
         }
 
