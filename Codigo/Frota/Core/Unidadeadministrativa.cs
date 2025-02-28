@@ -27,7 +27,7 @@ public partial class Unidadeadministrativa
 
     public float? Longitude { get; set; }
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 

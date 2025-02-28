@@ -9,7 +9,7 @@ public partial class Marcaveiculo
 
     public string Nome { get; set; } = null!;
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 

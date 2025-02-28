@@ -13,7 +13,7 @@ public partial class Pecainsumo
 
     public int KmGarantia { get; set; }
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 

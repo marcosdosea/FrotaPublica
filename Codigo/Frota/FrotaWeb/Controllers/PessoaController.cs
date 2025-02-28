@@ -3,9 +3,14 @@ using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Text;
 
 
 namespace FrotaWeb.Controllers
@@ -16,7 +21,8 @@ namespace FrotaWeb.Controllers
     {
         private readonly IPessoaService pessoaService;
         private readonly IMapper mapper;
-        
+        private readonly UserManager<UsuarioIdentity> userManager;
+
 
         public PessoaController(IPessoaService pessoaService, IMapper mapper)
         {
@@ -71,7 +77,7 @@ namespace FrotaWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Pessoa/Create")]
-        public async Task<ActionResult> Create(PessoaViewModel pessoaModel)
+        public async Task<ActionResult> Create(PessoaViewModel pessoaModel, [FromServices] IEmailSender emailSender)
         {
             if (ModelState.IsValid)
             {
@@ -80,11 +86,16 @@ namespace FrotaWeb.Controllers
                 try
                 {
                     pessoaService.Create(pessoa, idFrota);
-                    await pessoaService.CreatePessoaPapelAsync(pessoa, idFrota, pessoaModel.Papel);
+                    await pessoaService.CreateAsync(pessoa, idFrota, pessoaService.FindPapelPessoaById(pessoaModel.IdPapelPessoa));
                     var existingUser = await pessoaService.GetUserByCpfAsync(pessoa.Cpf);
                     var confirmationToken = await pessoaService.GenerateEmailConfirmationTokenAsync(existingUser);
-                    var callbackUrl = Url.Action( nameof(ConfirmEmail), "Pessoa", new { userId = existingUser.Id, token = confirmationToken }, protocol: HttpContext.Request.Scheme);
-                    await emailSender.SendEmailAsync( pessoa.Email, "Confirme seu cadastro", $"Por favor, confirme seu cadastro clicando neste link: <a href='{callbackUrl}'>Confirmar Cadastro</a>");
+                    var callbackUrl = Url.Action(
+                        nameof(ConfirmEmail),
+                        "Account",
+                        new { userId = existingUser.Id, token = confirmationToken },
+                        protocol: Request.Scheme
+                    );
+                    await emailSender.SendEmailAsync( pessoa.Email, pessoa.Nome, callbackUrl);
                 } catch (ServiceException exception)
                 {
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
@@ -92,17 +103,6 @@ namespace FrotaWeb.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
-        {
-            var result = await pessoaService.ConfirmEmailAsync(userId, token);
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            return BadRequest("Erro ao confirmar o e-mail.");
         }
 
         // GET: PessoaController/Edit/5

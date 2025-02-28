@@ -3,7 +3,9 @@ using Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Claims;
+using System.Text;
 
 
 namespace Service
@@ -11,12 +13,14 @@ namespace Service
     public class PessoaService : IPessoaService
     {
         private readonly FrotaContext context;
-        private readonly UserManager<UsuarioIdentity> userManager;
+        private readonly UserManager<Core.UsuarioIdentity> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PessoaService(FrotaContext context, UserManager<UsuarioIdentity> userManager, IHttpContextAccessor httpContextAccessor)
+        public PessoaService(FrotaContext context, UserManager<Core.UsuarioIdentity> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
             this.userManager = userManager;
+            this.roleManager = roleManager;
             this.context = context;
             this.httpContextAccessor = httpContextAccessor;
         }
@@ -161,10 +165,10 @@ namespace Service
                                        .FirstOrDefault();
         }
 
-        public uint FindPapelPessoaById(int idPapel)
+        public string? FindPapelPessoaById(uint idPapel)
         {
             return context.Papelpessoas.Where(papel => papel.Id == idPapel)
-                                       .Select(papel => papel.Id)
+                                       .Select(papel => papel.Papel)
                                        .FirstOrDefault();
         }
 
@@ -174,7 +178,7 @@ namespace Service
         /// <param name="pessoa"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<UsuarioIdentity> CreateAsync(Pessoa pessoa)
+        private async Task<UsuarioIdentity> CreateUserAsync(Pessoa pessoa)
         {
             var newUser = new UsuarioIdentity
             {
@@ -184,15 +188,38 @@ namespace Service
                 PhoneNumber = pessoa.Telefone
             };
 
-            var result = await userManager.CreateAsync(newUser, pessoa.Cpf);
+            var result = await userManager.CreateAsync(newUser);
 
             if (result.Succeeded)
             {
-                return newUser;
+                return userManager.FindByIdAsync(newUser.Id).Result;
             }
             else
             {
                 throw new Exception("Falha ao criar o usuário.");
+            }
+        }
+
+        private async Task CreateRoleForUserAsync(string papelPessoa, UsuarioIdentity? existingUser)
+        {
+            var roleExists = await roleManager.FindByNameAsync(papelPessoa);
+            if (roleExists == null)
+            {
+                throw new Exception($"O papel '{papelPessoa}' não existe no sistema.");
+            }
+
+            using (var context = new FrotaContext())
+            {
+                try
+                {
+                    await context.Database.ExecuteSqlInterpolatedAsync(
+                        $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ({existingUser.Id}, {roleExists.Id})"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Erro ao associar o papel ao usuário no banco de dados: {ex.Message}", ex);
+                }
             }
         }
 
@@ -204,7 +231,7 @@ namespace Service
         /// <param name="papelPessoa"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task CreatePessoaPapelAsync(Pessoa pessoa, int idFrota, string papelPessoa)
+        public async Task CreateAsync(Pessoa pessoa, int idFrota, string papelPessoa)
         {
             uint idPessoa = pessoa.Id;
             if (Get(pessoa.Id) == null)
@@ -213,78 +240,18 @@ namespace Service
             }
 
             var existingUser = await userManager.FindByNameAsync(pessoa.Cpf);
-
             if (existingUser == null)
             {
-                existingUser = await CreateAsync(pessoa);
-            }
-
-            /*var novaInscricao = new Inscricaopessoaevento
-            {
-                IdPessoa = idPessoa,
-                IdEvento = idEvento,
-                IdPapel = idPapel,
-                DataInscricao = DateTime.Now,
-                Status = "S"
-            };
-            _inscricaoService.CreateInscricaoEvento(novaInscricao);*/
-
-
-            if (papelPessoa == "GESTOR")
-            {
-                try
+                existingUser = await CreateUserAsync(pessoa);
+                if (existingUser == null)
                 {
-                    await userManager.AddClaimAsync(existingUser, new Claim("GESTOR", "true"));
+                    throw new Exception("Erro ao criar o usuário no sistema.");
                 }
-                catch (Exception e)
-                {
-                    throw new Exception("Erro ao adicionar claim de gestor ao usuário: " + e.Message);
-                }
-            }
-            else if (papelPessoa == "ADMINISTRADOR")
-            {
-                try
-                {
-                    await userManager.AddClaimAsync(existingUser, new Claim("ADMINISTRADOR", "true"));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
-                }
-            }
-            else if (papelPessoa == "MOTORISTA")
-            {
-                try
-                {
-                    await userManager.AddClaimAsync(existingUser, new Claim("MOTORISTA", "true"));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
-                }
-            }
-            else
-            {
-                try
-                {
-                    await userManager.AddClaimAsync(existingUser, new Claim("MECANICO", "true"));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Erro ao adicionar claim de colaborador ao usuário: " + e.Message);
-                }
-            }
-
-            var isInRole = await userManager.IsInRoleAsync(existingUser, papelPessoa);
-            if (!isInRole)
-            {
-                var roleResult = await userManager.AddToRoleAsync(existingUser, papelPessoa);
-                if (!roleResult.Succeeded)
-                {
-                    throw new Exception("Erro ao associar o papel ao usuário no Identity.");
-                }
+                await CreateRoleForUserAsync(papelPessoa, existingUser);
             }
         }
+
+        
 
         public async Task<string> GenerateEmailConfirmationTokenAsync(UsuarioIdentity user)
         {

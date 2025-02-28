@@ -29,7 +29,7 @@ public partial class Fornecedor
 
     public int? Longitude { get; set; }
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public sbyte Ativo { get; set; }
 

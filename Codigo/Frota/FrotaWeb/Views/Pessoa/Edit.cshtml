@@ -1,126 +1,102 @@
 ﻿@model FrotaWeb.Models.PessoaViewModel
 
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+<h4>PessoaViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cpf" class="control-label"></label>
+                <input asp-for="Cpf" class="form-control" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cep" class="control-label"></label>
+                <input asp-for="Cep" class="form-control" />
+                <span asp-validation-for="Cep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rua" class="control-label"></label>
+                <input asp-for="Rua" class="form-control" />
+                <span asp-validation-for="Rua" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bairro" class="control-label"></label>
+                <input asp-for="Bairro" class="form-control" />
+                <span asp-validation-for="Bairro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Complemento" class="control-label"></label>
+                <input asp-for="Complemento" class="form-control" />
+                <span asp-validation-for="Complemento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Numero" class="control-label"></label>
+                <input asp-for="Numero" class="form-control" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cidade" class="control-label"></label>
+                <input asp-for="Cidade" class="form-control" />
+                <span asp-validation-for="Cidade" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Estado" class="control-label"></label>
+                <input asp-for="Estado" class="form-control" />
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdFrota" class="control-label"></label>
+                <input asp-for="IdFrota" class="form-control" />
+                <span asp-validation-for="IdFrota" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdPapelPessoa" class="control-label"></label>
+                <input asp-for="IdPapelPessoa" class="form-control" />
+                <span asp-validation-for="IdPapelPessoa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ativo" class="control-label"></label>
+                <input asp-for="Ativo" class="form-control" />
+                <span asp-validation-for="Ativo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StatusAtivo" class="control-label"></label>
+                <input asp-for="StatusAtivo" class="form-control" />
+                <span asp-validation-for="StatusAtivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Telefone" class="control-label"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
-<main class="container mt-4">
-	<h4 class="page-title fs-2">
-		<i class="fa fa-user mr-3"></i>
-		Pessoa
-	</h4>
-	<h1 class="my-text-label fs-3 mt-4 mb-4">Editar Pessoa</h1>
-	<form asp-action="Edit" class="creator-form fs-5">
-		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Nome" class="label">Nome</label>
-					<input asp-for="Nome" class="form-control" placeholder="" />
-					<span asp-validation-for="Nome" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Cpf" class="label">Cpf</label>
-					<input asp-for="Cpf" class="form-control" placeholder="" />
-					<span asp-validation-for="Cpf" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Cep" class="label">Cep</label>
-					<input asp-for="Cep" class="form-control" placeholder="" />
-					<span asp-validation-for="Cep" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Rua" class="label">Rua</label>
-					<input asp-for="Rua" class="form-control" placeholder="" />
-					<span asp-validation-for="Rua" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Bairro" class="label">Bairro</label>
-					<input asp-for="Bairro" class="form-control" placeholder="" />
-					<span asp-validation-for="Bairro" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Complemento" class="label">Complemento</label>
-					<input asp-for="Complemento" class="form-control" placeholder="" />
-					<span asp-validation-for="Complemento" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Numero" class="label">Numero</label>
-					<input asp-for="Numero" class="form-control" placeholder="" />
-					<span asp-validation-for="Numero" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Cidade" class="label">Cidade</label>
-					<input asp-for="Cidade" class="form-control" placeholder="" />
-					<span asp-validation-for="Cidade" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Estado" class="label">Estado</label>
-					<input asp-for="Estado" class="form-control" placeholder="" />
-					<span asp-validation-for="Estado" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="IdFrota" class="label">Frota</label>
-					<input asp-for="IdFrota" class="form-control" placeholder="" />
-					<span asp-validation-for="IdFrota" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="IdPapelPessoa" class="label">Papel</label>
-					<input asp-for="IdPapelPessoa" class="form-control" placeholder="" />
-					<span asp-validation-for="IdPapelPessoa" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Ativo" class="label">Ativo</label>
-					<input asp-for="Ativo" class="form-control" placeholder="" />
-					<span asp-validation-for="Ativo" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mt-4">
-			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
-				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
-			</div>
-			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<input type="submit" value="Salvar" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso" />
-			</div>
-		</div>
-	</form>
-</main>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
 @section Scripts {
-	<script src="~/js/form.js" asp-append-version="true"></script>
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

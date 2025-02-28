@@ -25,7 +25,7 @@ public partial class Manutencao
 
     public string Status { get; set; } = null!;
 
-    public int IdFrota { get; set; }
+    public uint IdFrota { get; set; }
 
     public virtual Fornecedor IdFornecedorNavigation { get; set; } = null!;
 

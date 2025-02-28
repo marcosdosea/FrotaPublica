@@ -9,7 +9,7 @@ public partial class Marcapecainsumo
 
     public string Descricao { get; set; } = null!;
 
-    public int Idfrota { get; set; }
+    public uint Idfrota { get; set; }
 
     public virtual Frotum IdfrotaNavigation { get; set; } = null!;
 
