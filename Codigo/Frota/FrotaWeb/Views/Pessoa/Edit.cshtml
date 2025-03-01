@@ -6,6 +6,7 @@
     var frotas = ViewData["Frotas"] as IEnumerable<FrotaDTO> ?? Enumerable.Empty<FrotaDTO>();
     var papeis = ViewData["Papeis"] as IEnumerable<Papelpessoa> ?? Enumerable.Empty<Papelpessoa>();
     var estados = ViewData["Estados"] as List<string>;
+    var SeletorDeFrotaEnable = (bool)(ViewData["SeletorDeFrotaEnable"] ?? false);
 }
 
 <link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
@@ -32,7 +33,7 @@
             </div>
             <div class="form-group w60">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" readonly />
+                <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group w30">
@@ -89,23 +90,26 @@
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
             <hr class="divisor">
-            <div class="form-group w30">
-                <label asp-for="IdFrota" class="control-label"></label>
-                <select asp-for="IdFrota" class="custom-select select2">
-                    @if (!frotas.Any())
-                    {
-                        <option value="" disabled selected hidden>Frota</option>
-                    }
-                    else
-                    {
-                        foreach (var frota in frotas)
+            @if (SeletorDeFrotaEnable)
+            {
+                <div class="form-group w30">
+                    <label asp-for="IdFrota" class="control-label"></label>
+                    <select asp-for="IdFrota" class="custom-select select2">
+                        @if (!frotas.Any())
                         {
-                            <option value="@frota.Id">@frota.Nome</option>
+                            <option value="" disabled selected hidden>Frota</option>
                         }
-                    }
-                </select>
-                <span asp-validation-for="IdFrota" class="text-danger"></span>
-            </div>
+                        else
+                        {
+                            foreach (var frota in frotas)
+                            {
+                                <option value="@frota.Id">@frota.Nome</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="IdFrota" class="text-danger"></span>
+                </div>
+            }
             <div class="form-group w20">
                 <label asp-for="IdPapelPessoa" class="control-label"></label>
                 <select asp-for="IdPapelPessoa" class="custom-select select2">
