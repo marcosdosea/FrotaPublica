@@ -41,7 +41,6 @@ namespace FrotaWeb.Models
         public string? Cidade { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
-        [StringLength(2, MinimumLength = 2, ErrorMessage = "A sigla do {0} deve possuir 2 caracteres")]
         public string Estado { get; set; } = null!;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]

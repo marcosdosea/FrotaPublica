@@ -270,6 +270,11 @@ namespace Service
         {
             return await userManager.FindByNameAsync(cpf);
         }
+        public Pessoa? GetUserByEmailAsync(string email)
+        {
+            return context.Pessoas.FirstOrDefault(pessoa => pessoa.Email == email);
+        }
+
 
         public IEnumerable<Papelpessoa> GetPapeisPessoas(string papelUsuarioCadastrante)
         {

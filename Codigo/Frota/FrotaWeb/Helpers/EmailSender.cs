@@ -55,7 +55,7 @@ public class EmailSender : IEmailSender
                   <tr>
                     <td style=""padding: 10px; font-size: 16px; line-height: 1.6; color: #333333;"">
                       <h2 style=""color: #0C69AB; text-align: center;"">Está quase lá!</h2>
-                      <h3 style=""color: #000000; text-align: center; font-size: 15px;"">Confirme seu email e informe a senha que será usada para acessar o frota.</h3>
+                      <h3 style=""color: #000000; text-align: center; font-size: 15px;"">Informe a senha que será usada para acessar o frota.</h3>
                     </td>
                   </tr>
       

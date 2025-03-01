@@ -5,6 +5,7 @@
 @{
     var frotas = ViewData["Frotas"] as IEnumerable<FrotaDTO> ?? Enumerable.Empty<FrotaDTO>();
     var papeis = ViewData["Papeis"] as IEnumerable<Papelpessoa> ?? Enumerable.Empty<Papelpessoa>();
+    var estados = ViewData["Estados"] as List<string>;
 }
 
 <link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
@@ -24,27 +25,28 @@
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
-            <div class="form-group w40">
+            <div class="form-group w30">
                 <label asp-for="Cpf" class="control-label"></label>
                 <input asp-for="Cpf" class="form-control" />
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
-            <div class="form-group w80">
+            <div class="form-group w60">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group w40">
+            <div class="form-group w30">
                 <label asp-for="Telefone" class="control-label"></label>
                 <input asp-for="Telefone" class="form-control" />
                 <span asp-validation-for="Telefone" class="text-danger"></span>
             </div>
+            <hr class="divisor">
             <div class="form-group w40">
                 <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" class="form-control" id="cep" maxlength="9" placeholder="Digite o CEP" />
+                <input asp-for="Cep" class="form-control" id="cep" maxlength="9" />
                 <span asp-validation-for="Cep" class="text-danger"></span>
             </div>
-            <div class="form-group w40">
+            <div class="form-group w50">
                 <label asp-for="Rua" class="control-label"></label>
                 <input asp-for="Rua" class="form-control" id="rua" />
                 <span asp-validation-for="Rua" class="text-danger"></span>
@@ -59,7 +61,7 @@
                 <input asp-for="Complemento" class="form-control" />
                 <span asp-validation-for="Complemento" class="text-danger"></span>
             </div>
-            <div class="form-group w20">
+            <div class="form-group w10">
                 <label asp-for="Numero" class="control-label"></label>
                 <input asp-for="Numero" class="form-control" />
                 <span asp-validation-for="Numero" class="text-danger"></span>
@@ -69,12 +71,25 @@
                 <input asp-for="Cidade" class="form-control" id="cidade" />
                 <span asp-validation-for="Cidade" class="text-danger"></span>
             </div>
-            <div class="form-group w20">
+            <div class="form-group w10">
                 <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" id="estado" />
+                <select asp-for="Estado" class="custom-select select2" id="Estado">
+                    @if (!estados.Any())
+                    {
+                        <option value="" disabled selected hidden>Frota</option>
+                    }
+                    else
+                    {
+                        foreach (var estado in estados)
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
-            <div class="form-group w60">
+            <hr class="divisor">
+            <div class="form-group w30">
                 <label asp-for="IdFrota" class="control-label"></label>
                 <select asp-for="IdFrota" class="custom-select select2">
                     @if (!frotas.Any())
@@ -91,7 +106,7 @@
                 </select>
                 <span asp-validation-for="IdFrota" class="text-danger"></span>
             </div>
-            <div class="form-group w40">
+            <div class="form-group w20">
                 <label asp-for="IdPapelPessoa" class="control-label"></label>
                 <select asp-for="IdPapelPessoa" class="custom-select select2">
                     @if (!papeis.Any())
@@ -111,7 +126,7 @@
             <div class="form-group w-25">
                 <label class="control-label mb-2">Status</label>
                 <div class="btn-group-toggle d-flex" role="group" aria-label="Status">
-                    <input type="radio" class="btn-check" asp-for="Ativo" id="ativo" value="1" autocomplete="on" />
+                    <input type="radio" class="btn-check" asp-for="Ativo" id="ativo" value="1" autocomplete="on" checked />
                     <label class="btn btn-outline-success flex-grow-1" for="ativo">Ativo</label>
 
                     <input type="radio" class="btn-check" asp-for="Ativo" id="inativo" value="0" autocomplete="off" />
@@ -152,7 +167,12 @@
                         document.getElementById("rua").value = data.logradouro || "";
                         document.getElementById("bairro").value = data.bairro || "";
                         document.getElementById("cidade").value = data.localidade || "";
-                        document.getElementById("estado").value = data.uf || "";
+                        // Seletor para estado
+                        const estadoSelect = document.getElementById("Estado");
+                        estadoSelect.value = data.uf || "";
+                        if (!estadoSelect.value) {
+                            alert("Estado não encontrado no seletor.");
+                        }
                     })
                     .catch(error => {
                         console.error("Erro ao consultar o CEP:", error);

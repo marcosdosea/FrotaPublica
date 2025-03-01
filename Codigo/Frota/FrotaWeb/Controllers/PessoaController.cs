@@ -6,11 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Text;
 
 
 namespace FrotaWeb.Controllers
@@ -23,6 +19,7 @@ namespace FrotaWeb.Controllers
         private readonly IMapper mapper;
         private readonly IFrotaService frotaService;
         private readonly UserManager<UsuarioIdentity> userManager;
+        private readonly List<string> listaEstados;
 
 
         public PessoaController(IPessoaService pessoaService, IMapper mapper, IFrotaService frotaService)
@@ -30,6 +27,7 @@ namespace FrotaWeb.Controllers
             this.pessoaService = pessoaService;
             this.mapper = mapper;
             this.frotaService = frotaService;
+            this.listaEstados = new List<string> { "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" };
         }
 
         // GET: PessoaController
@@ -75,8 +73,7 @@ namespace FrotaWeb.Controllers
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
             ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
-            
-
+            ViewData["Estados"] = listaEstados;
             return View();
         }
 
@@ -106,6 +103,9 @@ namespace FrotaWeb.Controllers
                 } catch (ServiceException exception)
                 {
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+                    ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
+                    ViewData["Estados"] = listaEstados;
                     return View(pessoaModel);
                 }
             }

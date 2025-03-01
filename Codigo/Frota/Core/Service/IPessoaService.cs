@@ -17,6 +17,7 @@ public interface IPessoaService
     Task<string> GenerateEmailConfirmationTokenAsync(UsuarioIdentity user);
     Task<IdentityResult> ConfirmEmailAsync(string userId, string token);
     Task<UsuarioIdentity> GetUserByCpfAsync(string cpf);
+    Pessoa? GetUserByEmailAsync(string cpf);
     IEnumerable<Papelpessoa> GetPapeisPessoas(string papelUsuarioCadastrante);
 
 }
