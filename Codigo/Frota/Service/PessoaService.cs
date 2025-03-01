@@ -102,11 +102,20 @@ namespace Service
         /// Busca todas as pessoas cadastradas
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Pessoa> GetAll(int idFrota)
+        public IEnumerable<Pessoa> GetAll(int idFrota, bool viewAll)
         {
-            return context.Pessoas
+            if (viewAll)
+            {
+                return context.Pessoas
+                          .Where(f => f.IdPapelPessoa == 3)
+                          .AsNoTracking();
+            }
+            else
+            {
+                return context.Pessoas
                           .Where(f => f.IdFrota == idFrota)
                           .AsNoTracking();
+            }
         }
 
         public uint GetPessoaIdUser()
@@ -127,11 +136,19 @@ namespace Service
             return idPessoa;
         }
 
-        public IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome")
+        public IEnumerable<Pessoa> GetPaged(int idFrota, bool viewAll, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome")
         {
-            var query = context.Pessoas
-                               .Where(f => f.IdFrota == idFrota)
-                               .AsNoTracking();
+            IQueryable<Pessoa> query = context.Pessoas.AsNoTracking(); // Declara a query antes dos blocos if
+
+            if (viewAll)
+            {
+                query = query.Where(f => f.IdPapelPessoa == 3);
+            }
+            else
+            {
+                query = query.Where(f => f.IdFrota == idFrota);
+            }
+
 
             if (!string.IsNullOrEmpty(search))
             {

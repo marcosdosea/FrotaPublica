@@ -8,9 +8,9 @@ public interface IPessoaService
     void Delete(uint idPessoa);
     void Edit(Pessoa pessoa, int idFrota);
     Pessoa? Get(uint idPessoa);
-    IEnumerable<Pessoa> GetAll(int idFrota);
+    IEnumerable<Pessoa> GetAll(int idFrota, bool viewAll);
     uint GetPessoaIdUser();
-    IEnumerable<Pessoa> GetPaged(int idFrota, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome");
+    IEnumerable<Pessoa> GetPaged(int idFrota, bool viewAll, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome");
     uint FindPapelPessoa(string Papel);
     string? FindPapelPessoaById(uint idPapel);
     Task CreateAsync(Pessoa pessoa, int idFrota, string papelPessoa);

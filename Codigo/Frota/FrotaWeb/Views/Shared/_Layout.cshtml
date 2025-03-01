@@ -124,11 +124,14 @@
                             }
                         </div>
                     }
-                    @if (roleUser == "Gestor"){
+                    @if (roleUser == "Gestor" || roleUser == "Administrador"){
+
                         <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
                             <span class="material-symbols-outlined">badge</span>
-                            <p>Condutores</p>
+                            <p>Usuários</p>
                         </button>
+                    }
+                    @if (roleUser == "Gestor"){
                         <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
                             <span class="material-symbols-outlined">package_2</span>
                             <p>Fornecedores</p>

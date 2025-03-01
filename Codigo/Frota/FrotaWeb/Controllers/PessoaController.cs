@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 namespace FrotaWeb.Controllers
 {
 
-    [Authorize(Roles = "Gestor")]
+    [Authorize(Roles = "Gestor, Administrador")]
     public class PessoaController : Controller
     {
         private readonly IPessoaService pessoaService;
@@ -39,9 +39,10 @@ namespace FrotaWeb.Controllers
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             int length = 13;
             int totalResultados;
-            var listaPessoas = pessoaService.GetPaged(idFrota, page, length, out totalResultados, search, filterBy).ToList();
+            bool isAdm = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador";
+            var listaPessoas = pessoaService.GetPaged(idFrota, isAdm, page, length, out totalResultados, search, filterBy).ToList();
 
-            var totalPessoas = pessoaService.GetAll(idFrota).Count();
+            var totalPessoas = pessoaService.GetAll(idFrota, isAdm).Count();
             var totalPages = (int)Math.Ceiling((double)totalResultados / length);
 
             ViewBag.CurrentPage = page;
@@ -74,6 +75,7 @@ namespace FrotaWeb.Controllers
             ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
             ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
             ViewData["Estados"] = listaEstados;
+            ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
             return View();
         }
 
@@ -83,9 +85,17 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa/Create")]
         public async Task<ActionResult> Create(PessoaViewModel pessoaModel, [FromServices] IEmailSender emailSender)
         {
+            int idFrota;
+            if(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador")
+            {
+                idFrota = (int)pessoaModel.IdFrota;
+            }
+            else
+            {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out idFrota);
+            }
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 try
                 {
@@ -106,6 +116,7 @@ namespace FrotaWeb.Controllers
                     ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
                     ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
                     ViewData["Estados"] = listaEstados;
+                    ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
                     return View(pessoaModel);
                 }
             }
@@ -117,6 +128,10 @@ namespace FrotaWeb.Controllers
         {
             Pessoa pessoa = pessoaService.Get(id);
             PessoaViewModel pessoaModel = mapper.Map<PessoaViewModel>(pessoa);
+            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+            ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
+            ViewData["Estados"] = listaEstados;
+            ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
             return View(pessoaModel);
         }
 
@@ -125,9 +140,17 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, PessoaViewModel pessoaModel)
         {
+            int idFrota;
+            if (User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador")
+            {
+                idFrota = (int)pessoaModel.IdFrota;
+            }
+            else
+            {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out idFrota);
+            }
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 try
                 {
@@ -136,6 +159,10 @@ namespace FrotaWeb.Controllers
                 catch (ServiceException exception)
                 {
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
+                    ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
+                    ViewData["Estados"] = listaEstados;
+                    ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
                     return View(pessoaModel);
                 }
             }
