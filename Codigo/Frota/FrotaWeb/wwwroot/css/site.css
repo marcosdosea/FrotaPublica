@@ -1,4 +1,4 @@
-:root {
+ï»¿:root {
     --bg: #03438b;
     --fg: #ffffff;
     --grey: #c0c0c0;
@@ -10,7 +10,7 @@
     box-sizing: border-box;
 }
 
-/* Melhorar a organização do media query */
+/* Melhorar a organizaï¿½ï¿½o do media query */
 html {
     font-size: 14px;
     position: relative;

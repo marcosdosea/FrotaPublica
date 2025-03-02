@@ -81,93 +81,94 @@
     align-items: center;
     margin-top: 10px;
 }
-/* Botão Criar */
-.acoes .btn-primario {
-    background-color: #ffffff;
-    color: #171717;
-    border: none;
-    border-radius: 8px;
-    height: 40px;
-    width: 160px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 17px;
-    transition: background-color 0.3s;
-    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-    .acoes .btn-primario:hover {
-        background-color: #0C69AB;
-        color: #ffffff;
-        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-    }
-
-/*Estilo da barra de pesquisa*/
-.acoes form {
-    display: flex;
-    flex-direction: row;
-}
-
-    .acoes form input {
-        height: 40px;
+    /* Botão Criar */
+    .acoes .btn-primario {
         background-color: #ffffff;
-        border: 0px solid #ff0000;
+        color: #171717;
+        border: none;
         border-radius: 8px;
-        padding-left: 15px;
-        padding-right: 15px;
-        font-size: 17px;
-        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: 0.2s;
-    }
-
-        .acoes form input:hover {
-            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .acoes form input:focus {
-            border: 2px solid #0C69AB;
-            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-            outline: none;
-        }
-
-    .acoes form button {
         height: 40px;
-        width: 40px;
-        background-color: #0C69AB;
-        color: #ffffff;
-        border: 0px solid #0C69AB;
+        width: 160px;
+        padding: 10px 20px;
         border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 5px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 17px;
+        transition: background-color 0.3s;
         box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: 0.2s;
     }
 
-        .acoes form button:hover {
+        .acoes .btn-primario:hover {
+            background-color: #0C69AB;
+            color: #ffffff;
             box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        .acoes form button span {
-            font-size: 20px;
+    /*Estilo da barra de pesquisa*/
+    .acoes form {
+        display: flex;
+        flex-direction: row;
+    }
+
+        .acoes form input {
+            height: 40px;
+            background-color: #ffffff;
+            border: 0px solid #ff0000;
+            border-radius: 8px;
+            padding-left: 15px;
+            padding-right: 15px;
+            font-size: 17px;
+            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: 0.2s;
         }
 
-        .acoes form button:focus{
-            outline: none;
-        }
-
-        .acoes form button:hover {
-            background-color: #013759;
-        }
-
-        @media (max-width: 768px) {
-            .acoes form button {
-                display: none;
+            .acoes form input:hover {
+                box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
             }
+
+            .acoes form input:focus {
+                border: 2px solid #0C69AB;
+                box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+                outline: none;
+            }
+
+        .acoes form button {
+            height: 40px;
+            width: 40px;
+            background-color: #0C69AB;
+            color: #ffffff;
+            border: 0px solid #0C69AB;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 5px;
+            box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: 0.2s;
         }
+
+            .acoes form button:hover {
+                box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            .acoes form button span {
+                font-size: 20px;
+            }
+
+            .acoes form button:focus {
+                outline: none;
+            }
+
+            .acoes form button:hover {
+                background-color: #013759;
+            }
+
+@media (max-width: 768px) {
+    .acoes form button {
+        display: none;
+    }
+}
+
 .acoes form select {
     height: 40px;
     background-color: #ffffff;
@@ -179,9 +180,9 @@
     box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.acoes form select:focus {
-    outline: none;
-}
+    .acoes form select:focus {
+        outline: none;
+    }
 
 /* Estilo da Tabela */
 .tabela {
