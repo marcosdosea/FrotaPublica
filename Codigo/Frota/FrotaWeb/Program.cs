@@ -12,30 +12,30 @@ using FrotaWeb.Helpers;
 namespace FrotaWeb
 {
     public class Program
-	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddTransient<IPessoaService, PessoaService>();
-			builder.Services.AddTransient<IFrotaService, FrotaService>();
-			builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
-			builder.Services.AddTransient<IModeloVeiculoService, ModeloVeiculoService>();
-			builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
-			builder.Services.AddTransient<IVeiculoService, VeiculoService>();
-			builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
-			builder.Services.AddTransient<IFornecedorService, FornecedorService>();
-			builder.Services.AddTransient<ISolicitacaoManutencaoService, SolicitacaoManutencaoService>();
-			builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
-			builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
-			builder.Services.AddTransient<IVistoriaService, VistoriaService>();
-			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
-			builder.Services.AddTransient<IPercursoService, PercursoService>();
-			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
+            builder.Services.AddTransient<IFrotaService, FrotaService>();
+            builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
+            builder.Services.AddTransient<IModeloVeiculoService, ModeloVeiculoService>();
+            builder.Services.AddTransient<IPecaInsumoService, PecaInsumoService>();
+            builder.Services.AddTransient<IVeiculoService, VeiculoService>();
+            builder.Services.AddTransient<IAbastecimentoService, AbastecimentoService>();
+            builder.Services.AddTransient<IFornecedorService, FornecedorService>();
+            builder.Services.AddTransient<ISolicitacaoManutencaoService, SolicitacaoManutencaoService>();
+            builder.Services.AddTransient<IMarcaVeiculoService, MarcaVeiculoService>();
+            builder.Services.AddTransient<IManutencaoService, ManutencaoService>();
+            builder.Services.AddTransient<IVistoriaService, VistoriaService>();
+            builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
+            builder.Services.AddTransient<IPercursoService, PercursoService>();
+            builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddHttpContextAccessor();
 
@@ -81,17 +81,17 @@ namespace FrotaWeb
                 options.Cookie.IsEssential = true;
             });
 
-			builder.Services.ConfigureApplicationCookie(options =>
-			{
-				options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-				options.Cookie.Name = "FrotaWebCookie";
-				options.Cookie.HttpOnly = true;
-				options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-				options.LoginPath = "/Identity/Account/Login";
-				// ReturnUrlParameter requires 
-				options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-				options.SlidingExpiration = true;
-			});
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.Cookie.Name = "FrotaWebCookie";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Identity/Account/Login";
+                // ReturnUrlParameter requires 
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
 
 
             builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -106,30 +106,29 @@ namespace FrotaWeb
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
-			{
-				app.UseExceptionHandler("/Home/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
-			}
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
 
-			app.UseHttpsRedirection();
-			app.UseStaticFiles();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
-			app.UseRouting();
+            app.UseRouting();
 
-			app.UseSession();
+            app.UseSession();
 
-			app.UseAuthentication();
-			app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-			app.MapRazorPages();
+            app.MapRazorPages();
 
-			app.MapControllerRoute(
-				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
-			app.Run();
-		}
-	}
+            app.Run();
+        }
+    }
 }
-

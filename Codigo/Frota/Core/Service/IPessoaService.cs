@@ -8,6 +8,7 @@ public interface IPessoaService
     void Delete(uint idPessoa);
     void Edit(Pessoa pessoa, int idFrota);
     Pessoa? Get(uint idPessoa);
+    uint GetIdPessoaByCpf(string cpf);
     IEnumerable<Pessoa> GetAll(int idFrota, bool viewAll);
     uint GetPessoaIdUser();
     IEnumerable<Pessoa> GetPaged(int idFrota, bool viewAll, int page, int lenght, out int totalResults, string? search = null, string filterBy = "Nome");

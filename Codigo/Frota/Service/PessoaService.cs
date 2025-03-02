@@ -225,18 +225,15 @@ namespace Service
                 throw new Exception($"O papel '{papelPessoa}' não existe no sistema.");
             }
 
-            using (var context = new FrotaContext())
+            try
             {
-                try
-                {
-                    await context.Database.ExecuteSqlInterpolatedAsync(
-                        $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ({existingUser.Id}, {roleExists.Id})"
-                    );
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Erro ao associar o papel ao usuário no banco de dados: {ex.Message}", ex);
-                }
+                await context.Database.ExecuteSqlInterpolatedAsync(
+                    $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ({existingUser.Id}, {roleExists.Id})"
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao associar o papel ao usuário no banco de dados: {ex.Message}", ex);
             }
         }
 
@@ -304,6 +301,20 @@ namespace Service
                 return context.Papelpessoas.Where(papel => papel.Papel.ToLower() != "gestor" && papel.Papel.ToLower() != "administrador").ToList();
             }
 
+        }
+
+        /// <summary>
+        /// Obtém o Id de uma pessoa a partir do cpf informado
+        /// </summary>
+        /// <param name="cpf">O cpf da pessoa</param>
+        /// <returns>O id da pessoa correspondente ao cpf ou 0 caso não seja encontrada</returns>
+        public uint GetIdPessoaByCpf(string cpf)
+        {
+            return context.Pessoas
+                        .AsNoTracking()
+                        .Where(p => p.Cpf == cpf)
+                        .Select(p => p.Id)
+                        .FirstOrDefault();
         }
     }
 }
