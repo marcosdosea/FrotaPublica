@@ -1,4 +1,4 @@
-﻿.column-10 {
+.column-10 {
     width: 10%; /* Coluna com 10% de largura */
 }
 
@@ -46,16 +46,6 @@
     width: 100%; /* Coluna com 100% de largura */
 }
 
-
-
-/* Estilização genérica para páginas */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
-}
-
-.container {
-}
 
 /* Título da página */
 .titulo-pagina {
