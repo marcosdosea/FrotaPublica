@@ -49,10 +49,6 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySQL("Server=MYSQL5050.site4now.net;Database=db_aafdfe_frotadb;Uid=aafdfe_frotadb;Pwd=SmartFrota2025");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abastecimento>(entity =>
