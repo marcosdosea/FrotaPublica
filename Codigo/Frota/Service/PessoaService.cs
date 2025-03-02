@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

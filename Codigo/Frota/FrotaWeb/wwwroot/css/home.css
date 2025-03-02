@@ -1,0 +1,28 @@
+﻿.banner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+}
+
+.banner-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    height: auto;
+    object-fit: cover;
+    opacity: 0.5;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+}
+
+.welcome-text {
+    font-style: italic;
+    font-size: 2rem;
+    font-weight: 1000;
+    z-index: 1;
+    margin-top: 20px;
+}

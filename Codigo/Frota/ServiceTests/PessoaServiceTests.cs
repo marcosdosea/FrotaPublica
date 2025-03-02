@@ -169,7 +169,7 @@ namespace Service.Tests
                 }
             };
 
-            pessoaService = new PessoaService(context, httpContextAccessor);
+            pessoaService = new PessoaService(context);
         }
 
         [TestMethod()]

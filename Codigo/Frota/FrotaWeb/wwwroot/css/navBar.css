@@ -27,7 +27,7 @@ body {
     }
 
 .sidebar {
-    position: absolute;
+    position: fixed;
     z-index: 15;
     top: 15px;
     left: 15px;
@@ -35,14 +35,16 @@ body {
     width: var(--width-closed);
     border-radius: 10px;
     background: #ffffff; /* Cor de fundo da barra lateral */
-    transition: width 0.3s;
+    transition: width 0.3s ease-in-out;
     box-shadow: 0 0 10px rgb(0 0 0 / 10%); /* Sombra do ícone */
     border: 0.5px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
     .sidebar.open {
         width: var(--width-open);
-
     }
 
 /* Remove as bordas de foco de links e botões */
@@ -93,16 +95,19 @@ button.toggle {
 }
 
 .sidebar.open .toggle {
-    rotate: 180deg;
+    transform: rotate(180deg);
 }
 
-.sidebar .inner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 260px;
+.inner {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    scrollbar-width: none;
 }
+
+    .inner::-webkit-scrollbar {
+        display: none;
+    }
 
 .sidebar .header {
     display: flex;
@@ -122,8 +127,9 @@ button.toggle {
 
 .sidebar .header h1 {
     margin-left: 12px;
+    margin-top: 2px;
     font-weight: 800;
-    font-size: 16px;
+    font-size: 28px;
     letter-spacing: 2px;
     color: #0C69AB; /* Cor do título */
 }
@@ -136,6 +142,7 @@ button.toggle {
     position: relative;
     display: grid;
     margin-top: 25px;
+    white-space: nowrap;
 }
 
     .sidebar .menu::after {
@@ -146,7 +153,7 @@ button.toggle {
         height: 50px;
         width: 4px;
         background: #0C69AB; /* Cor da barra de destaque */
-        translate: 0 var(--top);
+        transform: translate(0, var(--top));
         transition: 0.3s;
     }
 
@@ -156,8 +163,7 @@ button.toggle {
         align-items: center;
         height: 50px;
         width: var(--width-closed);
-        font-size: 14px;
-        text-transform: capitalize;
+        font-size: 16px;
         line-height: 1;
         padding: 0 22px;
         color: inherit;
@@ -166,9 +172,9 @@ button.toggle {
         transition: 0.3s;
     }
 
-    .sidebar .menu button:focus {
-        outline: none;
-    }
+        .sidebar .menu button:focus {
+            outline: none;
+        }
 
         .sidebar .menu button p {
             margin: auto;
@@ -188,6 +194,10 @@ button.toggle {
     cursor: default;
 }
 
+.menu button:hover {
+    cursor: pointer !important;
+}
+
 .sidebar .menu button:hover > span {
     opacity: 1;
 }
@@ -195,6 +205,7 @@ button.toggle {
 .sidebar .menu button p,
 .sidebar .header h1 {
     opacity: 0;
+    transition: opacity 0.2s ease-in-out;
 }
 
 .sidebar.open :is(.sidebar .menu button p, .sidebar .header h1) {
@@ -202,7 +213,7 @@ button.toggle {
 }
 
 .sidebar.open .logo {
-    scale: 1;
+    transform: scale(1);
 }
 
 .sidebar .menu button > img {
@@ -224,31 +235,34 @@ button.toggle {
     color: inherit;
     cursor: pointer;
     opacity: 0.8;
-    transition: width 0.8s, opacity 0.3s;
+    transition: width 0.3s, opacity 0.6s;
+    border-top: 1px solid #dcdcdc;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .sidebar.open .login-button {
     width: var(--width-open); /* A largura expandida */
 }
 
-    .login-button a {
-        display: flex;
-        text-decoration: none;
-        flex-direction: row;
-        align-items: center;
-    }
+.login-button a {
+    display: flex;
+    text-decoration: none;
+    flex-direction: row;
+    align-items: center;
+}
 
     .login-button a:hover {
         text-decoration: none;
     }
-    
 
-        .login-button a p {
-            max-width: 140px;
-            overflow: hidden;
-            margin-left: 15px;
-            font-weight: 600;
-        }
+
+    .login-button a p {
+        max-width: 140px;
+        overflow: hidden;
+        margin-left: 15px;
+        font-weight: 600;
+    }
 
 .profile-link {
     margin: auto;
@@ -306,6 +320,44 @@ button.toggle {
             border-radius: 4px;
         }
 
+.sidebar:not(.open) .submenu {
+    display: none;
+}
+
 .expand-icon {
     margin-left: auto; /* Move o ícone de expansão para a direita */
+}
+
+
+
+/* Deixa o menu aberto para telas grades */
+@media (min-width: 768px) {
+    .sidebar {
+        width: var(--width-open) !important;
+    }
+
+        .sidebar .menu button p,
+        .sidebar .header h1 {
+            opacity: 1 !important;
+        }
+
+        .sidebar .toggle {
+            display: none !important;
+        }
+}
+
+/* Para recolher o menu aberto em telas pequenas */
+@media (max-width: 767px) {
+    .sidebar {
+        width: var(--width-closed);
+    }
+
+        .sidebar .menu button p,
+        .sidebar .header h1 {
+            opacity: 0;
+        }
+
+        .sidebar .toggle {
+            display: block;
+        }
 }

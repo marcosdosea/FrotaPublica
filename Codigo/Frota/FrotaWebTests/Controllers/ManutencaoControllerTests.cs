@@ -7,6 +7,7 @@ using FrotaWeb.Models;
 using Service;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace FrotaWeb.Controllers.Tests
 {
@@ -23,10 +24,10 @@ namespace FrotaWeb.Controllers.Tests
             IMapper mapper = new MapperConfiguration(cfg =>
                 cfg.AddProfile(new ManutencaoProfile())).CreateMapper();
 
-            mockManutencaoService.Setup(service => service.GetAll(It.IsAny<int>())).Returns(GetTestManutencoes());
+            mockManutencaoService.Setup(service => service.GetAll(It.IsAny<uint>())).Returns(GetTestManutencoes());
             mockManutencaoService.Setup(service => service.Get(1)).Returns(GetTestManutencao());
-            mockManutencaoService.Setup(service => service.Create(It.IsAny<Manutencao>(), It.IsAny<int>())).Verifiable();
-            mockManutencaoService.Setup(service => service.Edit(It.IsAny<Manutencao>(), It.IsAny<int>())).Verifiable();
+            mockManutencaoService.Setup(service => service.Create(It.IsAny<Manutencao>())).Verifiable();
+            mockManutencaoService.Setup(service => service.Edit(It.IsAny<Manutencao>())).Verifiable();
             mockManutencaoService.Setup(service => service.Delete(1)).Verifiable();
             controller = new ManutencaoController(mockManutencaoService.Object, mapper);
             var httpContextAccessor = new HttpContextAccessor
@@ -45,6 +46,7 @@ namespace FrotaWeb.Controllers.Tests
             {
                 HttpContext = httpContextAccessor.HttpContext
             };
+            controller.TempData = new TempDataDictionary(httpContextAccessor.HttpContext, Mock.Of<ITempDataProvider>());
         }
 
         [TestMethod()]
@@ -176,8 +178,8 @@ namespace FrotaWeb.Controllers.Tests
                 IdFornecedor = 2001,
                 DataHora = DateTime.Now,
                 IdResponsavel = 3001,
-                ValorPecas = 1500.50m,
-                ValorManutencao = 500.75m,
+                ValorPecas = "1500.50",
+                ValorManutencao = "500.75",
                 Tipo = "P",
                 Comprovante = null,
                 Status = "F",
