@@ -1,4 +1,4 @@
-﻿const sidebar = document.querySelector(".sidebar");
+const sidebar = document.querySelector(".sidebar");
 const nav = document.querySelector(".sidebar nav");
 const buttons = document.querySelectorAll('.menu > button');
 const submenus = document.querySelectorAll('.submenu');

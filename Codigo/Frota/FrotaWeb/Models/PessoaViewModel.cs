@@ -41,7 +41,6 @@ namespace FrotaWeb.Models
         public string? Cidade { get; set; }
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
-        [StringLength(2, MinimumLength = 2, ErrorMessage = "A sigla do {0} deve possuir 2 caracteres")]
         public string Estado { get; set; } = null!;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
@@ -56,6 +55,17 @@ namespace FrotaWeb.Models
         [DisplayName("Campo Ativo")]
         public sbyte Ativo { get; set; }
         public string? StatusAtivo { get; set; }
+
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Email")]
+        [EmailAddress]
+        [MaxLength(50)]
+        public string Email { get; set; } = null!;
+
+        [Required(ErrorMessage = "O {0} é obrigatório")]
+        [DisplayName("Número de Telefone")]
+        [StringLength(11, MinimumLength = 11, ErrorMessage = "O {0} deve possuir 11 dígitos")]
+        public string Telefone { get; set; } = null!;
 
     }
 }

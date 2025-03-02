@@ -22,7 +22,7 @@ namespace Service
         {
             context.Add(vistoria);
             context.SaveChanges();
-            return vistoria.Id;
+            return (uint)vistoria.Id;
         }
         /// <summary>
         /// Exclui uma vistoria na base de dados

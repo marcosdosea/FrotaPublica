@@ -49,7 +49,6 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abastecimento>(entity =>
@@ -492,6 +491,10 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Cpf)
                 .HasMaxLength(11)
                 .HasColumnName("cpf");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasDefaultValueSql("'padrao@gmail.com'")
+                .HasColumnName("email");
             entity.Property(e => e.Estado)
                 .HasMaxLength(2)
                 .HasColumnName("estado");
@@ -508,6 +511,10 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.Rua)
                 .HasMaxLength(50)
                 .HasColumnName("rua");
+            entity.Property(e => e.Telefone)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("'99999999999'")
+                .HasColumnName("telefone");
 
             entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Pessoas)
                 .HasForeignKey(d => d.IdFrota)

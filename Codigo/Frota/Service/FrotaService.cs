@@ -95,5 +95,18 @@ namespace Service
         {
             return context.Frota.AsNoTracking();
         }
+
+        public IEnumerable<FrotaDTO> GetAllOrdemAlfabetica()
+        {
+            var frotaDTOs = from frota in context.Frota.AsNoTracking()
+                                           orderby frota.Nome
+                                           select new FrotaDTO
+                                           {
+                                               Id = frota.Id,
+                                               Nome = frota.Nome,
+                                               Cnpj = frota.Cnpj
+                                           };
+            return frotaDTOs.ToList();
+        }
     }
 }

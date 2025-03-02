@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using FrotaWeb.Areas.Identity.Data;
+using Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -21,155 +21,154 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 
-namespace FrotaWeb.Areas.Identity.Pages.Account
+namespace FrotaWeb.Areas.Identity.Pages.Account;
+
+public class LoginModel : PageModel
 {
-    public class LoginModel : PageModel
+    private readonly SignInManager<UsuarioIdentity> _signInManager;
+    private readonly UserManager<UsuarioIdentity> userManager;
+    private readonly ILogger<LoginModel> _logger;
+    private readonly IFrotaService frotaService;
+    private UserManager<UsuarioIdentity> UserManager { get; set; }
+
+
+    public LoginModel(SignInManager<UsuarioIdentity> signInManager, UserManager<UsuarioIdentity> userManager, ILogger<LoginModel> logger, IFrotaService frotaService)
     {
-        private readonly SignInManager<UsuarioIdentity> _signInManager;
-        private readonly UserManager<UsuarioIdentity> userManager;
-        private readonly ILogger<LoginModel> _logger;
-        private readonly IFrotaService frotaService;
-        private UserManager<UsuarioIdentity> UserManager { get; set; }
+        _signInManager = signInManager;
+        this.userManager = userManager;
+        _logger = logger;
+        this.frotaService = frotaService;
+    }
 
 
-        public LoginModel(SignInManager<UsuarioIdentity> signInManager, UserManager<UsuarioIdentity> userManager, ILogger<LoginModel> logger, IFrotaService frotaService)
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public string ReturnUrl { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    [TempData]
+    public string ErrorMessage { get; set; }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public class InputModel
+    {
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [CPF(ErrorMessage = "O cpf informado não é válido")]
+        [Required(ErrorMessage = "O cpf é obrigatório")]
+        [StringLength(14, MinimumLength = 14, ErrorMessage = "O cpf deve ter 11 caracteres")]
+        public string UserName { get; set; }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [Required(ErrorMessage = "A senha é obrigatória")]
+        [StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [Display(Name = "Lembrar de mim?")]
+        public bool RememberMe { get; set; }
+    }
+
+    public async Task OnGetAsync(string returnUrl = null)
+    {
+        if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            _signInManager = signInManager;
-            this.userManager = userManager;
-            _logger = logger;
-            this.frotaService = frotaService;
+            ModelState.AddModelError(string.Empty, ErrorMessage);
         }
 
+        returnUrl ??= Url.Content("~/");
 
+        // Clear the existing external cookie to ensure a clean login process
+        await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [BindProperty]
-        public InputModel Input { get; set; }
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        ReturnUrl = returnUrl;
+    }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string ReturnUrl { get; set; }
+    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+    {
+        returnUrl ??= Url.Content("~/");
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [TempData]
-        public string ErrorMessage { get; set; }
+        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
+        if (ModelState.IsValid)
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [CPF(ErrorMessage = "O cpf informado não é válido")]
-            [Required(ErrorMessage = "O cpf é obrigatório")]
-            [StringLength(14, MinimumLength = 14, ErrorMessage = "O cpf deve ter 11 caracteres")]
-            public string UserName { get; set; }
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required(ErrorMessage = "A senha é obrigatória")]
-            [StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Display(Name = "Lembrar de mim?")]
-            public bool RememberMe { get; set; }
-        }
-
-        public async Task OnGetAsync(string returnUrl = null)
-        {
-            if (!string.IsNullOrEmpty(ErrorMessage))
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var userName = Input.UserName.Replace(".", "").Replace("-", "");
+            var user = userManager.Users.SingleOrDefault(u => u.UserName == userName);
+            if (user != null)
             {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
-            }
-
-            returnUrl ??= Url.Content("~/");
-
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            ReturnUrl = returnUrl;
-        }
-
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            if (ModelState.IsValid)
-            {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var userName = Input.UserName.Replace(".", "").Replace("-", "");
-                var user = userManager.Users.SingleOrDefault(u => u.UserName == userName);
-                if (user != null)
+                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                    if (result.Succeeded)
-                    {
-                        // Persistir o id da frota na sessão
-                        int idFrotaDoUsuario = (int)frotaService.GetFrotaByUsername(user.UserName);
-                        HttpContext.Session.SetInt32("FrotaId", idFrotaDoUsuario);
+                    // Persistir o id da frota na sessão
+                    int idFrotaDoUsuario = (int)frotaService.GetFrotaByUsername(user.UserName);
+                    HttpContext.Session.SetInt32("FrotaId", idFrotaDoUsuario);
 
-                        // Atualizar ou adicionar a claim personalizada no banco de dados
-                        var existingClaim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "FrotaId");
-                        if (existingClaim != null)
-                        {
-                            await userManager.RemoveClaimAsync(user, existingClaim);
-                        }
-                        await userManager.AddClaimAsync(user, new Claim("FrotaId", idFrotaDoUsuario.ToString()));
+                    // Atualizar ou adicionar a claim personalizada no banco de dados
+                    var existingClaim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "FrotaId");
+                    if (existingClaim != null)
+                    {
+                        await userManager.RemoveClaimAsync(user, existingClaim);
+                    }
+                    await userManager.AddClaimAsync(user, new Claim("FrotaId", idFrotaDoUsuario.ToString()));
 
-                        // Reautenticar o usuário para carregar as novas claims
-                        await _signInManager.SignInAsync(user, isPersistent: true);
+                    // Reautenticar o usuário para carregar as novas claims
+                    await _signInManager.SignInAsync(user, isPersistent: true);
 
-                        _logger.LogInformation("User logged in.");
-                        return LocalRedirect(returnUrl);
-                    }
-                    if (result.RequiresTwoFactor)
-                    {
-                        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                    }
-                    if (result.IsLockedOut)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        return RedirectToPage("./Lockout");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Login inválido");
-                        return Page();
-                    }
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                if (result.RequiresTwoFactor)
+                {
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                }
+                if (result.IsLockedOut)
+                {
+                    _logger.LogWarning("User account locked out.");
+                    return RedirectToPage("./Lockout");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Login inválido");
+                    return Page();
                 }
             }
-            // If we got this far, something failed, redisplay form
-            return Page();
         }
+        // If we got this far, something failed, redisplay form
+        return Page();
     }
 }
