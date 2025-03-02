@@ -1,6 +1,4 @@
-﻿using Core.DTO;
-
-namespace Core.Service
+﻿namespace Core.Service
 {
     public interface IFrotaService
     {
@@ -10,6 +8,5 @@ namespace Core.Service
         Frotum? Get(int idFrota);
         uint GetFrotaByUsername(string username);
         IEnumerable<Frotum> GetAll();
-        IEnumerable<FrotaDTO> GetAllOrdemAlfabetica();
     }
 }
