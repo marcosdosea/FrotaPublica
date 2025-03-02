@@ -1,26 +1,26 @@
 using Core;
 using Core.Service;
-using Microsoft.EntityFrameworkCore;
 using Service;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
-using FrotaWeb.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using FrotaWeb.Filter;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using FrotaWeb.Helpers;
 
 namespace FrotaWeb
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add<CustomExceptionFilter>();
-            });
+            builder.Services.AddControllersWithViews();
 
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddTransient<IPessoaService, PessoaService>();
 			builder.Services.AddTransient<IFrotaService, FrotaService>();
 			builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
@@ -36,7 +36,43 @@ namespace FrotaWeb
 			builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
 			builder.Services.AddTransient<IPercursoService, PercursoService>();
 			builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddHttpContextAccessor();
+
+            var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("A string de conexão 'FrotaDatabase' não foi encontrada ou está vazia.");
+            }
+            builder.Services.AddDbContext<FrotaContext>(options => options.UseMySQL(connectionString));
+            builder.Services.AddDbContext<IdentityContext>(options => options.UseMySQL(connectionString));
+
+
+            builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
+            {
+                // SignIn settings
+                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
+
+                // Default User settings.
+                options.User.AllowedUserNameCharacters =
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+!^ ";
+                options.User.RequireUniqueEmail = false;
+
+                // Default Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            }).AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<IdentityContext>();
 
             builder.Services.AddSession(options =>
             {
@@ -44,47 +80,6 @@ namespace FrotaWeb
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-			var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
-
-			if (string.IsNullOrEmpty(connectionString))
-			{
-				throw new InvalidOperationException("A string de conexão 'FrotaDatabase' não foi encontrada ou está vazia.");
-			}
-
-			builder.Services.AddDbContext<FrotaContext>(options =>
-				options.UseMySQL(connectionString));
-
-			builder.Services.AddDbContext<IdentityContext>(options =>
-			options.UseMySQL(connectionString));
-
-			builder.Services.AddDefaultIdentity<UsuarioIdentity>(options =>
-				{
-					// SignIn settings
-					options.SignIn.RequireConfirmedAccount = true;
-					options.SignIn.RequireConfirmedEmail = false;
-					options.SignIn.RequireConfirmedPhoneNumber = false;
-
-					// Password settings
-					options.Password.RequireDigit = true;
-					options.Password.RequireLowercase = true;
-					options.Password.RequireNonAlphanumeric = true;
-					options.Password.RequireUppercase = true;
-					options.Password.RequiredLength = 8;
-
-					// Default User settings.
-					options.User.AllowedUserNameCharacters =
-							"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+!^ ";
-					options.User.RequireUniqueEmail = false;
-
-					// Default Lockout settings
-					options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-					options.Lockout.MaxFailedAccessAttempts = 5;
-					options.Lockout.AllowedForNewUsers = true;
-				}).AddRoles<IdentityRole>()
-				   .AddEntityFrameworkStores<IdentityContext>();
 
 			builder.Services.ConfigureApplicationCookie(options =>
 			{
@@ -98,10 +93,19 @@ namespace FrotaWeb
 				options.SlidingExpiration = true;
 			});
 
-			var app = builder.Build();
 
-			// Configure the HTTP request pipeline.
-			if (!app.Environment.IsDevelopment())
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[] { new CultureInfo("pt-BR") };
+                options.DefaultRequestCulture = new RequestCulture("pt-BR");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
 			{
 				app.UseExceptionHandler("/Home/Error");
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

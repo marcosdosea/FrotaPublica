@@ -1,5 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using FrotaWeb.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@using Core;
 
 @inject SignInManager<UsuarioIdentity> SignInManager
 @inject UserManager<UsuarioIdentity> UserManager
@@ -18,23 +18,22 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Frota Pública</title>
-    <link rel="icon" type="image/x-icon" href="~/logo.ico">
-    <link rel="stylesheet" href="~/css/navBar.css" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>FrotaPública</title>
+    <link rel="stylesheet" href="~/css/navBar.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-
+    
 </head>
 <body style="background-color: #D2E5F2">
-    <div class="wrapper d-flex align-items-stretch">
+	<div class="wrapper d-flex align-items-stretch">
         <aside class="sidebar">
             <button class="toggle" type="button" onclick="toggleOpen()">
                 <span class="material-symbols-outlined">chevron_right</span>
@@ -45,7 +44,7 @@
                     <h1>Frota</h1>
                 </div>
                 <nav class="menu">
-
+                    
                     <button id="Home" type="button" onclick="window.location.href='@Url.Action("Index", "Home")';">
                         <span class="material-symbols-outlined">home</span>
                         <p>Página Inicial</p>
@@ -58,14 +57,12 @@
                         </button>
                         <!--expande manutenção-->
                         <div class="submenu" id="manutencao-submenu">
-                            @if (roleUser == "Gestor" || roleUser == "Motorista")
-                            {
+                            @if (roleUser == "Gestor" || roleUser == "Motorista"){
                                 <button type="button" onclick="window.location.href='@Url.Action("Index", "Solicitacaomanutencao")';">
                                     <p>Solicitar Manutenção</p>
                                 </button>
                             }
-                            @if (roleUser == "Gestor" || roleUser == "Mecânico")
-                            {
+                            @if (roleUser == "Gestor" || roleUser == "Mecânico"){
                                 <button type="button" onclick="window.location.href='@Url.Action("Index", "Manutencao")';">
                                     <p>Manutenção</p>
                                 </button>
@@ -79,8 +76,7 @@
                         </div>
                     }
                     <a></a>
-                    @if (roleUser == "Administrador")
-                    {
+                    @if (roleUser == "Administrador"){
                         <button id="Pecas" type="button" onclick="toggleSubmenu('pecasInsumos-submenu')">
                             <span class="material-symbols-outlined">settings</span>
                             <p>Peças e Insumos</p>
@@ -98,8 +94,7 @@
                         </div>
                     }
                     <a></a>
-                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Administrador")
-                    {
+                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Administrador"){
                         <button id="Veiculo" type="button" onclick="toggleSubmenu('veiculos-submenu')">
                             <span class="material-symbols-outlined">directions_car</span>
                             <p>Veículos</p>
@@ -129,30 +124,34 @@
                             }
                         </div>
                     }
-                    @if (roleUser == "Gestor")
-                    {
+                    @if (roleUser == "Gestor" || roleUser == "Administrador"){
+
                         <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
                             <span class="material-symbols-outlined">badge</span>
-                            <p>Condutores</p>
+                            <p>Usuários</p>
                         </button>
+                    }
+                    @if (roleUser == "Gestor"){
                         <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
                             <span class="material-symbols-outlined">package_2</span>
                             <p>Fornecedores</p>
+                        </button>
+                        <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
+                            <span class="material-symbols-outlined">space_dashboard</span>
+                            <p>Relatórios</p>
                         </button>
                         <button id="UnidadeAdministrativa" type="button" onclick="window.location.href='@Url.Action("Index", "UnidadeAdministrativa")';">
                             <span class="material-symbols-outlined">apartment</span>
                             <p>Unidade Administrativa</p>
                         </button>
                     }
-                    @if (roleUser == "Administrador")
-                    {
+                    @if (roleUser == "Administrador"){
                         <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
                             <span class="material-symbols-outlined">local_shipping</span>
                             <p>Frota</p>
                         </button>
                     }
-                    @if (roleUser == "Gestor" || roleUser == "Motorista")
-                    {
+                    @if (roleUser == "Gestor" || roleUser == "Motorista"){
                         <button id="Vistoria" type="button" onclick="window.location.href='@Url.Action("Index", "Vistoria")';">
                             <span class="material-symbols-outlined">playlist_add_check</span>
                             <p>Vistoria</p>
@@ -162,26 +161,28 @@
                             <p>Percurso</p>
                         </button>
                     }
+                    <div class="login-button">
+                        <a class="manage-link" asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
+                            <p class="profile-link">@userName</p>
+                        </a>
+                        <a class="logout-link" data-bs-toggle="modal" data-bs-target="#sairModal">
+                            <span class="material-symbols-outlined" style="margin-right: 22px;">logout</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
-            <div class="login-button">
-                <a class="manage-link" asp-area="Identity" asp-page="/Account/Manage/Index">
-                    <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
-                    <p class="profile-link">@userName</p>
-                </a>
-                <a class="logout-link" data-bs-toggle="modal" data-bs-target="#sairModal">
-                    <span class="material-symbols-outlined" style="margin-right: 22px;">logout</span>
-                </a>
-            </div>
         </aside>
-        <!-- Page Content -->
-        <div id="content">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
-    </div>
-    <!-- Modal Sair -->
+		<!-- Page Content -->
+		<div id="content">
+			<div class="container">
+				<main role="main" class="pb-3">
+					@RenderBody()
+				</main>
+			</div>
+		</div>
+	</div>
+	<!-- Modal Sair -->
     <div id="sairModal" tabindex="-1" class="modal fade" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
