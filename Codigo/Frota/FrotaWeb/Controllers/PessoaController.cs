@@ -1,33 +1,26 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace FrotaWeb.Controllers
 {
 
-    [Authorize(Roles = "Gestor, Administrador")]
+    [Authorize(Roles = "Gestor")]
     public class PessoaController : Controller
     {
         private readonly IPessoaService pessoaService;
         private readonly IMapper mapper;
-        private readonly IFrotaService frotaService;
-        private readonly UserManager<UsuarioIdentity> userManager;
-        private readonly List<string> listaEstados;
 
 
-        public PessoaController(IPessoaService pessoaService, IMapper mapper, IFrotaService frotaService)
+        public PessoaController(IPessoaService pessoaService, IMapper mapper)
         {
             this.pessoaService = pessoaService;
             this.mapper = mapper;
-            this.frotaService = frotaService;
-            this.listaEstados = new List<string> { "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" };
         }
 
         // GET: PessoaController
@@ -39,10 +32,9 @@ namespace FrotaWeb.Controllers
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             int length = 13;
             int totalResultados;
-            bool isAdm = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador";
-            var listaPessoas = pessoaService.GetPaged(idFrota, isAdm, page, length, out totalResultados, search, filterBy).ToList();
+            var listaPessoas = pessoaService.GetPaged(idFrota, page, length, out totalResultados, search, filterBy).ToList();
 
-            var totalPessoas = pessoaService.GetAll(idFrota, isAdm).Count();
+            var totalPessoas = pessoaService.GetAll(idFrota).Count();
             var totalPages = (int)Math.Ceiling((double)totalResultados / length);
 
             ViewBag.CurrentPage = page;
@@ -71,11 +63,6 @@ namespace FrotaWeb.Controllers
         [Route("Pessoa/Create")]
         public ActionResult Create()
         {
-            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-            ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
-            ViewData["Estados"] = listaEstados;
-            ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
             return View();
         }
 
@@ -83,40 +70,19 @@ namespace FrotaWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Pessoa/Create")]
-        public async Task<ActionResult> Create(PessoaViewModel pessoaModel, [FromServices] IEmailSender emailSender)
+        public ActionResult Create(PessoaViewModel pessoaModel)
         {
-            int idFrota;
-            if(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador")
-            {
-                idFrota = (int)pessoaModel.IdFrota;
-            }
-            else
-            {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out idFrota);
-            }
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 try
                 {
                     pessoaService.Create(pessoa, idFrota);
-                    await pessoaService.CreateAsync(pessoa, idFrota, pessoaService.FindPapelPessoaById(pessoaModel.IdPapelPessoa));
-                    var existingUser = await pessoaService.GetUserByCpfAsync(pessoa.Cpf);
-                    var confirmationToken = await pessoaService.GenerateEmailConfirmationTokenAsync(existingUser);
-                    var callbackUrl = Url.Action(
-                        nameof(ConfirmEmail),
-                        "Account",
-                        new { userId = existingUser.Id, token = confirmationToken },
-                        protocol: Request.Scheme
-                    );
-                    await emailSender.SendEmailAsync( pessoa.Email, pessoa.Nome, callbackUrl);
-                } catch (ServiceException exception)
+                }
+                catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
-                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-                    ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
-                    ViewData["Estados"] = listaEstados;
-                    ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     return View(pessoaModel);
                 }
             }
@@ -128,10 +94,6 @@ namespace FrotaWeb.Controllers
         {
             Pessoa pessoa = pessoaService.Get(id);
             PessoaViewModel pessoaModel = mapper.Map<PessoaViewModel>(pessoa);
-            ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-            ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
-            ViewData["Estados"] = listaEstados;
-            ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
             return View(pessoaModel);
         }
 
@@ -140,17 +102,9 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, PessoaViewModel pessoaModel)
         {
-            int idFrota;
-            if (User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador")
-            {
-                idFrota = (int)pessoaModel.IdFrota;
-            }
-            else
-            {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out idFrota);
-            }
             if (ModelState.IsValid)
             {
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
                 var pessoa = mapper.Map<Pessoa>(pessoaModel);
                 try
                 {
@@ -158,11 +112,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
-                    ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
-                    ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
-                    ViewData["Estados"] = listaEstados;
-                    ViewData["SeletorDeFrotaEnable"] = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador" ? true : false;
+                    ModelState.AddModelError(exception.AtributoError, exception.MensagemCustom);
                     return View(pessoaModel);
                 }
             }
@@ -188,12 +138,10 @@ namespace FrotaWeb.Controllers
             }
             catch (ServiceException exception)
             {
-                ModelState.AddModelError(exception.AtributoError!, "Não foi possível excluir o registro do banco");
+                TempData["MensagemError"] = exception.MensagemCustom;
             }
             return RedirectToAction(nameof(Index));
         }
 
-
-       
     }
 }

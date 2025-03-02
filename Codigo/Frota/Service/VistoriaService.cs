@@ -1,4 +1,4 @@
-using Core;
+﻿using Core;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +22,7 @@ namespace Service
         {
             context.Add(vistoria);
             context.SaveChanges();
-            return (uint)vistoria.Id;
+            return vistoria.Id;
         }
         /// <summary>
         /// Exclui uma vistoria na base de dados

@@ -1,189 +1,161 @@
 ﻿@model FrotaWeb.Models.PessoaViewModel
-@using Core.DTO
-@using Core
 
-@{
-    var frotas = ViewData["Frotas"] as IEnumerable<FrotaDTO> ?? Enumerable.Empty<FrotaDTO>();
-    var papeis = ViewData["Papeis"] as IEnumerable<Papelpessoa> ?? Enumerable.Empty<Papelpessoa>();
-    var estados = ViewData["Estados"] as List<string>;
-    var SeletorDeFrotaEnable = (bool)(ViewData["SeletorDeFrotaEnable"] ?? false);
-}
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
-
-<main>
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
-        </a>
-        <h1>Cadastro de Usuário</h1>
-    </div>
-    <div class="fomulario">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group w60">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+<main class="container mt-4">
+    <h4 class="page-title fs-2">
+        <i class="fa fa-user mr-3"></i>
+        Pessoa
+    </h4>
+    <h1 class="my-text-label fs-3 mt-4 mb-4">Nova Pessoa</h1>
+    <form asp-action="Create" class="creator-form fs-5">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="Nome" class="label">Nome</label>
+                    <input asp-for="Nome" class="form-control" placeholder="Nome" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w30">
-                <label asp-for="Cpf" class="control-label"></label>
-                <input asp-for="Cpf" class="form-control" />
-                <span asp-validation-for="Cpf" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="Cpf" class="label">Cpf</label>
+                    <input asp-for="Cpf" class="form-control" placeholder="00000000000" />
+                    <span asp-validation-for="Cpf" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w60">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+                <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="Cep" class="label">Cep</label>
+                    <input asp-for="Cep" class="form-control" placeholder="00000000" maxlength="9" onblur="buscarCep()" />
+                    <span asp-validation-for="Cep" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w30">
-                <label asp-for="Telefone" class="control-label"></label>
-                <input asp-for="Telefone" class="form-control" />
-                <span asp-validation-for="Telefone" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="Rua" class="label">Rua</label>
+                    <input asp-for="Rua" class="form-control" placeholder="Rua" id="Rua" />
+                    <span asp-validation-for="Rua" class="text-danger"></span>
+                </div>
             </div>
-            <hr class="divisor">
-            <div class="form-group w40">
-                <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" class="form-control" id="cep" maxlength="9" />
-                <span asp-validation-for="Cep" class="text-danger"></span>
+        </div>
+                <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="Bairro" class="label">Bairro</label>
+                    <input asp-for="Bairro" class="form-control" placeholder="Bairro" id="Bairro" />
+                    <span asp-validation-for="Bairro" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w50">
-                <label asp-for="Rua" class="control-label"></label>
-                <input asp-for="Rua" class="form-control" id="rua" />
-                <span asp-validation-for="Rua" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="Complemento" class="Complemento">Complemento</label>
+                    <input asp-for="Complemento" class="form-control" placeholder="Complemento" />
+                    <span asp-validation-for="Complemento" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w40">
-                <label asp-for="Bairro" class="control-label"></label>
-                <input asp-for="Bairro" class="form-control" id="bairro" />
-                <span asp-validation-for="Bairro" class="text-danger"></span>
+        </div>
+                <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="Numero" class="label">Numero</label>
+                    <input asp-for="Numero" class="form-control" placeholder="Numero" />
+                    <span asp-validation-for="Numero" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w60">
-                <label asp-for="Complemento" class="control-label"></label>
-                <input asp-for="Complemento" class="form-control" />
-                <span asp-validation-for="Complemento" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="Cidade" class="Cidade">Cidade</label>
+                    <input asp-for="Cidade" class="form-control" placeholder="Cidade" id="Cidade" />
+                    <span asp-validation-for="Cidade" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w10">
-                <label asp-for="Numero" class="control-label"></label>
-                <input asp-for="Numero" class="form-control" />
-                <span asp-validation-for="Numero" class="text-danger"></span>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="Estado" class="label">Estado</label>
+                    <input asp-for="Estado" class="form-control" placeholder="Estado" id="Estado" />
+                    <span asp-validation-for="Estado" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group w40">
-                <label asp-for="Cidade" class="control-label"></label>
-                <input asp-for="Cidade" class="form-control" id="cidade" />
-                <span asp-validation-for="Cidade" class="text-danger"></span>
-            </div>
-            <div class="form-group w10">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="custom-select select2" id="Estado">
-                    @if (!estados.Any())
-                    {
-                        <option value="" disabled selected hidden>Frota</option>
-                    }
-                    else
-                    {
-                        foreach (var estado in estados)
-                        {
-                            <option value="@estado">@estado</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <hr class="divisor">
-            @if (SeletorDeFrotaEnable)
-            {
-                <div class="form-group w30">
-                    <label asp-for="IdFrota" class="control-label"></label>
-                    <select asp-for="IdFrota" class="custom-select select2">
-                        @if (!frotas.Any())
-                        {
-                            <option value="" disabled selected hidden>Frota</option>
-                        }
-                        else
-                        {
-                            foreach (var frota in frotas)
-                            {
-                                <option value="@frota.Id">@frota.Nome</option>
-                            }
-                        }
-                    </select>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="IdFrota" class="label">Frota</label>
+                    <input asp-for="IdFrota" class="form-control" placeholder="Frota" />
                     <span asp-validation-for="IdFrota" class="text-danger"></span>
                 </div>
-            }
-            <div class="form-group w20">
-                <label asp-for="IdPapelPessoa" class="control-label"></label>
-                <select asp-for="IdPapelPessoa" class="custom-select select2">
-                    @if (!papeis.Any())
-                    {
-                        <option value="" disabled selected hidden>Papel</option>
-                    }
-                    else
-                    {
-                        foreach (var papel in papeis)
-                        {
-                            <option value="@papel.Id">@papel.Papel</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="IdPapelPessoa" class="text-danger"></span>
             </div>
-            <div class="form-group w-25">
-                <label class="control-label mb-2">Status</label>
-                <div class="btn-group-toggle d-flex" role="group" aria-label="Status">
-                    <input type="radio" class="btn-check" asp-for="Ativo" id="ativo" value="1" autocomplete="on" checked />
-                    <label class="btn btn-outline-success flex-grow-1" for="ativo">Ativo</label>
-
-                    <input type="radio" class="btn-check" asp-for="Ativo" id="inativo" value="0" autocomplete="off" />
-                    <label class="btn btn-outline-danger flex-grow-1" for="inativo">Inativo</label>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label asp-for="IdPapelPessoa" class="label">Papel</label>
+                    <input asp-for="IdPapelPessoa" class="form-control" placeholder="Papel" />
+                    <span asp-validation-for="IdPapelPessoa" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Ativo" class="text-danger mt-1 d-block"></span>
             </div>
-            <div class="buttons">
-                <input type="submit" value="Cadastrar Usuário" class="btn btn-primary" />
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label asp-for="Ativo" class="label">Ativo</label>
+                    <input asp-for="Ativo" class="form-control" placeholder="1" />
+                    <span asp-validation-for="Ativo" class="text-danger"></span>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
+                <a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
+            </div>
+            <div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
+                <button type="submit" value="Create" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Cadastrar</button>
+            </div>
+        </div>
+    </form>
 </main>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
+    <script src="~/js/form.js" asp-append-version="true"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        document.getElementById("cep").addEventListener("blur", function () {
-            const cep = this.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+        function buscarCep() {
+            var cep = document.getElementById("Cep").value.replace(/\D/g, ''); // Remove tudo que não for número
 
-            if (cep.length === 8) {
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Erro ao buscar CEP.");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.erro) {
-                            alert("CEP não encontrado.");
-                            return;
-                        }
+            if (cep !== "") {
+                var validacep = /^[0-9]{8}$/; // Validação do formato do CEP
 
-                        // Preenche os campos com os dados retornados
-                        document.getElementById("rua").value = data.logradouro || "";
-                        document.getElementById("bairro").value = data.bairro || "";
-                        document.getElementById("cidade").value = data.localidade || "";
-                        // Seletor para estado
-                        const estadoSelect = document.getElementById("Estado");
-                        estadoSelect.value = data.uf || "";
-                        if (!estadoSelect.value) {
-                            alert("Estado não encontrado no seletor.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Erro ao consultar o CEP:", error);
-                        alert("Não foi possível consultar o CEP.");
-                    });
-            } else {
-                alert("CEP inválido. Por favor, insira um CEP válido.");
+                if (validacep.test(cep)) {
+                    // Limpa os campos antes de preencher
+                    document.getElementById("Rua").value = "...";
+                    document.getElementById("Bairro").value = "...";
+                    document.getElementById("Cidade").value = "...";
+                    document.getElementById("Estado").value = "...";
+
+                    // Fazendo a requisição para a API ViaCEP
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.erro) {
+                                document.getElementById("Rua").value = data.logradouro;
+                                document.getElementById("Bairro").value = data.bairro;
+                                document.getElementById("Cidade").value = data.localidade;
+                                document.getElementById("Estado").value = data.uf;
+                            } else {
+                                alert("CEP não encontrado.");
+                            }
+                        })
+                        .catch(() => {
+                            alert("Erro ao buscar o CEP.");
+                        });
+                } else {
+                    alert("Formato de CEP inválido. Digite um CEP válido com 8 dígitos.");
+                }
             }
-        });
+        }
     </script>
 }
