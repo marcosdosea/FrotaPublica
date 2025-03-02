@@ -1,14 +1,11 @@
-using Core;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FrotaWeb.Areas.Identity.Data;
+namespace Core;
 
 public class IdentityContext : IdentityDbContext<UsuarioIdentity>
 {
-    public IdentityContext(DbContextOptions<IdentityContext> options)
-        : base(options)
+    public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
     {
     }
 

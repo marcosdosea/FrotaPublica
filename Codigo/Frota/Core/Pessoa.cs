@@ -31,6 +31,10 @@ public partial class Pessoa
 
     public sbyte Ativo { get; set; }
 
+    public string Email { get; set; } = null!;
+
+    public string Telefone { get; set; } = null!;
+
     public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;

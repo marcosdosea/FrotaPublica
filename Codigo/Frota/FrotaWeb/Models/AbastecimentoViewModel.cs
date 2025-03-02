@@ -29,12 +29,10 @@ namespace FrotaWeb.Models
 
         [Required(ErrorMessage = "A {0} é obrigatória")]
         [DisplayName("Leitura do odômetro")]
-        [RegularExpression(@"^(?:\d{1,6}|1000000)$", ErrorMessage = "A {0} deve ser um número entre 0 e 1.000.000.")]
-        public string Odometro { get; set; } = "0";
+        public int Odometro { get; set; }
 
         [Required(ErrorMessage = "Os {0} são obrigatórios")]
         [DisplayName("Litros Abastecidos")]
-        [RegularExpression(@"^\d{1,8}([.,]\d{1,2})?$", ErrorMessage = "O {0} deve estar ente 0 e 99.999.999,99")]
-        public string Litros { get; set; } = "0";
+        public int Litros { get; set; }
     }
 }

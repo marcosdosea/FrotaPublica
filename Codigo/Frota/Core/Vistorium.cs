@@ -5,7 +5,7 @@ namespace Core;
 
 public partial class Vistorium
 {
-    public uint Id { get; set; }
+    public int Id { get; set; }
 
     public DateTime Data { get; set; }
 
