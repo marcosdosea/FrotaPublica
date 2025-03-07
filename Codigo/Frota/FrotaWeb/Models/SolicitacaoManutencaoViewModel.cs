@@ -13,10 +13,12 @@ public class SolicitacaoManutencaoViewModel
     [Required(ErrorMessage = "O {0} é obrigatório")]
     [DisplayName("Código do Veículo")]
     public uint IdVeiculo { get; set; }
+    public string? PlacaVeiculo { get; set; }
 
     [Required(ErrorMessage = "O {0} é obrigatório")]
     [DisplayName("Código da Pessoa")]
     public uint IdPessoa { get; set; }
+    public string? NomePessoa { get; set; }
 
     [Required(ErrorMessage = "A {0} é obrigatório")]
     [DisplayName("Data da Solicitação")]

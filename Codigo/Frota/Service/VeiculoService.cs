@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.DTO;
 using Core.Service;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
@@ -80,6 +81,19 @@ namespace Service
         public Veiculo? Get(uint idVeiculo)
         {
             return context.Veiculos.Find(idVeiculo);
+        }
+
+        /// <summary>
+        /// Obter a Placa de um veículo através do Id
+        /// </summary>
+        /// <param name="idVeiculo"></param>
+        /// <returns></returns>
+        public string? GetPlacaVeiculo(uint idVeiculo)
+        {
+            return context.Veiculos
+                          .Where(veiculo => veiculo.Id == idVeiculo)
+                          .Select(veiculo => veiculo.Placa)
+                          .FirstOrDefault();
         }
 
         /// <summary>

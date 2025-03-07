@@ -16,8 +16,8 @@
         <table class="tabela">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.IdVeiculo)</th>
-                    <th>@Html.DisplayNameFor(model => model.IdPessoa)</th>
+                    <th>Veículo</th>
+                    <th>Solicitante</th>
                     <th>@Html.DisplayNameFor(model => model.DataSolicitacao)</th>
                     <th>@Html.DisplayNameFor(model => model.DescricaoProblema)</th>
                     <th class="column-15"></th>
@@ -27,8 +27,8 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.IdVeiculo)</td>
-                        <td>@Html.DisplayFor(modelItem => item.IdPessoa)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PlacaVeiculo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.NomePessoa)</td>
                         <td>@Html.DisplayFor(modelItem => item.DataSolicitacao)</td>
                         <td>@Html.DisplayFor(modelItem => item.DescricaoProblema)</td>
                         <td>
