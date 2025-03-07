@@ -1,6 +1,131 @@
-<link rel="stylesheet" href="~/css/home.css">
+@model FrotaWeb.Models.HomeViewModel
 
-<div class="container-main text-center banner">
-    <h1 class="display-4 welcome-text">Bem-vindo ao FrotaPública!</h1>
-    <img src="/img/logo.svg" alt="Logo" class="banner-image">
-</div>
+<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+
+
+
+<main class="main_content container">
+    <section>
+        <div class="content">
+            <div class="titulo">
+                <h1>Olá, @Model.NameUser!</h1>
+                <h2>Bem vindo ao painel do @Model.UserType</h2>
+            </div>
+            <div class="resource">
+                <img src="~/img/car.png" alt="">
+            </div>
+        </div>
+    </section>
+    @if (Model.UserType == "Motorista")
+    {
+        <section class="atalhos">
+            <div class="titulo-section">
+                <h1>Atalhos</h1>
+            </div>
+            <div class="atalhos">
+                <button class="atalho">
+                    <img src="./driver.png" alt="">
+                    <p>Adicionar Atalho</p>
+                </button>
+            </div>
+        </section>
+        <section>
+            <div class="titulo-section">
+                <h1>Lembretes</h1>
+                <p>Total(@Model.CoutLembretes)</p>
+            </div>
+            <div class="lembretes">
+                @foreach (var lembrete in Model.Lembretes)
+                {
+                    <div class="lembrete-item">
+                        <p>@lembrete</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    else if (Model.UserType == "Gestor")
+    {
+        <section class="atalhos">
+            <div class="titulo-section">
+                <h1>Atalhos</h1>
+            </div>
+            <div class="atalhos">
+                <button class="atalho">
+                    <img src="./driver.png" alt="">
+                    <p>Adicionar Atalho</p>
+                </button>
+            </div>
+        </section>
+        <section>
+            <div class="titulo-section">
+                <h1>Lembretes</h1>
+                <p>Total(@Model.CoutLembretes)</p>
+            </div>
+            <div class="lembretes">
+                @foreach (var lembrete in Model.Lembretes)
+                {
+                    <div class="lembrete-item">
+                        <p>@lembrete</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    else if (Model.UserType == "Administrador")
+    {
+        <section class="atalhos">
+            <div class="titulo-section">
+                <h1>Atalhos</h1>
+            </div>
+            <div class="atalhos">
+                <button class="atalho">
+                    <img src="./driver.png" alt="">
+                    <p>Adicionar Atalho</p>
+                </button>
+            </div>
+        </section>
+        <section>
+            <div class="titulo-section">
+                <h1>Lembretes</h1>
+                <p>Total(@Model.CoutLembretes)</p>
+            </div>
+            <div class="lembretes">
+                @foreach (var lembrete in Model.Lembretes)
+                {
+                    <div class="lembrete-item">
+                        <p>@lembrete</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    else if (Model.UserType == "Mecanico")
+    {
+        <section class="atalhos">
+            <div class="titulo-section">
+                <h1>Atalhos</h1>
+            </div>
+            <div class="atalhos">
+                <button class="atalho">
+                    <img src="./driver.png" alt="">
+                    <p>Adicionar Atalho</p>
+                </button>
+            </div>
+        </section>
+        <section>
+            <div class="titulo-section">
+                <h1>Lembretes</h1>
+                <p>Total(@Model.CoutLembretes)</p>
+            </div>
+            <div class="lembretes">
+                @foreach (var lembrete in Model.Lembretes)
+                {
+                    <div class="lembrete-item">
+                        <p>@lembrete</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</main>
