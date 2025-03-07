@@ -20,16 +20,10 @@
                         @Html.DisplayNameFor(model => model.Id)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.IdVeiculo)
+                        Placa Veículo
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.IdFornecedor)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.DataHora)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IdResponsavel)
+                        Responsável
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.ValorPecas)
@@ -41,10 +35,10 @@
                         @Html.DisplayNameFor(model => model.Tipo)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Comprovante)
+                        @Html.DisplayNameFor(model => model.Status)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Status)
+                        @Html.DisplayNameFor(model => model.DataHora)
                     </th>
                     <th class="column-15"></th>
                 </tr>
@@ -57,16 +51,10 @@
                             @Html.DisplayFor(modelItem => item.Id)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.IdVeiculo)
+                            @Html.DisplayFor(modelItem => item.PlacaVeiculo)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.IdFornecedor)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DataHora)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IdResponsavel)
+                            @Html.DisplayFor(modelItem => item.NomeResponsavel)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.ValorPecas)
@@ -78,10 +66,10 @@
                             @Html.DisplayFor(modelItem => item.Tipo)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Comprovante)
+                            @Html.DisplayFor(modelItem => item.Status)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Status)
+                            @Html.DisplayFor(modelItem => item.DataHora)
                         </td>
                         <td>
                             <a href="@Url.Action("Edit", "Manutencao", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">

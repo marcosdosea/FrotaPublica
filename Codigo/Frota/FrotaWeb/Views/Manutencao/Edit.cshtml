@@ -1,4 +1,11 @@
 ﻿@model FrotaWeb.Models.ManutencaoViewModel
+@using Core.DTO
+
+@{
+    var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
+    var pessoas = ViewData["Pessoas"] as IEnumerable<PessoaDTO> ?? Enumerable.Empty<PessoaDTO>();
+    var fornecedores = ViewData["Fornecedores"] as IEnumerable<FornecedorDTO> ?? Enumerable.Empty<FornecedorDTO>();
+}
 
 <link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
 
@@ -12,19 +19,38 @@
     <div class="fomulario">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdVeiculo" class="control-label"></label>
-                <input asp-for="IdVeiculo" class="form-control" />
+            <div class="form-group w30">
+                <label asp-for="IdVeiculo" class="control-label">Veículo</label>
+                <select asp-for="IdVeiculo" class="custom-select select2">
+                    @if (!veiculos.Any())
+                    {
+                        <option value="" disabled selected hidden>Veiculo</option>
+                    }
+                    else
+                    {
+                        foreach (var veiculo in veiculos)
+                        {
+                            <option value="@veiculo.Id">@veiculo.Placa</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="IdVeiculo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IdFornecedor" class="control-label"></label>
-                <input asp-for="IdFornecedor" class="form-control" />
+            <div class="form-group w40">
+                <label asp-for="IdFornecedor" class="control-label">Fornecedor</label>
+                <select asp-for="IdFornecedor" class="custom-select select2">
+                    @if (!fornecedores.Any())
+                    {
+                        <option value="" disabled selected hidden>Fornecedor</option>
+                    }
+                    else
+                    {
+                        foreach (var fornecedor in fornecedores)
+                        {
+                            <option value="@fornecedor.Id">@fornecedor.Nome</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="IdFornecedor" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -32,9 +58,21 @@
                 <input asp-for="DataHora" class="form-control" />
                 <span asp-validation-for="DataHora" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="IdResponsavel" class="control-label"></label>
-                <input asp-for="IdResponsavel" class="form-control" />
+            <div class="form-group w40">
+                <label asp-for="IdResponsavel" class="control-label">Responsável</label>
+                <select asp-for="IdResponsavel" class="custom-select select2">
+                    @if (!pessoas.Any())
+                    {
+                        <option value="" disabled selected hidden>Responsável</option>
+                    }
+                    else
+                    {
+                        foreach (var pessoa in pessoas)
+                        {
+                            <option value="@pessoa.Id">@pessoa.Nome</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="IdResponsavel" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core;
 using Core.Service;
+using FrotaWeb.Helpers;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,17 @@ namespace FrotaWeb.Controllers
     {
         private readonly IManutencaoService manutencaoService;
         private readonly IMapper mapper;
+        private readonly IVeiculoService veiculoService;
+        private readonly IPessoaService pessoaService;
+        private readonly IFornecedorService fornecedorService;
 
-        public ManutencaoController(IManutencaoService manutencaoService, IMapper mapper)
+        public ManutencaoController(IManutencaoService manutencaoService, IMapper mapper, IVeiculoService veiculoService, IPessoaService pessoaService, IFornecedorService fornecedorService)
         {
             this.manutencaoService = manutencaoService;
             this.mapper = mapper;
+            this.veiculoService = veiculoService;
+            this.pessoaService = pessoaService;
+            this.fornecedorService = fornecedorService;
         }
 
         // GET: ManutencaoController
@@ -38,6 +45,11 @@ namespace FrotaWeb.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             var listaManutencaoViewModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencoes);
+            foreach (var item in listaManutencaoViewModel)
+            {
+                item.PlacaVeiculo = veiculoService.GetPlacaVeiculo(item.IdVeiculo);
+                item.NomeResponsavel = pessoaService.GetNomePessoa(item.IdResponsavel);
+            }
             return View(listaManutencaoViewModel);
         }
 
@@ -53,6 +65,10 @@ namespace FrotaWeb.Controllers
         [Route("Manutencao/Create")]
         public ActionResult Create()
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+            ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+            ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
             return View();
         }
 
@@ -64,10 +80,23 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-                var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencao.IdFrota = idFrota;
-                manutencaoService.Create(manutencao);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                try
+                {
+                    var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
+                    manutencao.IdFrota = (uint)idFrota;
+                    manutencaoService.Create(manutencao);
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "A manutenção foi cadastrada com sucesso.");
+                }
+                catch (ServiceException exception)
+                {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+                    ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
+                    return View(manutencaoViewModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -77,6 +106,10 @@ namespace FrotaWeb.Controllers
         {
             var manutencao = manutencaoService.Get(id);
             var manutencaoViewModel = mapper.Map<ManutencaoViewModel>(manutencao);
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+            ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+            ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
             return View(manutencaoViewModel);
         }
 
@@ -87,9 +120,23 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-                var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
-                manutencaoService.Edit(manutencao);
+                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+                try
+                {
+                    var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
+                    manutencao.IdFrota = (uint)idFrota;
+                    manutencaoService.Edit(manutencao);
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
+                }
+                catch (ServiceException exception)
+                {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+                    ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
+                    return View(manutencaoViewModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -110,11 +157,12 @@ namespace FrotaWeb.Controllers
             try
             {
                 manutencaoService.Delete(id);
-                TempData["MensagemSucesso"] = "Veículo removido com sucesso!";
+                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O registro foi removido com sucesso.");
             }
             catch (ServiceException exception)
             {
-                TempData["MensagemError"] = exception.MensagemCustom;
+                PopupHelper.AddPopup(this, type: "error", title: "Operação mal sucedida", message: "Não foi possível remover o registro.");
+                return View(manutencaoViewModel);
             }
             return RedirectToAction(nameof(Index));
         }
