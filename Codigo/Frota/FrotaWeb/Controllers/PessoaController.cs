@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core;
 using Core.Service;
+using FrotaWeb.Helpers;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +57,7 @@ namespace FrotaWeb.Controllers
             {
                 item.StatusAtivo = item.Ativo == 1 ? "Ativo" : "Desativado";
             }
+            
             return View(listaPessoasModel);
         }
 
@@ -110,8 +112,10 @@ namespace FrotaWeb.Controllers
                         protocol: Request.Scheme
                     );
                     await emailSender.SendEmailAsync( pessoa.Email, pessoa.Nome, callbackUrl);
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O usuário foi cadastrado com sucesso!");
                 } catch (ServiceException exception)
                 {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Esse dado já foi utilizado em um cadastro existente!");
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
                     ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
                     ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
