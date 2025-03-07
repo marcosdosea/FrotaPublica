@@ -1,4 +1,6 @@
-﻿namespace Core.Service
+﻿using Core.DTO;
+
+namespace Core.Service
 {
     public interface IFornecedorService
     {
@@ -8,5 +10,6 @@
         Fornecedor? Get(uint idFornecedor);
         IEnumerable<Fornecedor> GetAll(int idFrota);
         Task<(bool Success, string Data)> ConsultaCnpj(string cnpj);
+        IEnumerable<FornecedorDTO> GetAllOrdemAlfabetica(int idFrota);
     }
 }

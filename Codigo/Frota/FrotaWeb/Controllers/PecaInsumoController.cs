@@ -54,13 +54,16 @@ namespace FrotaWeb.Controllers
             if (ModelState.IsValid)
             {
                 uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var peca = _mapper.Map<Pecainsumo>(model);
+                    peca.IdFrota = idFrota;
+                    _pecaInsumoService.Create(peca);
                 }
-                var peca = _mapper.Map<Pecainsumo>(model);
-                peca.IdFrota = idFrota;
-                _pecaInsumoService.Create(peca);
+                catch (ServiceException exception)
+                {
+                    return View(model);
+                }
             }
             return RedirectToAction(nameof(Index));
         }
@@ -78,16 +81,19 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, PecaInsumoViewModel model)
         {
+            uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (ModelState.IsValid)
             {
-                uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var peca = _mapper.Map<Pecainsumo>(model);
+                    peca.IdFrota = idFrota;
+                    _pecaInsumoService.Edit(peca);
                 }
-                var peca = _mapper.Map<Pecainsumo>(model);
-                peca.IdFrota = idFrota;
-                _pecaInsumoService.Edit(peca);
+                catch (ServiceException exception)
+                {
+                    return View(model);
+                }
             }
             return RedirectToAction(nameof(Index));
         }

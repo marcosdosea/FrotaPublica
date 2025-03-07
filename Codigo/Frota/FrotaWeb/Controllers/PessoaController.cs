@@ -112,10 +112,10 @@ namespace FrotaWeb.Controllers
                         protocol: Request.Scheme
                     );
                     await emailSender.SendEmailAsync( pessoa.Email, pessoa.Nome, callbackUrl);
-                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O usuário foi cadastrado com sucesso!");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O usuário foi cadastrado com sucesso.");
                 } catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Esse dado já foi utilizado em um cadastro existente!");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados.");
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
                     ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
                     ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);
@@ -152,6 +152,7 @@ namespace FrotaWeb.Controllers
             else
             {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out idFrota);
+                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
             }
             if (ModelState.IsValid)
             {
@@ -162,6 +163,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados.");
                     ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
                     ViewData["Frotas"] = this.frotaService.GetAllOrdemAlfabetica();
                     ViewData["Papeis"] = this.pessoaService.GetPapeisPessoas(User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Core.DTO;
+using Microsoft.AspNetCore.Identity;
 
 namespace Core.Service;
 
@@ -20,5 +21,7 @@ public interface IPessoaService
     Task<UsuarioIdentity> GetUserByCpfAsync(string cpf);
     Pessoa? GetUserByEmailAsync(string cpf);
     IEnumerable<Papelpessoa> GetPapeisPessoas(string papelUsuarioCadastrante);
+    IEnumerable<PessoaDTO> GetAllOrdemAlfabetica(int idFrota);
+    string? GetNomePessoa(uint idPessoa);
 
 }

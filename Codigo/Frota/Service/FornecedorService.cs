@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -95,6 +96,20 @@ namespace Service
                     return (false, response.IsSuccessStatusCode.ToString());
                 }
             }
+        }
+
+
+        public IEnumerable<FornecedorDTO> GetAllOrdemAlfabetica(int idFrota)
+        {
+            var fornecedoresDTOs = from fornecedor in context.Fornecedors.AsNoTracking()
+                             where fornecedor.IdFrota == idFrota
+                             orderby fornecedor.Nome
+                             select new FornecedorDTO
+                             {
+                                 Id = fornecedor.Id,
+                                 Nome = fornecedor.Nome
+                             };
+            return fornecedoresDTOs.ToList();
         }
     }
 }

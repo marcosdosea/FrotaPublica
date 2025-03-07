@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core;
 using Core.Service;
+using FrotaWeb.Helpers;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,15 @@ namespace FrotaWeb.Controllers
     {
         private readonly ISolicitacaoManutencaoService service;
         private readonly IMapper _mapper;
+        private readonly IVeiculoService veiculoService;
+        private readonly IPessoaService pessoaService;
 
-        public SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper)
+        public SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper, IVeiculoService veiculoService, IPessoaService pessoaService)
         {
             this.service = service;
             _mapper = mapper;
+            this.veiculoService = veiculoService;
+            this.pessoaService = pessoaService;
         }
 
 
@@ -25,12 +30,13 @@ namespace FrotaWeb.Controllers
         public ActionResult Index()
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            if (idFrota == 0)
-            {
-                return Redirect("/Identity/Account/Login");
-            }
             var listaSolicitacoes = service.GetAll(idFrota);
             var listaSolicitacoesModel = _mapper.Map<List<SolicitacaoManutencaoViewModel>>(listaSolicitacoes);
+            foreach (var item in listaSolicitacoesModel)
+            {
+                item.PlacaVeiculo = veiculoService.GetPlacaVeiculo(item.IdVeiculo);
+                item.NomePessoa = pessoaService.GetNomePessoa(item.IdPessoa);
+            }
 
             return View(listaSolicitacoesModel);
         }
@@ -47,6 +53,9 @@ namespace FrotaWeb.Controllers
         // GET: SolicitacaomanutencaoController.cs/Create
         public ActionResult Create()
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+            ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
             return View();
         }
 
@@ -57,14 +66,21 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid) {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
+                    service.Create(solicitacao, idFrota);
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "A solicitação foi cadastrada com sucesso!");
                 }
-                var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
-                service.Create(solicitacao, idFrota);
+                catch (ServiceException exception)
+                {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+                    return View(solicitacaoModel);
+                }
             }
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -73,7 +89,9 @@ namespace FrotaWeb.Controllers
         {
             var solicitacao = service.Get(id);
             var solicitacaoModel = _mapper.Map<SolicitacaoManutencaoViewModel>(solicitacao);
-
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+            ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
             return View(solicitacaoModel);
         }
 
@@ -84,14 +102,21 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid) {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
+                    service.Edit(solicitacao, idFrota);
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
                 }
-                var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
-                service.Edit(solicitacao, idFrota);
+                catch (ServiceException exception)
+                {
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
+                    return View(solicitacaoModel);
+                }
             }
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,7 +134,16 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(uint id, SolicitacaoManutencaoViewModel solicitacaoModel)
         {
-            service.Delete(id);
+            try
+            {
+                service.Delete(id);
+                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O registro foi removido com sucesso.");
+            }
+            catch (ServiceException exception)
+            {
+                PopupHelper.AddPopup(this, type: "error", title: "Operação mal sucedida", message: "Não foi possível remover o registro.");
+                return View(solicitacaoModel);
+            }
             return RedirectToAction(nameof(Index));
         }
     }

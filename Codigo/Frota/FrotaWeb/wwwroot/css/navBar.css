@@ -125,13 +125,8 @@ button.toggle {
     width: var(--width-open);
 }
 
-.sidebar .header h1 {
-    margin-left: 12px;
-    margin-top: 2px;
-    font-weight: 800;
-    font-size: 28px;
-    letter-spacing: 2px;
-    color: #0C69AB; /* Cor do título */
+.sidebar .inner .header h1 {
+    margin-left: 12px; margin-top: 2px; font-weight: 600; font-size: 16px !important; letter-spacing: 2px; color: #0C69AB; /* Cor do título */
 }
 
 .sidebar .logo {

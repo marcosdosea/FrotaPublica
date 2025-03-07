@@ -14,6 +14,7 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Código do Veículo")]
         public uint IdVeiculo { get; set; }
+        public string? PlacaVeiculo { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Código do Fornecedor")]
@@ -27,6 +28,7 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Código do Responsável")]
         public uint IdResponsavel { get; set; }
+        public string? NomeResponsavel { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [DisplayName("Valor das Peças")]

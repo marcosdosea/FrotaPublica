@@ -11,6 +11,7 @@ namespace Core.Service
         IEnumerable<Veiculo> GetPaged(int page, int lenght, uint idFrota);
         IEnumerable<Veiculo> GetAll(uint idFrota);
         IEnumerable<VeiculoDTO> GetVeiculoDTO(int idFrota);
+        string? GetPlacaVeiculo(uint idVeiculo);
     }
 }
 

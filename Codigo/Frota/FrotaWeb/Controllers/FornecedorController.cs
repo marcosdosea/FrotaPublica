@@ -13,11 +13,13 @@ namespace FrotaWeb.Controllers
 
         private readonly IFornecedorService fornecedorService;
         private readonly IMapper mapper;
+        private readonly List<string> listaEstados;
 
         public FornecedorController(IFornecedorService fornecedorService, IMapper mapper)
         {
             this.fornecedorService = fornecedorService;
             this.mapper = mapper;
+            this.listaEstados = new List<string> { "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" };
         }
 
         // GET: FornecedorController
@@ -45,6 +47,7 @@ namespace FrotaWeb.Controllers
         // GET: FornecedorController/Create
         public ActionResult Create()
         {
+            ViewData["Estados"] = listaEstados;
             return View();
         }
 
@@ -53,16 +56,20 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(FornecedorViewModel fornecedorViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (ModelState.IsValid)
             {
-
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                    fornecedorService.Create(fornecedor, idFrota);
                 }
-                var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                fornecedorService.Create(fornecedor, idFrota);
+                catch (ServiceException exception)
+                {
+                    ViewData["Estados"] = listaEstados;
+                    return View(fornecedorViewModel);
+                }
+                
             }
             return RedirectToAction(nameof(Index));
         }
@@ -72,6 +79,7 @@ namespace FrotaWeb.Controllers
         {
             var fornecedor = fornecedorService.Get(id);
             var fornecedorModel = mapper.Map<FornecedorViewModel>(fornecedor);
+            ViewData["Estados"] = listaEstados;
             return View(fornecedorModel);
         }
 
@@ -80,15 +88,19 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(uint id, FornecedorViewModel fornecedorViewModel)
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (ModelState.IsValid)
             {
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
+                    fornecedorService.Edit(fornecedor, idFrota);
                 }
-                var fornecedor = mapper.Map<Fornecedor>(fornecedorViewModel);
-                fornecedorService.Edit(fornecedor, idFrota);
+                catch (ServiceException exception)
+                {
+                    ViewData["Estados"] = listaEstados;
+                    return View(fornecedorViewModel);
+                }
             }
             return RedirectToAction(nameof(Index));
         }

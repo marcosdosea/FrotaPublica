@@ -1,22 +1,17 @@
 ﻿@model FrotaWeb.Models.PercursoViewModel
 
-@{
-    ViewData["Title"] = "Edit";
-}
+<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
 
-<h1>Edit</h1>
-
-<h4>PercursoViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Cadastro de Percurso</h1>
+    </div>
+    <div class="fomulario">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="IdVeiculo" class="control-label"></label>
                 <input asp-for="IdVeiculo" class="form-control" />
@@ -82,16 +77,12 @@
                 <input asp-for="Motivo" class="form-control" />
                 <span asp-validation-for="Motivo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="buttons">
+                <input type="submit" value="Salvar Alterações" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

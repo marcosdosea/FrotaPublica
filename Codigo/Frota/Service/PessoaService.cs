@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.DTO;
 using Core.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -315,6 +316,28 @@ namespace Service
                         .Where(p => p.Cpf == cpf)
                         .Select(p => p.Id)
                         .FirstOrDefault();
+        }
+
+        public IEnumerable<PessoaDTO> GetAllOrdemAlfabetica(int idFrota)
+        {
+            var pessoaDTOs = from pessoa in context.Pessoas.AsNoTracking()
+                             where pessoa.IdFrota == idFrota
+                             orderby pessoa.Nome
+                                select new PessoaDTO
+                                {
+                                    Id = pessoa.Id,
+                                    Nome = pessoa.Nome,
+                                    Cpf = pessoa.Cpf
+                                };
+            return pessoaDTOs.ToList();
+        }
+
+        public string? GetNomePessoa(uint idPessoa)
+        {
+            return context.Pessoas
+                          .Where(pessoa => pessoa.Id == idPessoa)
+                          .Select(pessoa => pessoa.Nome)
+                          .FirstOrDefault();
         }
     }
 }
