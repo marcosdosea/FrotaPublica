@@ -154,6 +154,29 @@ form {
             color: rgba(0, 0, 0, 0.65);
         }
 
+.form-group textarea {
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 18px;
+    color: #000000;
+    height: 120px;
+}
+
+    .form-group textarea:focus {
+        border: 2px solid #0C69AB;
+        outline: none;
+        border-color: #0C69AB;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-group textarea::placeholder {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
 select.custom-select {
     border: 2px solid rgba(0, 0, 0, 0.25); /* Define a borda cinza clara */
     border-radius: 10px; /* Bordas arredondadas */

@@ -13,12 +13,14 @@ namespace FrotaWeb.Controllers
 	{
 		private readonly IUnidadeAdministrativaService unidadeAdministrativaService;
 		private readonly IMapper mapper;
+        private readonly List<string> listaEstados;
 
-		public UnidadeAdministrativaController(IUnidadeAdministrativaService unidadeAdministrativaService, IMapper mapper)
+        public UnidadeAdministrativaController(IUnidadeAdministrativaService unidadeAdministrativaService, IMapper mapper)
 		{
 			this.unidadeAdministrativaService = unidadeAdministrativaService;
 			this.mapper = mapper;
-		}
+            this.listaEstados = new List<string> { "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" };
+        }
 
 		// GET: UnidadeAdministrativa
 		public ActionResult Index()
@@ -44,7 +46,8 @@ namespace FrotaWeb.Controllers
 		// GET: UnidadeAdministrativa/Create
 		public ActionResult Create()
 		{
-			return View();
+            ViewData["Estados"] = listaEstados;
+            return View();
 		}
 
 		// POST: UnidadeAdministrativa/Create
@@ -52,17 +55,20 @@ namespace FrotaWeb.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult Create(UnidadeAdministrativaViewModel unidadeViewModel)
 		{
-			if (ModelState.IsValid)
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (ModelState.IsValid)
 			{
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
+				try
+				{
+                    var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
+                    unidadeAdministrativaService.Create(unidade, idFrota);
                 }
-                var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
-				unidadeAdministrativaService.Create(unidade, idFrota);
-			}
-
+                catch (ServiceException exception)
+                {
+                    ViewData["Estados"] = listaEstados;
+                    return View(unidadeViewModel);
+                }
+            }
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -71,7 +77,8 @@ namespace FrotaWeb.Controllers
 		{
 			var unidade = unidadeAdministrativaService.Get(id);
 			var unidadeViewModel = mapper.Map<UnidadeAdministrativaViewModel>(unidade);
-			return View(unidadeViewModel);
+            ViewData["Estados"] = listaEstados;
+            return View(unidadeViewModel);
 		}
 
 		// POST: UnidadeAdministrativa/Edit/5
@@ -79,15 +86,20 @@ namespace FrotaWeb.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult Edit(uint id, UnidadeAdministrativaViewModel unidadeViewModel)
 		{
-			if (ModelState.IsValid)
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            if (ModelState.IsValid)
 			{
-                int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
-                {
-                    return Redirect("/Identity/Account/Login");
+				try
+				{
+                    var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
+                    unidadeAdministrativaService.Edit(unidade, idFrota);
                 }
-                var unidade = mapper.Map<Unidadeadministrativa>(unidadeViewModel);
-				unidadeAdministrativaService.Edit(unidade, idFrota);
+                catch (ServiceException exception)
+                {
+                    ViewData["Estados"] = listaEstados;
+                    return View(unidadeViewModel);
+                }
+                
 			}
 
 			return RedirectToAction(nameof(Index));

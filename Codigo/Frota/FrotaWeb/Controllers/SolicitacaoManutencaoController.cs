@@ -13,11 +13,13 @@ namespace FrotaWeb.Controllers
     {
         private readonly ISolicitacaoManutencaoService service;
         private readonly IMapper _mapper;
+        private readonly IVeiculoService veiculoService;
 
-        public SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper)
+        public SolicitacaoManutencaoController(ISolicitacaoManutencaoService service, IMapper mapper, IVeiculoService veiculoService)
         {
             this.service = service;
             _mapper = mapper;
+            this.veiculoService = veiculoService;
         }
 
 
@@ -47,6 +49,8 @@ namespace FrotaWeb.Controllers
         // GET: SolicitacaomanutencaoController.cs/Create
         public ActionResult Create()
         {
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
             return View();
         }
 
@@ -57,14 +61,17 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid) {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
+                    service.Create(solicitacao, idFrota);
                 }
-                var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
-                service.Create(solicitacao, idFrota);
+                catch (ServiceException exception)
+                {
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    return View(solicitacaoModel);
+                }
             }
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -73,7 +80,8 @@ namespace FrotaWeb.Controllers
         {
             var solicitacao = service.Get(id);
             var solicitacaoModel = _mapper.Map<SolicitacaoManutencaoViewModel>(solicitacao);
-
+            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
             return View(solicitacaoModel);
         }
 
@@ -84,14 +92,17 @@ namespace FrotaWeb.Controllers
         {
             if (ModelState.IsValid) {
                 int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-                if (idFrota == 0)
+                try
                 {
-                    return Redirect("/Identity/Account/Login");
+                    var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
+                    service.Edit(solicitacao, idFrota);
                 }
-                var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
-                service.Edit(solicitacao, idFrota);
+                catch (ServiceException exception)
+                {
+                    ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
+                    return View(solicitacaoModel);
+                }
             }
-
             return RedirectToAction(nameof(Index));
         }
 
