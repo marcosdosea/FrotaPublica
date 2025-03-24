@@ -9,72 +9,117 @@ namespace FrotaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class ABastecimentoController : ControllerBase
+    [Authorize(Roles = "Gestor, Motorista")]
+    public class AbastecimentoController : ControllerBase
     {
         private readonly IAbastecimentoService _abastecimentoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IPessoaService _pessoaService;
 
-        public ABastecimentoController(IAbastecimentoService abastecimentoService, IMapper mapper)
+        public AbastecimentoController(IAbastecimentoService abastecimentoService,
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            IPessoaService pessoaService)
         {
-            _abastecimentoService = abastecimentoService;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+            _abastecimentoService = abastecimentoService;
+            _pessoaService = pessoaService;
         }
 
+        // GET: api/AbastecimentoApi
         [HttpGet]
-        public ActionResult Get()
+        public ActionResult<IEnumerable<AbastecimentoViewModel>> GetAll()
         {
-            var listaAbastecimento = _abastecimentoService.GetAll();
-            if (listaAbastecimento == null)
-                return NotFound();
-            return Ok(listaAbastecimento);
+            uint idFrota = 1;
+            var listaAbastecimentos = _abastecimentoService.GetAll(idFrota).ToList();
+            var listaAbastecimentosViewModel = _mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
+            return Ok(listaAbastecimentosViewModel);
         }
 
+        // GET: api/AbastecimentoApi/5
         [HttpGet("{id}")]
-        public ActionResult Get(uint id)
+        public ActionResult<AbastecimentoViewModel> Get(uint id)
         {
-            Abastecimento abastecimento = _abastecimentoService.Get(id);
+            var abastecimento = _abastecimentoService.Get(id);
+
             if (abastecimento == null)
+            {
                 return NotFound();
-            return Ok(abastecimento);
+            }
+
+            var abastecimentoView = _mapper.Map<AbastecimentoViewModel>(abastecimento);
+            return Ok(abastecimentoView);
         }
 
+        // POST: api/AbastecimentoApi
         [HttpPost]
-        public ActionResult Post([FromBody] FornecedorViewModel abastecimentoModel)
+        public ActionResult<AbastecimentoViewModel> Create(AbastecimentoViewModel abastecimentoViewModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest("Dados Inválidos.");
+            {
+                return BadRequest(ModelState);
+            }
 
-            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoModel);
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            string cpf = _httpContextAccessor.HttpContext?.User.Identity?.Name!;
+
+            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoViewModel);
+            abastecimento.IdFrota = idFrota;
+            abastecimento.IdPessoa = _pessoaService.GetIdPessoaByCpf(cpf);
+
             _abastecimentoService.Create(abastecimento);
 
-            return Ok();
+            var createdAbastecimento = _abastecimentoService.Get(abastecimento.Id);
+            var result = _mapper.Map<AbastecimentoViewModel>(createdAbastecimento);
+
+            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
+        // PUT: api/AbastecimentoApi/5
         [HttpPut("{id}")]
-        public ActionResult Put(uint id, [FromBody] AbastecimentoViewModel abastecimentoModel)
+        public IActionResult Update(uint id, AbastecimentoViewModel abastecimentoViewModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Dados Inválidos.");
+            if (id != abastecimentoViewModel.Id)
+            {
+                return BadRequest("ID na rota não corresponde ao ID no objeto");
+            }
 
-            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoModel);
-            if (abastecimento == null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingAbastecimento = _abastecimentoService.Get(id);
+            if (existingAbastecimento == null)
+            {
                 return NotFound();
+            }
+
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoViewModel);
+            abastecimento.IdFrota = idFrota;
 
             _abastecimentoService.Edit(abastecimento);
 
-            return Ok();
+            return NoContent();
         }
 
+        // DELETE: api/AbastecimentoApi/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(uint id)
+        public IActionResult Delete(uint id)
         {
-            Abastecimento abastecimento = _abastecimentoService.Get(id);
+            var abastecimento = _abastecimentoService.Get(id);
+
             if (abastecimento == null)
+            {
                 return NotFound();
+            }
 
             _abastecimentoService.Delete(id);
-            return Ok();
+
+            return NoContent();
         }
     }
 }
