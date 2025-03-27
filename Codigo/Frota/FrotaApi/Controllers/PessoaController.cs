@@ -20,64 +20,7 @@ namespace FrotaApi.Controllers
 			_mapper = mapper;
 		}
 
-		[HttpGet]
-		public ActionResult Get()
-		{
-			var listaPessoa = _pessoaService.GetAll();
-			if (listaPessoa == null)
-				return NotFound();
-			return Ok(listaPessoa);
-		}
-
-
-		[HttpGet("{id}")]
-		public ActionResult Get(uint id)
-		{
-			Pessoa pessoa = _pessoaService.Get(id);
-			if (pessoa == null)
-				return NotFound();
-			return Ok(pessoa);
-		}
-
-		[HttpPost]
-		public ActionResult Post([FromBody] PessoaViewModel pessoaModel)
-		{
-			if (!ModelState.IsValid)
-				return BadRequest("Dados Inválidos.");
-
-			var pessoa = _mapper.Map<Pessoa>(pessoaModel);
-			_pessoaService.Create(pessoa);
-
-			return Ok();
-
-		}
-
-		[HttpPut("{id}")]
-		public ActionResult Put(uint id, [FromBody] PessoaViewModel pessoaModel)
-		{
-			if (!ModelState.IsValid)
-				return BadRequest("Dados Inválidos.");
-
-			var pessoa = _mapper.Map<Pessoa>(pessoaModel);
-			if (pessoa == null)
-				return NotFound();
-
-			_pessoaService.Edit(pessoa);
-
-			return Ok();
-
-		}
-
-		[HttpDelete("{id}")]
-		public ActionResult Delete(uint id)
-		{
-			Pessoa pessoa = _pessoaService.Get(id);
-			if (pessoa == null)
-				return NotFound();
-
-			_pessoaService.Delete(id);
-			return Ok();
-		}
+		
 	}
 }
 

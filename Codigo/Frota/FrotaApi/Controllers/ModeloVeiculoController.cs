@@ -22,68 +22,6 @@ namespace FrotaApi.Controllers
         }
 
 
-        // GET: api/<ModeloVeiculoController>
-        [HttpGet]
-        public ActionResult Get()
-        {
-            var listaModelosVeiculos = _modeloveiculoservice.GetAll();
-            if (listaModelosVeiculos == null)
-                return NotFound();
-            return Ok(listaModelosVeiculos);
-        }
-
-        // GET api/<ModeloVeiculoController>/5
-        [HttpGet("{id}")]
-        public ActionResult Get(uint id)
-        {
-            Modeloveiculo modelo = _modeloveiculoservice.Get(id);
-            if (modelo == null)
-                return NotFound();
-            return Ok(modelo);
-        }
-
-
-        // POST api/<ModeloVeiculoController>
-        [HttpPost]
-        public ActionResult Post([FromBody] ModeloVeiculoViewModel modeloVeiculomodel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest("Dados Invalidos.");
-
-            var modelVeiculo = _mapper.Map<Modeloveiculo>(modeloVeiculomodel);
-            _modeloveiculoservice.Create(modelVeiculo);
-
-            return Ok();
-
-        }
-
-        // PUT api/<ModeloVeiculoController>/5
-        [HttpPut("{id}")]
-        public ActionResult Put(uint id, [FromBody] ModeloVeiculoViewModel modeloVeiculomodel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest("Dados Invalidos.");
-
-            var modeloVeiculo = _mapper.Map<Modeloveiculo>(modeloVeiculomodel);
-            if (modeloVeiculo == null)
-                return NotFound();
-
-            _modeloveiculoservice.Edit(modeloVeiculo);
-
-            return Ok();
-
-        }
-
-        // DELETE api/<ModeloVeiculoController>/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(uint id)
-        {
-            Modeloveiculo modeloVeiculo = _modeloveiculoservice.Get(id);
-            if (modeloVeiculo == null)
-                return NotFound();
-
-            _modeloveiculoservice.Delete(id);
-            return Ok();
-        }
+        
     }
 }
