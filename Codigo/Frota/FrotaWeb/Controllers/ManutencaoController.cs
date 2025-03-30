@@ -31,15 +31,28 @@ namespace FrotaWeb.Controllers
         [Route("Manutencao/Index/{page}")]
         [Route("Manutencao/{page}")]
         [Route("Manutencao")]
-        public ActionResult Index([FromRoute]int page = 0)
+        public ActionResult Index([FromRoute]int page = 0, [FromQuery] uint? idVeiculo = null)
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             int length = 15;
-            var listaManutencoes = manutencaoService.GetAll(idFrota)
+
+            var veiculos = veiculoService.GetVeiculoDTO((int)idFrota);
+            ViewData["Veiculos"] = veiculos;
+            ViewBag.IdVeiculoSelecionado = idVeiculo;
+
+
+            var query = manutencaoService.GetAll(idFrota);
+            if (idVeiculo.HasValue)
+            {
+                query = query.Where(m => m.IdVeiculo == idVeiculo.Value);
+            }
+
+            var totalManutencoes = query.Count();
+            var listaManutencoes = query
                                     .Skip(page * length)
                                     .Take(length)
                                     .ToList();
-            var totalManutencoes = manutencaoService.GetAll(idFrota).Count();
+
             var totalPages = (int)Math.Ceiling((double)totalManutencoes / length);
 
             ViewBag.CurrentPage = page;
