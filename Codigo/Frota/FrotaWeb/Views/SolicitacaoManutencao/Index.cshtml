@@ -17,7 +17,7 @@
         <div class="acoes">
             <a asp-action="Create" class="btn btn-primario">Criar</a>
             <div class="filtros">
-                <form id="formFiltro" method="get" action="@Url.Action("Index", "Manutencao")">
+                <form id="formFiltro" method="get" action="@Url.Action("Index", "SolicitacaoManutencao")">
                     <input type="hidden" name="page" value="0" />
                     <label for="idVeiculo">Filtrar por Veículo:</label>
                     <select id="idVeiculo" name="idVeiculo" class="custom-select select2" onchange="document.getElementById('formFiltro').submit();">
