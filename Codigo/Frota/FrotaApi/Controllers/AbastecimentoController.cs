@@ -9,7 +9,6 @@ namespace FrotaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Gestor, Motorista")]
     public class AbastecimentoController : ControllerBase
     {
         private readonly IAbastecimentoService _abastecimentoService;

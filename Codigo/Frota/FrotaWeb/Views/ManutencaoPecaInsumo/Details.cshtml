@@ -1,6 +1,8 @@
 ﻿@model FrotaWeb.Models.ManutencaoPecaInsumoViewModel
 
-<div>
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+
+<div class="container-details">
 	<h4>ManutencaoPecaInsumoViewModel</h4>
 	<hr />
 	<dl class="row">
@@ -54,7 +56,7 @@
 		</dd>
 	</dl>
 </div>
-<div>
+<div class="container-buttons">
 	@Html.ActionLink("Edit", "Edit", new { idManutencao = Model.IdManutencao, idPecaInsumo = Model.IdPecaInsumo }) |
 	<a asp-action="Index">Back to List</a>
 </div>
