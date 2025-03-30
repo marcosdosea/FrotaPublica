@@ -6,9 +6,9 @@
     viewModel = Model;
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
 
-<div>
+<div class="container-details">
     <h4>VeiculoPecaInsumoViewModel</h4>
     <hr />
     <dl class="row">
@@ -50,7 +50,7 @@
         </dd>
     </dl>
 </div>
-<div>
+<div class="container-buttons">
     <a asp-controller="VeiculoPecaInsumo"
        asp-action="Edit"
        asp-route-idVeiculo="@viewModel.IdVeiculo"

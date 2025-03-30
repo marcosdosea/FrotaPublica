@@ -1,6 +1,8 @@
 ﻿@model FrotaWeb.Models.PessoaViewModel
 
-<div>
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+
+<div class="container-details">
     <h4>PessoaViewModel</h4>
     <hr />
     <dl class="row">
@@ -102,7 +104,7 @@
         </dd>
     </dl>
 </div>
-<div>
+<div class="container-buttons">
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     <a asp-action="Index">Back to List</a>
 </div>

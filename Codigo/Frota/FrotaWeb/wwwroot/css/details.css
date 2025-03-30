@@ -1,0 +1,68 @@
+﻿/* Container principal */
+.container-details {
+    margin-top: 50px
+}
+
+/* Título */
+h4 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0C69AB;
+    margin-bottom: 16px;
+}
+
+/* Separador */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #E5E7EB;
+    margin: 16px 0;
+}
+
+/* Labels e valores */
+dl {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+}
+
+dt {
+    font-weight: bold;
+    color: #4B5563;
+    margin-bottom: 8px;
+}
+
+dd {
+    margin-left: 0;
+    margin-bottom: 8px;
+}
+
+/* Estilização dos botões */
+.container-buttons > a, div > button {
+    display: inline-block;
+    background-color: #0C69AB;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+    .container-buttons > a:hover, div > button:hover {
+        background-color: #08568B;
+    }
+
+    .container-buttons > a:last-child {
+        background-color: #F1F5F9;
+        color: #333;
+    }
+
+        .container-buttons > a:last-child:hover {
+            background-color: #E2E8F0;
+        }

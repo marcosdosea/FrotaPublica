@@ -1,12 +1,8 @@
 ﻿@model FrotaWeb.Models.FrotaViewModel
 
-@{
-    ViewData["Title"] = "Details";
-}
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
 
-<h1>Details</h1>
-
-<div>
+<div class="container-details">
     <h4>FrotaViewModel</h4>
     <hr />
     <dl class="row">
@@ -72,7 +68,7 @@
         </dd>
     </dl>
 </div>
-<div>
+<div class="container-buttons">
     <a href="@Url.Action("Edit", "Frota", new { id = Model.Id })" class="edit" title="Editar" data-toggle="tooltip">
         <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
     </a> |
