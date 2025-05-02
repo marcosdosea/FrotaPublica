@@ -14,4 +14,5 @@ public interface IPercursoService
 	Percurso? Get(uint idPercurso);
 	IEnumerable<Percurso> GetAll();
 	Percurso? ObterPercursosAtualDoMotorista(int idPessoa);
+	uint ObterVeiculoDePercurso(uint idPercurso);
 }

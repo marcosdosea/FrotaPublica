@@ -16,13 +16,15 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> logger;
     private readonly UserManager<UsuarioIdentity> userManager; // Injete o UserManager
+    private readonly IPercursoService percursoService;
     private readonly IPessoaService pessoaService;
 
-    public HomeController(ILogger<HomeController> logger, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService)
+    public HomeController(ILogger<HomeController> logger, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService, IPercursoService percursoService)
     {
         this.logger = logger;
         this.userManager = userManager;
         this.pessoaService = pessoaService;
+        this.percursoService = percursoService;
     }
 
     public async Task<IActionResult> Index()
@@ -35,13 +37,14 @@ public class HomeController : Controller
         if(userRole == "Motorista")
         {
             uint idPercurso = pessoaService.EmPercurso();
-            if(idPercurso == 0)
+            if(idPercurso == 1)
             {
                 return RedirectToAction("VeiculosDisponiveis", "Veiculo");
             }
             else
             {
-                return RedirectToAction("Detalhes", "Percurso", new { id = idPercurso });
+                //uint idVeiculoDoPercurso = percursoService.ObterVeiculoDePercurso(idPercurso);
+                return RedirectToAction("Gerenciamento", "Veiculo", new { idPercurso = 1, idVeiculo = 58 });
             }
         }
         viewModel.UserType = userRole;

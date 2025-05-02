@@ -67,8 +67,23 @@ public class PercursoService : IPercursoService
 		return context.Percursos.AsNoTracking();
 	}
 
+	/// <summary>
+	/// Busca um percurso corrente para determinado motorista
+	/// </summary>
+	/// <param name="idPessoa"></param>
+	/// <returns></returns>
 	public Percurso? ObterPercursosAtualDoMotorista(int idPessoa)
 	{
 		return context.Percursos.FirstOrDefault(p => p.IdPessoa == idPessoa && p.DataHoraRetorno == DateTime.MinValue);
+	}
+
+	/// <summary>
+	/// Obtém o id do veículo de determinado percurso
+	/// </summary>
+	/// <param name="idPercurso"></param>
+	/// <returns></returns>
+	public uint ObterVeiculoDePercurso(uint idPercurso)
+	{
+		return context.Percursos.FirstOrDefault(p => p.Id == idPercurso).IdVeiculo;
 	}
 }

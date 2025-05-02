@@ -1,0 +1,30 @@
+﻿@model FrotaWeb.Models.VeiculoViewModel
+
+<link rel="stylesheet" href="~/css/gerenciamento-veiculo-page.css" asp-append-version="true" />
+
+<main class="main_content container">
+    <div class="card">
+        <div>
+            <h2>@Model.ModeloNome</h2>
+            <div>@Model.Placa</div>
+            <div class="status">Em Uso</div>
+        </div>
+        <img src="~/img/car-gerenciamento.png" alt="Veículo" style="width: 100px;">
+    </div>
+
+    <div class="actions">
+        <button> <span style="color:red;">●</span><i class="fas fa-clipboard-check"></i> Realizar Vistoria</button>
+        <button><i class="fas fa-gas-pump"></i> Abastecer</button>
+        <button><i class="fas fa-sign-out-alt"></i> Registrar Saída</button>
+        <button><i class="fas fa-tools"></i> Solicitar Manutenção</button>
+        <button><i class="fas fa-times-circle" style="color:red;"></i> Finalizar Uso</button>
+    </div>
+
+    <div class="reminders">
+        <h3>Lembretes</h3>
+        <div>Total (1)</div>
+        <ul>
+            <li>Realizar troca imediata do pneu dianteiro direito, pneu atingiu limite máximo de uso.</li>
+        </ul>
+    </div>
+</main>

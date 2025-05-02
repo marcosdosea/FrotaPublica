@@ -96,6 +96,16 @@ namespace FrotaWeb.Controllers
             return View(veiculosViewModel);
         }
 
+        [Route("Veiculo/Gerenciamento/{idPercurso}/{idVeiculo}")]
+        public IActionResult Gerenciamento(uint idPercurso, uint idVeiculo)
+        {
+            var veiculo = veiculoService.Get(idVeiculo);
+            VeiculoViewModel veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+            ViewBag.IdPercursoAtual = idPercurso;
+            return View(veiculoViewModel);
+        }
+
+
         // GET: Veiculo/Details/5
         public ActionResult Details(uint id)
         {
