@@ -8,22 +8,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "Gestor")]
+    [Authorize(Roles = "Gestor,Motorista")]
     public class VeiculoController : Controller
     {
         private readonly IVeiculoService veiculoService;
         private readonly IMapper mapper;
         private readonly IUnidadeAdministrativaService unidadeAdministrativaService;
+        private readonly IPessoaService pessoaService;
         private readonly IFrotaService frotaService;
         private readonly IModeloVeiculoService modeloVeiculoService;
 
-        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService)
+        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
             this.unidadeAdministrativaService = unidadeAdministrativaService;
             this.frotaService = frotaService;
             this.modeloVeiculoService = modeloVeiculoService;
+            this.pessoaService = pessoaService;
         }
 
         // GET: Veiculo
@@ -43,6 +45,54 @@ namespace FrotaWeb.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(listaVeiculos);
+            foreach (var veiculo in veiculosViewModel)
+            {
+                veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
+                string status;
+                if(veiculo.Status == "D")
+                {
+                    veiculo.StatusNome = "Disponível";
+                }
+                else if (veiculo.Status == "U")
+                {
+                    veiculo.StatusNome = "Em Uso";
+                }
+                else if (veiculo.Status == "M")
+                {
+                    veiculo.StatusNome = "Em Manutenção";
+                }
+                else
+                {
+                    veiculo.StatusNome = "Indisponível";
+                }
+            }
+            return View(veiculosViewModel);
+        }
+
+        [Authorize(Roles = "Gestor,Motorista")]
+        [Route("Veiculo/Disponiveis")]
+        [Route("Veiculo/Disponiveis/{page}")]
+        public ActionResult VeiculosDisponiveis([FromRoute] int page = 0, [FromQuery] string placa = "")
+        {
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
+            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "UnidadeId")?.Value, out uint idUnidade);
+
+            int length = 15;
+            var pagedResult = veiculoService.GetVeiculosDisponiveisUnidadeAdministrativaPaged(page, length, idFrota, idUnidade, placa);
+
+            var totalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / length);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPlaca = placa;
+
+            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(pagedResult.Items);
+
+            foreach (var veiculo in veiculosViewModel)
+            {
+                veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
+                veiculo.StatusNome = "Disponível";
+            }
             return View(veiculosViewModel);
         }
 
@@ -119,8 +169,8 @@ namespace FrotaWeb.Controllers
                 catch (ServiceException exception)
                 {
                     ModelState.AddModelError(exception.AtributoError!, "Este dado já está cadastrado");
-                    ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(veiculo.IdFrota);
-                    ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(veiculo.IdFrota);
+                    ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica((uint)veiculo.IdFrota);
+                    ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica((uint)veiculo.IdFrota);
                     return View(veiculoViewModel);
                 }
             }

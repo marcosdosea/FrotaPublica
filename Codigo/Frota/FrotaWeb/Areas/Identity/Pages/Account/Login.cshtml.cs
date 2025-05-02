@@ -138,17 +138,28 @@ public class LoginModel : PageModel
                     int idFrotaDoUsuario = (int)frotaService.GetFrotaByUsername(user.UserName);
                     HttpContext.Session.SetInt32("FrotaId", idFrotaDoUsuario);
 
-                    // Atualizar ou adicionar a claim personalizada no banco de dados
-                    var existingClaim = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "FrotaId");
-                    if (existingClaim != null)
+                    // Persistir o id da unidade na sessão
+                    int idUnidadeDoUsuario = (int)frotaService.GetUnidadeByUsername(user.UserName);
+                    HttpContext.Session.SetInt32("UnidadeId", idUnidadeDoUsuario);
+
+                    // Atualizar ou adicionar a claim personalizada de Frota no banco de dados
+                    var existingClaimFrota = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "FrotaId");
+                    if (existingClaimFrota != null)
                     {
-                        await userManager.RemoveClaimAsync(user, existingClaim);
+                        await userManager.RemoveClaimAsync(user, existingClaimFrota);
                     }
                     await userManager.AddClaimAsync(user, new Claim("FrotaId", idFrotaDoUsuario.ToString()));
 
+                    // Atualizar ou adicionar a claim personalizada de Unidade no banco de dados
+                    var existingClaimUnidade = (await userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "UnidadeId");
+                    if (existingClaimUnidade != null)
+                    {
+                        await userManager.RemoveClaimAsync(user, existingClaimUnidade);
+                    }
+                    await userManager.AddClaimAsync(user, new Claim("UnidadeId", idUnidadeDoUsuario.ToString()));
+
                     // Reautenticar o usuário para carregar as novas claims
                     await _signInManager.SignInAsync(user, isPersistent: true);
-
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

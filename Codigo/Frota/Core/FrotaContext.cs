@@ -472,6 +472,8 @@ public partial class FrotaContext : DbContext
 
             entity.HasIndex(e => e.IdPapelPessoa, "fk_Pessoa_PapelPessoa1_idx");
 
+            entity.HasIndex(e => e.IdunidadeAdministrativa, "fk_pessoa_unidadeAdministrativa1");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Ativo)
                 .HasDefaultValueSql("'1'")
@@ -502,6 +504,7 @@ public partial class FrotaContext : DbContext
                 .HasColumnType("int(11) unsigned zerofill")
                 .HasColumnName("idFrota");
             entity.Property(e => e.IdPapelPessoa).HasColumnName("idPapelPessoa");
+            entity.Property(e => e.IdunidadeAdministrativa).HasColumnName("idunidadeAdministrativa");
             entity.Property(e => e.Nome)
                 .HasMaxLength(50)
                 .HasColumnName("nome");
@@ -525,6 +528,11 @@ public partial class FrotaContext : DbContext
                 .HasForeignKey(d => d.IdPapelPessoa)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Pessoa_PapelPessoa1");
+
+            entity.HasOne(d => d.IdunidadeAdministrativaNavigation).WithMany(p => p.Pessoas)
+                .HasForeignKey(d => d.IdunidadeAdministrativa)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_pessoa_unidadeAdministrativa1");
         });
 
         modelBuilder.Entity<Solicitacaomanutencao>(entity =>

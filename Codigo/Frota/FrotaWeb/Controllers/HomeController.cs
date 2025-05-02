@@ -32,6 +32,18 @@ public class HomeController : Controller
         viewModel.NameUser = pessoaService.GetNomePessoa(pessoaService.GetPessoaIdUser());
         var roles = await userManager.GetRolesAsync(user);
         string userRole = roles.FirstOrDefault();
+        if(userRole == "Motorista")
+        {
+            uint idPercurso = pessoaService.EmPercurso();
+            if(idPercurso == 0)
+            {
+                return RedirectToAction("VeiculosDisponiveis", "Veiculo");
+            }
+            else
+            {
+                return RedirectToAction("Detalhes", "Percurso", new { id = idPercurso });
+            }
+        }
         viewModel.UserType = userRole;
         //inicializar uma lista de lembretes manualmente que é uma lista de strings
         viewModel.Lembretes = new List<string> { "Ação de cadastro pendente.", "Verifique a nova política de privacidade"};

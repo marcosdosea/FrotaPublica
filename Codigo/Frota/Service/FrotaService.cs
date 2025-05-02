@@ -88,6 +88,30 @@ namespace Service
         }
 
         /// <summary>
+        /// Método para obter o id da unidade do usuário que fizer a autenticação
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns>id da unidade</returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public uint GetUnidadeByUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+                throw new UnauthorizedAccessException("Usuário não encontrado.");
+
+            uint? idUnidade = context.Pessoas
+                                 .AsNoTracking()
+                                 .Where(p => p.Cpf == username)
+                                 .Select(p => p.IdunidadeAdministrativa)
+                                 .FirstOrDefault();
+            if(idUnidade == null)
+                return 0;
+            if (idUnidade == 0)
+                throw new InvalidOperationException("Unidade não encontrada para o usuário autenticado.");
+            return (uint)idUnidade;
+        }
+
+        /// <summary>
         /// Obter a lista de frota cadastradas
         /// </summary>
         /// <returns></returns>

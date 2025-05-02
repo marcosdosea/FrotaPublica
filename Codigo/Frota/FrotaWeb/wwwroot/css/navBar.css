@@ -11,7 +11,7 @@ body {
     margin: 0;
     background-color: #D2E5F2;
     color: #171717;
-    font-family: "Euclid Circular A", "Poppins";
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .sidebar button {

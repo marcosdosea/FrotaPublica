@@ -31,5 +31,7 @@ public partial class Unidadeadministrativa
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
+    public virtual ICollection<Pessoa> Pessoas { get; set; } = new List<Pessoa>();
+
     public virtual ICollection<Veiculo> Veiculos { get; set; } = new List<Veiculo>();
 }
