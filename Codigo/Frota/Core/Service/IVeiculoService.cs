@@ -13,6 +13,7 @@ namespace Core.Service
         IEnumerable<Veiculo> GetAll(uint idFrota);
         IEnumerable<VeiculoDTO> GetVeiculoDTO(int idFrota);
         string? GetPlacaVeiculo(uint idVeiculo);
+        bool AtualizarOdometroVeiculo(uint idVeiculo, int novoOdometro);
     }
 }
 

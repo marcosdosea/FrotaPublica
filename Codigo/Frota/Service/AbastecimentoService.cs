@@ -8,7 +8,7 @@ namespace Service
     {
         private readonly FrotaContext context;
 
-        public AbastecimentoService(FrotaContext context)
+        public AbastecimentoService(FrotaContext context, IVeiculoService veiculoService)
         {
             this.context = context;
         }

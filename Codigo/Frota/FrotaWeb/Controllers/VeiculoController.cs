@@ -17,8 +17,13 @@ namespace FrotaWeb.Controllers
         private readonly IPessoaService pessoaService;
         private readonly IFrotaService frotaService;
         private readonly IModeloVeiculoService modeloVeiculoService;
+        private readonly IPercursoService percursoService;
+        private readonly IVistoriaService vistoriaService;
+        private readonly IAbastecimentoService abastecimentoService;
+        private readonly ISolicitacaoManutencaoService solicitacaoManutencaoService;
+        private readonly IFornecedorService fornecedorService;
 
-        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService)
+        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService, IPercursoService percursoService, IVistoriaService vistoriaService, IAbastecimentoService abastecimentoService, ISolicitacaoManutencaoService solicitacaoManutencaoService, IFornecedorService fornecedorService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
@@ -26,6 +31,11 @@ namespace FrotaWeb.Controllers
             this.frotaService = frotaService;
             this.modeloVeiculoService = modeloVeiculoService;
             this.pessoaService = pessoaService;
+            this.percursoService = percursoService;
+            this.vistoriaService = vistoriaService;
+            this.abastecimentoService = abastecimentoService;
+            this.solicitacaoManutencaoService = solicitacaoManutencaoService;
+            this.fornecedorService = fornecedorService;
         }
 
         // GET: Veiculo
@@ -51,7 +61,7 @@ namespace FrotaWeb.Controllers
                 string status;
                 if(veiculo.Status == "D")
                 {
-                    veiculo.StatusNome = "DisponÌvel";
+                    veiculo.StatusNome = "Dispon√≠vel";
                 }
                 else if (veiculo.Status == "U")
                 {
@@ -59,11 +69,11 @@ namespace FrotaWeb.Controllers
                 }
                 else if (veiculo.Status == "M")
                 {
-                    veiculo.StatusNome = "Em ManutenÁ„o";
+                    veiculo.StatusNome = "Em Manuten√ß√£o";
                 }
                 else
                 {
-                    veiculo.StatusNome = "IndisponÌvel";
+                    veiculo.StatusNome = "Indispon√≠vel";
                 }
             }
             return View(veiculosViewModel);
@@ -91,7 +101,7 @@ namespace FrotaWeb.Controllers
             foreach (var veiculo in veiculosViewModel)
             {
                 veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
-                veiculo.StatusNome = "DisponÌvel";
+                veiculo.StatusNome = "Dispon√≠vel";
             }
             return View(veiculosViewModel);
         }
@@ -100,11 +110,195 @@ namespace FrotaWeb.Controllers
         public IActionResult Gerenciamento(uint idPercurso, uint idVeiculo)
         {
             var veiculo = veiculoService.Get(idVeiculo);
-            VeiculoViewModel veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+            var percurso = percursoService.Get(idPercurso);
+            
+            if (veiculo == null || percurso == null)
+            {
+                return NotFound();
+            }
+
+            var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+            veiculoViewModel.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
             ViewBag.IdPercursoAtual = idPercurso;
+            ViewBag.Percurso = percurso;
             return View(veiculoViewModel);
         }
 
+        [HttpGet]
+        [Route("Veiculo/RegistrarVistoria/{idPercurso}/{idVeiculo}")]
+        public IActionResult RegistrarVistoria(uint idPercurso, uint idVeiculo)
+        {
+            var vistoriaViewModel = new VistoriaViewModel
+            {
+                IdPessoaResponsavel = pessoaService.GetPessoaIdUser(),
+                Data = DateTime.Now
+            };
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(vistoriaViewModel);
+        }
+
+        [HttpPost]
+        [Route("Veiculo/RegistrarVistoria/{idPercurso}/{idVeiculo}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult RegistrarVistoria(uint idPercurso, uint idVeiculo, VistoriaViewModel vistoriaViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var vistoria = mapper.Map<Vistorium>(vistoriaViewModel);
+                    vistoriaService.Create(vistoria);
+                    return RedirectToAction("Gerenciamento", new { idPercurso, idVeiculo });
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, exception.MensagemCustom);
+                }
+            }
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(vistoriaViewModel);
+        }
+
+        [HttpGet]
+        [Route("Veiculo/RegistrarAbastecimento/{idPercurso}/{idVeiculo}")]
+        public IActionResult RegistrarAbastecimento(uint idPercurso, uint idVeiculo)
+        {
+            var abastecimentoViewModel = new AbastecimentoViewModel
+            {
+                IdVeiculo = idVeiculo,
+                IdPessoa = pessoaService.GetPessoaIdUser(),
+                DataHora = DateTime.Now
+            };
+            ViewBag.IdVeiculo = idVeiculo;
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculoService.Get(idVeiculo).IdFrota);
+            return View(abastecimentoViewModel);
+        }
+
+        [HttpPost]
+        [Route("Veiculo/RegistrarAbastecimento/{idPercurso}/{idVeiculo}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult RegistrarAbastecimento(uint idPercurso, uint idVeiculo, AbastecimentoViewModel abastecimentoViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
+                    abastecimento.IdFrota = veiculoService.Get(idVeiculo).IdFrota;
+
+                    //atualizar o odometro do ve√≠culo
+                    if (!veiculoService.AtualizarOdometroVeiculo(abastecimento.IdVeiculo, abastecimento.Odometro))
+                    {
+                        ViewBag.IdVeiculo = idVeiculo;
+                        ViewBag.IdPercurso = idPercurso;
+                        ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculoService.Get(idVeiculo).IdFrota);
+                        return View(abastecimentoViewModel);
+                    }
+
+                    abastecimentoService.Create(abastecimento);
+                    return RedirectToAction("Gerenciamento", new { idPercurso, idVeiculo });
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, exception.MensagemCustom);
+                }
+            }
+            ViewBag.IdVeiculo = idVeiculo;
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculoService.Get(idVeiculo).IdFrota);
+            return View(abastecimentoViewModel);
+        }
+
+        [HttpGet]
+        [Route("Veiculo/SolicitarManutencao/{idPercurso}/{idVeiculo}")]
+        public IActionResult SolicitarManutencao(uint idPercurso, uint idVeiculo)
+        {
+            var solicitacaoViewModel = new SolicitacaoManutencaoViewModel
+            {
+                IdVeiculo = idVeiculo,
+                IdPessoa = pessoaService.GetPessoaIdUser(),
+                DataSolicitacao = DateTime.Now
+            };
+            ViewBag.IdVeiculo = idVeiculo;
+            ViewBag.IdPercurso = idPercurso;
+            return View(solicitacaoViewModel);
+        }
+
+        [HttpPost]
+        [Route("Veiculo/SolicitarManutencao/{idPercurso}/{idVeiculo}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult SolicitarManutencao(uint idPercurso, uint idVeiculo, SolicitacaoManutencaoViewModel solicitacaoViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var solicitacao = mapper.Map<Solicitacaomanutencao>(solicitacaoViewModel);
+                    solicitacaoManutencaoService.Create(solicitacao, (int)veiculoService.Get(idVeiculo).IdFrota);
+                    return RedirectToAction("Gerenciamento", new { idPercurso, idVeiculo });
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, exception.MensagemCustom);
+                }
+            }
+            ViewBag.IdVeiculo = idVeiculo;
+            ViewBag.IdPercurso = idPercurso;
+            return View(solicitacaoViewModel);
+        }
+
+        [HttpGet]
+        [Route("Veiculo/FinalizarUso/{idPercurso}/{idVeiculo}")]
+        public IActionResult FinalizarUso(uint idPercurso, uint idVeiculo)
+        {
+            var percurso = percursoService.Get(idPercurso);
+            var veiculo = veiculoService.Get(idVeiculo);
+            
+            if (percurso == null || veiculo == null)
+            {
+                return NotFound();
+            }
+
+            var percursoViewModel = mapper.Map<PercursoViewModel>(percurso);
+            percursoViewModel.DataHoraRetorno = DateTime.Now;
+            percursoViewModel.OdometroFinal = veiculo.Odometro;
+            
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(percursoViewModel);
+        }
+
+        [HttpPost]
+        [Route("Veiculo/FinalizarUso/{idPercurso}/{idVeiculo}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult FinalizarUso(uint idPercurso, uint idVeiculo, PercursoViewModel percursoViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var percurso = mapper.Map<Percurso>(percursoViewModel);
+                    percursoService.Edit(percurso);
+                    
+                    var veiculo = veiculoService.Get(idVeiculo);
+                    veiculo.Status = "D"; // Dispon√≠vel
+                    veiculo.Odometro = percursoViewModel.OdometroFinal;
+                    veiculoService.Edit(veiculo);
+                    
+                    return RedirectToAction("VeiculosDisponiveis");
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, exception.MensagemCustom);
+                }
+            }
+            ViewBag.IdPercurso = idPercurso;
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(percursoViewModel);
+        }
 
         // GET: Veiculo/Details/5
         public ActionResult Details(uint id)
@@ -135,14 +329,14 @@ namespace FrotaWeb.Controllers
                 uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
                 var veiculo = mapper.Map<Veiculo>(veiculoViewModel);
                 veiculo.IdFrota = idFrota;
-                TempData["MensagemSucesso"] = "VeÌculo cadastrado com sucesso!";
+                TempData["MensagemSucesso"] = "Ve√≠culo cadastrado com sucesso!";
                 try
                 {
                     veiculoService.Create(veiculo);
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Este dado j· est· cadastrado");
+                    ModelState.AddModelError(exception.AtributoError!, "Este dado j√° est√° cadastrado");
                     ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica(idFrota);
                     ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica(idFrota);
                     return View(veiculoViewModel);
@@ -178,7 +372,7 @@ namespace FrotaWeb.Controllers
                 }
                 catch (ServiceException exception)
                 {
-                    ModelState.AddModelError(exception.AtributoError!, "Este dado j· est· cadastrado");
+                    ModelState.AddModelError(exception.AtributoError!, "Este dado j√° est√° cadastrado");
                     ViewData["Unidades"] = this.unidadeAdministrativaService.GetAllOrdemAlfabetica((uint)veiculo.IdFrota);
                     ViewData["Modelos"] = this.modeloVeiculoService.GetAllOrdemAlfabetica((uint)veiculo.IdFrota);
                     return View(veiculoViewModel);
@@ -203,13 +397,76 @@ namespace FrotaWeb.Controllers
             try
             {
                 veiculoService.Delete(id);
-                TempData["MensagemSucesso"] = "VeÌculo removido com sucesso!";
+                TempData["MensagemSucesso"] = "Ve√≠culo removido com sucesso!";
             }
             catch (ServiceException exception)
             {
                 TempData["MensagemError"] = exception.MensagemCustom;
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        [Route("Veiculo/Usar/{id}")]
+        public IActionResult Usar(uint id)
+        {
+            var veiculo = veiculoService.Get(id);
+            if (veiculo == null)
+            {
+                return NotFound();
+            }
+
+            var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
+            veiculoViewModel.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
+            ViewBag.IdVeiculo = id;
+            return View("Gerenciamento", veiculoViewModel);
+        }
+
+        [HttpGet]
+        [Route("Veiculo/RegistrarSaida/{idVeiculo}")]
+        public IActionResult RegistrarSaida(uint idVeiculo)
+        {
+            var veiculo = veiculoService.Get(idVeiculo);
+            if (veiculo == null)
+            {
+                return NotFound();
+            }
+            var percursoViewModel = new PercursoViewModel
+            {
+                IdVeiculo = idVeiculo,
+                IdPessoa = pessoaService.GetPessoaIdUser(),
+                DataHoraSaida = DateTime.Now,
+                OdometroInicial = veiculo.Odometro
+            };
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(percursoViewModel);
+        }
+
+        [HttpPost]
+        [Route("Veiculo/RegistrarSaida/{idVeiculo}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult RegistrarSaida(uint idVeiculo, PercursoViewModel percursoViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var percurso = mapper.Map<Percurso>(percursoViewModel);
+                    percursoService.Create(percurso);
+                    var veiculo = veiculoService.Get(idVeiculo);
+                    veiculo.Status = "U"; // Em Uso
+                    veiculoService.Edit(veiculo);
+                    return RedirectToAction("Gerenciamento", new { idPercurso = percurso.Id, idVeiculo = idVeiculo });
+                }
+                catch (ServiceException exception)
+                {
+                    ModelState.AddModelError(exception.AtributoError!, exception.MensagemCustom);
+                    ViewBag.IdVeiculo = idVeiculo;
+                    return View(percursoViewModel);
+                }
+            }
+            ViewBag.IdVeiculo = idVeiculo;
+            return View(percursoViewModel);
         }
     }
 }

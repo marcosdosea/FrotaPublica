@@ -37,14 +37,14 @@ public class HomeController : Controller
         if(userRole == "Motorista")
         {
             uint idPercurso = pessoaService.EmPercurso();
-            if(idPercurso == 1)
+            if(idPercurso == 0)
             {
                 return RedirectToAction("VeiculosDisponiveis", "Veiculo");
             }
             else
             {
-                //uint idVeiculoDoPercurso = percursoService.ObterVeiculoDePercurso(idPercurso);
-                return RedirectToAction("Gerenciamento", "Veiculo", new { idPercurso = 1, idVeiculo = 58 });
+                uint idVeiculoDoPercurso = percursoService.ObterVeiculoDePercurso(idPercurso);
+                return RedirectToAction("Gerenciamento", "Veiculo", new { idPercurso = idPercurso, idVeiculo = idVeiculoDoPercurso });
             }
         }
         viewModel.UserType = userRole;

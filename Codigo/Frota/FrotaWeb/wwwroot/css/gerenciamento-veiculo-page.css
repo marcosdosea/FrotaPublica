@@ -1,5 +1,5 @@
 ﻿.card {
-    background: #f0f4f8;
+    background: #fff;
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -7,6 +7,7 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    margin-top: 20px;
 }
 
     .card h2 {
@@ -59,7 +60,7 @@
         }
 
         .reminders {
-            background: #e4f0f8;
+            margin-top: 50px;
             border-radius: 12px;
             padding: 1rem;
         }

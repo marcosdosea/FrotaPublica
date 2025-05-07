@@ -178,6 +178,18 @@ namespace Service
                              };
             return veiculoDTO.ToList();
         }
+
+        public bool AtualizarOdometroVeiculo(uint idVeiculo, int novoOdometro)
+        {
+            var veiculo = context.Veiculos.Find(idVeiculo);
+            if(novoOdometro <= veiculo.Odometro)
+            {
+                return false;
+            }
+            veiculo.Odometro = novoOdometro;
+            Edit(veiculo);
+            return true;
+        }
     }
 }
 
