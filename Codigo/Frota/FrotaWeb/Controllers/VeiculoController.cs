@@ -186,15 +186,16 @@ namespace FrotaWeb.Controllers
             {
                 try
                 {
+                    var veiculo = veiculoService.Get(idVeiculo);
                     var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
-                    abastecimento.IdFrota = veiculoService.Get(idVeiculo).IdFrota;
+                    abastecimento.IdFrota = veiculo.IdFrota;
 
                     //atualizar o odometro do veículo
                     if (!veiculoService.AtualizarOdometroVeiculo(abastecimento.IdVeiculo, abastecimento.Odometro))
                     {
                         ViewBag.IdVeiculo = idVeiculo;
                         ViewBag.IdPercurso = idPercurso;
-                        ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculoService.Get(idVeiculo).IdFrota);
+                        ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculo.IdFrota);
                         return View(abastecimentoViewModel);
                     }
 
@@ -208,7 +209,7 @@ namespace FrotaWeb.Controllers
             }
             ViewBag.IdVeiculo = idVeiculo;
             ViewBag.IdPercurso = idPercurso;
-            ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculoService.Get(idVeiculo).IdFrota);
+            ViewBag.Fornecedores = fornecedorService.GetAllOrdemAlfabetica((int)veiculo.IdFrota);
             return View(abastecimentoViewModel);
         }
 
