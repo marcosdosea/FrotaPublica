@@ -35,11 +35,15 @@ public partial class Pessoa
 
     public string Telefone { get; set; } = null!;
 
+    public uint IdunidadeAdministrativa { get; set; }
+
     public virtual ICollection<Abastecimento> Abastecimentos { get; set; } = new List<Abastecimento>();
 
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual Papelpessoa IdPapelPessoaNavigation { get; set; } = null!;
+
+    public virtual Unidadeadministrativa IdunidadeAdministrativaNavigation { get; set; } = null!;
 
     public virtual ICollection<Manutencao> Manutencaos { get; set; } = new List<Manutencao>();
 

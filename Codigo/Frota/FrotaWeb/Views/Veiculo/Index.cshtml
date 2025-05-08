@@ -16,10 +16,10 @@
         <table class="tabela">
             <thead>
                 <tr>
+                    <th>Modelo</th>
                     <th>@Html.DisplayNameFor(model => model.Placa)</th>
-                    <th>@Html.DisplayNameFor(model => model.Modelo)</th>
                     <th>@Html.DisplayNameFor(model => model.Cor)</th>
-                    <th>@Html.DisplayNameFor(model => model.Status)</th>
+                    <th>Status</th>
                     <th class="column-15"></th>
                 </tr>
             </thead>
@@ -27,10 +27,10 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td>@Html.DisplayFor(modelItem => item.ModeloNome)</td>
                         <td>@Html.DisplayFor(modelItem => item.Placa)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Modelo)</td>
                         <td>@Html.DisplayFor(modelItem => item.Cor)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                        <td>@Html.DisplayFor(modelItem => item.StatusNome)</td>
                         <td>
                             <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
                                 <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>

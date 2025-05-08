@@ -43,6 +43,8 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         public string Status { get; set; } = null!;
 
+        public string? StatusNome { get; set; } = null!;
+
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [Range(1900,3000, ErrorMessage = "O {0} é inválido")]
         public int Ano { get; set; }
@@ -50,6 +52,8 @@ namespace FrotaWeb.Models
         [Required(ErrorMessage = "O {0} é obrigatório")]
         [Range(1900, 3000, ErrorMessage = "O {0} é inválido")]
         public int Modelo { get; set; }
+
+        public string? ModeloNome { get; set; }
 
         [StringLength(50, ErrorMessage = "O {0} pode ter no máximo 50 caracteres")]
         public string? Renavan { get; set; }

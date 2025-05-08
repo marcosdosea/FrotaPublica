@@ -17,13 +17,15 @@ namespace Service
         private readonly UserManager<Core.UsuarioIdentity> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IPercursoService percursoService;
 
-        public PessoaService(FrotaContext context, UserManager<Core.UsuarioIdentity> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
+        public PessoaService(FrotaContext context, UserManager<Core.UsuarioIdentity> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor, IPercursoService percursoService)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.context = context;
             this.httpContextAccessor = httpContextAccessor;
+            this.percursoService = percursoService;
         }
 
         /// <summary>
@@ -338,6 +340,20 @@ namespace Service
                           .Where(pessoa => pessoa.Id == idPessoa)
                           .Select(pessoa => pessoa.Nome)
                           .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Verifica se um usuário (motorista) está em percurso
+        /// </summary>
+        /// <param name="idUser"></param>
+        /// <returns>Retorna o id do percurso e 0 se não houver nenhum</returns>
+        public uint EmPercurso()
+        {
+            int idUser = (int)GetPessoaIdUser();
+            var percurso = percursoService.ObterPercursosAtualDoMotorista(idUser);
+            if (percurso == null) return 0;
+
+            return percurso.Id;
         }
     }
 }

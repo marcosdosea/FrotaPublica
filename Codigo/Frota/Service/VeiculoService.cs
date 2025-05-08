@@ -122,6 +122,40 @@ namespace Service
                           .Take(lenght);
         }
 
+        /// <summary>
+        /// Obtém uma lista parcial de veículos disponíveis para realizar a paginação
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="lenght"></param>
+        /// <param name="idFrota"></param>
+        /// <param name="unidadeAdministrativa"></param>
+        /// <returns>Lista de Veículos</returns>
+        public PagedResult<Veiculo> GetVeiculosDisponiveisUnidadeAdministrativaPaged(int page, int length, uint idFrota, uint unidadeAdministrativa, string placa)
+        {
+            var query = context.Veiculos
+                               .AsNoTracking()
+                               .Where(v => v.IdFrota == idFrota &&
+                                           v.IdUnidadeAdministrativa == unidadeAdministrativa &&
+                                           v.Status == "D");
+
+            if (!string.IsNullOrWhiteSpace(placa))
+            {
+                query = query.Where(v => v.Placa.ToUpper().Contains(placa.ToUpper()));
+            }
+
+            int totalCount = query.Count();
+
+            var items = query.Skip(page * length)
+                             .Take(length)
+                             .ToList();
+
+            return new PagedResult<Veiculo>
+            {
+                Items = items,
+                TotalCount = totalCount
+            };
+        }
+
 
         /// <summary>
         /// Obtém uma listagem simplificada de veículos
@@ -143,6 +177,18 @@ namespace Service
                                  Ano = veiculo.Ano
                              };
             return veiculoDTO.ToList();
+        }
+
+        public bool AtualizarOdometroVeiculo(uint idVeiculo, int novoOdometro)
+        {
+            var veiculo = context.Veiculos.Find(idVeiculo);
+            if(novoOdometro <= veiculo.Odometro)
+            {
+                return false;
+            }
+            veiculo.Odometro = novoOdometro;
+            Edit(veiculo);
+            return true;
         }
     }
 }

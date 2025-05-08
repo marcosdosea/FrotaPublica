@@ -1,0 +1,77 @@
+@model FrotaWeb.Models.AbastecimentoViewModel
+@using Core.DTO
+
+@{
+    var fornecedores = ViewBag.Fornecedores as IEnumerable<FornecedorDTO> ?? Enumerable.Empty<FornecedorDTO>();
+}
+
+<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Registrar Abastecimento</h1>
+    </div>
+    <div class="fomulario">
+        <form asp-action="RegistrarAbastecimento" asp-route-idPercurso="@ViewBag.IdPercurso" asp-route-idVeiculo="@ViewBag.IdVeiculo" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input type="hidden" asp-for="IdVeiculo" />
+            <input type="hidden" asp-for="IdPessoa" />
+            <input type="hidden" asp-for="DataHora" />
+
+            <div class="form-group">
+                <label asp-for="IdFornecedor" class="control-label">Fornecedor</label>
+                <select asp-for="IdFornecedor" class="form-control select2">
+                    @if (!fornecedores.Any())
+                    {
+                        <option value="" disabled selected hidden>Selecione um fornecedor</option>
+                    }
+                    else
+                    {
+                        foreach (var fornecedor in fornecedores)
+                        {
+                            <option value="@fornecedor.Id">@fornecedor.Nome</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="IdFornecedor" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Odometro" class="control-label">Odômetro</label>
+                <input asp-for="Odometro" class="form-control" />
+                <span asp-validation-for="Odometro" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Litros" class="control-label">Litros Abastecidos</label>
+                <input asp-for="Litros" class="form-control" />
+                <span asp-validation-for="Litros" class="text-danger"></span>
+            </div>
+
+            <div class="buttons">
+                <input type="submit" value="Registrar Abastecimento" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/form.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2({
+                language: {
+                    noResults: function () {
+                        return "Não encontrado";
+                    }
+                }
+            });
+        });
+    </script>
+} 

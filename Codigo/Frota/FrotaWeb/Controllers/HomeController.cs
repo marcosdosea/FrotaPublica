@@ -16,13 +16,15 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> logger;
     private readonly UserManager<UsuarioIdentity> userManager; // Injete o UserManager
+    private readonly IPercursoService percursoService;
     private readonly IPessoaService pessoaService;
 
-    public HomeController(ILogger<HomeController> logger, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService)
+    public HomeController(ILogger<HomeController> logger, UserManager<UsuarioIdentity> userManager, IPessoaService pessoaService, IPercursoService percursoService)
     {
         this.logger = logger;
         this.userManager = userManager;
         this.pessoaService = pessoaService;
+        this.percursoService = percursoService;
     }
 
     public async Task<IActionResult> Index()
@@ -32,6 +34,19 @@ public class HomeController : Controller
         viewModel.NameUser = pessoaService.GetNomePessoa(pessoaService.GetPessoaIdUser());
         var roles = await userManager.GetRolesAsync(user);
         string userRole = roles.FirstOrDefault();
+        if(userRole == "Motorista")
+        {
+            uint idPercurso = pessoaService.EmPercurso();
+            if(idPercurso == 0)
+            {
+                return RedirectToAction("VeiculosDisponiveis", "Veiculo");
+            }
+            else
+            {
+                uint idVeiculoDoPercurso = percursoService.ObterVeiculoDePercurso(idPercurso);
+                return RedirectToAction("Gerenciamento", "Veiculo", new { idPercurso = idPercurso, idVeiculo = idVeiculoDoPercurso });
+            }
+        }
         viewModel.UserType = userRole;
         //inicializar uma lista de lembretes manualmente que é uma lista de strings
         viewModel.Lembretes = new List<string> { "Ação de cadastro pendente.", "Verifique a nova política de privacidade"};

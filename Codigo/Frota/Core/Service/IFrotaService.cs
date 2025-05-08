@@ -9,6 +9,7 @@ namespace Core.Service
         bool Delete(int idFrota);
         Frotum? Get(int idFrota);
         uint GetFrotaByUsername(string username);
+        uint GetUnidadeByUsername(string username);
         IEnumerable<Frotum> GetAll();
         IEnumerable<FrotaDTO> GetAllOrdemAlfabetica();
     }

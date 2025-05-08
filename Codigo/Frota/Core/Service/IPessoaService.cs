@@ -22,6 +22,7 @@ public interface IPessoaService
     Pessoa? GetUserByEmailAsync(string cpf);
     IEnumerable<Papelpessoa> GetPapeisPessoas(string papelUsuarioCadastrante);
     IEnumerable<PessoaDTO> GetAllOrdemAlfabetica(int idFrota);
+    uint EmPercurso();
     string? GetNomePessoa(uint idPessoa);
 
 }

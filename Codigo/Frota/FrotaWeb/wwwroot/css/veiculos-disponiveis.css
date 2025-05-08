@@ -1,0 +1,180 @@
+﻿.title-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.filtro-input {
+    display: flex;
+    position: relative;
+    width: 200px;
+    height: 100%;
+}
+
+    .filtro-input input {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 0 15px;
+        font-size: 16px;
+        font-weight: normal;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .filtro-input button {
+        outline: none;
+        border: none;
+        background-color: transparent;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0C69AB;
+    }
+
+    .filtro-input input:focus{
+        outline: none;
+    }
+
+    /* Estilo da tabela */
+    .table-responsive {
+        background-color: transparent;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+.tabela {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: -10px;
+}
+
+    .tabela thead th {
+        background-color: transparent;
+        color: #333;
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 15px;
+        font-size: 16px;
+        border: none;
+    }
+
+    .tabela tbody tr {
+        background-color: transparent !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .tabela tbody td {
+            height: 70px;
+            padding: 15px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: white;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .tabela tbody td:first-child {
+            border-top-left-radius: 10px !important;
+            border-bottom-left-radius: 10px !important;
+            display: flex;
+            align-items: center;
+        }
+
+            .tabela tbody td:first-child i {
+                font-size: 35px;
+            }
+
+            .tabela tbody td:last-child {
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+                text-align: right;
+            }
+
+/* Ícone de carro */
+.car-icon {
+    color: #0C69AB;
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+/* Botão Usar */
+.edit.icone {
+    background-color: #0C69AB;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    text-align: center;
+    font-size: 18px;
+}
+
+    .edit.icone:hover {
+        background-color: #013759;
+    }
+
+    .edit.icone i {
+        display: none;
+    }
+
+    .edit.icone::after {
+        content: "Usar";
+    }
+
+/* Status de disponibilidade */
+.status-disponivel {
+    color: #28a745;
+    font-weight: 500;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .tabela {
+        border-spacing: 0;
+    }
+
+        .tabela thead {
+            display: none;
+        }
+
+        .tabela tbody tr {
+            display: block;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        .tabela tbody td {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            text-align: right;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .tabela tbody td:last-child {
+                border-bottom: none;
+                justify-content: center;
+            }
+
+            .tabela tbody td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-align: left;
+            }
+
+    .navigation-pages {
+        flex-wrap: wrap;
+    }
+}
