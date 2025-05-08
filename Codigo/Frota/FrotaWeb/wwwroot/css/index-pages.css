@@ -104,6 +104,47 @@
         box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
     }
 
+.filtros {
+    width: 60%;
+    display: flex;
+    justify-content: end;
+}
+
+.filtros form {
+    width: 370px;
+    display: flex;
+    align-items: center;
+}
+
+.filtros form label {
+    margin: 0px;
+    margin-right: 10px;
+    font-weight: bold;
+    width: 150px;
+}
+
+    .filtros form select.custom-select {
+        width: 220px !important;
+        border: 2px solid rgba(0, 0, 0, 0.25); /* Define a borda cinza clara */
+        border-radius: 10px; /* Bordas arredondadas */
+        padding: 8px; /* Espaçamento interno */
+        font-size: 16px; /* Tamanho da fonte */
+        background-color: #f9f9f9; /* Fundo leve para melhorar o contraste */
+        color: #333; /* Cor do texto */
+        outline: none; /* Remove o contorno padrão ao clicar */
+        transition: all 0.3s ease; /* Suaviza as interações */
+        height: 45px;
+        font-weight: bold;
+
+    }
+
+    .filtros form select.custom-select:focus {
+        border-color: #007bff; /* Cor da borda ao focar */
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Adiciona um efeito de foco */
+        background-color: #fff; /* Fundo branco no foco */
+    }
+
+
 /*Estilo da barra de pesquisa*/
 .acoes form {
     display: flex;

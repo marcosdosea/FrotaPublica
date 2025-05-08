@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<FrotaWeb.Models.ManutencaoViewModel>
+@using Core.DTO
+
+@{
+    var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
+}
 
 <link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
 
@@ -10,6 +15,26 @@
         <h1>Manutenções</h1>
         <div class="acoes">
             <a asp-action="Create" class="btn btn-primario">Criar</a>
+            <div class="filtros">
+                <form id="formFiltro" method="get" action="@Url.Action("Index", "Manutencao")">
+                    <input type="hidden" name="page" value="0" />
+                    <label for="idVeiculo">Filtrar por Veículo:</label>
+                    <select id="idVeiculo" name="idVeiculo" class="custom-select select2" onchange="document.getElementById('formFiltro').submit();">
+                        <option value="">Todos os Veículos</option>
+                        @foreach (var veiculo in veiculos)
+                        {
+                            if (ViewBag.IdVeiculoSelecionado != null && ViewBag.IdVeiculoSelecionado == veiculo.Id)
+                            {
+                                <option value="@veiculo.Id" selected>@veiculo.Placa</option>
+                            }
+                            else
+                            {
+                                <option value="@veiculo.Id">@veiculo.Placa</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
         </div>
     </div>
     <div class="table-responsive">
@@ -102,7 +127,7 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })">@numeroPageLast</a>
                         </li>
                     }
                     <li class="page-item">
@@ -120,7 +145,7 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })">@numeroPageLast</a>
                         </li>
                     }
                 }
@@ -134,7 +159,7 @@
                             @{
                                 var numeroPageLast = i + 1;
                             }
-                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                            <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })">@numeroPageLast</a>
                         </li>
                     }
                     <li class="page-item">
@@ -153,7 +178,7 @@
                         @{
                             var numeroPageLast = i + 1;
                         }
-                        <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i })">@numeroPageLast</a>
+                        <a class="page-link" href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })">@numeroPageLast</a>
                     </li>
                 }
             }

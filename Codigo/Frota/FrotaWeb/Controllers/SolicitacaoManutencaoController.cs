@@ -27,17 +27,32 @@ namespace FrotaWeb.Controllers
 
 
         // GET: SolicitacaomanutencaoController.cs
-        public ActionResult Index()
+        [Route("SolicitacaoManutencao/Index")]
+        [Route("SolicitacaoManutencao")]
+        public ActionResult Index([FromQuery] uint? idVeiculo = null)
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            var listaSolicitacoes = service.GetAll(idFrota);
+
+            // Obter todos os veículos para o dropdown
+            var veiculos = veiculoService.GetVeiculoDTO(idFrota);
+            ViewData["Veiculos"] = veiculos;
+            ViewBag.IdVeiculoSelecionado = idVeiculo;
+
+            // Aplicar filtro por veículo se necessário
+            var query = service.GetAll(idFrota);
+            if (idVeiculo.HasValue)
+            {
+                query = query.Where(s => s.IdVeiculo == idVeiculo.Value);
+            }
+
+            var listaSolicitacoes = query.ToList();
+
             var listaSolicitacoesModel = _mapper.Map<List<SolicitacaoManutencaoViewModel>>(listaSolicitacoes);
             foreach (var item in listaSolicitacoesModel)
             {
                 item.PlacaVeiculo = veiculoService.GetPlacaVeiculo(item.IdVeiculo);
                 item.NomePessoa = pessoaService.GetNomePessoa(item.IdPessoa);
             }
-
             return View(listaSolicitacoesModel);
         }
 
