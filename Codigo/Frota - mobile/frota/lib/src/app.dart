@@ -1,0 +1,163 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/fuel_provider.dart';
+import 'providers/inspection_provider.dart';
+import 'providers/journey_provider.dart';
+import 'providers/maintenance_provider.dart';
+import 'providers/reminder_provider.dart';
+import 'providers/vehicle_provider.dart';
+import 'routing/app_router.dart';
+import 'utils/app_theme.dart';
+import 'utils/api_client.dart';
+import 'screens/login_screen.dart';
+import 'screens/available_vehicles_screen.dart';
+import 'screens/driver_home_screen.dart';
+import 'screens/presentation_screen.dart';
+
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => VehicleProvider()),
+        ChangeNotifierProvider(create: (_) => JourneyProvider()),
+        ChangeNotifierProvider(create: (_) => FuelProvider()),
+        ChangeNotifierProvider(create: (_) => InspectionProvider()),
+        ChangeNotifierProvider(create: (_) => MaintenanceProvider()),
+        ChangeNotifierProvider(create: (_) => ReminderProvider()),
+      ],
+      child: AppContent(),
+    );
+  }
+}
+
+class AppContent extends StatefulWidget {
+  @override
+  _AppContentState createState() => _AppContentState();
+}
+
+class _AppContentState extends State<AppContent> {
+  Timer? _tokenRefreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa o provider de autenticação
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeApp();
+      _startTokenRefreshCheck();
+    });
+  }
+
+  @override
+  void dispose() {
+    _tokenRefreshTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startTokenRefreshCheck() {
+    // Verificar a cada 5 minutos se o token está válido
+    _tokenRefreshTimer =
+        Timer.periodic(const Duration(minutes: 5), (timer) async {
+      print('Verificando validade do token...');
+      if (mounted) {
+        final isTokenExpired = await ApiClient.isTokenExpired();
+        if (isTokenExpired) {
+          print('Token está expirado. Tentando renovar...');
+          final authProvider =
+              Provider.of<AuthProvider>(context, listen: false);
+          if (authProvider.isAuthenticated) {
+            await authProvider.refreshToken();
+          }
+        } else {
+          print('Token ainda é válido.');
+        }
+      }
+    });
+  }
+
+  Future<void> _initializeApp() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.initialize();
+
+    if (authProvider.isAuthenticated) {
+      // Se o usuário estiver autenticado, verifica se há uma jornada ativa
+      final journeyProvider =
+          Provider.of<JourneyProvider>(context, listen: false);
+      await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+
+      if (journeyProvider.hasActiveJourney) {
+        // Se houver uma jornada ativa, carrega o veículo dessa jornada
+        final vehicleProvider =
+            Provider.of<VehicleProvider>(context, listen: false);
+        final vehicle = await vehicleProvider
+            .getVehicleById(journeyProvider.activeJourney!.vehicleId);
+
+        if (vehicle != null) {
+          vehicleProvider.setCurrentVehicle(vehicle);
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Frota App',
+      theme: AppTheme.lightTheme,
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRouter.initialRoute,
+      routes: AppRouter.routes,
+      onGenerateRoute: (settings) {
+        // Intercepta a navegação para verificar se é necessário redirecionar
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        if (!authProvider.isAuthenticated &&
+            settings.name != '/login' &&
+            settings.name != '/presentation') {
+          // Se não estiver autenticado e não estiver indo para login ou apresentação, redireciona para login
+          return MaterialPageRoute(builder: (_) => const LoginScreen());
+        }
+
+        if (authProvider.isAuthenticated) {
+          final journeyProvider =
+              Provider.of<JourneyProvider>(context, listen: false);
+          final vehicleProvider =
+              Provider.of<VehicleProvider>(context, listen: false);
+
+          // Se estiver tentando ir para veículos disponíveis enquanto existe percurso ativo, redireciona
+          if (settings.name == '/available_vehicles' &&
+              journeyProvider.hasActiveJourney) {
+            // Precisamos garantir que temos o veículo antes de redirecionar
+            if (vehicleProvider.hasCurrentVehicle) {
+              return MaterialPageRoute(
+                builder: (_) =>
+                    DriverHomeScreen(vehicle: vehicleProvider.currentVehicle!),
+              );
+            } else {
+              // Caso não tenha o veículo carregado, direciona para a tela de apresentação
+              // que vai iniciar o carregamento do veículo corretamente
+              return MaterialPageRoute(
+                  builder: (_) => const PresentationScreen());
+            }
+          }
+
+          // Se não houver percurso ativo e estiver indo para a tela inicial, redireciona para veículos disponíveis
+          if (settings.name == '/presentation' &&
+              !journeyProvider.hasActiveJourney) {
+            return MaterialPageRoute(
+                builder: (_) => const AvailableVehiclesScreen());
+          }
+        }
+
+        // Processa normalmente se não houver redirecionamento
+        return null;
+      },
+    );
+  }
+}
