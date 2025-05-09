@@ -182,11 +182,12 @@ namespace FrotaWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RegistrarAbastecimento(uint idPercurso, uint idVeiculo, AbastecimentoViewModel abastecimentoViewModel)
         {
+            Veiculo veiculo = new Veiculo();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var veiculo = veiculoService.Get(idVeiculo);
+                    veiculo = veiculoService.Get(idVeiculo);
                     var abastecimento = mapper.Map<Abastecimento>(abastecimentoViewModel);
                     abastecimento.IdFrota = veiculo.IdFrota;
 

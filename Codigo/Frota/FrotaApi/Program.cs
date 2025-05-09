@@ -10,11 +10,14 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace FrotaApi
 {
     public class Program
     {
+        private const string DEFAULT_JWT_KEY = "Ch4v3S3cR3t4Fr0t4Publ1c42023@#$%&*123456789ABCDEFGHIJKLMN";
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -22,11 +25,42 @@ namespace FrotaApi
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            
+            // ConfiguraÃ§Ã£o do Swagger para suportar JWT
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Frota API", Version = "v1" });
+                
+                // ConfiguraÃ§Ã£o para usar Bearer token no Swagger UI
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
+            
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddHttpContextAccessor();
 
-            // Registrando serviços
+            // Registrando serviÃ§os
             builder.Services.AddTransient<IPessoaService, PessoaService>();
             builder.Services.AddTransient<IFrotaService, FrotaService>();
             builder.Services.AddTransient<IMarcaPecaInsumoService, MarcaPecaInsumoService>();
@@ -42,18 +76,18 @@ namespace FrotaApi
             builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
             builder.Services.AddTransient<IPercursoService, PercursoService>();
             builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
-            builder.Services.AddTransient<IEmailSender, DummyEmailSender>();  // Implementação mock para IEmailSender
+            builder.Services.AddTransient<IEmailSender, DummyEmailSender>();  // ImplementaÃ§Ã£o mock para IEmailSender
 
             var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("A string de conexão 'FrotaDatabase' não foi encontrada ou está vazia.");
+                throw new InvalidOperationException("A string de conexÃ£o 'FrotaDatabase' nÃ£o foi encontrada ou estÃ¡ vazia.");
             }
 
             builder.Services.AddDbContext<FrotaContext>(options => options.UseMySQL(connectionString));
             builder.Services.AddDbContext<IdentityContext>(options => options.UseMySQL(connectionString));
 
-            // Configuração do Identity
+            // ConfiguraÃ§Ã£o do Identity
             builder.Services.AddIdentity<UsuarioIdentity, IdentityRole>(options =>
             {
                 // SignIn settings
@@ -81,7 +115,14 @@ namespace FrotaApi
             .AddEntityFrameworkStores<IdentityContext>()
             .AddDefaultTokenProviders();
 
-            // Configurar autenticação JWT
+            // Garantir que a chave JWT tenha pelo menos 256 bits (32 bytes)
+            string jwtKey = builder.Configuration["Jwt:Key"] ?? DEFAULT_JWT_KEY;
+            if (jwtKey.Length < 32)
+            {
+                jwtKey = DEFAULT_JWT_KEY;
+            }
+
+            // Configurar autenticaÃ§Ã£o JWT
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -95,16 +136,16 @@ namespace FrotaApi
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "ChaveTemporariaParaDesenvolvimento123456789"))
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "FrotaPublicaApi",
+                    ValidAudience = builder.Configuration["Jwt:Audience"] ?? "FrotaPublicaApp",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
                 };
             });
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -121,12 +162,12 @@ namespace FrotaApi
         }
     }
 
-    // Implementação temporária de IEmailSender para satisfazer a dependência
+    // ImplementaÃ§Ã£o temporÃ¡ria de IEmailSender para satisfazer a dependÃªncia
     public class DummyEmailSender : IEmailSender
     {
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            // Esta é uma implementação vazia para satisfazer a dependência
+            // Esta Ã© uma implementaÃ§Ã£o vazia para satisfazer a dependÃªncia
             return Task.CompletedTask;
         }
     }

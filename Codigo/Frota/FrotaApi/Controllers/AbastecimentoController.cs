@@ -9,116 +9,154 @@ namespace FrotaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Motorista")]
     public class AbastecimentoController : ControllerBase
     {
         private readonly IAbastecimentoService _abastecimentoService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMapper _mapper;
         private readonly IPessoaService _pessoaService;
+        private readonly IVeiculoService _veiculoService;
+        private readonly IPercursoService _percursoService;
+        private readonly IMapper _mapper;
 
-        public AbastecimentoController(IAbastecimentoService abastecimentoService,
-            IHttpContextAccessor httpContextAccessor,
-            IMapper mapper,
-            IPessoaService pessoaService)
+        public AbastecimentoController(
+            IAbastecimentoService abastecimentoService,
+            IPessoaService pessoaService,
+            IVeiculoService veiculoService,
+            IPercursoService percursoService,
+            IMapper mapper)
         {
-            _mapper = mapper;
-            _httpContextAccessor = httpContextAccessor;
             _abastecimentoService = abastecimentoService;
             _pessoaService = pessoaService;
+            _veiculoService = veiculoService;
+            _percursoService = percursoService;
+            _mapper = mapper;
         }
 
-        // GET: api/AbastecimentoApi
+        public class RegistrarAbastecimentoModel
+        {
+            public uint IdVeiculo { get; set; }
+            public DateTime Data { get; set; }
+            public decimal ValorLitro { get; set; }
+            public decimal Litros { get; set; }
+            public decimal KmAtual { get; set; }
+            public string? Observacoes { get; set; }
+            public uint? IdPercurso { get; set; }
+        }
+
+        // GET: api/Abastecimento
         [HttpGet]
-        public ActionResult<IEnumerable<AbastecimentoViewModel>> GetAll()
+        public ActionResult<IEnumerable<Abastecimento>> GetAbastecimentosDoMotorista()
         {
-            uint idFrota = 1;
-            var listaAbastecimentos = _abastecimentoService.GetAll(idFrota).ToList();
-            var listaAbastecimentosViewModel = _mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
-            return Ok(listaAbastecimentosViewModel);
+            try
+            {
+                // Obter a pessoa (motorista) logada
+                uint idPessoa = (uint)_pessoaService.GetPessoaIdUser();
+                
+                // Obter a unidade administrativa e frota do motorista
+                var pessoa = _pessoaService.Get(idPessoa);
+                if (pessoa == null)
+                {
+                    return NotFound("Pessoa não encontrada");
+                }
+
+                uint idFrota = pessoa.IdFrota;
+
+                // Buscar todos os abastecimentos da frota
+                var abastecimentos = _abastecimentoService.GetAll(idFrota)
+                    .Where(a => a.IdPessoa == idPessoa)
+                    .OrderByDescending(a => a.DataHora)
+                    .ToList();
+
+                return Ok(abastecimentos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao obter abastecimentos: {ex.Message}");
+            }
         }
 
-        // GET: api/AbastecimentoApi/5
+        // GET: api/Abastecimento/5
         [HttpGet("{id}")]
-        public ActionResult<AbastecimentoViewModel> Get(uint id)
+        public ActionResult<Abastecimento> GetAbastecimento(uint id)
         {
-            var abastecimento = _abastecimentoService.Get(id);
-
-            if (abastecimento == null)
+            try
             {
-                return NotFound();
-            }
+                var abastecimento = _abastecimentoService.Get(id);
+                if (abastecimento == null)
+                {
+                    return NotFound("Abastecimento não encontrado");
+                }
 
-            var abastecimentoView = _mapper.Map<AbastecimentoViewModel>(abastecimento);
-            return Ok(abastecimentoView);
+                // Verificar se o abastecimento pertence ao motorista logado
+                uint idPessoa = (uint)_pessoaService.GetPessoaIdUser();
+                if (abastecimento.IdPessoa != idPessoa)
+                {
+                    return Forbid("Você não tem permissão para visualizar este abastecimento");
+                }
+
+                return Ok(abastecimento);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao obter abastecimento: {ex.Message}");
+            }
         }
 
-        // POST: api/AbastecimentoApi
+        // POST: api/Abastecimento
         [HttpPost]
-        public ActionResult<AbastecimentoViewModel> Create(AbastecimentoViewModel abastecimentoViewModel)
+        public ActionResult<Abastecimento> RegistrarAbastecimento([FromBody] RegistrarAbastecimentoModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                // Obter a pessoa (motorista) logada
+                uint idPessoa = (uint)_pessoaService.GetPessoaIdUser();
+                
+                // Verificar se o veículo existe
+                var veiculo = _veiculoService.Get(model.IdVeiculo);
+                if (veiculo == null)
+                {
+                    return NotFound("Veículo não encontrado");
+                }
+
+                // Verificar se está em percurso com este veículo
+                var percursoAtual = _percursoService.ObterPercursosAtualDoMotorista((int)idPessoa);
+                if (percursoAtual == null || percursoAtual.IdVeiculo != model.IdVeiculo)
+                {
+                    return BadRequest("Você não está em um percurso ativo com este veículo");
+                }
+
+                // Atualizar o odômetro do veículo, se necessário
+                int kmAtual = (int)model.KmAtual;
+                if (veiculo.Odometro < kmAtual)
+                {
+                    _veiculoService.AtualizarOdometroVeiculo(model.IdVeiculo, kmAtual);
+                }
+
+                // Criar o abastecimento
+                var abastecimento = new Abastecimento
+                {
+                    IdVeiculo = model.IdVeiculo,
+                    IdPessoa = idPessoa,
+                    IdFrota = veiculo.IdFrota,
+                    DataHora = model.Data,
+                    Litros = model.Litros,
+                    Odometro = (int)model.KmAtual
+                };
+
+                uint idAbastecimento = _abastecimentoService.Create(abastecimento);
+                abastecimento.Id = idAbastecimento;
+
+                return Ok(new
+                {
+                    Message = "Abastecimento registrado com sucesso",
+                    IdAbastecimento = idAbastecimento,
+                    Abastecimento = abastecimento
+                });
             }
-
-            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            string cpf = _httpContextAccessor.HttpContext?.User.Identity?.Name!;
-
-            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoViewModel);
-            abastecimento.IdFrota = idFrota;
-            abastecimento.IdPessoa = _pessoaService.GetIdPessoaByCpf(cpf);
-
-            _abastecimentoService.Create(abastecimento);
-
-            var createdAbastecimento = _abastecimentoService.Get(abastecimento.Id);
-            var result = _mapper.Map<AbastecimentoViewModel>(createdAbastecimento);
-
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
-        }
-
-        // PUT: api/AbastecimentoApi/5
-        [HttpPut("{id}")]
-        public IActionResult Update(uint id, AbastecimentoViewModel abastecimentoViewModel)
-        {
-            if (id != abastecimentoViewModel.Id)
+            catch (Exception ex)
             {
-                return BadRequest("ID na rota não corresponde ao ID no objeto");
+                return BadRequest($"Erro ao registrar abastecimento: {ex.Message}");
             }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var existingAbastecimento = _abastecimentoService.Get(id);
-            if (existingAbastecimento == null)
-            {
-                return NotFound();
-            }
-
-            uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            var abastecimento = _mapper.Map<Abastecimento>(abastecimentoViewModel);
-            abastecimento.IdFrota = idFrota;
-
-            _abastecimentoService.Edit(abastecimento);
-
-            return NoContent();
-        }
-
-        // DELETE: api/AbastecimentoApi/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(uint id)
-        {
-            var abastecimento = _abastecimentoService.Get(id);
-
-            if (abastecimento == null)
-            {
-                return NotFound();
-            }
-
-            _abastecimentoService.Delete(id);
-
-            return NoContent();
         }
     }
 }
