@@ -3,6 +3,20 @@ import '../models/vehicle.dart';
 import '../utils/api_client.dart';
 
 class VehicleRepository {
+  // Método privado para buscar o nome do modelo do veículo
+  Future<String> _getVehicleModelName(String vehicleId) async {
+    try {
+      final response = await ApiClient.get('ModeloVeiculo/$vehicleId');
+      if (response.statusCode == 200) {
+        return response.body.replaceAll('"', ''); // Remove as aspas da string
+      }
+      return 'Modelo não encontrado';
+    } catch (e) {
+      print('Erro ao buscar nome do modelo do veículo: $e');
+      return 'Erro ao buscar modelo';
+    }
+  }
+
   // Obter todos os veículos disponíveis
   Future<List<Vehicle>> getAvailableVehicles(
       int? unidadeAdministrativaId) async {
@@ -37,7 +51,12 @@ class VehicleRepository {
                 'ID: ${vehicleJson['id']}, Modelo: ${vehicleJson['idModeloVeiculo']}, Status: ${vehicleJson['status']}');
 
             final vehicle = Vehicle.fromJson(vehicleJson);
-            vehicles.add(vehicle);
+
+            // Buscar o nome do modelo do veículo
+            final modelName = await _getVehicleModelName(vehicle.id);
+            final updatedVehicle = vehicle.copyWith(model: modelName);
+
+            vehicles.add(updatedVehicle);
             print('Veículo ${vehicle.licensePlate} processado com sucesso');
           } catch (e, st) {
             print('ERRO ao processar veículo $i: $e');
@@ -86,7 +105,11 @@ class VehicleRepository {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return Vehicle.fromJson(data);
+        final vehicle = Vehicle.fromJson(data);
+
+        // Buscar o nome do modelo do veículo
+        final modelName = await _getVehicleModelName(id);
+        return vehicle.copyWith(model: modelName);
       }
 
       return null;
