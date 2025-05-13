@@ -58,7 +58,12 @@ namespace FrotaApi.Controllers
                 var percursoAtual = _percursoService.ObterPercursosAtualDoMotorista((int)idPessoa);
                 if (percursoAtual != null)
                 {
-                    return BadRequest("Motorista já possui um percurso em andamento. Finalize o percurso atual antes de iniciar um novo.");
+                    return Ok(new
+                    {
+                        Message = "Motorista já possui um percurso em andamento",
+                        EmPercurso = true,
+                        Percurso = percursoAtual
+                    });
                 }
 
                 // Atualizar o odômetro do veículo
@@ -73,7 +78,7 @@ namespace FrotaApi.Controllers
                     DataHoraRetorno = DateTime.MinValue, // Será atualizado quando o percurso for finalizado
                     LocalPartida = model.LocalPartida,
                     LocalChegada = model.LocalChegada,
-                    OdometroInicial = model.OdometroInicial,
+                    OdometroInicial = veiculo.Odometro,
                     OdometroFinal = 0, // Será atualizado quando o percurso for finalizado
                     Motivo = model.Motivo
                 };

@@ -8,6 +8,7 @@ import '../screens/inspection_screen.dart';
 import '../screens/inspection_selection_screen.dart';
 import '../screens/maintenance_request_screen.dart';
 import '../screens/presentation_screen.dart';
+import '../screens/journey_registration_screen.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> routes = {

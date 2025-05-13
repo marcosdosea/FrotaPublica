@@ -13,6 +13,7 @@ class Journey {
   final bool isActive;
   final double? distance;
   final List<String>? fuelRefillIds;
+  final String? reason;
 
   Journey({
     required this.id,
@@ -27,52 +28,53 @@ class Journey {
     required this.isActive,
     this.distance,
     this.fuelRefillIds,
+    this.reason,
   });
 
   factory Journey.fromJson(Map<String, dynamic> json) {
+    // Verificar se a data de retorno é a data mínima (indica percurso ativo)
+    final DateTime? dataRetorno = json['dataHoraRetorno'] != null
+        ? DateTime.parse(json['dataHoraRetorno'])
+        : null;
+
+    // Se for DateTime.MinValue (usado pela API para indicar percursos ativos),
+    // consideramos como null
+    final bool isMinDate = dataRetorno?.year == 1 &&
+        dataRetorno?.month == 1 &&
+        dataRetorno?.day == 1;
+
     return Journey(
       id: json['id']?.toString() ?? '',
-      vehicleId: json['vehicle_id'] ?? json['veiculoId']?.toString() ?? '',
-      driverId: json['driver_id'] ?? json['motoristaId']?.toString() ?? '',
-      origin: json['origin'] ?? json['origem'] ?? '',
-      destination: json['destination'] ?? json['destino'] ?? '',
-      initialOdometer: json['initial_odometer'] ?? json['kmInicial'] ?? 0,
-      finalOdometer: json['final_odometer'] ?? json['kmFinal'],
-      departureTime: json['departure_time'] != null
-          ? DateTime.parse(json['departure_time'])
-          : json['dataHoraSaida'] != null
-              ? DateTime.parse(json['dataHoraSaida'])
-              : DateTime.now(),
-      arrivalTime: json['arrival_time'] != null
-          ? DateTime.parse(json['arrival_time'])
-          : json['dataHoraChegada'] != null
-              ? DateTime.parse(json['dataHoraChegada'])
-              : null,
-      isActive: json['is_active'] ?? json['ativo'] ?? true,
-      distance: json['distance'] ?? json['distanciaPercorrida']?.toDouble(),
-      fuelRefillIds: json['fuel_refill_ids'] != null
-          ? List<String>.from(json['fuel_refill_ids'])
-          : json['abastecimentoIds'] != null
-              ? List<String>.from(
-                  json['abastecimentoIds'].map((id) => id.toString()))
-              : null,
+      vehicleId: json['idVeiculo']?.toString() ?? '',
+      driverId: json['idPessoa']?.toString() ?? '',
+      origin: json['localPartida'] ?? '',
+      destination: json['localChegada'] ?? '',
+      initialOdometer: json['odometroInicial'] ?? 0,
+      finalOdometer: isMinDate ? null : json['odometroFinal'],
+      departureTime: json['dataHoraSaida'] != null
+          ? DateTime.parse(json['dataHoraSaida'])
+          : DateTime.now(),
+      arrivalTime: isMinDate ? null : dataRetorno,
+      isActive: isMinDate,
+      reason: json['motivo'],
+      // Esses campos podem não estar disponíveis na API
+      distance: null,
+      fuelRefillIds: null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'veiculoId': vehicleId,
-      'motoristaId': driverId,
-      'origem': origin,
-      'destino': destination,
-      'kmInicial': initialOdometer,
-      'kmFinal': finalOdometer,
+      'idVeiculo': vehicleId,
+      'idPessoa': driverId,
+      'localPartida': origin,
+      'localChegada': destination,
+      'odometroInicial': initialOdometer,
+      'odometroFinal': finalOdometer,
       'dataHoraSaida': departureTime.toIso8601String(),
-      'dataHoraChegada': arrivalTime?.toIso8601String(),
-      'ativo': isActive,
-      'distanciaPercorrida': distance,
-      'abastecimentoIds': fuelRefillIds,
+      'dataHoraRetorno': arrivalTime?.toIso8601String(),
+      'motivo': reason,
     };
   }
 
@@ -89,6 +91,7 @@ class Journey {
     bool? isActive,
     double? distance,
     List<String>? fuelRefillIds,
+    String? reason,
   }) {
     return Journey(
       id: id ?? this.id,
@@ -103,6 +106,7 @@ class Journey {
       isActive: isActive ?? this.isActive,
       distance: distance ?? this.distance,
       fuelRefillIds: fuelRefillIds ?? this.fuelRefillIds,
+      reason: reason ?? this.reason,
     );
   }
 

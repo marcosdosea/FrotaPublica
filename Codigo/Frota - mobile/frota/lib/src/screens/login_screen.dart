@@ -36,12 +36,13 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success && mounted) {
-        // Verifica se o usuário tem um percurso ativo
+        // Verificar se o usuário tem um percurso ativo
         final journeyProvider =
             Provider.of<JourneyProvider>(context, listen: false);
         await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
 
-        if (journeyProvider.hasActiveJourney) {
+        if (journeyProvider.hasActiveJourney &&
+            journeyProvider.activeJourney != null) {
           // Se há jornada ativa, obter o veículo associado
           final vehicleProvider =
               Provider.of<VehicleProvider>(context, listen: false);
@@ -56,12 +57,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context) => DriverHomeScreen(vehicle: vehicle),
               ),
             );
-          } else {
-            // Se não conseguir obter o veículo, direcionar para veículos disponíveis
-            Navigator.pushReplacementNamed(context, '/available_vehicles');
+            return;
           }
-        } else {
-          // Se não há jornada ativa, ir para veículos disponíveis
+        }
+
+        // Se não há jornada ativa ou não foi possível recuperar o veículo,
+        // redirecionar para tela de veículos disponíveis
+        if (mounted) {
           Navigator.pushReplacementNamed(context, '/available_vehicles');
         }
       }

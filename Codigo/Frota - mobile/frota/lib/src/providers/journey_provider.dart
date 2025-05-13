@@ -4,25 +4,26 @@ import '../services/journey_service.dart';
 
 class JourneyProvider with ChangeNotifier {
   final JourneyService _journeyService = JourneyService();
-  
+
   Journey? _activeJourney;
   List<Journey> _journeyHistory = [];
   bool _isLoading = false;
   String? _error;
-  
+
   Journey? get activeJourney => _activeJourney;
   List<Journey> get journeyHistory => _journeyHistory;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get hasActiveJourney => _activeJourney != null;
-  
+
   // Carregar jornada ativa para um motorista
   Future<void> loadActiveJourney(String driverId) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
-      _activeJourney = await _journeyService.getActiveJourneyForDriver(driverId);
+      _activeJourney =
+          await _journeyService.getActiveJourneyForDriver(driverId);
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -31,7 +32,7 @@ class JourneyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Iniciar uma nova jornada
   Future<bool> startJourney({
     required String vehicleId,
@@ -39,10 +40,11 @@ class JourneyProvider with ChangeNotifier {
     required String origin,
     required String destination,
     required int initialOdometer,
+    String? reason,
   }) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final journey = await _journeyService.startJourney(
         vehicleId: vehicleId,
@@ -50,8 +52,9 @@ class JourneyProvider with ChangeNotifier {
         origin: origin,
         destination: destination,
         initialOdometer: initialOdometer,
+        reason: reason,
       );
-      
+
       if (journey != null) {
         _activeJourney = journey;
         _error = null;
@@ -68,20 +71,20 @@ class JourneyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Finalizar jornada ativa
   Future<bool> finishJourney(int finalOdometer) async {
     if (_activeJourney == null) return false;
-    
+
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final journey = await _journeyService.finishJourney(
         journeyId: _activeJourney!.id,
         finalOdometer: finalOdometer,
       );
-      
+
       if (journey != null) {
         _activeJourney = null;
         _error = null;
@@ -99,14 +102,15 @@ class JourneyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Carregar histórico de jornadas
   Future<void> loadJourneyHistory(String driverId) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
-      _journeyHistory = await _journeyService.getJourneyHistoryForDriver(driverId);
+      _journeyHistory =
+          await _journeyService.getJourneyHistoryForDriver(driverId);
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -115,20 +119,20 @@ class JourneyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Adicionar abastecimento à jornada ativa
   Future<bool> addFuelRefillToActiveJourney(String fuelRefillId) async {
     if (_activeJourney == null) return false;
-    
+
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final journey = await _journeyService.addFuelRefillToJourney(
         _activeJourney!.id,
         fuelRefillId,
       );
-      
+
       if (journey != null) {
         _activeJourney = journey;
         _error = null;
@@ -145,7 +149,7 @@ class JourneyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Limpar erro
   void clearError() {
     _error = null;

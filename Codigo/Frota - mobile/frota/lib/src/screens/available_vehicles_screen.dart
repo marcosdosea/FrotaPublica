@@ -4,6 +4,7 @@ import '../models/vehicle.dart';
 import '../providers/vehicle_provider.dart';
 import '../providers/auth_provider.dart';
 import 'driver_home_screen.dart';
+import 'journey_registration_screen.dart';
 
 class AvailableVehiclesScreen extends StatefulWidget {
   const AvailableVehiclesScreen({super.key});
@@ -324,7 +325,7 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                            DriverHomeScreen(
+                                                            JourneyRegistrationScreen(
                                                                 vehicle:
                                                                     vehicle),
                                                       ),

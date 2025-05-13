@@ -11,6 +11,8 @@ import '../providers/vehicle_provider.dart';
 import 'fuel_registration_screen.dart';
 import 'inspection_selection_screen.dart';
 import 'maintenance_request_screen.dart';
+import '../providers/auth_provider.dart';
+import '../providers/journey_provider.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -38,7 +40,20 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       final vehicleProvider =
           Provider.of<VehicleProvider>(context, listen: false);
       vehicleProvider.setCurrentVehicle(_currentVehicle);
+
+      // Carregar percurso ativo
+      _loadActiveJourney();
     });
+  }
+
+  Future<void> _loadActiveJourney() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final journeyProvider =
+        Provider.of<JourneyProvider>(context, listen: false);
+
+    if (authProvider.currentUser != null) {
+      await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+    }
   }
 
   @override
@@ -272,20 +287,36 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     // Card de percurso
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: JourneyCard(
-                        journey: Journey(
-                          id: '1',
-                          vehicleId: _currentVehicle.id,
-                          driverId: '1',
-                          origin: 'Itabaiana',
-                          destination: 'Areia Branca',
-                          initialOdometer: _currentVehicle.odometer,
-                          departureTime:
-                              DateTime.now().subtract(const Duration(hours: 1)),
-                          isActive: true,
-                        ),
-                        onTap: () {
-                          // Ação ao clicar no card
+                      child: Consumer<JourneyProvider>(
+                        builder: (context, journeyProvider, child) {
+                          final journey = journeyProvider.activeJourney;
+
+                          if (journey == null) {
+                            // Caso não tenha percurso ativo, mostrar mensagem
+                            return const Card(
+                              color: Colors.white,
+                              elevation: 2,
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: Text(
+                                    'Nenhum percurso ativo no momento',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return JourneyCard(
+                            journey: journey,
+                            onTap: () {
+                              // Ação ao clicar no card - poderia mostrar detalhes
+                            },
+                          );
                         },
                       ),
                     ),

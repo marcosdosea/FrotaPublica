@@ -82,7 +82,7 @@ class VehicleRepository {
   // Obter um veículo específico por ID
   Future<Vehicle?> getVehicleById(String id) async {
     try {
-      final response = await ApiClient.get('Veiculos/$id');
+      final response = await ApiClient.get('Veiculo/$id');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

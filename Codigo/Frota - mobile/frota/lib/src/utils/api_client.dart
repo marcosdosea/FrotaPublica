@@ -1,10 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
-  static const String baseUrl = 'http://itetech-001-site1.qtempurl.com/api';
+  // Use 10.0.2.2 para acessar o computador host (localhost) a partir do emulador Android
+  // Ou use o IP real da sua máquina na rede se estiver usando um dispositivo físico
+  static const String baseUrl = 'https://10.0.2.2:7139/api';
   static const storage = FlutterSecureStorage();
+
+  // Criar uma instância HTTP personalizada que aceita certificados inválidos (apenas para desenvolvimento)
+  static final _client = HttpClient()
+    ..badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
+
+  static final _httpClient = http.Client();
 
   static const String _tokenKey = 'jwt_token';
   static const String _refreshTokenKey = 'refresh_token';
@@ -108,10 +118,31 @@ class ApiClient {
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
-    return await http.get(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: headers,
-    );
+    try {
+      final uri = Uri.parse('$baseUrl/$endpoint');
+      final request = await _client.getUrl(uri);
+
+      // Adicionar headers
+      headers.forEach((key, value) {
+        request.headers.add(key, value);
+      });
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      return http.Response(
+        responseBody,
+        response.statusCode,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          if (token != null) HttpHeaders.authorizationHeader: 'Bearer $token'
+        },
+        isRedirect: response.isRedirect,
+      );
+    } catch (e) {
+      print('Erro na requisição GET: $e');
+      return http.Response('{"error": "$e"}', 500);
+    }
   }
 
   // POST Request com autenticação automática
@@ -123,11 +154,35 @@ class ApiClient {
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
-    return await http.post(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: headers,
-      body: jsonEncode(data),
-    );
+    try {
+      final uri = Uri.parse('$baseUrl/$endpoint');
+      final request = await _client.postUrl(uri);
+
+      // Adicionar headers
+      headers.forEach((key, value) {
+        request.headers.add(key, value);
+      });
+
+      // Adicionar corpo da requisição
+      final jsonBody = utf8.encode(jsonEncode(data));
+      request.add(jsonBody);
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      return http.Response(
+        responseBody,
+        response.statusCode,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          if (token != null) HttpHeaders.authorizationHeader: 'Bearer $token'
+        },
+        isRedirect: response.isRedirect,
+      );
+    } catch (e) {
+      print('Erro na requisição POST: $e');
+      return http.Response('{"error": "$e"}', 500);
+    }
   }
 
   // PUT Request com autenticação automática
@@ -139,11 +194,35 @@ class ApiClient {
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
-    return await http.put(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: headers,
-      body: jsonEncode(data),
-    );
+    try {
+      final uri = Uri.parse('$baseUrl/$endpoint');
+      final request = await _client.putUrl(uri);
+
+      // Adicionar headers
+      headers.forEach((key, value) {
+        request.headers.add(key, value);
+      });
+
+      // Adicionar corpo da requisição
+      final jsonBody = utf8.encode(jsonEncode(data));
+      request.add(jsonBody);
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      return http.Response(
+        responseBody,
+        response.statusCode,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          if (token != null) HttpHeaders.authorizationHeader: 'Bearer $token'
+        },
+        isRedirect: response.isRedirect,
+      );
+    } catch (e) {
+      print('Erro na requisição PUT: $e');
+      return http.Response('{"error": "$e"}', 500);
+    }
   }
 
   // DELETE Request com autenticação automática
@@ -155,9 +234,30 @@ class ApiClient {
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
-    return await http.delete(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: headers,
-    );
+    try {
+      final uri = Uri.parse('$baseUrl/$endpoint');
+      final request = await _client.deleteUrl(uri);
+
+      // Adicionar headers
+      headers.forEach((key, value) {
+        request.headers.add(key, value);
+      });
+
+      final response = await request.close();
+      final responseBody = await response.transform(utf8.decoder).join();
+
+      return http.Response(
+        responseBody,
+        response.statusCode,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          if (token != null) HttpHeaders.authorizationHeader: 'Bearer $token'
+        },
+        isRedirect: response.isRedirect,
+      );
+    } catch (e) {
+      print('Erro na requisição DELETE: $e');
+      return http.Response('{"error": "$e"}', 500);
+    }
   }
 }

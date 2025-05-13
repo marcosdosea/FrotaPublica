@@ -1,8 +1,51 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../utils/api_client.dart';
+import 'package:flutter/material.dart';
 
 class AuthRepository {
+  static const String _userKey = 'current_user';
+
+  // Salvar os dados do usuário localmente
+  Future<void> _saveUserData(User user) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userKey, jsonEncode(user.toJson()));
+      print('Dados do usuário salvos localmente: ${user.name}');
+    } catch (e) {
+      print('Erro ao salvar dados do usuário: $e');
+    }
+  }
+
+  // Obter os dados do usuário salvos localmente
+  Future<User?> _getSavedUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userString = prefs.getString(_userKey);
+
+      if (userString != null) {
+        final userData = jsonDecode(userString);
+        return User.fromJson(userData);
+      }
+      return null;
+    } catch (e) {
+      print('Erro ao obter dados do usuário: $e');
+      return null;
+    }
+  }
+
+  // Remover os dados do usuário salvos localmente
+  Future<void> _removeSavedUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_userKey);
+      print('Dados do usuário removidos localmente');
+    } catch (e) {
+      print('Erro ao remover dados do usuário: $e');
+    }
+  }
+
   Future<User?> login(String cpf, String password) async {
     try {
       // Limpa o CPF para enviar apenas os números
@@ -36,6 +79,9 @@ class AuthRepository {
             role: data['role'] ?? 'Motorista',
             unidadeAdministrativaId: 1, // Valor padrão (será atualizado depois)
           );
+
+          // Salvar dados do usuário localmente
+          await _saveUserData(user);
 
           return user;
         } else {
@@ -85,8 +131,10 @@ class AuthRepository {
 
   Future<void> logout() async {
     try {
-      // Apenas remove o token localmente
+      // Remove o token localmente
       await ApiClient.removeToken();
+      // Remove os dados do usuário
+      await _removeSavedUserData();
     } catch (e) {
       print('Erro ao realizar logout: $e');
       rethrow;
@@ -99,16 +147,14 @@ class AuthRepository {
       final token = await ApiClient.getToken();
       if (token == null) return null;
 
-      // Obter usuário a partir do token JWT
-      // Nesse caso simplificado, retornamos um usuário básico
-      return User(
-        id: '1',
-        name: 'Motorista',
-        email: 'motorista@example.com',
-        cpf: '12345678900',
-        role: 'Motorista',
-        unidadeAdministrativaId: 1,
-      );
+      // Obter usuário salvo localmente
+      final savedUser = await _getSavedUserData();
+      if (savedUser != null) {
+        print('Usuário recuperado do armazenamento local: ${savedUser.name}');
+        return savedUser;
+      }
+
+      return null;
     } catch (e) {
       print('Erro ao obter usuário atual: $e');
       return null;

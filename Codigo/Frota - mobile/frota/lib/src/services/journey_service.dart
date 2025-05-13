@@ -21,6 +21,7 @@ class JourneyService {
     required String origin,
     required String destination,
     required int initialOdometer,
+    String? reason,
   }) async {
     try {
       return await _journeyRepository.startJourney(
@@ -29,6 +30,7 @@ class JourneyService {
         origin: origin,
         destination: destination,
         initialOdometer: initialOdometer,
+        reason: reason,
       );
     } catch (e) {
       print('Erro no serviço ao iniciar jornada: $e');
