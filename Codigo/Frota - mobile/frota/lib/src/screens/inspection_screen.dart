@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/inspection_service.dart';
+import '../providers/journey_provider.dart';
+import '../providers/auth_provider.dart';
 
 class InspectionScreen extends StatefulWidget {
   final String title;
+  final String vehicleId;
+  final String type; // "S" (saída) ou "R" (retorno)
 
   const InspectionScreen({
     super.key,
     required this.title,
+    required this.vehicleId,
+    required this.type,
   });
 
   @override
@@ -14,11 +22,79 @@ class InspectionScreen extends StatefulWidget {
 
 class _InspectionScreenState extends State<InspectionScreen> {
   final TextEditingController problemsController = TextEditingController();
+  final InspectionService _inspectionService = InspectionService();
+  bool _isSubmitting = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
     problemsController.dispose();
     super.dispose();
+  }
+
+  Future<void> _registerInspection() async {
+    if (problemsController.text.isEmpty) {
+      setState(() {
+        _errorMessage =
+            "Por favor, informe se há problemas ou 'Nenhum' caso não haja.";
+      });
+      _showErrorMessage(_errorMessage!);
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await _inspectionService.registerInspection(
+        vehicleId: widget.vehicleId,
+        type: widget.type,
+        problems: problemsController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (result != null) {
+        // Navegar de volta para a tela principal
+        Navigator.pop(context, true);
+        _showSuccessMessage("Vistoria registrada com sucesso!");
+      } else {
+        setState(() {
+          _isSubmitting = false;
+          _errorMessage =
+              "Não foi possível registrar a vistoria. Tente novamente.";
+        });
+        _showErrorMessage(_errorMessage!);
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isSubmitting = false;
+        _errorMessage = "Erro ao registrar vistoria: $e";
+      });
+      _showErrorMessage(_errorMessage!);
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _showSuccessMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
   @override
@@ -29,7 +105,8 @@ class _InspectionScreenState extends State<InspectionScreen> {
         children: [
           // Blue header with rounded bottom corners
           Container(
-            padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            padding:
+                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
             decoration: const BoxDecoration(
               color: Color(0xFF116AD5),
               borderRadius: BorderRadius.only(
@@ -88,7 +165,8 @@ class _InspectionScreenState extends State<InspectionScreen> {
                     controller: problemsController,
                     maxLines: 5,
                     decoration: InputDecoration(
-                      hintText: 'Informar',
+                      hintText:
+                          'Descreva os problemas ou escreva "Nenhum" caso não haja',
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -101,21 +179,18 @@ class _InspectionScreenState extends State<InspectionScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF0066CC), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF0066CC), width: 2),
                       ),
                       contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
-
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Implementar lógica de registro
-                        Navigator.pop(context);
-                      },
+                      onPressed: _isSubmitting ? null : _registerInspection,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0066CC),
                         foregroundColor: Colors.white,
@@ -123,13 +198,22 @@ class _InspectionScreenState extends State<InspectionScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Registrar',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Registrar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ],

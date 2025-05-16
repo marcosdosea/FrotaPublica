@@ -5,25 +5,39 @@ import '../models/inspection_status.dart';
 class InspectionService {
   final InspectionRepository _inspectionRepository = InspectionRepository();
 
-  // Registrar inspeção
+  // Registrar vistoria
   Future<Inspection?> registerInspection({
-    required String journeyId,
     required String vehicleId,
-    required String driverId,
-    required InspectionType type,
+    required String type, // "S" (saída) ou "R" (retorno)
     String? problems,
   }) async {
     try {
-      return await _inspectionRepository.registerInspection(
-        journeyId: journeyId,
+      // Chamar o repository e retornar o resultado
+      final result = await _inspectionRepository.registerInspection(
         vehicleId: vehicleId,
-        driverId: driverId,
         type: type,
         problems: problems,
       );
+
+      // Log para depuração
+      print('InspectionService: Resultado do registro de vistoria: $result');
+
+      return result;
     } catch (e) {
-      print('Erro no serviço ao registrar inspeção: $e');
-      return null;
+      // Registrar o erro e propagar a exceção para ser tratada na UI
+      print('InspectionService: Erro ao registrar vistoria: $e');
+      rethrow;
+    }
+  }
+
+  // Verifica se o tipo de vistoria já foi registrado para o veículo no percurso atual
+  Future<bool> hasInspectionBeenCompleted(String vehicleId, String type) async {
+    try {
+      return await _inspectionRepository.hasInspectionBeenCompleted(
+          vehicleId, type);
+    } catch (e) {
+      print('InspectionService: Erro ao verificar vistoria: $e');
+      return false;
     }
   }
 
@@ -46,6 +60,15 @@ class InspectionService {
     } catch (e) {
       print('Erro no serviço ao obter inspeções por veículo: $e');
       return [];
+    }
+  }
+
+  // Limpar o status das vistorias para um veículo
+  Future<void> clearInspectionStatus(String vehicleId) async {
+    try {
+      await _inspectionRepository.clearInspectionStatus(vehicleId);
+    } catch (e) {
+      print('InspectionService: Erro ao limpar status das vistorias: $e');
     }
   }
 }

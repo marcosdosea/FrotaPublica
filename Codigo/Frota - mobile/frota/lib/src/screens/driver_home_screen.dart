@@ -13,6 +13,7 @@ import 'inspection_selection_screen.dart';
 import 'maintenance_request_screen.dart';
 import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
+import '../services/inspection_service.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -26,24 +27,80 @@ class DriverHomeScreen extends StatefulWidget {
   State<DriverHomeScreen> createState() => _DriverHomeScreenState();
 }
 
-class _DriverHomeScreenState extends State<DriverHomeScreen> {
+class _DriverHomeScreenState extends State<DriverHomeScreen>
+    with WidgetsBindingObserver {
   // Estado para controlar quais vistorias já foram realizadas
   InspectionStatus inspectionStatus = InspectionStatus();
   late Vehicle _currentVehicle;
+  final InspectionService _inspectionService = InspectionService();
 
   @override
   void initState() {
     super.initState();
     _currentVehicle = widget.vehicle;
+    // Registrar observer para detectar mudanças no ciclo de vida da aplicação
+    WidgetsBinding.instance.addObserver(this);
     // Atualizar o veículo atual no provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vehicleProvider =
           Provider.of<VehicleProvider>(context, listen: false);
       vehicleProvider.setCurrentVehicle(_currentVehicle);
 
-      // Carregar percurso ativo
-      _loadActiveJourney();
+      // Carregar percurso ativo e verificar status das vistorias
+      _refreshData();
     });
+  }
+
+  @override
+  void dispose() {
+    // Cancelar o observer ao destruir o widget
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Não atualizar aqui para evitar múltiplas atualizações
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Quando o app volta para o foreground, atualizar dados
+    if (state == AppLifecycleState.resumed) {
+      _refreshData();
+    }
+  }
+
+  // Método para verificar o status das vistorias
+  Future<void> _checkInspectionStatus() async {
+    try {
+      // Verificar vistoria de saída
+      bool departureCompleted =
+          await _inspectionService.hasInspectionBeenCompleted(
+        _currentVehicle.id,
+        'S',
+      );
+
+      // Verificar vistoria de retorno
+      bool arrivalCompleted =
+          await _inspectionService.hasInspectionBeenCompleted(
+        _currentVehicle.id,
+        'R',
+      );
+
+      // Evitar atualização se o widget foi desmontado
+      if (mounted) {
+        setState(() {
+          inspectionStatus = InspectionStatus(
+            departureInspectionCompleted: departureCompleted,
+            arrivalInspectionCompleted: arrivalCompleted,
+          );
+        });
+      }
+    } catch (e) {
+      print('Erro ao verificar status das vistorias: $e');
+    }
   }
 
   Future<void> _loadActiveJourney() async {
@@ -53,6 +110,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     if (authProvider.currentUser != null) {
       await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+    }
+  }
+
+  // Método para atualizar todos os dados da tela
+  Future<void> _refreshData() async {
+    try {
+      // Carregar percurso ativo
+      await _loadActiveJourney();
+
+      // Verificar status das vistorias
+      await _checkInspectionStatus();
+    } catch (e) {
+      print('Erro ao atualizar dados: $e');
     }
   }
 
@@ -80,384 +150,414 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             child: Container(
               // Cor de fundo do conteúdo principal
               color: const Color(0xFFF5F5F5),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Blue header - agora parte do conteúdo scrollável
-                    Stack(
-                      clipBehavior: Clip
-                          .none, // Permite que o card ultrapasse os limites do Stack
-                      children: [
-                        // Blue header
-                        Container(
-                          width: double.infinity,
-                          height: 330.0, // Altura do header conforme o design
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color(0xFF116AD5),
-                                Color(0xFF116AD5),
-                                Color(0xFF004BA7)
-                              ],
-                              stops: [
-                                0.0,
-                                0.5,
-                                1.0
-                              ], // Constant color until 50%, then gradient
-                            ),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x29000000),
-                                offset: Offset(0, 3),
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.only(
-                              top: 60, left: 24, right: 24, bottom: 30),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Olá, Motorista!',
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              const Text(
-                                'Realize aqui todos os registros ao longo do percurso',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Card do veículo sobreposto ao header
-                        Positioned(
-                          left: 24,
-                          right: 24,
-                          bottom:
-                              -80, // Valor negativo para sobrepor o card ao header
-                          child: Card(
-                            color: Colors.white,
-                            elevation: 4,
-                            margin: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        _currentVehicle.model,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            'Placa: ',
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Text(
-                                            _currentVehicle.licensePlate,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 24),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF0066CC)
-                                                  .withOpacity(0.1),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(
-                                              Icons.bar_chart,
-                                              color: Color(0xFF0066CC),
-                                              size: 28,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            '${_currentVehicle.distanceTraveled ?? 0}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Color(0xFF0066CC),
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Km percorridos',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        width: 1,
-                                        height: 80,
-                                        color: Colors.grey[300],
-                                      ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF0066CC)
-                                                  .withOpacity(0.1),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(
-                                              Icons.local_gas_station,
-                                              color: Color(0xFF0066CC),
-                                              size: 28,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'R\$ ${_currentVehicle.fuelSpent?.toStringAsFixed(2) ?? '0.00'}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Color(0xFF0066CC),
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Abastecidos',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+              child: RefreshIndicator(
+                onRefresh: _refreshData,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      // Blue header - agora parte do conteúdo scrollável
+                      Stack(
+                        clipBehavior: Clip
+                            .none, // Permite que o card ultrapasse os limites do Stack
+                        children: [
+                          // Blue header
+                          Container(
+                            width: double.infinity,
+                            height: 330.0, // Altura do header conforme o design
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFF116AD5),
+                                  Color(0xFF116AD5),
+                                  Color(0xFF004BA7)
                                 ],
+                                stops: [
+                                  0.0,
+                                  0.5,
+                                  1.0
+                                ], // Constant color until 50%, then gradient
+                              ),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x29000000),
+                                  offset: Offset(0, 3),
+                                  blurRadius: 6,
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.only(
+                                top: 60, left: 24, right: 24, bottom: 30),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Olá, Motorista!',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'Realize aqui todos os registros ao longo do percurso',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Card do veículo sobreposto ao header
+                          Positioned(
+                            left: 24,
+                            right: 24,
+                            bottom:
+                                -80, // Valor negativo para sobrepor o card ao header
+                            child: Card(
+                              color: Colors.white,
+                              elevation: 4,
+                              margin: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _currentVehicle.model,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              'Placa: ',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Text(
+                                              _currentVehicle.licensePlate,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF0066CC)
+                                                    .withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.bar_chart,
+                                                color: Color(0xFF0066CC),
+                                                size: 28,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              '${_currentVehicle.distanceTraveled ?? 0}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Color(0xFF0066CC),
+                                              ),
+                                            ),
+                                            const Text(
+                                              'Km percorridos',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 1,
+                                          height: 80,
+                                          color: Colors.grey[300],
+                                        ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF0066CC)
+                                                    .withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.local_gas_station,
+                                                color: Color(0xFF0066CC),
+                                                size: 28,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              '${_currentVehicle.fuelSpent?.toStringAsFixed(2) ?? '00'} Litros',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Color(0xFF0066CC),
+                                              ),
+                                            ),
+                                            const Text(
+                                              'Abastecidos',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    // Espaço para compensar a sobreposição do card
-                    const SizedBox(height: 100),
+                      // Espaço para compensar a sobreposição do card
+                      const SizedBox(height: 100),
 
-                    // Card de percurso
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Consumer<JourneyProvider>(
-                        builder: (context, journeyProvider, child) {
-                          final journey = journeyProvider.activeJourney;
+                      // Card de percurso
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Consumer<JourneyProvider>(
+                          builder: (context, journeyProvider, child) {
+                            final journey = journeyProvider.activeJourney;
 
-                          if (journey == null) {
-                            // Caso não tenha percurso ativo, mostrar mensagem
-                            return const Card(
-                              color: Colors.white,
-                              elevation: 2,
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'Nenhum percurso ativo no momento',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
+                            if (journey == null) {
+                              // Caso não tenha percurso ativo, mostrar mensagem
+                              return const Card(
+                                color: Colors.white,
+                                elevation: 2,
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      'Nenhum percurso ativo no momento',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                              );
+                            }
+
+                            return JourneyCard(
+                              journey: journey,
+                              onTap: () {
+                                // Ação ao clicar no card - poderia mostrar detalhes
+                              },
                             );
-                          }
-
-                          return JourneyCard(
-                            journey: journey,
-                            onTap: () {
-                              // Ação ao clicar no card - poderia mostrar detalhes
-                            },
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Registros section
-                    Padding(
-                      padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-                      child: Row(
-                        children: const [
-                          Text(
-                            'Registros',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Horizontal scrollable list of action cards
-                    SizedBox(
-                      height: 120,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-                        children: [
-                          _buildActionCardHorizontal(
-                            icon: Icons.local_gas_station,
-                            title: 'Registrar\nAbastecimento',
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const FuelRegistrationScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionCardHorizontal(
-                            icon: Icons.checklist,
-                            title: 'Realizar Vistoria',
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const InspectionSelectionScreen(),
-                                ),
-                              ).then((value) {
-                                // Atualizar o estado se a vistoria foi realizada
-                                if (value != null &&
-                                    value is InspectionStatus) {
-                                  setState(() {
-                                    inspectionStatus = value;
-                                  });
-                                }
-                              });
-                            },
-                            hasNotification: !inspectionStatus
-                                    .departureInspectionCompleted ||
-                                !inspectionStatus.arrivalInspectionCompleted,
-                            isCompleted:
-                                inspectionStatus.departureInspectionCompleted &&
-                                    inspectionStatus.arrivalInspectionCompleted,
-                          ),
-                          _buildActionCardHorizontal(
-                            icon: Icons.build,
-                            title: 'Solicitar Manutenção',
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MaintenanceRequestScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionCardHorizontal(
-                            icon: Icons.cancel,
-                            title: 'Finalizar Percurso',
-                            onTap: () {
-                              _showFinishJourneyDialog();
-                            },
-                            iconColor: Colors.red,
-                            iconBgColor: Colors.red.withOpacity(0.1),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-                      child: Row(
-                        children: const [
-                          Text(
-                            'Lembretes',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Mostra os problemas de manutenção do veículo selecionado
-                    if (_currentVehicle.maintenanceIssues != null &&
-                        _currentVehicle.maintenanceIssues!.isNotEmpty)
-                      ..._currentVehicle.maintenanceIssues!
-                          .map((issue) => _buildReminderCard(
-                                title: issue,
-                                onTap: () {},
-                              ))
-                          .toList()
-                    else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0, vertical: 12.0),
-                        child: Center(
-                          child: Text(
-                            'Nenhum lembrete para este veículo',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
+                          },
                         ),
                       ),
 
-                    // Espaço extra no final para melhor scroll
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 24),
+
+                      // Registros section
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                        child: Row(
+                          children: const [
+                            Text(
+                              'Registros',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Horizontal scrollable list of action cards
+                      SizedBox(
+                        height: 120,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding:
+                              const EdgeInsets.only(left: 24.0, right: 24.0),
+                          children: [
+                            _buildActionCardHorizontal(
+                              icon: Icons.local_gas_station,
+                              title: 'Registrar\nAbastecimento',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FuelRegistrationScreen(
+                                      vehicleId: _currentVehicle.id,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildActionCardHorizontal(
+                              icon: Icons.checklist,
+                              title: 'Realizar Vistoria',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        InspectionSelectionScreen(
+                                      vehicleId: _currentVehicle.id,
+                                    ),
+                                  ),
+                                ).then((value) {
+                                  // Sempre atualizar os dados ao retornar da tela de inspeção
+                                  _refreshData();
+
+                                  // Além disso, atualizar o estado se a vistoria foi realizada
+                                  if (value != null &&
+                                      value is InspectionStatus) {
+                                    setState(() {
+                                      inspectionStatus = value;
+                                    });
+                                  }
+                                });
+                              },
+                              hasNotification: !inspectionStatus
+                                      .departureInspectionCompleted ||
+                                  !inspectionStatus.arrivalInspectionCompleted,
+                              isCompleted: inspectionStatus
+                                      .departureInspectionCompleted &&
+                                  inspectionStatus.arrivalInspectionCompleted,
+                            ),
+                            _buildActionCardHorizontal(
+                              icon: Icons.build,
+                              title: 'Solicitar Manutenção',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MaintenanceRequestScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildActionCardHorizontal(
+                              icon: Icons.cancel,
+                              title: 'Finalizar Percurso',
+                              onTap: () {
+                                // Verificar se ambas as vistorias foram realizadas
+                                if (!inspectionStatus
+                                        .departureInspectionCompleted ||
+                                    !inspectionStatus
+                                        .arrivalInspectionCompleted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'É necessário realizar ambas as vistorias antes de finalizar o percurso'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                _showFinishJourneyDialog();
+                              },
+                              iconColor: Colors.red,
+                              iconBgColor: Colors.red.withOpacity(0.1),
+                              // Desabilitar o botão se as vistorias não foram feitas
+                              isDisabled: !inspectionStatus
+                                      .departureInspectionCompleted ||
+                                  !inspectionStatus.arrivalInspectionCompleted,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                        child: Row(
+                          children: const [
+                            Text(
+                              'Lembretes',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Mostra os problemas de manutenção do veículo selecionado
+                      if (_currentVehicle.maintenanceIssues != null &&
+                          _currentVehicle.maintenanceIssues!.isNotEmpty)
+                        ..._currentVehicle.maintenanceIssues!
+                            .map((issue) => _buildReminderCard(
+                                  title: issue,
+                                  onTap: () {},
+                                ))
+                            .toList()
+                      else
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 12.0),
+                          child: Center(
+                            child: Text(
+                              'Nenhum lembrete para este veículo',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      // Espaço extra no final para melhor scroll
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -479,7 +579,40 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             duration: '1:34 h',
             distance: '23 km',
             onFinish: (int odometer) async {
-              // Lógica para finalizar a jornada com o odômetro informado
+              // Obter instância do InspectionService para limpar vistorias
+              final inspectionService = InspectionService();
+
+              // Finalizar o percurso usando o JourneyProvider
+              final journeyProvider =
+                  Provider.of<JourneyProvider>(context, listen: false);
+              final result = await journeyProvider.finishJourney(odometer);
+
+              if (result) {
+                // Limpar as vistorias salvas localmente
+                await inspectionService
+                    .clearInspectionStatus(_currentVehicle.id);
+
+                // Resetar o status das vistorias na tela
+                setState(() {
+                  inspectionStatus = InspectionStatus();
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Percurso finalizado com sucesso!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content:
+                        Text('Erro ao finalizar o percurso. Tente novamente.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+
               Navigator.pop(context);
             },
           ),
@@ -497,6 +630,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     Color iconBgColor = const Color(0xFFE3F2FD),
     bool hasNotification = false,
     bool isCompleted = false,
+    bool isDisabled = false,
   }) {
     return Container(
       width: 130,
@@ -508,7 +642,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(
-          onTap: isCompleted ? null : onTap,
+          onTap: isDisabled ? null : onTap,
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
@@ -525,7 +659,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       ),
                       child: Icon(
                         icon,
-                        color: isCompleted ? Colors.grey : iconColor,
+                        color: isDisabled ? Colors.grey : iconColor,
                         size: 24,
                       ),
                     ),
@@ -536,7 +670,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
-                        color: isCompleted ? Colors.grey : Colors.black87,
+                        color: isDisabled ? Colors.grey : Colors.black87,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

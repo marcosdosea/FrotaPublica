@@ -4,7 +4,8 @@ class MaintenanceRequestScreen extends StatefulWidget {
   const MaintenanceRequestScreen({super.key});
 
   @override
-  State<MaintenanceRequestScreen> createState() => _MaintenanceRequestScreenState();
+  State<MaintenanceRequestScreen> createState() =>
+      _MaintenanceRequestScreenState();
 }
 
 class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
@@ -24,7 +25,8 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
         children: [
           // Blue header with rounded bottom corners
           Container(
-            padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            padding:
+                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
             decoration: const BoxDecoration(
               color: Color(0xFF116AD5),
               borderRadius: BorderRadius.only(
@@ -96,12 +98,12 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF0066CC), width: 2),
+                        borderSide: const BorderSide(
+                            color: Color(0xFF0066CC), width: 2),
                       ),
                       contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
-
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,

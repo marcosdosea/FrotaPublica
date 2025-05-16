@@ -1,8 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/journey_provider.dart';
+import '../services/inspection_service.dart';
+import '../models/inspection_status.dart';
 import 'inspection_screen.dart';
 
-class InspectionSelectionScreen extends StatelessWidget {
-  const InspectionSelectionScreen({super.key});
+class InspectionSelectionScreen extends StatefulWidget {
+  final String vehicleId;
+
+  const InspectionSelectionScreen({
+    super.key,
+    required this.vehicleId,
+  });
+
+  @override
+  State<InspectionSelectionScreen> createState() =>
+      _InspectionSelectionScreenState();
+}
+
+class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
+  final InspectionService _inspectionService = InspectionService();
+  bool _isLoading = true;
+  bool _departureCompleted = false;
+  bool _arrivalCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInspectionStatus();
+  }
+
+  Future<void> _loadInspectionStatus() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Verificar se a vistoria de saída foi concluída
+      bool departureCompleted =
+          await _inspectionService.hasInspectionBeenCompleted(
+        widget.vehicleId,
+        'S',
+      );
+
+      // Verificar se a vistoria de chegada foi concluída
+      bool arrivalCompleted =
+          await _inspectionService.hasInspectionBeenCompleted(
+        widget.vehicleId,
+        'R',
+      );
+
+      if (mounted) {
+        setState(() {
+          _departureCompleted = departureCompleted;
+          _arrivalCompleted = arrivalCompleted;
+          _isLoading = false;
+        });
+
+        // Se ambas as vistorias estiverem completadas, enviar status atualizado para tela principal
+        _checkAndReturnStatus();
+      }
+    } catch (e) {
+      print('Erro ao verificar status das vistorias: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _checkAndReturnStatus() {
+    // Se as duas vistorias foram completadas, retornar para a tela principal
+    if (_departureCompleted && _arrivalCompleted) {
+      // Mostrar mensagem ao usuário
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Todas as vistorias foram concluídas!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Pequeno atraso para garantir que a UI seja atualizada antes de retornar
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (mounted) {
+          Navigator.pop(
+              context,
+              InspectionStatus(
+                departureInspectionCompleted: true,
+                arrivalInspectionCompleted: true,
+              ));
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +103,8 @@ class InspectionSelectionScreen extends StatelessWidget {
         children: [
           // Blue header with rounded bottom corners
           Container(
-            padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            padding:
+                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
             decoration: const BoxDecoration(
               color: Color(0xFF116AD5),
               borderRadius: BorderRadius.only(
@@ -53,64 +145,100 @@ class InspectionSelectionScreen extends StatelessWidget {
           ),
 
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Vistoria de Saída',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF0066CC),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildInspectionCard(
-                    context: context,
-                    title: 'Registrar',
-                    isCompleted: false,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const InspectionScreen(
-                            title: 'Vistoria de Saída',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: _loadInspectionStatus,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Se não houver nenhuma vistoria para fazer
+                          if (_departureCompleted && _arrivalCompleted)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 40),
+                                child: Text(
+                                  'Todas as vistorias foram concluídas!',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
 
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Vistoria de Chegada',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF0066CC),
-                      fontWeight: FontWeight.w500,
+                          // Vistoria de Saída
+                          if (!_departureCompleted) ...[
+                            const Text(
+                              'Vistoria de Saída',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF0066CC),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInspectionCard(
+                              context: context,
+                              title: 'Registrar',
+                              isCompleted: _departureCompleted,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InspectionScreen(
+                                      title: 'Vistoria de Saída',
+                                      vehicleId: widget.vehicleId,
+                                      type: 'S',
+                                    ),
+                                  ),
+                                ).then((_) {
+                                  // Recarregar status após retornar
+                                  _loadInspectionStatus();
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+
+                          // Vistoria de Chegada
+                          if (!_arrivalCompleted) ...[
+                            const Text(
+                              'Vistoria de Chegada',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF0066CC),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildInspectionCard(
+                              context: context,
+                              title: 'Registrar',
+                              isCompleted: _arrivalCompleted,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InspectionScreen(
+                                      title: 'Vistoria de Chegada',
+                                      vehicleId: widget.vehicleId,
+                                      type: 'R',
+                                    ),
+                                  ),
+                                ).then((_) {
+                                  // Recarregar status após retornar
+                                  _loadInspectionStatus();
+                                });
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  _buildInspectionCard(
-                    context: context,
-                    title: 'Registrar',
-                    isCompleted: false,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const InspectionScreen(
-                            title: 'Vistoria de Chegada',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -147,15 +275,15 @@ class InspectionSelectionScreen extends StatelessWidget {
               ),
               isCompleted
                   ? const Icon(
-                Icons.check_circle,
-                color: Color(0xFF0066CC),
-                size: 24,
-              )
+                      Icons.check_circle,
+                      color: Color(0xFF0066CC),
+                      size: 24,
+                    )
                   : const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey,
-                size: 16,
-              ),
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey,
+                      size: 16,
+                    ),
             ],
           ),
         ),

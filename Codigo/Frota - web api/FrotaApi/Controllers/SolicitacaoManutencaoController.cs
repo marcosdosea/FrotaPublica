@@ -33,11 +33,9 @@ namespace FrotaApi.Controllers
         {
             public uint IdVeiculo { get; set; }
             public string Descricao { get; set; }
-            public string Prioridade { get; set; }
-            public string? TipoManutencao { get; set; }
         }
 
-        [HttpPost]
+        [HttpPost("registrar")]
         public ActionResult CriarSolicitacaoManutencao([FromBody] CriarSolicitacaoManutencaoModel model)
         {
             try

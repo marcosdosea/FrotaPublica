@@ -35,6 +35,7 @@ namespace FrotaApi.Controllers
         public class RegistrarAbastecimentoModel
         {
             public uint IdVeiculo { get; set; }
+            public uint IdFornecedor { get; set; }
             public DateTime Data { get; set; }
             public decimal ValorLitro { get; set; }
             public decimal Litros { get; set; }
@@ -118,6 +119,12 @@ namespace FrotaApi.Controllers
                     return NotFound("Veículo não encontrado");
                 }
 
+                // Verificar se o fornecedor foi informado
+                if (model.IdFornecedor == 0)
+                {
+                    return BadRequest("É necessário selecionar um posto de combustível");
+                }
+
                 // Verificar se está em percurso com este veículo
                 var percursoAtual = _percursoService.ObterPercursosAtualDoMotorista((int)idPessoa);
                 if (percursoAtual == null || percursoAtual.IdVeiculo != model.IdVeiculo)
@@ -125,26 +132,28 @@ namespace FrotaApi.Controllers
                     return BadRequest("Você não está em um percurso ativo com este veículo");
                 }
 
-                // Atualizar o odômetro do veículo, se necessário
+                // Validar se o odômetro informado não é menor que o atual
                 int kmAtual = (int)model.KmAtual;
-                if (veiculo.Odometro < kmAtual)
+                if (veiculo.Odometro >= kmAtual)
                 {
-                    _veiculoService.AtualizarOdometroVeiculo(model.IdVeiculo, kmAtual);
+                    return BadRequest($"O odômetro informado ({kmAtual} km) não pode ser menor ou igual ao odômetro atual do veículo ({veiculo.Odometro} km)");
                 }
 
                 // Criar o abastecimento
                 var abastecimento = new Abastecimento
                 {
                     IdVeiculo = model.IdVeiculo,
+                    IdFornecedor = model.IdFornecedor,
                     IdPessoa = idPessoa,
                     IdFrota = veiculo.IdFrota,
                     DataHora = model.Data,
                     Litros = model.Litros,
-                    Odometro = (int)model.KmAtual
+                    Odometro = kmAtual
                 };
 
                 uint idAbastecimento = _abastecimentoService.Create(abastecimento);
                 abastecimento.Id = idAbastecimento;
+                _veiculoService.AtualizarOdometroVeiculo(model.IdVeiculo, kmAtual);
 
                 return Ok(new
                 {

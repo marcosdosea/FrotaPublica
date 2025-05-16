@@ -4,17 +4,17 @@ import '../services/fuel_service.dart';
 
 class FuelProvider with ChangeNotifier {
   final FuelService _fuelService = FuelService();
-  
+
   List<FuelRefill> _vehicleRefills = [];
   double _totalCost = 0.0;
   bool _isLoading = false;
   String? _error;
-  
+
   List<FuelRefill> get vehicleRefills => _vehicleRefills;
   double get totalCost => _totalCost;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  
+
   // Registrar abastecimento
   Future<FuelRefill?> registerFuelRefill({
     required String journeyId,
@@ -27,7 +27,7 @@ class FuelProvider with ChangeNotifier {
   }) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final refill = await _fuelService.registerFuelRefill(
         journeyId: journeyId,
@@ -38,14 +38,14 @@ class FuelProvider with ChangeNotifier {
         totalCost: totalCost,
         odometerReading: odometerReading,
       );
-      
+
       if (refill != null) {
         _vehicleRefills.add(refill);
         _error = null;
       } else {
         _error = 'Não foi possível registrar o abastecimento';
       }
-      
+
       return refill;
     } catch (e) {
       _error = e.toString();
@@ -55,12 +55,12 @@ class FuelProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Carregar abastecimentos para um veículo
   Future<void> loadVehicleRefills(String vehicleId) async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       _vehicleRefills = await _fuelService.getFuelRefillsForVehicle(vehicleId);
       _totalCost = await _fuelService.getTotalFuelCostForVehicle(vehicleId);
@@ -72,7 +72,7 @@ class FuelProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Limpar erro
   void clearError() {
     _error = null;

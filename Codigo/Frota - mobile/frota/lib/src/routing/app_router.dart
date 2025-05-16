@@ -15,9 +15,6 @@ class AppRouter {
     '/login': (context) => const LoginScreen(),
     '/available_vehicles': (context) => const AvailableVehiclesScreen(),
     '/exit_registration': (context) => const ExitRegistrationScreen(),
-    '/fuel_registration': (context) => const FuelRegistrationScreen(),
-    '/inspection': (context) => const InspectionScreen(title: 'Vistoria'),
-    '/inspection_selection': (context) => const InspectionSelectionScreen(),
     '/maintenance_request': (context) => const MaintenanceRequestScreen(),
     '/presentation': (context) => const PresentationScreen(),
   };
