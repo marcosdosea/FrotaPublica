@@ -14,6 +14,7 @@ import 'maintenance_request_screen.dart';
 import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
 import '../services/inspection_service.dart';
+import '../providers/fuel_provider.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -118,6 +119,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     try {
       // Carregar percurso ativo
       await _loadActiveJourney();
+
+      // Atualizar o veículo atual
+      final vehicleProvider =
+          Provider.of<VehicleProvider>(context, listen: false);
+      final updatedVehicle =
+          await vehicleProvider.getVehicleById(_currentVehicle.id);
+      if (updatedVehicle != null) {
+        setState(() {
+          _currentVehicle = updatedVehicle;
+        });
+        vehicleProvider.setCurrentVehicle(updatedVehicle);
+      }
+
+      // Carregar abastecimentos do veículo
+      final fuelProvider = Provider.of<FuelProvider>(context, listen: false);
+      await fuelProvider.loadVehicleRefills(_currentVehicle.id);
 
       // Verificar status das vistorias
       await _checkInspectionStatus();
@@ -288,16 +305,39 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                               ),
                                             ),
                                             const SizedBox(height: 8),
-                                            Text(
-                                              '${_currentVehicle.distanceTraveled ?? 0}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Color(0xFF0066CC),
-                                              ),
+                                            Consumer2<JourneyProvider,
+                                                VehicleProvider>(
+                                              builder: (context,
+                                                  journeyProvider,
+                                                  vehicleProvider,
+                                                  child) {
+                                                final journey = journeyProvider
+                                                    .activeJourney;
+                                                final currentVehicle =
+                                                    vehicleProvider
+                                                            .currentVehicle ??
+                                                        _currentVehicle;
+                                                final odometerDifference =
+                                                    journey != null
+                                                        ? (currentVehicle
+                                                                    .odometer ??
+                                                                0) -
+                                                            (journey.initialOdometer ??
+                                                                0)
+                                                        : 0;
+
+                                                return Text(
+                                                  '${odometerDifference} Km',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Color(0xFF0066CC),
+                                                  ),
+                                                );
+                                              },
                                             ),
                                             const Text(
-                                              'Km percorridos',
+                                              'Percorridos',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey,
@@ -327,13 +367,46 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                               ),
                                             ),
                                             const SizedBox(height: 8),
-                                            Text(
-                                              '${_currentVehicle.fuelSpent?.toStringAsFixed(2) ?? '00'} Litros',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Color(0xFF0066CC),
-                                              ),
+                                            Consumer2<JourneyProvider,
+                                                FuelProvider>(
+                                              builder: (context,
+                                                  journeyProvider,
+                                                  fuelProvider,
+                                                  child) {
+                                                final journey = journeyProvider
+                                                    .activeJourney;
+                                                double totalLiters = 0.0;
+
+                                                if (journey != null) {
+                                                  // Filtrar apenas os abastecimentos do percurso atual
+                                                  final journeyRefills =
+                                                      fuelProvider
+                                                          .vehicleRefills
+                                                          .where((refill) =>
+                                                              refill
+                                                                  .journeyId ==
+                                                              journey.id)
+                                                          .toList();
+
+                                                  // Somar os litros de todos os abastecimentos
+                                                  totalLiters = journeyRefills
+                                                      .fold(
+                                                          0.0,
+                                                          (sum, refill) =>
+                                                              sum +
+                                                              (refill.liters ??
+                                                                  0.0));
+                                                }
+
+                                                return Text(
+                                                  '${totalLiters.toStringAsFixed(2)} L',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Color(0xFF0066CC),
+                                                  ),
+                                                );
+                                              },
                                             ),
                                             const Text(
                                               'Abastecidos',
@@ -476,7 +549,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const MaintenanceRequestScreen(),
+                                        MaintenanceRequestScreen(
+                                      vehicleId: _currentVehicle.id,
+                                    ),
                                   ),
                                 );
                               },

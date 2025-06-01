@@ -1,9 +1,4 @@
-enum MaintenanceStatus {
-  pending,
-  inProgress,
-  completed,
-  rejected
-}
+import 'dart:convert';
 
 class MaintenanceRequest {
   final String id;
@@ -11,7 +6,7 @@ class MaintenanceRequest {
   final String driverId;
   final String description;
   final DateTime timestamp;
-  final MaintenanceStatus status;
+  final String status;
   final String? technicianNotes;
   final DateTime? completionDate;
 
@@ -28,15 +23,15 @@ class MaintenanceRequest {
 
   factory MaintenanceRequest.fromJson(Map<String, dynamic> json) {
     return MaintenanceRequest(
-      id: json['id'],
-      vehicleId: json['vehicle_id'],
-      driverId: json['driver_id'],
-      description: json['description'],
-      timestamp: DateTime.parse(json['timestamp']),
-      status: MaintenanceStatus.values.byName(json['status']),
-      technicianNotes: json['technician_notes'],
-      completionDate: json['completion_date'] != null
-          ? DateTime.parse(json['completion_date'])
+      id: json['id'].toString(),
+      vehicleId: json['idVeiculo'].toString(),
+      driverId: json['idPessoa'].toString(),
+      description: json['descricaoProblema'],
+      timestamp: DateTime.parse(json['dataSolicitacao']),
+      status: json['status'] ?? 'Pendente',
+      technicianNotes: json['observacoesTecnico'],
+      completionDate: json['dataConclusao'] != null
+          ? DateTime.parse(json['dataConclusao'])
           : null,
     );
   }
@@ -44,13 +39,13 @@ class MaintenanceRequest {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'vehicle_id': vehicleId,
-      'driver_id': driverId,
-      'description': description,
-      'timestamp': timestamp.toIso8601String(),
-      'status': status.name,
-      'technician_notes': technicianNotes,
-      'completion_date': completionDate?.toIso8601String(),
+      'idVeiculo': int.parse(vehicleId),
+      'idPessoa': int.parse(driverId),
+      'descricaoProblema': description,
+      'dataSolicitacao': timestamp.toIso8601String(),
+      'status': status,
+      'observacoesTecnico': technicianNotes,
+      'dataConclusao': completionDate?.toIso8601String(),
     };
   }
 }

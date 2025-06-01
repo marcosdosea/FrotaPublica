@@ -15,7 +15,11 @@ class AppRouter {
     '/login': (context) => const LoginScreen(),
     '/available_vehicles': (context) => const AvailableVehiclesScreen(),
     '/exit_registration': (context) => const ExitRegistrationScreen(),
-    '/maintenance_request': (context) => const MaintenanceRequestScreen(),
+    '/maintenance_request': (context) {
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      return MaintenanceRequestScreen(vehicleId: args['vehicleId']);
+    },
     '/presentation': (context) => const PresentationScreen(),
   };
 

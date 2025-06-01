@@ -7,42 +7,36 @@ class MaintenanceService {
   // Criar solicitação de manutenção
   Future<MaintenanceRequest?> createMaintenanceRequest({
     required String vehicleId,
-    required String driverId,
     required String description,
   }) async {
     try {
-      return await _maintenanceRepository.createMaintenanceRequest(
+      return await _maintenanceRepository.registerMaintenanceRequest(
         vehicleId: vehicleId,
-        driverId: driverId,
         description: description,
       );
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
+      print('Erro ao criar solicitação de manutenção: $e');
       return null;
     }
   }
 
-  // Obter solicitações para um veículo
-  Future<List<MaintenanceRequest>> getMaintenanceRequestsForVehicle(
-      String vehicleId) async {
+  // Obter solicitações do motorista
+  Future<List<MaintenanceRequest>> getMaintenanceRequests() async {
     try {
-      return await _maintenanceRepository
-          .getMaintenanceRequestsForVehicle(vehicleId);
+      return await _maintenanceRepository.getMaintenanceRequests();
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
+      print('Erro ao obter solicitações de manutenção: $e');
       return [];
     }
   }
 
-  // Obter solicitações para um motorista
-  Future<List<MaintenanceRequest>> getMaintenanceRequestsForDriver(
-      String driverId) async {
+  // Obter uma solicitação específica
+  Future<MaintenanceRequest?> getMaintenanceRequest(String id) async {
     try {
-      return await _maintenanceRepository
-          .getMaintenanceRequestsForDriver(driverId);
+      return await _maintenanceRepository.getMaintenanceRequest(id);
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
-      return [];
+      print('Erro ao obter solicitação de manutenção: $e');
+      return null;
     }
   }
 }
