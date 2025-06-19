@@ -157,9 +157,9 @@ namespace FrotaApi.Controllers
 
                 return Ok(new
                 {
-                    Message = "Abastecimento registrado com sucesso",
-                    IdAbastecimento = idAbastecimento,
-                    Abastecimento = abastecimento
+                    message = "Abastecimento registrado com sucesso",
+                    idAbastecimento = idAbastecimento,
+                    abastecimento = abastecimento
                 });
             }
             catch (Exception ex)

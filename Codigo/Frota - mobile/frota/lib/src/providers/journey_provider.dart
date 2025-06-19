@@ -85,10 +85,7 @@ class JourneyProvider with ChangeNotifier {
         finalOdometer: finalOdometer,
       );
 
-      if (journey != null) {
-        _activeJourney = null;
-        _error = null;
-        await loadJourneyHistory(_activeJourney!.driverId);
+      if (journey == true) {
         return true;
       } else {
         _error = 'Não foi possível finalizar a jornada';

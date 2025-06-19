@@ -218,6 +218,22 @@ namespace Service
             Edit(veiculo);
             return true;
         }
+
+        public bool VeiculoSendoUsado(uint idVeiculo, bool statusUso)
+        {
+            var veiulo = context.Veiculos.Find(idVeiculo);
+            veiulo.Status = statusUso ? "U" : "D";
+            try
+            {
+
+                Edit(veiulo);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
 

@@ -50,6 +50,9 @@ class VehicleRepository {
             print(
                 'ID: ${vehicleJson['id']}, Modelo: ${vehicleJson['idModeloVeiculo']}, Status: ${vehicleJson['status']}');
 
+            // Converter o ID para string antes de criar o objeto Vehicle
+            vehicleJson['id'] = vehicleJson['id'].toString();
+
             final vehicle = Vehicle.fromJson(vehicleJson);
 
             // Buscar o nome do modelo do veículo

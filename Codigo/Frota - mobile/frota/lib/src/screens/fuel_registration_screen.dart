@@ -144,6 +144,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
 
       // Independentemente do valor de result, a operação foi bem-sucedida já que não lançou exceção
       Navigator.pop(context, true); // Retorna sucesso
+      await _fuelService.addLitersToJourneyTotal(_journeyId!, liters);
       _showSuccessMessage('Abastecimento registrado com sucesso!');
     } catch (e) {
       print('Exceção capturada ao registrar abastecimento: $e');

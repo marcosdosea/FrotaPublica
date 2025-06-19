@@ -27,7 +27,7 @@ class Vehicle {
     this.unidadeAdministrativaId,
   });
 
-  factory Vehicle.fromJson(Map<String, dynamic> json) {
+  factory Vehicle.fromJson(dynamic json) {
     try {
       // Log para depuração
       print(
@@ -42,46 +42,70 @@ class Vehicle {
       final String veiculoId = json['id']?.toString() ?? '';
       print('ID do veículo: $veiculoId');
 
-      // Tratamento para o modelo do veículo
-      String modelo = '';
-      if (json['model'] != null) {
-        modelo = json['model'];
-      } else if (json['modelo'] != null) {
-        modelo = json['modelo'];
-      } else if (json['idModeloVeiculoNavigation'] != null &&
-          json['idModeloVeiculoNavigation'] is Map &&
-          json['idModeloVeiculoNavigation']['descricao'] != null) {
-        modelo = json['idModeloVeiculoNavigation']['descricao'];
-      } else {
-        // Tentativa de identificar modelo pelo ID
-        final modeloId = json['idModeloVeiculo']?.toString() ?? '';
-        if (modeloId.isNotEmpty) {
-          modelo = 'Modelo ID: $modeloId';
-        } else {
-          modelo = 'Modelo desconhecido';
-        }
-      }
-      print('Modelo do veículo: $modelo');
-
       // Tratamento para a placa
       final String placa =
           json['license_plate'] ?? json['placa'] ?? 'Sem placa';
       print('Placa do veículo: $placa');
 
-      // Tratamento para o odômetro
-      final int odometro =
-          json['odometer'] ?? json['odometro'] ?? json['kmAtual'] ?? 0;
+      // CORREÇÃO: Tratamento correto para o odômetro
+      int odometro = 0;
+
+      // Primeiro, tenta pegar diretamente do campo 'odometro'
+      if (json['odometro'] != null) {
+        if (json['odometro'] is int) {
+          odometro = json['odometro'];
+        } else {
+          odometro = int.tryParse(json['odometro'].toString()) ?? 0;
+        }
+      }
+      // Se não encontrar 'odometro', tenta outros possíveis nomes de campo
+      else if (json['odometer'] != null) {
+        if (json['odometer'] is int) {
+          odometro = json['odometer'];
+        } else {
+          odometro = int.tryParse(json['odometer'].toString()) ?? 0;
+        }
+      }
+
       print('Odômetro do veículo: $odometro');
+
+      // Tratamento para o modelo do veículo
+      String modelo = '';
+      print('DEBUG - Campos disponíveis: ${json.keys.toList()}');
+
+      if (json['model'] != null) {
+        modelo = json['model'].toString();
+        print('DEBUG - Modelo encontrado em "model": $modelo');
+      } else if (json['modelo'] != null) {
+        modelo = json['modelo'].toString();
+        print('DEBUG - Modelo encontrado em "modelo": $modelo');
+      } else if (json['idModeloVeiculoNavigation'] != null &&
+          json['idModeloVeiculoNavigation'] is Map &&
+          json['idModeloVeiculoNavigation']['descricao'] != null) {
+        modelo = json['idModeloVeiculoNavigation']['descricao'];
+        print('DEBUG - Modelo encontrado em navigation: $modelo');
+      } else {
+        // Tentativa de identificar modelo pelo ID
+        final modeloId = json['idModeloVeiculo']?.toString() ?? '';
+        if (modeloId.isNotEmpty) {
+          modelo = 'Modelo ID: $modeloId';
+          print('DEBUG - Modelo criado com ID: $modelo');
+        } else {
+          modelo = 'Modelo desconhecido';
+          print('DEBUG - Modelo desconhecido');
+        }
+      }
+      print('Modelo do veículo: $modelo');
 
       return Vehicle(
         id: veiculoId,
         model: modelo,
         licensePlate: placa,
-        odometer: odometro,
+        odometer: odometro, // Usando a variável corrigida
         imageUrl: json['image_url'] ?? json['fotoUrl'],
         isAvailable: json['is_available'] ?? json['disponivel'] ?? disponivel,
         currentDriverId:
-            json['current_driver_id'] ?? json['motoristaAtualId']?.toString(),
+        json['current_driver_id'] ?? json['motoristaAtualId']?.toString(),
         maintenanceIssues: json['maintenance_issues'] != null
             ? List<String>.from(json['maintenance_issues'])
             : null,
@@ -110,51 +134,21 @@ class Vehicle {
     }
   }
 
-  // Método auxiliar para converter para double com segurança
+  // Métodos auxiliares para parsing seguro
   static double? _parseDouble(dynamic value) {
     if (value == null) return null;
     if (value is double) return value;
     if (value is int) return value.toDouble();
-    if (value is String) {
-      try {
-        return double.parse(value);
-      } catch (_) {
-        return null;
-      }
-    }
+    if (value is String) return double.tryParse(value);
     return null;
   }
 
-  // Método auxiliar para converter para int com segurança
   static int? _parseInt(dynamic value) {
     if (value == null) return null;
     if (value is int) return value;
     if (value is double) return value.toInt();
-    if (value is String) {
-      try {
-        return int.parse(value);
-      } catch (_) {
-        return null;
-      }
-    }
+    if (value is String) return int.tryParse(value);
     return null;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'model': model,
-      'license_plate': licensePlate,
-      'odometer': odometer,
-      'image_url': imageUrl,
-      'is_available': isAvailable,
-      'current_driver_id': currentDriverId,
-      'maintenance_issues': maintenanceIssues,
-      'fuel_spent': fuelSpent,
-      'distance_traveled': distanceTraveled,
-      'fuel_efficiency': fuelEfficiency,
-      'unidadeAdministrativaId': unidadeAdministrativaId,
-    };
   }
 
   Vehicle copyWith({
@@ -184,7 +178,7 @@ class Vehicle {
       distanceTraveled: distanceTraveled ?? this.distanceTraveled,
       fuelEfficiency: fuelEfficiency ?? this.fuelEfficiency,
       unidadeAdministrativaId:
-          unidadeAdministrativaId ?? this.unidadeAdministrativaId,
+      unidadeAdministrativaId ?? this.unidadeAdministrativaId,
     );
   }
 }

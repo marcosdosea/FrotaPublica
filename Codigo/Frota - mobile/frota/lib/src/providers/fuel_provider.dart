@@ -9,11 +9,13 @@ class FuelProvider with ChangeNotifier {
   double _totalCost = 0.0;
   bool _isLoading = false;
   String? _error;
+  double _totalLitersForJourney = 0.0;
 
   List<FuelRefill> get vehicleRefills => _vehicleRefills;
   double get totalCost => _totalCost;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  double get totalLitersForJourney => _totalLitersForJourney;
 
   // Registrar abastecimento
   Future<FuelRefill?> registerFuelRefill({
@@ -77,5 +79,33 @@ class FuelProvider with ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  // Obter total de litros abastecidos para o percurso
+  Future<void> loadTotalLitersForJourney(String journeyId) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _totalLitersForJourney =
+          await _fuelService.getTotalLitersForJourney(journeyId);
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+      _totalLitersForJourney = 0.0;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Zerar total de litros abastecidos para o percurso
+  Future<void> clearTotalLitersForJourney(String journeyId) async {
+    try {
+      await _fuelService.clearTotalLitersForJourney(journeyId);
+      _totalLitersForJourney = 0.0;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+    }
   }
 }

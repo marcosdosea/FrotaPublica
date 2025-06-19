@@ -78,7 +78,7 @@ class JourneyRepository {
   }
 
   // Finalizar uma jornada
-  Future<Journey?> finishJourney({
+  Future<bool> finishJourney({
     required String journeyId,
     required int finalOdometer,
   }) async {
@@ -92,14 +92,17 @@ class JourneyRepository {
 
         if (journeyResponse.statusCode == 200) {
           final journeyData = jsonDecode(journeyResponse.body);
-          return Journey.fromJson(journeyData);
+          return true;
+        }
+        else{
+          return false;
         }
       }
-
-      return null;
+      else{
+        return false;
+      }
     } catch (e) {
-      print('Erro ao finalizar jornada: $e');
-      return null;
+      return false;
     }
   }
 

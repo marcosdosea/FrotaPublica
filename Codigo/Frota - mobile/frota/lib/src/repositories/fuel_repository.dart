@@ -1,10 +1,14 @@
 import 'dart:convert';
 import '../models/fuel_refill.dart';
 import '../utils/api_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FuelRepository {
   // Lista de abastecimentos mockados (manter para compatibilidade com funções existentes)
   final List<FuelRefill> _mockFuelRefills = [];
+
+  // Chave base para armazenamento local do total de litros abastecidos por percurso
+  static const String _totalLitersKey = 'total_liters_journey_';
 
   // Registrar um novo abastecimento na API
   Future<FuelRefill?> registerFuelRefill({
@@ -31,6 +35,9 @@ class FuelRepository {
       if (response.statusCode == 200) {
         print('Abastecimento registrado com sucesso: ${response.body}');
         final data = jsonDecode(response.body);
+
+        // Persistir o total de litros abastecidos para o percurso
+        await addLitersToJourneyTotal(journeyId, liters);
 
         // Extrair o ID do abastecimento da resposta JSON
         String abastecimentoId;
@@ -74,6 +81,9 @@ class FuelRepository {
 
         // Adicionar ao cache local para compatibilidade com outras funções
         _mockFuelRefills.add(newFuelRefill);
+
+
+
         return newFuelRefill;
       } else {
         final errorResponse = response.body;
@@ -96,6 +106,41 @@ class FuelRepository {
     } catch (e) {
       print('Exceção ao registrar abastecimento: $e');
       rethrow; // Propagar a exceção para que seja tratada na UI
+    }
+  }
+
+  // Adiciona litros ao total persistido para o percurso
+  Future<void> addLitersToJourneyTotal(String journeyId, double liters) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = '$_totalLitersKey$journeyId';
+      final current = prefs.getDouble(key) ?? 0.0;
+      await prefs.setDouble(key, current + liters);
+    } catch (e) {
+      print('Erro ao somar litros ao total do percurso: $e');
+    }
+  }
+
+  // Obtém o total de litros abastecidos para o percurso
+  Future<double> getTotalLitersForJourney(String journeyId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = '$_totalLitersKey$journeyId';
+      return prefs.getDouble(key) ?? 0.0;
+    } catch (e) {
+      print('Erro ao obter total de litros do percurso: $e');
+      return 0.0;
+    }
+  }
+
+  // Zera o total de litros abastecidos para o percurso
+  Future<void> clearTotalLitersForJourney(String journeyId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final key = '$_totalLitersKey$journeyId';
+      await prefs.remove(key);
+    } catch (e) {
+      print('Erro ao zerar total de litros do percurso: $e');
     }
   }
 

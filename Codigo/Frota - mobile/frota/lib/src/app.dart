@@ -64,21 +64,30 @@ class _AppContentState extends State<AppContent> {
     // Verificar a cada 5 minutos se o token está válido
     _tokenRefreshTimer =
         Timer.periodic(const Duration(minutes: 5), (timer) async {
-      print('Verificando validade do token...');
-      if (mounted) {
-        final isTokenExpired = await ApiClient.isTokenExpired();
-        if (isTokenExpired) {
-          print('Token está expirado. Tentando renovar...');
-          final authProvider =
-              Provider.of<AuthProvider>(context, listen: false);
-          if (authProvider.isAuthenticated) {
-            await authProvider.refreshToken();
+          print('Verificando validade do token...');
+          if (mounted) {
+            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+            // Primeiro verifica se ainda está autenticado
+            if (!authProvider.isAuthenticated) {
+              print('Usuário não está autenticado. Parando verificação de token.');
+              return;
+            }
+
+            // Usar o método checkAuthenticationStatus que já lida com toda a lógica
+            final isStillAuthenticated = await authProvider.checkAuthenticationStatus();
+
+            if (!isStillAuthenticated) {
+              print('Autenticação perdida. Navegando para login...');
+              // Navegar para tela de login se necessário
+              if (mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              }
+            } else {
+              print('Token ainda é válido. Usuário continua autenticado.');
+            }
           }
-        } else {
-          print('Token ainda é válido.');
-        }
-      }
-    });
+        });
   }
 
   Future<void> _initializeApp() async {
@@ -88,13 +97,13 @@ class _AppContentState extends State<AppContent> {
     if (authProvider.isAuthenticated) {
       // Se o usuário estiver autenticado, verifica se há uma jornada ativa
       final journeyProvider =
-          Provider.of<JourneyProvider>(context, listen: false);
+      Provider.of<JourneyProvider>(context, listen: false);
       await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
 
       if (journeyProvider.hasActiveJourney) {
         // Se houver uma jornada ativa, carrega o veículo dessa jornada
         final vehicleProvider =
-            Provider.of<VehicleProvider>(context, listen: false);
+        Provider.of<VehicleProvider>(context, listen: false);
         final vehicle = await vehicleProvider
             .getVehicleById(journeyProvider.activeJourney!.vehicleId);
 
@@ -107,56 +116,62 @@ class _AppContentState extends State<AppContent> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Frota App',
-      theme: AppTheme.lightTheme,
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppRouter.initialRoute,
-      routes: AppRouter.routes,
-      onGenerateRoute: (settings) {
-        // Intercepta a navegação para verificar se é necessário redirecionar
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        return MaterialApp(
+          title: 'Frota App',
+          theme: AppTheme.lightTheme,
+          debugShowCheckedModeBanner: false,
+          initialRoute: AppRouter.initialRoute,
+          routes: AppRouter.routes,
+          onGenerateRoute: (settings) {
+            // Intercepta a navegação para verificar se é necessário redirecionar
 
-        if (!authProvider.isAuthenticated &&
-            settings.name != '/login' &&
-            settings.name != '/presentation') {
-          // Se não estiver autenticado e não estiver indo para login ou apresentação, redireciona para login
-          return MaterialPageRoute(builder: (_) => const LoginScreen());
-        }
+            // Se não estiver autenticado e não estiver indo para login ou apresentação
+            if (!authProvider.isAuthenticated &&
+                settings.name != '/login' &&
+                settings.name != '/presentation') {
+              print('Usuário não autenticado. Redirecionando para login.');
+              return MaterialPageRoute(builder: (_) => const LoginScreen());
+            }
 
-        if (authProvider.isAuthenticated) {
-          final journeyProvider =
+            if (authProvider.isAuthenticated) {
+              final journeyProvider =
               Provider.of<JourneyProvider>(context, listen: false);
-          final vehicleProvider =
+              final vehicleProvider =
               Provider.of<VehicleProvider>(context, listen: false);
 
-          // Se estiver tentando ir para veículos disponíveis enquanto existe percurso ativo, redireciona
-          if (settings.name == '/available_vehicles' &&
-              journeyProvider.hasActiveJourney) {
-            // Precisamos garantir que temos o veículo antes de redirecionar
-            if (vehicleProvider.hasCurrentVehicle) {
-              return MaterialPageRoute(
-                builder: (_) =>
-                    DriverHomeScreen(vehicle: vehicleProvider.currentVehicle!),
-              );
-            } else {
-              // Caso não tenha o veículo carregado, direciona para a tela de apresentação
-              // que vai iniciar o carregamento do veículo corretamente
-              return MaterialPageRoute(
-                  builder: (_) => const PresentationScreen());
+              // Se estiver tentando ir para veículos disponíveis enquanto existe percurso ativo, redireciona
+              if (settings.name == '/available_vehicles' &&
+                  journeyProvider.hasActiveJourney) {
+                print('Jornada ativa encontrada. Redirecionando para DriverHomeScreen.');
+                // Precisamos garantir que temos o veículo antes de redirecionar
+                if (vehicleProvider.hasCurrentVehicle) {
+                  return MaterialPageRoute(
+                    builder: (_) =>
+                        DriverHomeScreen(vehicle: vehicleProvider.currentVehicle!),
+                  );
+                } else {
+                  // Caso não tenha o veículo carregado, direciona para a tela de apresentação
+                  // que vai iniciar o carregamento do veículo corretamente
+                  return MaterialPageRoute(
+                      builder: (_) => const PresentationScreen());
+                }
+              }
+
+              // Se não houver percurso ativo e estiver indo para a tela inicial, redireciona para veículos disponíveis
+              if (settings.name == '/presentation' &&
+                  !journeyProvider.hasActiveJourney) {
+                print('Nenhuma jornada ativa. Redirecionando para veículos disponíveis.');
+                return MaterialPageRoute(
+                    builder: (_) => const AvailableVehiclesScreen());
+              }
             }
-          }
 
-          // Se não houver percurso ativo e estiver indo para a tela inicial, redireciona para veículos disponíveis
-          if (settings.name == '/presentation' &&
-              !journeyProvider.hasActiveJourney) {
-            return MaterialPageRoute(
-                builder: (_) => const AvailableVehiclesScreen());
-          }
-        }
-
-        // Processa normalmente se não houver redirecionamento
-        return null;
+            // Processa normalmente se não houver redirecionamento
+            return null;
+          },
+        );
       },
     );
   }

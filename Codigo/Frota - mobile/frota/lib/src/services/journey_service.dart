@@ -39,7 +39,7 @@ class JourneyService {
   }
 
   // Finalizar uma jornada
-  Future<Journey?> finishJourney({
+  Future<bool> finishJourney({
     required String journeyId,
     required int finalOdometer,
   }) async {
@@ -50,7 +50,7 @@ class JourneyService {
       );
     } catch (e) {
       print('Erro no serviço ao finalizar jornada: $e');
-      return null;
+      return false;
     }
   }
 

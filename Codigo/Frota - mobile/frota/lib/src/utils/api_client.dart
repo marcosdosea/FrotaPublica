@@ -20,9 +20,21 @@ class ApiClient {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _tokenExpiryKey = 'token_expiry';
 
+  // Callback para notificar quando o token é atualizado
+  static Function(String token, String refreshToken, DateTime expiry)?
+      onTokenUpdated;
+
+  // Callback para notificar quando o token expira
+  static Function()? onTokenExpired;
+
   // Obter token JWT armazenado
   static Future<String?> getToken() async {
     return await storage.read(key: _tokenKey);
+  }
+
+  // Obter refresh token armazenado
+  static Future<String?> getRefreshToken() async {
+    return await storage.read(key: _refreshTokenKey);
   }
 
   // Salvar token JWT
@@ -31,6 +43,9 @@ class ApiClient {
     await storage.write(key: _tokenKey, value: token);
     await storage.write(key: _refreshTokenKey, value: refreshToken);
     await storage.write(key: _tokenExpiryKey, value: expiry.toIso8601String());
+
+    // Notificar sobre a atualização do token
+    onTokenUpdated?.call(token, refreshToken, expiry);
 
     // Imprimir para depuração
     print('Token JWT salvo com sucesso!');
@@ -52,54 +67,66 @@ class ApiClient {
     return DateTime.now().isAfter(expiry.subtract(const Duration(minutes: 5)));
   }
 
+  // Renovar token usando refresh token
+  static Future<bool> refreshToken() async {
+    try {
+      final refreshToken = await getRefreshToken();
+      if (refreshToken == null) {
+        print('Nenhum refresh token encontrado');
+        return false;
+      }
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/Auth/refresh-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refreshToken': refreshToken}),
+      );
+
+      print("Resposta do refresh token: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['success'] == true) {
+          final newToken = data['token'];
+          final newRefreshToken = data['refreshToken'] ?? refreshToken;
+
+          // Salvar o novo token
+          await saveToken(newToken, newRefreshToken,
+              DateTime.now().add(const Duration(days: 7)));
+
+          print("Token renovado com sucesso");
+          return true;
+        } else {
+          print("Falha ao renovar token: ${data['message']}");
+        }
+      } else {
+        print("Erro ao renovar token. Status: ${response.statusCode}");
+      }
+
+      // Se chegou aqui, não conseguiu renovar o token
+      await removeToken();
+      onTokenExpired?.call();
+      return false;
+    } catch (e) {
+      print('Erro ao renovar token: $e');
+      // Em caso de erro, força novo login
+      await removeToken();
+      onTokenExpired?.call();
+      return false;
+    }
+  }
+
   // Renovar token automaticamente se necessário
   static Future<String?> _getValidToken() async {
     if (await isTokenExpired()) {
       print("Token expirado ou não existe. Tentando fazer refresh...");
-      final token = await storage.read(key: _tokenKey);
-      if (token != null) {
-        try {
-          // Implementando a chamada ao endpoint de refresh token
-          final response = await http.post(
-            Uri.parse('$baseUrl/Auth/refresh-token'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'token': token}),
-          );
 
-          print("Resposta do refresh token: ${response.statusCode}");
-
-          if (response.statusCode == 200) {
-            final data = jsonDecode(response.body);
-
-            if (data['success'] == true) {
-              final newToken = data['token'];
-
-              // Salvar o novo token
-              await saveToken(
-                  newToken,
-                  newToken, // Usando o mesmo token como refreshToken
-                  DateTime.now().add(const Duration(days: 7)));
-
-              print("Token renovado com sucesso");
-              return newToken;
-            } else {
-              print("Falha ao renovar token: ${data['message']}");
-            }
-          } else {
-            print("Erro ao renovar token. Status: ${response.statusCode}");
-          }
-
-          // Se chegou aqui, não conseguiu renovar o token
-          await removeToken();
-          return null;
-        } catch (e) {
-          print('Erro ao renovar token: $e');
-          // Em caso de erro, força novo login
-          await removeToken();
-          return null;
-        }
+      final success = await refreshToken();
+      if (!success) {
+        print("Não foi possível renovar o token");
+        return null;
       }
-      return null;
     }
 
     final token = await getToken();
@@ -114,7 +141,7 @@ class ApiClient {
     final token = await _getValidToken();
     final headers = {
       'Content-Type': 'application/json',
-      'accept': 'text/plain',
+      'accept': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
@@ -150,7 +177,7 @@ class ApiClient {
     final token = await _getValidToken();
     final headers = {
       'Content-Type': 'application/json',
-      'accept': 'text/plain',
+      'accept': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
@@ -190,7 +217,7 @@ class ApiClient {
     final token = await _getValidToken();
     final headers = {
       'Content-Type': 'application/json',
-      'accept': 'text/plain',
+      'accept': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
 
@@ -230,7 +257,7 @@ class ApiClient {
     final token = await _getValidToken();
     final headers = {
       'Content-Type': 'application/json',
-      'accept': 'text/plain',
+      'accept': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
 

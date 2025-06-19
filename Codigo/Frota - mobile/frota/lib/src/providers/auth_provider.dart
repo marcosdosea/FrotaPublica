@@ -22,6 +22,10 @@ class AuthProvider with ChangeNotifier {
 
     try {
       print('AuthProvider: Inicializando e verificando usuário atual');
+
+      // Configurar callbacks do ApiClient
+      _setupApiClientCallbacks();
+
       _currentUser = await _authService.getCurrentUser();
       _error = null;
 
@@ -38,6 +42,30 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Configurar callbacks do ApiClient para manter sincronização
+  void _setupApiClientCallbacks() {
+    ApiClient.onTokenUpdated = (token, refreshToken, expiry) {
+      print('AuthProvider: Token atualizado pelo ApiClient');
+      // O token foi renovado automaticamente, apenas notificar os listeners
+      // para que a UI seja atualizada se necessário
+      notifyListeners();
+    };
+
+    ApiClient.onTokenExpired = () {
+      print('AuthProvider: Token expirou e não pôde ser renovado');
+      // Token expirou e não foi possível renovar - fazer logout
+      _handleTokenExpiration();
+    };
+  }
+
+  // Método para lidar com expiração de token
+  void _handleTokenExpiration() async {
+    print('AuthProvider: Lidando com expiração de token');
+    _currentUser = null;
+    _error = 'Sessão expirada. Faça login novamente.';
+    notifyListeners();
   }
 
   // Login
@@ -70,45 +98,66 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Refresh Token
+  // Refresh Token - agora usa o método do ApiClient
   Future<bool> refreshToken() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
     try {
       print('AuthProvider: Tentando renovar token...');
-      final token = await ApiClient.getToken();
 
-      if (token == null) {
-        print('AuthProvider: Nenhum token disponível para renovação');
-        _error = 'Nenhum token disponível';
-        return false;
-      }
-
-      final success = await _authService.refreshToken(token);
+      // Usar o método refreshToken do ApiClient que já lida com toda a lógica
+      final success = await ApiClient.refreshToken();
 
       if (success) {
         print('AuthProvider: Token renovado com sucesso');
         _error = null;
+        // Não precisa notificar aqui pois o callback onTokenUpdated já fará isso
       } else {
         print('AuthProvider: Falha ao renovar token');
         _error = 'Falha ao renovar sessão';
-        // Se não conseguir renovar, faz logout
-        await logout();
+        // Se não conseguir renovar, marca como não autenticado
+        _currentUser = null;
+        notifyListeners();
       }
 
       return success;
     } catch (e) {
       print('AuthProvider: Erro ao renovar token: $e');
       _error = 'Erro ao renovar sessão: $e';
-      // Em caso de erro, faz logout
-      await logout();
-      return false;
-    } finally {
-      _isLoading = false;
+      _currentUser = null;
       notifyListeners();
+      return false;
     }
+  }
+
+  // Verificar se o token ainda é válido
+  Future<bool> isTokenValid() async {
+    try {
+      final isExpired = await ApiClient.isTokenExpired();
+      return !isExpired;
+    } catch (e) {
+      print('AuthProvider: Erro ao verificar validade do token: $e');
+      return false;
+    }
+  }
+
+  // Método para verificar autenticação de forma mais robusta
+  Future<bool> checkAuthenticationStatus() async {
+    if (_currentUser == null) {
+      return false;
+    }
+
+    // Verificar se o token ainda é válido
+    final tokenValid = await isTokenValid();
+    if (!tokenValid) {
+      print('AuthProvider: Token inválido, tentando renovar...');
+      final renewed = await refreshToken();
+      if (!renewed) {
+        print('AuthProvider: Não foi possível renovar token, fazendo logout');
+        await logout();
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // Logout

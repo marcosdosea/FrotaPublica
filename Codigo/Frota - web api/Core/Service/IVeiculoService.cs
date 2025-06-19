@@ -15,6 +15,7 @@ namespace Core.Service
         string? GetPlacaVeiculo(uint idVeiculo);
         bool AtualizarOdometroVeiculo(uint idVeiculo, int novoOdometro);
         List<Veiculo>? GetAllFilterByPlaca(uint idFrota, uint unidadeAdministrativa, string placa);
+        bool VeiculoSendoUsado(uint idVeiculo, bool statusUso);
     }
 }
 

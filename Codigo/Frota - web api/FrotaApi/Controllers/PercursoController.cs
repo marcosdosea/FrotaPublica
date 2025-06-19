@@ -60,14 +60,23 @@ namespace FrotaApi.Controllers
                 {
                     return Ok(new
                     {
-                        Message = "Motorista já possui um percurso em andamento",
-                        EmPercurso = true,
-                        Percurso = percursoAtual
+                        message = "Motorista já possui um percurso em andamento",
+                        emPercurso = true,
+                        percurso = new
+                        {
+                            id = percursoAtual.Id,
+                            idPessoa = percursoAtual.IdPessoa,
+                            idVeiculo = percursoAtual.IdVeiculo,
+                            dataHoraSaida = percursoAtual.DataHoraSaida,
+                            dataHoraRetorno = percursoAtual.DataHoraRetorno,
+                            localPartida = percursoAtual.LocalPartida,
+                            localChegada = percursoAtual.LocalChegada,
+                            odometroInicial = percursoAtual.OdometroInicial,
+                            odometroFinal = percursoAtual.OdometroFinal,
+                            motivo = percursoAtual.Motivo
+                        }
                     });
                 }
-
-                // Atualizar o odômetro do veículo
-                _veiculoService.AtualizarOdometroVeiculo(model.IdVeiculo, model.OdometroInicial);
 
                 // Criar o percurso
                 var percurso = new Percurso
@@ -75,11 +84,11 @@ namespace FrotaApi.Controllers
                     IdPessoa = idPessoa,
                     IdVeiculo = model.IdVeiculo,
                     DataHoraSaida = DateTime.Now,
-                    DataHoraRetorno = DateTime.MinValue, // Será atualizado quando o percurso for finalizado
+                    DataHoraRetorno = DateTime.MinValue, 
                     LocalPartida = model.LocalPartida,
                     LocalChegada = model.LocalChegada,
-                    OdometroInicial = veiculo.Odometro,
-                    OdometroFinal = 0, // Será atualizado quando o percurso for finalizado
+                    OdometroInicial = model.OdometroInicial,
+                    OdometroFinal = 0, 
                     Motivo = model.Motivo
                 };
 
@@ -88,9 +97,22 @@ namespace FrotaApi.Controllers
 
                 return Ok(new
                 {
-                    Message = "Percurso iniciado com sucesso",
-                    IdPercurso = idPercurso,
-                    Percurso = percurso
+                    message = "Percurso iniciado com sucesso",
+                    emPercurso = false,
+                    idPercurso = idPercurso,
+                    percurso = new
+                    {
+                        id = percurso.Id,
+                        idPessoa = percurso.IdPessoa,
+                        idVeiculo = percurso.IdVeiculo,
+                        dataHoraSaida = percurso.DataHoraSaida,
+                        dataHoraRetorno = percurso.DataHoraRetorno,
+                        localPartida = percurso.LocalPartida,
+                        localChegada = percurso.LocalChegada,
+                        odometroInicial = percurso.OdometroInicial,
+                        odometroFinal = percurso.OdometroFinal,
+                        motivo = percurso.Motivo
+                    }
                 });
             }
             catch (Exception ex)
@@ -127,7 +149,12 @@ namespace FrotaApi.Controllers
                 }
 
                 // Atualizar o odômetro do veículo
+                if(model.OdometroFinal < _veiculoService.Get(percurso.IdVeiculo).Odometro)
+                {
+                    return BadRequest("Odometro final menor que o odometro atual do veiculo");
+                }
                 _veiculoService.AtualizarOdometroVeiculo(percurso.IdVeiculo, model.OdometroFinal);
+                _veiculoService.VeiculoSendoUsado(percurso.IdVeiculo, false);
 
                 // Finalizar o percurso
                 percurso.DataHoraRetorno = DateTime.Now;
@@ -137,8 +164,8 @@ namespace FrotaApi.Controllers
 
                 return Ok(new
                 {
-                    Message = "Percurso finalizado com sucesso",
-                    IdPercurso = model.IdPercurso
+                    message = "Percurso finalizado com sucesso",
+                    idPercurso = model.IdPercurso
                 });
             }
             catch (Exception ex)

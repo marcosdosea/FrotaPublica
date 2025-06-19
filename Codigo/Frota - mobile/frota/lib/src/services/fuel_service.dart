@@ -66,4 +66,31 @@ class FuelService {
       return 0.0;
     }
   }
+
+  Future<void> addLitersToJourneyTotal(String journeyId, double liters) async {
+    try{
+      return await _fuelRepository.addLitersToJourneyTotal(journeyId, liters);
+    } catch (e){
+      return;
+    }
+  }
+
+  // Obtém o total de litros abastecidos para o percurso
+  Future<double> getTotalLitersForJourney(String journeyId) async {
+    try {
+      return await _fuelRepository.getTotalLitersForJourney(journeyId);
+    } catch (e) {
+      print('FuelService: Erro ao obter total de litros do percurso: $e');
+      return 0.0;
+    }
+  }
+
+  // Zera o total de litros abastecidos para o percurso
+  Future<void> clearTotalLitersForJourney(String journeyId) async {
+    try {
+      await _fuelRepository.clearTotalLitersForJourney(journeyId);
+    } catch (e) {
+      print('FuelService: Erro ao zerar total de litros do percurso: $e');
+    }
+  }
 }
