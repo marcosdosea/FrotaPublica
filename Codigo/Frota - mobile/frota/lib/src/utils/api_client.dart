@@ -89,13 +89,23 @@ class ApiClient {
         return false;
       }
 
-      final response = await http.post(
-        Uri.parse('$_httpsBaseUrl/Auth/refresh-token'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'refreshToken': refreshToken}),
+      final uri = Uri.parse('$_httpsBaseUrl/Auth/refresh-token');
+      final request = await _client.postUrl(uri);
+      request.headers.add('Content-Type', 'application/json');
+      final jsonBody = utf8.encode(jsonEncode({'refreshToken': refreshToken}));
+      request.add(jsonBody);
+      final httpResponse = await request.close();
+      final responseBody = await httpResponse.transform(utf8.decoder).join();
+      final response = http.Response(
+        responseBody,
+        httpResponse.statusCode,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        isRedirect: httpResponse.isRedirect,
       );
 
-      print("Resposta do refresh token: ${response.statusCode}");
+      print("Resposta do refresh token: \\${response.statusCode}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

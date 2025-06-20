@@ -258,13 +258,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                   ),
                                   const SizedBox(height: 5),
                                   // Textos do header
-                                  const Text(
-                                    'Olá, Motorista!',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                  Consumer<AuthProvider>(
+                                    builder: (context, authProvider, child) {
+                                      final user = authProvider.currentUser;
+                                      final firstName =
+                                          user?.name?.split(' ').first ??
+                                              'Motorista';
+
+                                      return Text(
+                                        'Olá, $firstName!',
+                                        style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    },
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
