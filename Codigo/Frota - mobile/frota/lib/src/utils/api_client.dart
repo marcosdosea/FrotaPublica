@@ -4,9 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
-  // Use 10.0.2.2 para acessar o computador host (localhost) a partir do emulador Android
-  // Ou use o IP real da sua máquina na rede se estiver usando um dispositivo físico
-  static const String baseUrl = 'https://10.0.2.2:7139/api';
+  // Configuração centralizada da API
+  static const String _host = 'itetech-001-site1.qtempurl.com';
+  static const String _apiPath = '/api';
+  static const String _httpsBaseUrl = 'https://$_host$_apiPath';
+  static const String _httpBaseUrl = 'http://$_host$_apiPath';
+
   static const storage = FlutterSecureStorage();
 
   // Criar uma instância HTTP personalizada que aceita certificados inválidos (apenas para desenvolvimento)
@@ -26,6 +29,16 @@ class ApiClient {
 
   // Callback para notificar quando o token expira
   static Function()? onTokenExpired;
+
+  // Métodos auxiliares para construir URLs
+  static String _buildUrl(String protocol, String endpoint) {
+    final baseUrl = protocol == 'https' ? _httpsBaseUrl : _httpBaseUrl;
+    return '$baseUrl/$endpoint';
+  }
+
+  static Uri _buildUri(String protocol, String endpoint) {
+    return Uri.parse(_buildUrl(protocol, endpoint));
+  }
 
   // Obter token JWT armazenado
   static Future<String?> getToken() async {
@@ -77,7 +90,7 @@ class ApiClient {
       }
 
       final response = await http.post(
-        Uri.parse('$baseUrl/Auth/refresh-token'),
+        Uri.parse('$_httpsBaseUrl/Auth/refresh-token'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refreshToken': refreshToken}),
       );
@@ -146,7 +159,7 @@ class ApiClient {
     };
 
     try {
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = Uri.parse('$_httpsBaseUrl/$endpoint');
       final request = await _client.getUrl(uri);
 
       // Adicionar headers
@@ -182,7 +195,7 @@ class ApiClient {
     };
 
     try {
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = Uri.parse('$_httpsBaseUrl/$endpoint');
       final request = await _client.postUrl(uri);
 
       // Adicionar headers
@@ -222,7 +235,7 @@ class ApiClient {
     };
 
     try {
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = Uri.parse('$_httpsBaseUrl/$endpoint');
       final request = await _client.putUrl(uri);
 
       // Adicionar headers
@@ -262,7 +275,7 @@ class ApiClient {
     };
 
     try {
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = Uri.parse('$_httpsBaseUrl/$endpoint');
       final request = await _client.deleteUrl(uri);
 
       // Adicionar headers

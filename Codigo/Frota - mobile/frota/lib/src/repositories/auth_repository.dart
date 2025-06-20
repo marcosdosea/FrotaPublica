@@ -1,11 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import '../utils/api_client.dart';
 import 'package:flutter/material.dart';
 
 class AuthRepository {
   static const String _userKey = 'current_user';
+
+  // Configuração centralizada da API (mesma do ApiClient)
+  static const String _host = 'itetech-001-site1.qtempurl.com';
+  static const String _apiPath = '/api';
+
+  // Métodos auxiliares para construir URLs
+  static String _buildUrl(String protocol, String endpoint) {
+    final baseUrl = protocol == 'https'
+        ? 'https://$_host$_apiPath'
+        : 'http://$_host$_apiPath';
+    return '$baseUrl/$endpoint';
+  }
 
   // Salvar os dados do usuário localmente
   Future<void> _saveUserData(User user) async {
