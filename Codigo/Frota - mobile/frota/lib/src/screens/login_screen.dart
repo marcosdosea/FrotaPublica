@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../screens/driver_home_screen.dart';
+import '../services/biometric_service.dart';
 import '../utils/formatters.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,12 +20,47 @@ class _LoginScreenState extends State<LoginScreen> {
   final _cpfController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _biometricEnabled = false;
+  bool _biometricSupported = false;
 
   @override
-  void dispose() {
-    _cpfController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _initializeLogin();
+  }
+
+  Future<void> _initializeLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Verificar suporte à biometria
+    final supported = await BiometricService.isDeviceSupported();
+    final canCheck = await BiometricService.canCheckBiometrics();
+    final enabled = await BiometricService.isBiometricEnabled();
+
+    setState(() {
+      _biometricSupported = supported && canCheck;
+      _biometricEnabled = enabled;
+    });
+
+    // Pré-preencher CPF se disponível
+    if (authProvider.lastLoggedCpf != null) {
+      _cpfController.text = authProvider.lastLoggedCpf!;
+    }
+
+    // Se a biometria estiver habilitada e o usuário não estiver autenticado,
+    // tentar login automático com biometria
+    if (_biometricEnabled && !authProvider.isAuthenticated) {
+      _tryBiometricLogin();
+    }
+  }
+
+  Future<void> _tryBiometricLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.loginWithBiometrics();
+
+    if (success && mounted) {
+      _navigateAfterLogin(authProvider);
+    }
   }
 
   Future<void> _login() async {
@@ -33,41 +69,49 @@ class _LoginScreenState extends State<LoginScreen> {
       final success = await authProvider.login(
         _cpfController.text,
         _passwordController.text,
+        saveBiometric: _biometricEnabled,
       );
 
       if (success && mounted) {
-        // Verificar se o usuário tem um percurso ativo
-        final journeyProvider =
-            Provider.of<JourneyProvider>(context, listen: false);
-        await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
-
-        if (journeyProvider.hasActiveJourney &&
-            journeyProvider.activeJourney != null) {
-          // Se há jornada ativa, obter o veículo associado
-          final vehicleProvider =
-              Provider.of<VehicleProvider>(context, listen: false);
-          final vehicle = await vehicleProvider
-              .getVehicleById(journeyProvider.activeJourney!.vehicleId);
-
-          if (vehicle != null && mounted) {
-            // Navegar para a tela de motorista com o veículo
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DriverHomeScreen(vehicle: vehicle),
-              ),
-            );
-            return;
-          }
-        }
-
-        // Se não há jornada ativa ou não foi possível recuperar o veículo,
-        // redirecionar para tela de veículos disponíveis
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/available_vehicles');
-        }
+        _navigateAfterLogin(authProvider);
       }
     }
+  }
+
+  Future<void> _navigateAfterLogin(AuthProvider authProvider) async {
+    // Verificar se o usuário tem um percurso ativo
+    final journeyProvider = Provider.of<JourneyProvider>(context, listen: false);
+    await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+
+    if (journeyProvider.hasActiveJourney && journeyProvider.activeJourney != null) {
+      // Se há jornada ativa, obter o veículo associado
+      final vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+      final vehicle = await vehicleProvider.getVehicleById(journeyProvider.activeJourney!.vehicleId);
+
+      if (vehicle != null && mounted) {
+        // Navegar para a tela de motorista com o veículo
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DriverHomeScreen(vehicle: vehicle),
+          ),
+        );
+        return;
+      }
+    }
+
+    // Se não há jornada ativa ou não foi possível recuperar o veículo,
+    // redirecionar para tela de veículos disponíveis
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/available_vehicles');
+    }
+  }
+
+  @override
+  void dispose() {
+    _cpfController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -121,7 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, informe seu CPF';
                     }
-                    // Opcional: validar se o CPF tem o formato correto
                     final cpfRegex = RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
                     if (!cpfRegex.hasMatch(value)) {
                       return 'Digite um CPF válido';
@@ -219,6 +262,48 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
                 ),
+
+                // Biometric login button (only show if supported and enabled)
+                if (_biometricSupported && _biometricEnabled) ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    'ou',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: authProvider.isLoading ? null : _tryBiometricLogin,
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF116AD5).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color(0xFF116AD5),
+                          width: 2,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.fingerprint,
+                        size: 30,
+                        color: Color(0xFF116AD5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Usar biometria',
+                    style: TextStyle(
+                      color: Color(0xFF116AD5),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
+import '../services/biometric_service.dart';
 import '../utils/api_client.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -9,11 +10,13 @@ class AuthProvider with ChangeNotifier {
   User? _currentUser;
   bool _isLoading = false;
   String? _error;
+  String? _lastLoggedCpf;
 
   User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _currentUser != null;
+  String? get lastLoggedCpf => _lastLoggedCpf;
 
   // Inicializar - verificar se há um usuário logado
   Future<void> initialize() async {
@@ -30,10 +33,15 @@ class AuthProvider with ChangeNotifier {
       _error = null;
 
       if (_currentUser != null) {
-        print(
-            'AuthProvider: Usuário autenticado na inicialização: ${_currentUser!.name}');
+        print('AuthProvider: Usuário autenticado na inicialização: ${_currentUser!.name}');
+        // Carregar o último CPF usado
+        final credentials = await BiometricService.getSavedCredentials();
+        _lastLoggedCpf = credentials['cpf'];
       } else {
         print('AuthProvider: Nenhum usuário autenticado na inicialização');
+        // Ainda assim, carregar o último CPF para facilitar o login
+        final credentials = await BiometricService.getSavedCredentials();
+        _lastLoggedCpf = credentials['cpf'];
       }
     } catch (e) {
       print('AuthProvider: Erro na inicialização: $e');
@@ -48,14 +56,11 @@ class AuthProvider with ChangeNotifier {
   void _setupApiClientCallbacks() {
     ApiClient.onTokenUpdated = (token, refreshToken, expiry) {
       print('AuthProvider: Token atualizado pelo ApiClient');
-      // O token foi renovado automaticamente, apenas notificar os listeners
-      // para que a UI seja atualizada se necessário
       notifyListeners();
     };
 
     ApiClient.onTokenExpired = () {
       print('AuthProvider: Token expirou e não pôde ser renovado');
-      // Token expirou e não foi possível renovar - fazer logout
       _handleTokenExpiration();
     };
   }
@@ -68,8 +73,65 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Login
-  Future<bool> login(String cpf, String password) async {
+  // Login com biometria
+  Future<bool> loginWithBiometrics() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      print('AuthProvider: Tentando login com biometria');
+      
+      // Verificar se a biometria está habilitada
+      final biometricEnabled = await BiometricService.isBiometricEnabled();
+      if (!biometricEnabled) {
+        _error = 'Biometria não está habilitada';
+        return false;
+      }
+
+      // Autenticar com biometria
+      final authenticated = await BiometricService.authenticateWithBiometrics();
+      if (!authenticated) {
+        _error = 'Falha na autenticação biométrica';
+        return false;
+      }
+
+      // Obter credenciais salvas
+      final credentials = await BiometricService.getSavedCredentials();
+      final cpf = credentials['cpf'];
+      final password = credentials['password'];
+
+      if (cpf == null || password == null) {
+        _error = 'Credenciais não encontradas';
+        return false;
+      }
+
+      // Fazer login com as credenciais salvas
+      _currentUser = await _authService.login(cpf, password);
+      final success = _currentUser != null;
+
+      if (success) {
+        print('AuthProvider: Login biométrico bem-sucedido para: ${_currentUser!.name}');
+        _lastLoggedCpf = cpf;
+        _error = null;
+      } else {
+        print('AuthProvider: Login biométrico falhou');
+        _error = 'Falha no login. Verifique suas credenciais.';
+      }
+
+      return success;
+    } catch (e) {
+      print('AuthProvider: Erro durante login biométrico: $e');
+      _error = 'Erro ao fazer login com biometria: $e';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Login tradicional
+  Future<bool> login(String cpf, String password, {bool saveBiometric = false}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -81,7 +143,13 @@ class AuthProvider with ChangeNotifier {
 
       if (success) {
         print('AuthProvider: Login bem-sucedido para: ${_currentUser!.name}');
+        _lastLoggedCpf = cpf;
         _error = null;
+
+        // Salvar credenciais se a biometria estiver habilitada
+        if (saveBiometric && await BiometricService.isBiometricEnabled()) {
+          await BiometricService.saveCredentials(cpf, password);
+        }
       } else {
         print('AuthProvider: Login falhou - credenciais inválidas');
         _error = 'CPF ou senha incorretos';
@@ -103,17 +171,14 @@ class AuthProvider with ChangeNotifier {
     try {
       print('AuthProvider: Tentando renovar token...');
 
-      // Usar o método refreshToken do ApiClient que já lida com toda a lógica
       final success = await ApiClient.refreshToken();
 
       if (success) {
         print('AuthProvider: Token renovado com sucesso');
         _error = null;
-        // Não precisa notificar aqui pois o callback onTokenUpdated já fará isso
       } else {
         print('AuthProvider: Falha ao renovar token');
         _error = 'Falha ao renovar sessão';
-        // Se não conseguir renovar, marca como não autenticado
         _currentUser = null;
         notifyListeners();
       }
@@ -170,6 +235,7 @@ class AuthProvider with ChangeNotifier {
       await _authService.logout();
       _currentUser = null;
       _error = null;
+      // Manter o último CPF para facilitar próximo login
       print('AuthProvider: Logout concluído com sucesso');
     } catch (e) {
       print('AuthProvider: Erro durante logout: $e');

@@ -227,7 +227,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Botão de perfil alinhado à direita
+                                  // Ícone de perfil alinhado à direita
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -256,28 +256,23 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 20),
-                                  // Texto de saudação
-                                  const Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Olá, Motorista!',
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12),
-                                      Text(
-                                        'Realize aqui todos os registros ao longo do percurso',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
+                                  const SizedBox(height: 5),
+                                  // Textos do header
+                                  const Text(
+                                    'Olá, Motorista!',
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    'Realize aqui todos os registros ao longo do percurso',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -696,9 +691,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   void _showFinishJourneyDialog() {
     // Obter dados do percurso e veículo
     final journeyProvider =
-        Provider.of<JourneyProvider>(context, listen: false);
+    Provider.of<JourneyProvider>(context, listen: false);
     final vehicleProvider =
-        Provider.of<VehicleProvider>(context, listen: false);
+    Provider.of<VehicleProvider>(context, listen: false);
     final journey = journeyProvider.activeJourney;
     final currentVehicle = vehicleProvider.currentVehicle ?? _currentVehicle;
 
@@ -735,7 +730,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
               // Finalizar o percurso usando o JourneyProvider
               final journeyProvider =
-                  Provider.of<JourneyProvider>(context, listen: false);
+              Provider.of<JourneyProvider>(context, listen: false);
               final result = await journeyProvider.finishJourney(odometer);
 
               if (result == true) {
@@ -745,7 +740,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                 // Limpar o total de litros abastecidos do percurso ativo
                 final fuelProvider =
-                    Provider.of<FuelProvider>(context, listen: false);
+                Provider.of<FuelProvider>(context, listen: false);
                 final journey = journeyProvider.activeJourney;
                 if (journey != null) {
                   await fuelProvider.clearTotalLitersForJourney(journey.id);
