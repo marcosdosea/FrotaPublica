@@ -15,6 +15,7 @@ import 'screens/login_screen.dart';
 import 'screens/available_vehicles_screen.dart';
 import 'screens/driver_home_screen.dart';
 import 'screens/presentation_screen.dart';
+import 'providers/theme_provider.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -30,6 +31,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InspectionProvider()),
         ChangeNotifierProvider(create: (_) => MaintenanceProvider()),
         ChangeNotifierProvider(create: (_) => ReminderProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: AppContent(),
     );
@@ -116,11 +118,13 @@ class _AppContentState extends State<AppContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
+    return Consumer2<AuthProvider, ThemeProvider>(
+      builder: (context, authProvider, themeProvider, child) {
         return MaterialApp(
           title: 'Frota App',
           theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
           debugShowCheckedModeBanner: false,
           initialRoute: AppRouter.initialRoute,
           routes: AppRouter.routes,

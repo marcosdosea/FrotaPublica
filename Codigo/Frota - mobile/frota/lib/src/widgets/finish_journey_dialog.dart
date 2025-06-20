@@ -54,6 +54,7 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -76,17 +77,19 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'Duração: ',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   Text(
                     widget.duration,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                 ],
@@ -94,17 +97,19 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'Distância Percorrida: ',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   Text(
                     widget.distance,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                 ],
@@ -122,17 +127,31 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
               TextFormField(
                 controller: odometerController,
                 keyboardType: TextInputType.number,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Informe a leitura',
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF3A3A5C)
+                          : Colors.grey.shade300,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF3A3A5C)
+                          : Colors.grey.shade300,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),

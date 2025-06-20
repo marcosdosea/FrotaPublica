@@ -38,14 +38,14 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
     try {
       // Verificar se a vistoria de saída foi concluída
       bool departureCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         widget.vehicleId,
         'S',
       );
 
       // Verificar se a vistoria de chegada foi concluída
       bool arrivalCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         widget.vehicleId,
         'R',
       );
@@ -98,13 +98,13 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // Blue header with rounded bottom corners
           Container(
             padding:
-                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
             decoration: const BoxDecoration(
               color: Color(0xFF116AD5),
               borderRadius: BorderRadius.only(
@@ -148,97 +148,98 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : RefreshIndicator(
-                    onRefresh: _loadInspectionStatus,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Se não houver nenhuma vistoria para fazer
-                          if (_departureCompleted && _arrivalCompleted)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 40),
-                                child: Text(
-                                  'Todas as vistorias foram concluídas!',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
+              onRefresh: _loadInspectionStatus,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Se não houver nenhuma vistoria para fazer
+                    if (_departureCompleted && _arrivalCompleted)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: Text(
+                            'Todas as vistorias foram concluídas!',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
-
-                          // Vistoria de Saída
-                          if (!_departureCompleted) ...[
-                            const Text(
-                              'Vistoria de Saída',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF0066CC),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _buildInspectionCard(
-                              context: context,
-                              title: 'Registrar',
-                              isCompleted: _departureCompleted,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => InspectionScreen(
-                                      title: 'Vistoria de Saída',
-                                      vehicleId: widget.vehicleId,
-                                      type: 'S',
-                                    ),
-                                  ),
-                                ).then((_) {
-                                  // Recarregar status após retornar
-                                  _loadInspectionStatus();
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Vistoria de Chegada
-                          if (!_arrivalCompleted) ...[
-                            const Text(
-                              'Vistoria de Chegada',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF0066CC),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _buildInspectionCard(
-                              context: context,
-                              title: 'Registrar',
-                              isCompleted: _arrivalCompleted,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => InspectionScreen(
-                                      title: 'Vistoria de Chegada',
-                                      vehicleId: widget.vehicleId,
-                                      type: 'R',
-                                    ),
-                                  ),
-                                ).then((_) {
-                                  // Recarregar status após retornar
-                                  _loadInspectionStatus();
-                                });
-                              },
-                            ),
-                          ],
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+
+                    // Vistoria de Saída
+                    if (!_departureCompleted) ...[
+                      const Text(
+                        'Vistoria de Saída',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF0066CC),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildInspectionCard(
+                        context: context,
+                        title: 'Registrar',
+                        isCompleted: _departureCompleted,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InspectionScreen(
+                                title: 'Vistoria de Saída',
+                                vehicleId: widget.vehicleId,
+                                type: 'S',
+                              ),
+                            ),
+                          ).then((_) {
+                            // Recarregar status após retornar
+                            _loadInspectionStatus();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Vistoria de Chegada
+                    if (!_arrivalCompleted) ...[
+                      const Text(
+                        'Vistoria de Chegada',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF0066CC),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildInspectionCard(
+                        context: context,
+                        title: 'Registrar',
+                        isCompleted: _arrivalCompleted,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InspectionScreen(
+                                title: 'Vistoria de Chegada',
+                                vehicleId: widget.vehicleId,
+                                type: 'R',
+                              ),
+                            ),
+                          ).then((_) {
+                            // Recarregar status após retornar
+                            _loadInspectionStatus();
+                          });
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -253,9 +254,14 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
   }) {
     return Card(
       elevation: 0,
+      color: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.grey.shade300),
+        side: BorderSide(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF3A3A5C)
+              : Colors.grey.shade300,
+        ),
       ),
       child: InkWell(
         onTap: isCompleted ? null : onTap,
@@ -270,20 +276,22 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isCompleted ? Colors.grey : Colors.black87,
+                  color: isCompleted
+                      ? Theme.of(context).textTheme.bodySmall?.color
+                      : Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               isCompleted
                   ? const Icon(
-                      Icons.check_circle,
-                      color: Color(0xFF0066CC),
-                      size: 24,
-                    )
-                  : const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 16,
-                    ),
+                Icons.check_circle,
+                color: Color(0xFF0066CC),
+                size: 24,
+              )
+                  : Icon(
+                Icons.arrow_forward_ios,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+                size: 16,
+              ),
             ],
           ),
         ),

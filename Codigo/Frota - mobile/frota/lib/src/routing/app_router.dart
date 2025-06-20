@@ -9,6 +9,7 @@ import '../screens/inspection_selection_screen.dart';
 import '../screens/maintenance_request_screen.dart';
 import '../screens/presentation_screen.dart';
 import '../screens/journey_registration_screen.dart';
+import '../screens/profile_screen.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> routes = {
@@ -21,6 +22,7 @@ class AppRouter {
       return MaintenanceRequestScreen(vehicleId: args['vehicleId']);
     },
     '/presentation': (context) => const PresentationScreen(),
+    '/profile': (context) => const ProfileScreen(),
   };
 
   static String get initialRoute => '/presentation';

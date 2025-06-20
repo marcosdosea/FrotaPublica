@@ -16,6 +16,7 @@ import '../providers/journey_provider.dart';
 import '../services/inspection_service.dart';
 import '../providers/fuel_provider.dart';
 import 'available_vehicles_screen.dart';
+import 'profile_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -45,7 +46,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     // Atualizar o veículo atual no provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
+      Provider.of<VehicleProvider>(context, listen: false);
       vehicleProvider.setCurrentVehicle(_currentVehicle);
 
       // Carregar percurso ativo e verificar status das vistorias
@@ -79,14 +80,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     try {
       // Verificar vistoria de saída
       bool departureCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'S',
       );
 
       // Verificar vistoria de retorno
       bool arrivalCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'R',
       );
@@ -108,7 +109,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   Future<void> _loadActiveJourney() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final journeyProvider =
-        Provider.of<JourneyProvider>(context, listen: false);
+    Provider.of<JourneyProvider>(context, listen: false);
 
     if (authProvider.currentUser != null) {
       await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
@@ -123,9 +124,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
       // Atualizar o veículo atual
       final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
+      Provider.of<VehicleProvider>(context, listen: false);
       final updatedVehicle =
-          await vehicleProvider.getVehicleById(_currentVehicle.id);
+      await vehicleProvider.getVehicleById(_currentVehicle.id);
       if (updatedVehicle != null) {
         setState(() {
           _currentVehicle = updatedVehicle;
@@ -139,7 +140,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
       // Carregar total de litros abastecidos do percurso ativo
       final journeyProvider =
-          Provider.of<JourneyProvider>(context, listen: false);
+      Provider.of<JourneyProvider>(context, listen: false);
       final journey = journeyProvider.activeJourney;
       if (journey != null) {
         await fuelProvider.loadTotalLitersForJourney(journey.id);
@@ -158,7 +159,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0xFF116AD5), // Mesma cor do topo do header
       statusBarIconBrightness:
-          Brightness.light, // Ícones claros na barra de status
+      Brightness.light, // Ícones claros na barra de status
     ));
 
     return WillPopScope(
@@ -177,7 +178,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
             Expanded(
               child: Container(
                 // Cor de fundo do conteúdo principal
-                color: const Color(0xFFF5F5F5),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: RefreshIndicator(
                   onRefresh: _refreshData,
                   child: SingleChildScrollView(
@@ -193,7 +194,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             Container(
                               width: double.infinity,
                               height:
-                                  330.0, // Altura do header conforme o design
+                              330.0, // Altura do header conforme o design
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topCenter,
@@ -222,25 +223,61 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 ],
                               ),
                               padding: const EdgeInsets.only(
-                                  top: 60, left: 24, right: 24, bottom: 30),
+                                  top: 40, left: 24, right: 24, bottom: 30),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Olá, Motorista!',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                  // Botão de perfil alinhado à direita
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const ProfileScreen(),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.2),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.person,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'Realize aqui todos os registros ao longo do percurso',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
+                                  const SizedBox(height: 20),
+                                  // Texto de saudação
+                                  const Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Olá, Motorista!',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'Realize aqui todos os registros ao longo do percurso',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -251,9 +288,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               left: 24,
                               right: 24,
                               bottom:
-                                  -80, // Valor negativo para sobrepor o card ao header
+                              -80, // Valor negativo para sobrepor o card ao header
                               child: Card(
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 elevation: 4,
                                 margin: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
@@ -266,29 +303,31 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             _currentVehicle.model,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18,
+                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                             ),
                                           ),
                                           Row(
                                             children: [
-                                              const Text(
+                                              Text(
                                                 'Placa: ',
                                                 style: TextStyle(
-                                                  color: Colors.grey,
+                                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                                   fontSize: 14,
                                                 ),
                                               ),
                                               Text(
                                                 _currentVehicle.licensePlate,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 14,
+                                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                                 ),
                                               ),
                                             ],
@@ -298,14 +337,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       const SizedBox(height: 24),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
                                                 padding:
-                                                    const EdgeInsets.all(12),
+                                                const EdgeInsets.all(12),
                                                 decoration: BoxDecoration(
                                                   color: const Color(0xFF0066CC)
                                                       .withOpacity(0.1),
@@ -329,33 +368,33 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                                           .activeJourney;
                                                   final currentVehicle =
                                                       vehicleProvider
-                                                              .currentVehicle ??
+                                                          .currentVehicle ??
                                                           _currentVehicle;
                                                   final odometerDifference =
-                                                      journey != null
-                                                          ? (currentVehicle
-                                                                      .odometer ??
-                                                                  0) -
-                                                              (journey.initialOdometer ??
-                                                                  0)
-                                                          : 0;
+                                                  journey != null
+                                                      ? (currentVehicle
+                                                      .odometer ??
+                                                      0) -
+                                                      (journey.initialOdometer ??
+                                                          0)
+                                                      : 0;
 
                                                   return Text(
                                                     '${odometerDifference} Km',
                                                     style: const TextStyle(
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 20,
                                                       color: Color(0xFF0066CC),
                                                     ),
                                                   );
                                                 },
                                               ),
-                                              const Text(
+                                              Text(
                                                 'Percorridos',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.grey,
+                                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                                 ),
                                               ),
                                             ],
@@ -363,14 +402,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                           Container(
                                             width: 1,
                                             height: 80,
-                                            color: Colors.grey[300],
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                                ? const Color(0xFF3A3A5C)
+                                                : Colors.grey[300],
                                           ),
                                           Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
                                                 padding:
-                                                    const EdgeInsets.all(12),
+                                                const EdgeInsets.all(12),
                                                 decoration: BoxDecoration(
                                                   color: const Color(0xFF0066CC)
                                                       .withOpacity(0.1),
@@ -403,18 +444,18 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                                     '${totalLiters.toStringAsFixed(2)} L',
                                                     style: const TextStyle(
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 20,
                                                       color: Color(0xFF0066CC),
                                                     ),
                                                   );
                                                 },
                                               ),
-                                              const Text(
+                                              Text(
                                                 'Abastecidos',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.grey,
+                                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                                 ),
                                               ),
                                             ],
@@ -441,17 +482,17 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                               if (journey == null) {
                                 // Caso não tenha percurso ativo, mostrar mensagem
-                                return const Card(
-                                  color: Colors.white,
+                                return Card(
+                                  color: Theme.of(context).cardColor,
                                   elevation: 2,
                                   child: Padding(
-                                    padding: EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(16.0),
                                     child: Center(
                                       child: Text(
                                         'Nenhum percurso ativo no momento',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.grey,
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                         ),
                                       ),
                                     ),
@@ -474,14 +515,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         // Registros section
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
+                          const EdgeInsets.only(left: 24.0, right: 24.0),
                           child: Row(
-                            children: const [
+                            children: [
                               Text(
                                 'Registros',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                               ),
                             ],
@@ -495,7 +537,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             padding:
-                                const EdgeInsets.only(left: 24.0, right: 24.0),
+                            const EdgeInsets.only(left: 24.0, right: 24.0),
                             children: [
                               _buildActionCardHorizontal(
                                 icon: Icons.local_gas_station,
@@ -506,8 +548,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           FuelRegistrationScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   );
                                 },
@@ -521,8 +563,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           InspectionSelectionScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   ).then((value) {
                                     // Sempre atualizar os dados ao retornar da tela de inspeção
@@ -538,11 +580,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                   });
                                 },
                                 hasNotification: !inspectionStatus
-                                        .departureInspectionCompleted ||
+                                    .departureInspectionCompleted ||
                                     !inspectionStatus
                                         .arrivalInspectionCompleted,
                                 isCompleted: inspectionStatus
-                                        .departureInspectionCompleted &&
+                                    .departureInspectionCompleted &&
                                     inspectionStatus.arrivalInspectionCompleted,
                               ),
                               _buildActionCardHorizontal(
@@ -554,8 +596,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           MaintenanceRequestScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   );
                                 },
@@ -566,7 +608,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 onTap: () {
                                   // Verificar se ambas as vistorias foram realizadas
                                   if (!inspectionStatus
-                                          .departureInspectionCompleted ||
+                                      .departureInspectionCompleted ||
                                       !inspectionStatus
                                           .arrivalInspectionCompleted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -584,7 +626,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 iconBgColor: Colors.red.withOpacity(0.1),
                                 // Desabilitar o botão se as vistorias não foram feitas
                                 isDisabled: !inspectionStatus
-                                        .departureInspectionCompleted ||
+                                    .departureInspectionCompleted ||
                                     !inspectionStatus
                                         .arrivalInspectionCompleted,
                               ),
@@ -596,14 +638,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
+                          const EdgeInsets.only(left: 24.0, right: 24.0),
                           child: Row(
-                            children: const [
+                            children: [
                               Text(
                                 'Lembretes',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                               ),
                             ],
@@ -616,9 +659,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             _currentVehicle.maintenanceIssues!.isNotEmpty)
                           ..._currentVehicle.maintenanceIssues!
                               .map((issue) => _buildReminderCard(
-                                    title: issue,
-                                    onTap: () {},
-                                  ))
+                            title: issue,
+                            onTap: () {},
+                          ))
                               .toList()
                         else
                           Padding(
@@ -628,7 +671,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               child: Text(
                                 'Nenhum lembrete para este veículo',
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                   fontSize: 14,
                                 ),
                               ),
@@ -762,7 +805,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
       width: 130,
       margin: const EdgeInsets.only(right: 8),
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -796,7 +839,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
-                        color: isDisabled ? Colors.grey : Colors.black87,
+                        color: isDisabled
+                            ? Colors.grey
+                            : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -847,7 +892,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     required VoidCallback onTap,
   }) {
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 24),
       shape: RoundedRectangleBorder(
@@ -869,16 +914,17 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
-                color: Colors.grey,
+                color: Theme.of(context).textTheme.bodySmall?.color,
               ),
             ],
           ),

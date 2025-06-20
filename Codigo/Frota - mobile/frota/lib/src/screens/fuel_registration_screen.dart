@@ -222,7 +222,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // Blue header with rounded bottom corners
@@ -289,17 +289,31 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                     TextField(
                       controller: odometerController,
                       keyboardType: TextInputType.number,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Informe a leitura',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: Theme.of(context).cardColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -323,17 +337,31 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                     TextField(
                       controller: litersController,
                       keyboardType: TextInputType.number,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Informe a quantidade',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: Theme.of(context).cardColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -356,12 +384,14 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                     const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _highlightSupplier
                               ? Colors.red
-                              : Colors.grey.shade300,
+                              : (Theme.of(context).brightness == Brightness.dark 
+                                  ? const Color(0xFF3A3A5C)
+                                  : Colors.grey.shade300),
                           width: _highlightSupplier ? 2 : 1,
                         ),
                       ),
@@ -405,32 +435,49 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                               : DropdownButtonHideUnderline(
                                   child: DropdownButton<Supplier>(
                                     value: selectedSupplier,
-                                    hint: const Padding(
+                                    hint: Padding(
                                       padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      child: Text('Selecionar Posto'),
+                                          const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Text(
+                                        'Selecionar Posto',
+                                        style: TextStyle(
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
+                                        ),
+                                      ),
                                     ),
                                     isExpanded: true,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
+                                    icon: Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
+                                    ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
                                     borderRadius: BorderRadius.circular(8),
+                                    dropdownColor: Theme.of(context).cardColor,
+                                    style: TextStyle(
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    ),
                                     items: _suppliers.isEmpty
                                         ? [
-                                            const DropdownMenuItem<Supplier>(
+                                            DropdownMenuItem<Supplier>(
                                               value: null,
                                               enabled: false,
                                               child: Text(
                                                 'Nenhum fornecedor disponível',
                                                 style: TextStyle(
-                                                    color: Colors.grey),
+                                                    color: Theme.of(context).textTheme.bodySmall?.color),
                                               ),
                                             )
                                           ]
                                         : _suppliers.map((Supplier supplier) {
                                             return DropdownMenuItem<Supplier>(
                                               value: supplier,
-                                              child: Text(supplier.name),
+                                              child: Text(
+                                                supplier.name,
+                                                style: TextStyle(
+                                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                ),
+                                              ),
                                             );
                                           }).toList(),
                                     onChanged: _suppliers.isEmpty

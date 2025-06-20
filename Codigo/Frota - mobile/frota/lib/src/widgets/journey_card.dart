@@ -14,7 +14,7 @@ class JourneyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -32,11 +32,11 @@ class JourneyCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Partida',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                       Text(
@@ -52,19 +52,19 @@ class JourneyCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text(
+                      Text(
                         'Destino',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                       Text(
                         journey.destination,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -77,7 +77,9 @@ class JourneyCard extends StatelessWidget {
                   Container(
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF3A3A5C)
+                          : Colors.grey[300],
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -111,7 +113,9 @@ class JourneyCard extends StatelessWidget {
                       height: 12,
                       decoration: BoxDecoration(
                         color: journey.isActive
-                            ? Colors.grey[300]
+                            ? (Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey[300])
                             : const Color(0xFF0066CC),
                         shape: BoxShape.circle,
                       ),
@@ -125,18 +129,19 @@ class JourneyCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Odômetros inicial: ',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                       Text(
                         '${journey.initialOdometer} km',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                       ),
                     ],
@@ -144,18 +149,19 @@ class JourneyCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Saída: ',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                       Text(
                         journey.formattedDepartureTime,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                       ),
                     ],

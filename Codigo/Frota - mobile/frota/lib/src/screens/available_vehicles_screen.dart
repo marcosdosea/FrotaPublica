@@ -135,7 +135,7 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
             // Main content with light gray background
             Expanded(
               child: Container(
-                color: const Color(0xFFF5F5F5),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: Column(
                   children: [
                     // Search field - com padding apenas nas laterais e topo
@@ -145,9 +145,13 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                       child: Container(
                         height: 48,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
+                          border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
+                          ),
                         ),
                         child: TextField(
                           controller: _searchController,
@@ -156,10 +160,13 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                               _searchQuery = value;
                             });
                           },
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                           decoration: InputDecoration(
                             hintText: 'Buscar Placa ou Modelo',
                             hintStyle: TextStyle(
-                              color: Colors.grey[600],
+                              color: Theme.of(context).textTheme.bodySmall?.color,
                               fontSize: 16,
                             ),
                             prefixIcon: const Icon(
@@ -185,11 +192,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Nenhum veículo encontrado',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.grey,
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                         ),
                                       ),
                                       const SizedBox(height: 16),
@@ -253,7 +260,7 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                           margin:
                                               const EdgeInsets.only(bottom: 8),
                                           decoration: BoxDecoration(
-                                            color: Colors.white,
+                                            color: Theme.of(context).cardColor,
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             boxShadow: [
@@ -287,26 +294,27 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                     children: [
                                                       Text(
                                                         vehicle.model,
-                                                        style: const TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 4),
                                                       Text(
                                                         'Placa: ${vehicle.licensePlate}',
-                                                        style: const TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 14,
-                                                          color: Colors.black87,
+                                                          color: Theme.of(context).textTheme.bodyLarge?.color,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 2),
                                                       Text(
                                                         'Hodômetro: ${vehicle.odometer} km',
-                                                        style: const TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 12,
-                                                          color: Colors.grey,
+                                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                                         ),
                                                       ),
                                                     ],

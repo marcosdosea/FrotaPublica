@@ -56,7 +56,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // Cabeçalho azul com cantos arredondados na parte inferior
@@ -119,17 +119,31 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: originController,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Informe o local de partida',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -152,17 +166,31 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: destinationController,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Informe o local de chegada',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -186,17 +214,31 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                   TextField(
                     controller: reasonController,
                     maxLines: 3,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Descreva o motivo do percurso',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),

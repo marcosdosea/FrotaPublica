@@ -80,7 +80,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // Blue header with rounded bottom corners
@@ -144,17 +144,31 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
                   TextField(
                     controller: _descriptionController,
                     maxLines: 5,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Informe qual o problema',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
