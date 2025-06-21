@@ -17,6 +17,7 @@ import '../services/inspection_service.dart';
 import '../providers/fuel_provider.dart';
 import 'available_vehicles_screen.dart';
 import 'profile_screen.dart';
+import 'map_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -36,6 +37,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   InspectionStatus inspectionStatus = InspectionStatus();
   late Vehicle _currentVehicle;
   final InspectionService _inspectionService = InspectionService();
+
+  // Controlador do PageView para o slider
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
   @override
   void initState() {
@@ -58,6 +63,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   void dispose() {
     // Cancelar o observer ao destruir o widget
     WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -194,7 +200,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             Container(
                               width: double.infinity,
                               height:
-                              330.0, // Altura do header conforme o design
+                              280.0, // Altura do header conforme o design
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topCenter,
@@ -223,7 +229,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 ],
                               ),
                               padding: const EdgeInsets.only(
-                                  top: 40, left: 24, right: 24, bottom: 30),
+                                  top: 10, left: 24, right: 24, bottom: 30),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -287,236 +293,20 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               ),
                             ),
 
-                            // Card do veículo sobreposto ao header
+                            // Slider de cards sobreposto ao header
                             Positioned(
                               left: 24,
                               right: 24,
-                              bottom:
-                              -80, // Valor negativo para sobrepor o card ao header
-                              child: Card(
-                                color: Theme.of(context).cardColor,
-                                elevation: 4,
-                                margin: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _currentVehicle.model,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: Theme.of(context).textTheme.bodyLarge?.color,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'Placa: ',
-                                                style: TextStyle(
-                                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                              Text(
-                                                _currentVehicle.licensePlate,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                const EdgeInsets.all(12),
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xFF0066CC)
-                                                      .withOpacity(0.1),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.bar_chart,
-                                                  color: Color(0xFF0066CC),
-                                                  size: 28,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Consumer2<JourneyProvider,
-                                                  VehicleProvider>(
-                                                builder: (context,
-                                                    journeyProvider,
-                                                    vehicleProvider,
-                                                    child) {
-                                                  final journey =
-                                                      journeyProvider
-                                                          .activeJourney;
-                                                  final currentVehicle =
-                                                      vehicleProvider
-                                                          .currentVehicle ??
-                                                          _currentVehicle;
-                                                  final odometerDifference =
-                                                  journey != null
-                                                      ? (currentVehicle
-                                                      .odometer ??
-                                                      0) -
-                                                      (journey.initialOdometer ??
-                                                          0)
-                                                      : 0;
-
-                                                  return Text(
-                                                    '${odometerDifference} Km',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Color(0xFF0066CC),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              Text(
-                                                'Percorridos',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Container(
-                                            width: 1,
-                                            height: 80,
-                                            color: Theme.of(context).brightness == Brightness.dark
-                                                ? const Color(0xFF3A3A5C)
-                                                : Colors.grey[300],
-                                          ),
-                                          Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                padding:
-                                                const EdgeInsets.all(12),
-                                                decoration: BoxDecoration(
-                                                  color: const Color(0xFF0066CC)
-                                                      .withOpacity(0.1),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.local_gas_station,
-                                                  color: Color(0xFF0066CC),
-                                                  size: 28,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Consumer2<JourneyProvider,
-                                                  FuelProvider>(
-                                                builder: (context,
-                                                    journeyProvider,
-                                                    fuelProvider,
-                                                    child) {
-                                                  final journey =
-                                                      journeyProvider
-                                                          .activeJourney;
-                                                  double totalLiters = 0.0;
-
-                                                  if (journey != null) {
-                                                    totalLiters = fuelProvider
-                                                        .totalLitersForJourney;
-                                                  }
-
-                                                  return Text(
-                                                    '${totalLiters.toStringAsFixed(2)} L',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Color(0xFF0066CC),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              Text(
-                                                'Abastecidos',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              bottom: -120,
+                              child: _buildSliderCard(),
                             ),
                           ],
                         ),
 
                         // Espaço para compensar a sobreposição do card
-                        const SizedBox(height: 100),
+                        const SizedBox(height: 130),
 
-                        // Card de percurso
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Consumer<JourneyProvider>(
-                            builder: (context, journeyProvider, child) {
-                              final journey = journeyProvider.activeJourney;
-
-                              if (journey == null) {
-                                // Caso não tenha percurso ativo, mostrar mensagem
-                                return Card(
-                                  color: Theme.of(context).cardColor,
-                                  elevation: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Nenhum percurso ativo no momento',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Theme.of(context).textTheme.bodySmall?.color,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              return JourneyCard(
-                                journey: journey,
-                                onTap: () {
-                                  // Ação ao clicar no card - poderia mostrar detalhes
-                                },
-                              );
-                            },
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Registros section
+                        // Registros section - movido para cima
                         Padding(
                           padding:
                           const EdgeInsets.only(left: 24.0, right: 24.0),
@@ -693,6 +483,436 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           ],
         ),
       ),
+    );
+  }
+
+  // Widget do slider de cards
+  Widget _buildSliderCard() {
+    return Container(
+      height: 230,
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
+                  children: [
+                    _buildJourneyCard(), // Primeiro card - percurso
+                    _buildVehicleDataCard(), // Segundo card - dados do veículo
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Indicadores de página
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildPageIndicator(0),
+              const SizedBox(width: 8),
+              _buildPageIndicator(1),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+// Indicador de página
+  Widget _buildPageIndicator(int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: _currentPage == index ? 24 : 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: _currentPage == index
+            ? const Color(0xFF0066CC)
+            : Colors.grey.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+  }
+
+// Card de dados do veículo (segundo slide)
+  Widget _buildVehicleDataCard() {
+    return Card(
+      color: Theme.of(context).cardColor,
+      elevation: 4,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _currentVehicle.model,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Placa: ',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      _currentVehicle.licensePlate,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0066CC).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.bar_chart,
+                        color: Color(0xFF0066CC),
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Consumer2<JourneyProvider, VehicleProvider>(
+                      builder: (context, journeyProvider, vehicleProvider, child) {
+                        final journey = journeyProvider.activeJourney;
+                        final currentVehicle = vehicleProvider.currentVehicle ?? _currentVehicle;
+                        final odometerDifference = journey != null
+                            ? (currentVehicle.odometer ?? 0) - (journey.initialOdometer ?? 0)
+                            : 0;
+
+                        return Text(
+                          '${odometerDifference} Km',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Color(0xFF0066CC),
+                          ),
+                        );
+                      },
+                    ),
+                    Text(
+                      'Percorridos',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: 1,
+                  height: 80,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF3A3A5C)
+                      : Colors.grey[300],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0066CC).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.local_gas_station,
+                        color: Color(0xFF0066CC),
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Consumer2<JourneyProvider, FuelProvider>(
+                      builder: (context, journeyProvider, fuelProvider, child) {
+                        final journey = journeyProvider.activeJourney;
+                        double totalLiters = 0.0;
+
+                        if (journey != null) {
+                          totalLiters = fuelProvider.totalLitersForJourney;
+                        }
+
+                        return Text(
+                          '${totalLiters.toStringAsFixed(2)} L',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Color(0xFF0066CC),
+                          ),
+                        );
+                      },
+                    ),
+                    Text(
+                      'Abastecidos',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// Card de percurso (primeiro slide) - redesenhado seguindo o padrão do JourneyCard
+  Widget _buildJourneyCard() {
+    return Consumer<JourneyProvider>(
+      builder: (context, journeyProvider, child) {
+        final journey = journeyProvider.activeJourney;
+
+        if (journey == null) {
+          return Card(
+            color: Theme.of(context).cardColor,
+            elevation: 4,
+            margin: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  'Nenhum percurso ativo no momento',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Card(
+          color: Theme.of(context).cardColor,
+          elevation: 4,
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Origem e Destino
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Partida',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        Text(
+                          journey.origin ?? 'Não informado',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0066CC),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Destino',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        Text(
+                          journey.destination ?? 'Não informado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Barra de progresso
+                Stack(
+                  children: [
+                    Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF3A3A5C)
+                            : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: journey.progress ?? 0.0,
+                      child: Container(
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0066CC),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: -4,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF0066CC),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: -4,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: journey.isActive ?? false
+                              ? (Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3A3A5C)
+                              : Colors.grey[300])
+                              : const Color(0xFF0066CC),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Informações inferiores e botão
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Odômetro inicial: ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).textTheme.bodySmall?.color,
+                              ),
+                            ),
+                            Text(
+                              '${journey.initialOdometer ?? 0} km',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              'Saída: ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).textTheme.bodySmall?.color,
+                              ),
+                            ),
+                            Text(
+                              journey.formattedDepartureTime ?? 'Não informado',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapScreen(journey: journey),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.map, size: 16),
+                      label: const Text('Ver Mapa'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0066CC),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

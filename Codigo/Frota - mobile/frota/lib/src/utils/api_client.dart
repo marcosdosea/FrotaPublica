@@ -7,7 +7,7 @@ class ApiClient {
   // Configuração centralizada da API
   static const String _host = 'itetech-001-site1.qtempurl.com';
   static const String _apiPath = '/api';
-  static const String _httpsBaseUrl = 'https://$_host$_apiPath';
+  static const String _httpsBaseUrl = 'http://$_host$_apiPath';
   static const String _httpBaseUrl = 'http://$_host$_apiPath';
 
   static const storage = FlutterSecureStorage();

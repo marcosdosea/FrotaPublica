@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Controller_SelectedScaffolderID>ApiControllerWithActionsScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
-    <NameOfLastUsedPublishProfile>F:\Projetos\Trabalho\FrotaPublica\Codigo\Frota - web api\FrotaApi\Properties\PublishProfiles\itetech-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\Projetos\Trabalho\FrotaPublica\Codigo\Frota - web api\FrotaApi\Properties\PublishProfiles\itetech-001-site1 - Web Deploy3.pubxml</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>FrotaApi</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

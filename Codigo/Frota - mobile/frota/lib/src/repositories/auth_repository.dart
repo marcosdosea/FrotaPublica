@@ -16,7 +16,7 @@ class AuthRepository {
   // Métodos auxiliares para construir URLs
   static String _buildUrl(String protocol, String endpoint) {
     final baseUrl = protocol == 'https'
-        ? 'https://$_host$_apiPath'
+        ? 'http://$_host$_apiPath'
         : 'http://$_host$_apiPath';
     return '$baseUrl/$endpoint';
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 // Formatter personalizado para CPF
 class CpfInputFormatter extends TextInputFormatter {
@@ -38,5 +39,20 @@ class CpfInputFormatter extends TextInputFormatter {
       text: formattedText,
       selection: TextSelection.collapsed(offset: formattedText.length),
     );
+  }
+}
+
+// Classe para formatação de dados
+class Formatters {
+  static String formatDateTime(DateTime dateTime) {
+    return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
+  }
+
+  static String formatDate(DateTime dateTime) {
+    return DateFormat('dd/MM/yyyy').format(dateTime);
+  }
+
+  static String formatTime(DateTime dateTime) {
+    return DateFormat('HH:mm').format(dateTime);
   }
 }

@@ -14,6 +14,10 @@ class Journey {
   final double? distance;
   final List<String>? fuelRefillIds;
   final String? reason;
+  final double? originLatitude;
+  final double? originLongitude;
+  final double? destinationLatitude;
+  final double? destinationLongitude;
 
   Journey({
     required this.id,
@@ -29,6 +33,10 @@ class Journey {
     this.distance,
     this.fuelRefillIds,
     this.reason,
+    this.originLatitude,
+    this.originLongitude,
+    this.destinationLatitude,
+    this.destinationLongitude,
   });
 
   factory Journey.fromJson(Map<String, dynamic> json) {
@@ -57,6 +65,12 @@ class Journey {
       arrivalTime: isMinDate ? null : dataRetorno,
       isActive: isMinDate,
       reason: json['motivo'],
+      // Coordenadas de origem
+      originLatitude: json['latitudePartida']?.toDouble(),
+      originLongitude: json['longitudePartida']?.toDouble(),
+      // Coordenadas de destino
+      destinationLatitude: json['latitudeChegada']?.toDouble(),
+      destinationLongitude: json['longitudeChegada']?.toDouble(),
       // Esses campos podem não estar disponíveis na API
       distance: null,
       fuelRefillIds: null,
@@ -75,6 +89,10 @@ class Journey {
       'dataHoraSaida': departureTime.toIso8601String(),
       'dataHoraRetorno': arrivalTime?.toIso8601String(),
       'motivo': reason,
+      'latitudePartida': originLatitude,
+      'longitudePartida': originLongitude,
+      'latitudeChegada': destinationLatitude,
+      'longitudeChegada': destinationLongitude,
     };
   }
 
@@ -92,6 +110,10 @@ class Journey {
     double? distance,
     List<String>? fuelRefillIds,
     String? reason,
+    double? originLatitude,
+    double? originLongitude,
+    double? destinationLatitude,
+    double? destinationLongitude,
   }) {
     return Journey(
       id: id ?? this.id,
@@ -107,6 +129,10 @@ class Journey {
       distance: distance ?? this.distance,
       fuelRefillIds: fuelRefillIds ?? this.fuelRefillIds,
       reason: reason ?? this.reason,
+      originLatitude: originLatitude ?? this.originLatitude,
+      originLongitude: originLongitude ?? this.originLongitude,
+      destinationLatitude: destinationLatitude ?? this.destinationLatitude,
+      destinationLongitude: destinationLongitude ?? this.destinationLongitude,
     );
   }
 
@@ -141,4 +167,20 @@ class Journey {
 
     return '$hours:${minutes.toString().padLeft(2, '0')} h';
   }
+
+  // Verifica se tem coordenadas válidas
+  bool get hasValidCoordinates {
+    return originLatitude != null &&
+        originLongitude != null &&
+        destinationLatitude != null &&
+        destinationLongitude != null;
+  }
+
+  // Getters para compatibilidade com o map_screen.dart
+  double? get departureLatitude => originLatitude;
+  double? get departureLongitude => originLongitude;
+  double? get arrivalLatitude => destinationLatitude;
+  double? get arrivalLongitude => destinationLongitude;
+  String? get departureLocation => origin;
+  String? get arrivalLocation => destination;
 }
