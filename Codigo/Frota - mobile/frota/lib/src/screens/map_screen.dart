@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../models/journey.dart';
-import '../models/vehicle.dart';
 import '../providers/vehicle_provider.dart';
-import '../providers/journey_provider.dart';
-import '../providers/fuel_provider.dart';
 import '../models/inspection_status.dart';
 import '../services/inspection_service.dart';
 import 'fuel_registration_screen.dart';
 import 'inspection_selection_screen.dart';
 import 'maintenance_request_screen.dart';
 import '../utils/formatters.dart';
+import '../widgets/finish_journey_dialog.dart';
+import '../providers/journey_provider.dart';
+import '../providers/fuel_provider.dart';
+import 'available_vehicles_screen.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 
 class MapScreen extends StatefulWidget {
   final Journey journey;
@@ -28,10 +34,17 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
-  Set<Marker> _markers = {};
-  Set<Polyline> _polylines = {};
+  final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
   InspectionStatus inspectionStatus = InspectionStatus();
   final InspectionService _inspectionService = InspectionService();
+  bool _isLoadingRoute = false;
+  String? _routeDistance;
+  String? _routeDuration;
+
+  // CHAVE DA API DO GOOGLE MAPS
+  static const String _googleMapsApiKey =
+      'AIzaSyCxFxCvXpzIcSL_ck0CQyk2Xc2YvOmiLlc';
 
   @override
   void initState() {
@@ -40,82 +53,185 @@ class _MapScreenState extends State<MapScreen> {
     _checkInspectionStatus();
   }
 
-  void _setupMapData() {
+  void _setupMapData() async {
+    // Limpar dados antigos
     _markers.clear();
     _polylines.clear();
 
     // Verificar se temos coordenadas válidas
-    if (widget.journey.departureLatitude != null &&
-        widget.journey.departureLongitude != null &&
-        widget.journey.arrivalLatitude != null &&
-        widget.journey.arrivalLongitude != null) {
-
+    if (widget.journey.hasValidCoordinates) {
+      print(
+          '--- MAP_SCREEN: Coordenadas válidas encontradas. Origem: (${widget.journey.originLatitude}, ${widget.journey.originLongitude}), Destino: (${widget.journey.destinationLatitude}, ${widget.journey.destinationLongitude})');
       final departureLatLng = LatLng(
-        widget.journey.departureLatitude!,
-        widget.journey.departureLongitude!,
+        widget.journey.originLatitude!,
+        widget.journey.originLongitude!,
       );
 
       final arrivalLatLng = LatLng(
-        widget.journey.arrivalLatitude!,
-        widget.journey.arrivalLongitude!,
+        widget.journey.destinationLatitude!,
+        widget.journey.destinationLongitude!,
       );
 
-      // Adicionar marcadores
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('departure'),
-          position: departureLatLng,
-          infoWindow: InfoWindow(
-            title: 'Partida',
-            snippet: widget.journey.departureLocation ?? 'Local de partida',
-          ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-        ),
-      );
+      // Adicionar marcadores de partida e chegada
+      _addMarkers(departureLatLng, arrivalLatLng);
 
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('arrival'),
-          position: arrivalLatLng,
-          infoWindow: InfoWindow(
-            title: 'Destino',
-            snippet: widget.journey.arrivalLocation ?? 'Local de chegada',
-          ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        ),
-      );
-
-      // Adicionar linha da rota
-      _polylines.add(
-        Polyline(
-          polylineId: const PolylineId('route'),
-          points: [departureLatLng, arrivalLatLng],
-          color: const Color(0xFF116AD5),
-          width: 4,
-        ),
-      );
+      // Buscar e desenhar a rota
+      await _getDirectionsRoute(departureLatLng, arrivalLatLng);
+    } else {
+      print(
+          '--- MAP_SCREEN: Coordenadas inválidas ou ausentes. Exibindo mapa de Sergipe.');
     }
+
+    // Atualizar a UI
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _addMarkers(LatLng origin, LatLng destination) {
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('departure'),
+        position: origin,
+        infoWindow: InfoWindow(
+          title: 'Partida',
+          snippet: widget.journey.origin,
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+      ),
+    );
+
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('arrival'),
+        position: destination,
+        infoWindow: InfoWindow(
+          title: 'Destino',
+          snippet: widget.journey.destination,
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      ),
+    );
+  }
+
+  Future<void> _getDirectionsRoute(LatLng origin, LatLng destination) async {
+    setState(() {
+      _isLoadingRoute = true;
+    });
+    print(
+        '--- MAP_SCREEN: _getDirectionsRoute chamado com Origem: $origin, Destino: $destination');
+
+    try {
+      final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
+          'origin=${origin.latitude},${origin.longitude}&'
+          'destination=${destination.latitude},${destination.longitude}&'
+          'key=$_googleMapsApiKey&'
+          'language=pt-BR';
+
+      print('--- MAP_SCREEN: Chamando URL da API do Google Directions: $url');
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print('--- MAP_SCREEN: Resposta da API recebida (StatusCode: 200).');
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK' && (data['routes'] as List).isNotEmpty) {
+          print(
+              '--- MAP_SCREEN: Status da rota é OK. Desenhando rota no mapa.');
+          final route = data['routes'][0];
+          final leg = route['legs'][0];
+
+          // Extrair informações da rota
+          _routeDistance = leg['distance']['text'];
+          _routeDuration = leg['duration']['text'];
+
+          // Decodificar os pontos da rota e criar a polyline
+          final String encodedPolyline = route['overview_polyline']['points'];
+          _polylines.add(
+            Polyline(
+              polylineId: const PolylineId('route'),
+              points: _decodePolyline(encodedPolyline),
+              color: const Color(0xFF116AD5),
+              width: 5,
+            ),
+          );
+        } else {
+          print(
+              '--- MAP_SCREEN: API retornou status: ${data['status']}. Desenhando linha reta como fallback.');
+          // Fallback para linha reta se a API falhar
+          _drawStraightLine(origin, destination);
+        }
+      } else {
+        print(
+            '--- MAP_SCREEN: Falha na chamada da API (StatusCode: ${response.statusCode}). Desenhando linha reta como fallback.');
+        _drawStraightLine(origin, destination);
+      }
+    } catch (e) {
+      print(
+          '--- MAP_SCREEN: Erro na chamada da API: $e. Desenhando linha reta como fallback.');
+      _drawStraightLine(origin, destination);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingRoute = false;
+        });
+        _fitMarkersInView();
+      }
+    }
+  }
+
+  void _drawStraightLine(LatLng origin, LatLng destination) {
+    _polylines.add(
+      Polyline(
+        polylineId: const PolylineId('route'),
+        points: [origin, destination],
+        color: const Color(0xFF116AD5),
+        width: 5,
+      ),
+    );
+  }
+
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> polyline = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      polyline.add(LatLng(lat / 1E5, lng / 1E5));
+    }
+    return polyline;
   }
 
   Future<void> _checkInspectionStatus() async {
     try {
-      final vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+      final vehicleProvider =
+      Provider.of<VehicleProvider>(context, listen: false);
       final currentVehicle = vehicleProvider.currentVehicle;
 
       if (currentVehicle != null) {
-        // Verificar vistoria de saída
-        bool departureCompleted =
-        await _inspectionService.hasInspectionBeenCompleted(
-          currentVehicle.id,
-          'S',
-        );
-
-        // Verificar vistoria de retorno
-        bool arrivalCompleted =
-        await _inspectionService.hasInspectionBeenCompleted(
-          currentVehicle.id,
-          'R',
-        );
+        bool departureCompleted = await _inspectionService
+            .hasInspectionBeenCompleted(currentVehicle.id, 'S');
+        bool arrivalCompleted = await _inspectionService
+            .hasInspectionBeenCompleted(currentVehicle.id, 'R');
 
         if (mounted) {
           setState(() {
@@ -127,339 +243,83 @@ class _MapScreenState extends State<MapScreen> {
         }
       }
     } catch (e) {
-      print('Erro ao verificar status das vistorias: $e');
+      // Tratar erro se necessário
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Configurar barra de status
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF116AD5),
-      statusBarIconBrightness: Brightness.light,
-    ));
+    LatLng initialPosition = const LatLng(-10.9472, -37.0731); // Sergipe
+    double initialZoom = 8.0;
 
-    // Determinar posição inicial do mapa
-    LatLng initialPosition;
-    double initialZoom = 10.0;
-
-    if (widget.journey.departureLatitude != null &&
-        widget.journey.departureLongitude != null) {
+    if (widget.journey.hasValidCoordinates) {
       initialPosition = LatLng(
-        widget.journey.departureLatitude!,
-        widget.journey.departureLongitude!,
-      );
+          widget.journey.originLatitude!, widget.journey.originLongitude!);
       initialZoom = 12.0;
-    } else {
-      // Fallback para Sergipe
-      initialPosition = const LatLng(-10.9472, -37.0731);
-      initialZoom = 8.0;
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF116AD5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
-          // Barra de status
+          // Blue header with rounded bottom corners
           Container(
-            height: MediaQuery.of(context).padding.top,
-            color: const Color(0xFF116AD5),
-          ),
-          // Header
-          Container(
-            color: const Color(0xFF116AD5),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding:
+            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            decoration: const BoxDecoration(
+              color: Color(0xFF116AD5),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x29000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
             child: Row(
               children: [
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
                     Icons.arrow_back,
                     color: Colors.white,
                     size: 24,
                   ),
                 ),
-                const Expanded(
-                  child: Text(
-                    'Percurso',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
+                const SizedBox(width: 16),
+                const Text(
+                  'Percurso',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(width: 48), // Para balancear o botão de voltar
               ],
             ),
           ),
-          // Conteúdo
+
           Expanded(
             child: Container(
+              width: double.infinity,
               color: Theme.of(context).scaffoldBackgroundColor,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.only(top: 24, bottom: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Card do mapa
-                    Card(
-                      color: Theme.of(context).cardColor,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            // Header do card com partida e destino
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Partida',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Theme.of(context).textTheme.bodySmall?.color,
-                                      ),
-                                    ),
-                                    Text(
-                                      widget.journey.departureLocation ?? 'Não informado',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF116AD5),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'Destino',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Theme.of(context).textTheme.bodySmall?.color,
-                                      ),
-                                    ),
-                                    Text(
-                                      widget.journey.arrivalLocation ?? 'Não informado',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF116AD5),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            // Mapa
-                            Container(
-                              height: 300,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? const Color(0xFF3A3A5C)
-                                      : Colors.grey[300]!,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target: initialPosition,
-                                    zoom: initialZoom,
-                                  ),
-                                  markers: _markers,
-                                  polylines: _polylines,
-                                  onMapCreated: (GoogleMapController controller) {
-                                    _mapController = controller;
-
-                                    // Se temos marcadores, ajustar a câmera para mostrar todos
-                                    if (_markers.isNotEmpty) {
-                                      _fitMarkersInView();
-                                    }
-                                  },
-                                  zoomControlsEnabled: true,
-                                  mapToolbarEnabled: false,
-                                  myLocationButtonEnabled: false,
-                                  compassEnabled: true,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            // Informações do percurso
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Odômetros',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF116AD5),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Inicial: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${widget.journey.initialOdometer ?? 0}km',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Consumer<VehicleProvider>(
-                                  builder: (context, vehicleProvider, child) {
-                                    final currentVehicle = vehicleProvider.currentVehicle;
-                                    return Row(
-                                      children: [
-                                        Text(
-                                          'Final: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${currentVehicle?.odometer ?? 0}km',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 12),
-                                if (widget.journey.departureTime != null)
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Saída: ',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF116AD5),
-                                        ),
-                                      ),
-                                      Text(
-                                        Formatters.formatDateTime(widget.journey.departureTime!),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF116AD5),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _buildMapCard(initialPosition, initialZoom),
                     ),
                     const SizedBox(height: 32),
-                    // Seção de registros
-                    Text(
-                      'Registros',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Cards de registros
-                    Consumer<VehicleProvider>(
-                      builder: (context, vehicleProvider, child) {
-                        final currentVehicle = vehicleProvider.currentVehicle;
-
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: _buildRegistrationCard(
-                                icon: Icons.local_gas_station,
-                                title: 'Registrar\nAbastecimento',
-                                onTap: currentVehicle != null ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FuelRegistrationScreen(
-                                        vehicleId: currentVehicle.id,
-                                      ),
-                                    ),
-                                  );
-                                } : null,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildRegistrationCard(
-                                icon: Icons.checklist,
-                                title: 'Realizar\nVistoria',
-                                hasNotification: !inspectionStatus.departureInspectionCompleted ||
-                                    !inspectionStatus.arrivalInspectionCompleted,
-                                isCompleted: inspectionStatus.departureInspectionCompleted &&
-                                    inspectionStatus.arrivalInspectionCompleted,
-                                onTap: currentVehicle != null ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => InspectionSelectionScreen(
-                                        vehicleId: currentVehicle.id,
-                                      ),
-                                    ),
-                                  ).then((value) {
-                                    _checkInspectionStatus();
-                                  });
-                                } : null,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildRegistrationCard(
-                                icon: Icons.exit_to_app,
-                                title: 'Registrar\nSaída',
-                                onTap: currentVehicle != null ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MaintenanceRequestScreen(
-                                        vehicleId: currentVehicle.id,
-                                      ),
-                                    ),
-                                  );
-                                } : null,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
+                    _buildRegistrosSection(),
                   ],
                 ),
               ),
@@ -470,88 +330,443 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildRegistrationCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback? onTap,
-    bool hasNotification = false,
-    bool isCompleted = false,
-  }) {
+  Widget _buildMapCard(LatLng initialPosition, double initialZoom) {
     return Card(
       color: Theme.of(context).cardColor,
-      elevation: 2,
+      elevation: 4,
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildJourneyHeader(),
+            const SizedBox(height: 16),
+            _buildMapContainer(initialPosition, initialZoom),
+            const SizedBox(height: 16),
+            _buildOdometerInfo(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJourneyHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildLocationInfo('Partida', widget.journey.origin),
+        _buildLocationInfo('Destino', widget.journey.destination,
+            alignRight: true),
+      ],
+    );
+  }
+
+  Widget _buildLocationInfo(String label, String location,
+      {bool alignRight = false}) {
+    return Column(
+      crossAxisAlignment:
+      alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).textTheme.bodySmall?.color,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          location,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF116AD5),
+          ),
+          textAlign: alignRight ? TextAlign.end : TextAlign.start,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMapContainer(LatLng initialPosition, double initialZoom) {
+    return Container(
+      height: 350,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[300]!, width: 1),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0066CC).withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      icon,
-                      color: const Color(0xFF0066CC),
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: initialPosition,
+                zoom: initialZoom,
               ),
+              markers: _markers,
+              polylines: _polylines,
+              onMapCreated: (GoogleMapController controller) {
+                _mapController = controller;
+                _fitMarkersInView();
+              },
+              zoomControlsEnabled: true,
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: true,
+              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer()),
+              },
             ),
-            if (hasNotification)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            if (isCompleted)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  width: 16,
-                  height: 16,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF0066CC),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 12,
-                  ),
+            if (_isLoadingRoute)
+              const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF116AD5),
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOdometerInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Odômetros',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Consumer<VehicleProvider>(
+          builder: (context, vehicleProvider, child) {
+            final currentVehicle = vehicleProvider.currentVehicle;
+            return Column(
+              children: [
+                _infoRow('Inicial:', '${widget.journey.initialOdometer}km'),
+                const SizedBox(height: 4),
+                _infoRow('Final:',
+                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km'),
+                const SizedBox(height: 4),
+                _infoRow('Hora de Saída:',
+                    Formatters.formatDateTime(widget.journey.departureTime)),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).textTheme.bodySmall?.color),
+        ),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegistrosSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            'Registros',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Consumer<VehicleProvider>(
+          builder: (context, vehicleProvider, child) {
+            final currentVehicle = vehicleProvider.currentVehicle;
+
+            return SizedBox(
+              height: 120,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildActionCardHorizontal(
+                    icon: Icons.local_gas_station,
+                    title: 'Registrar\nAbastecimento',
+                    onTap: () {
+                      if (currentVehicle == null) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FuelRegistrationScreen(
+                            vehicleId: currentVehicle.id,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildActionCardHorizontal(
+                    icon: Icons.checklist,
+                    title: 'Realizar Vistoria',
+                    onTap: () {
+                      if (currentVehicle == null) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InspectionSelectionScreen(
+                            vehicleId: currentVehicle.id,
+                          ),
+                        ),
+                      ).then((value) {
+                        _checkInspectionStatus();
+                      });
+                    },
+                    hasNotification:
+                    !inspectionStatus.departureInspectionCompleted ||
+                        !inspectionStatus.arrivalInspectionCompleted,
+                    isCompleted:
+                    inspectionStatus.departureInspectionCompleted &&
+                        inspectionStatus.arrivalInspectionCompleted,
+                  ),
+                  _buildActionCardHorizontal(
+                    icon: Icons.build,
+                    title: 'Solicitar Manutenção',
+                    onTap: () {
+                      if (currentVehicle == null) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MaintenanceRequestScreen(
+                            vehicleId: currentVehicle.id,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildActionCardHorizontal(
+                    icon: Icons.cancel,
+                    title: 'Finalizar Percurso',
+                    onTap: () {
+                      if (!inspectionStatus.departureInspectionCompleted ||
+                          !inspectionStatus.arrivalInspectionCompleted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'É necessário realizar ambas as vistorias antes de finalizar o percurso'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+                      _showFinishJourneyDialog();
+                    },
+                    iconColor: Colors.red,
+                    iconBgColor: Colors.red.withOpacity(0.1),
+                    isDisabled:
+                    !inspectionStatus.departureInspectionCompleted ||
+                        !inspectionStatus.arrivalInspectionCompleted,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  void _showFinishJourneyDialog() {
+    final journeyProvider =
+    Provider.of<JourneyProvider>(context, listen: false);
+    final vehicleProvider =
+    Provider.of<VehicleProvider>(context, listen: false);
+    final journey = journeyProvider.activeJourney;
+    final currentVehicle = vehicleProvider.currentVehicle;
+
+    if (currentVehicle == null || journey == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não há percurso ativo para finalizar.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    String duration = '0:00 h';
+    if (journey.departureTime != null) {
+      final difference = DateTime.now().difference(journey.departureTime!);
+      final hours = difference.inHours;
+      final minutes = difference.inMinutes.remainder(60);
+      duration = '${hours}:${minutes.toString().padLeft(2, '0')} h';
+    }
+
+    final odometerDifference =
+        (currentVehicle.odometer ?? 0) - (journey.initialOdometer ?? 0);
+    final distance = '${odometerDifference} km';
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: FinishJourneyDialog(
+            duration: duration,
+            distance: distance,
+            onFinish: (int odometer) async {
+              final inspectionService = InspectionService();
+              final result = await journeyProvider.finishJourney(odometer);
+
+              if (result == true) {
+                await inspectionService
+                    .clearInspectionStatus(currentVehicle.id);
+
+                final fuelProvider =
+                Provider.of<FuelProvider>(context, listen: false);
+                await fuelProvider.clearTotalLitersForJourney(journey.id);
+
+                setState(() {
+                  inspectionStatus = InspectionStatus();
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Percurso finalizado com sucesso!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+
+                Navigator.pop(context); // Fecha o diálogo
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AvailableVehiclesScreen(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Odômetro final inferior ao atual.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActionCardHorizontal({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color iconColor = const Color(0xFF0066CC),
+    Color iconBgColor = const Color(0xFFE3F2FD),
+    bool hasNotification = false,
+    bool isCompleted = false,
+    bool isDisabled = false,
+  }) {
+    return Container(
+      width: 130,
+      margin: const EdgeInsets.only(right: 8),
+      child: Card(
+        color: Theme.of(context).cardColor,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: isDisabled ? null : onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: iconBgColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: isDisabled ? Colors.grey : iconColor,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: isDisabled
+                            ? Colors.grey
+                            : Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              if (hasNotification)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              if (isCompleted)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF0066CC),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -567,17 +782,23 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   LatLngBounds _calculateBounds() {
-    final lats = _markers.map((m) => m.position.latitude).toList();
-    final lngs = _markers.map((m) => m.position.longitude).toList();
-
-    final minLat = lats.reduce((a, b) => a < b ? a : b);
-    final maxLat = lats.reduce((a, b) => a > b ? a : b);
-    final minLng = lngs.reduce((a, b) => a < b ? a : b);
-    final maxLng = lngs.reduce((a, b) => a > b ? a : b);
-
     return LatLngBounds(
-      southwest: LatLng(minLat, minLng),
-      northeast: LatLng(maxLat, maxLng),
+      southwest: LatLng(
+        _markers
+            .map((m) => m.position.latitude)
+            .reduce((a, b) => a < b ? a : b),
+        _markers
+            .map((m) => m.position.longitude)
+            .reduce((a, b) => a < b ? a : b),
+      ),
+      northeast: LatLng(
+        _markers
+            .map((m) => m.position.latitude)
+            .reduce((a, b) => a > b ? a : b),
+        _markers
+            .map((m) => m.position.longitude)
+            .reduce((a, b) => a > b ? a : b),
+      ),
     );
   }
 }

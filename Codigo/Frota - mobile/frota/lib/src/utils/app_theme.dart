@@ -7,7 +7,7 @@ class AppTheme {
   static const Color primaryLightColor = Color(0xFF116AD5);
 
   // Cores do tema claro
-  static const Color lightBackgroundColor = Color(0xFFF5F5F5);
+  static const Color lightBackgroundColor = Color(0xFFD8E6EE);
   static const Color lightCardColor = Colors.white;
   static const Color lightTextColor = Colors.black87;
   static const Color lightSecondaryTextColor = Colors.grey;
