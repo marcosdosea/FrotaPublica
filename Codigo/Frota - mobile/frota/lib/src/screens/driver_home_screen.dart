@@ -501,7 +501,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   // Widget do slider de cards
   Widget _buildSliderCard() {
     return Container(
-      height: 230,
+      height: 220,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [

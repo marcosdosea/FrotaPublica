@@ -83,7 +83,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark, // Ícones pretos
-        statusBarBrightness: Brightness.light, // Para iOS
+        statusBarBrightness: Brightness.dark, // Para iOS
       ),
     );
     return Scaffold(
@@ -95,8 +95,8 @@ class _PresentationScreenState extends State<PresentationScreen> {
           // Imagem 3D no topo se estendendo até a barra de notificações
           ClipRRect(
             borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -166,6 +166,7 @@ class _PresentationScreenState extends State<PresentationScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

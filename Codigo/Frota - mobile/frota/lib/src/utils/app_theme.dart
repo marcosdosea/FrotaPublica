@@ -13,8 +13,8 @@ class AppTheme {
   static const Color lightSecondaryTextColor = Colors.grey;
 
   // Cores do tema escuro
-  static const Color darkBackgroundColor = Color(0xFF1A1A2E);
-  static const Color darkCardColor = Color(0xFF16213E);
+  static const Color darkBackgroundColor = Color(0xFF0C0C19);
+  static const Color darkCardColor = Color(0xFF0B0C43);
   static const Color darkTextColor = Colors.white;
   static const Color darkSecondaryTextColor = Color(0xFFB0B0B0);
 
