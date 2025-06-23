@@ -13,6 +13,7 @@ import '../providers/journey_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../widgets/keyboard_aware_widget.dart';
+import 'driver_home_screen.dart';
 
 class JourneyRegistrationScreen extends StatefulWidget {
   const JourneyRegistrationScreen({super.key});
@@ -47,6 +48,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
     // Adicionar listeners aos controllers para validar o formulário
     originController.addListener(_validateForm);
     destinationController.addListener(_validateForm);
+    reasonController.addListener(_validateForm);
   }
 
   @override
@@ -54,6 +56,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
     // Remover listeners dos controllers
     originController.removeListener(_validateForm);
     destinationController.removeListener(_validateForm);
+    reasonController.removeListener(_validateForm);
 
     // Dispose dos controllers
     originController.dispose();
@@ -117,78 +120,41 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _getAutocompleteSuggestions(
-      String pattern, bool isOrigin) async {
-    if (pattern.isEmpty && isOrigin) {
-      return [
-        {
-          'description': 'Usar sua Posição Atual',
-          'place_id': 'USE_CURRENT_LOCATION'
-        }
-      ];
-    }
-    if (pattern.isEmpty) {
-      return [];
-    }
-
-    // 1. Tentar autocomplete normal
+      String pattern) async {
+    if (pattern.isEmpty) return [];
     final autocompleteUrl = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&key=$_googleMapsApiKey&language=pt_BR');
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$pattern&key=$_googleMapsApiKey&language=pt_BR&components=country:br');
     try {
       final response = await http.get(autocompleteUrl);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        debugPrint('Google Autocomplete Response: ${response.body}');
         if (data['status'] == 'OK' &&
             data['predictions'] != null &&
             data['predictions'].isNotEmpty) {
-          List<Map<String, dynamic>> suggestions =
-              List<Map<String, dynamic>>.from(data['predictions']);
-          if (isOrigin) {
-            suggestions.insert(0, {
-              'description': 'Usar sua Posição Atual',
-              'place_id': 'USE_CURRENT_LOCATION'
-            });
-          }
-          return suggestions;
+          return List<Map<String, dynamic>>.from(data['predictions']);
         }
       }
-    } catch (e) {
-      debugPrint('Erro no autocomplete: $e');
-    }
-
-    // 2. Fallback: tentar Place Text Search
+    } catch (_) {}
+    // Fallback: tentar Place Text Search, também filtrando por Brasil
     final textSearchUrl = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$pattern&key=$_googleMapsApiKey&language=pt_BR');
+        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$pattern&key=$_googleMapsApiKey&language=pt_BR&region=br');
     try {
       final response = await http.get(textSearchUrl);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        debugPrint('Google Text Search Response: ${response.body}');
         if (data['status'] == 'OK' &&
             data['results'] != null &&
             data['results'].isNotEmpty) {
-          // Adaptar para o formato esperado pelo autocomplete
-          List<Map<String, dynamic>> suggestions =
-              List<Map<String, dynamic>>.from(data['results'].map((item) => {
-                    'description': item['name'] +
-                        (item['formatted_address'] != null
-                            ? ' - ' + item['formatted_address']
-                            : ''),
-                    'place_id': item['place_id'],
-                  }));
-          if (isOrigin) {
-            suggestions.insert(0, {
-              'description': 'Usar sua Posição Atual',
-              'place_id': 'USE_CURRENT_LOCATION'
-            });
-          }
-          return suggestions;
+          return List<Map<String, dynamic>>.from(data['results'].map((item) => {
+                'description': item['name'] +
+                    (item['formatted_address'] != null
+                        ? ' - ' + item['formatted_address']
+                        : ''),
+                'place_id': item['place_id'],
+              }));
         }
       }
-    } catch (e) {
-      debugPrint('Erro no text search: $e');
-    }
-
+    } catch (_) {}
     return [];
   }
 
@@ -258,9 +224,11 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
         );
 
         if (success) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Percurso iniciado com sucesso!')),
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DriverHomeScreen(vehicle: vehicle)),
           );
         } else {
           throw Exception('Falha ao iniciar percurso');
@@ -277,81 +245,186 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final vehicleProvider = Provider.of<VehicleProvider>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Registrar Novo Percurso'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : KeyboardAwareScrollView(
-              padding: const EdgeInsets.all(16.0),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Column(
+        children: [
+          // Cabeçalho azul com cantos arredondados na parte inferior
+          Container(
+            padding:
+                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            decoration: const BoxDecoration(
+              color: Color(0xFF116AD5),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x29000000),
+                  offset: Offset(0, 3),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'Registrar Percurso',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text(
+                      'Local de Saída',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF0066CC),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     TypeAheadField<Map<String, dynamic>>(
                       controller: originController,
                       suggestionsCallback: (pattern) =>
-                          _getAutocompleteSuggestions(pattern, true),
+                          _getAutocompleteSuggestions(pattern),
                       builder: (context, controller, focusNode) {
-                        return TextFormField(
+                        return TextField(
                           controller: controller,
                           focusNode: focusNode,
-                          textInputAction: TextInputAction.next,
-                          decoration: const InputDecoration(
-                            labelText: 'Local de Partida',
-                            border: OutlineInputBorder(),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
-                          validator: (value) => value!.isEmpty
-                              ? 'Informe o local de partida'
-                              : null,
+                          decoration: InputDecoration(
+                            hintText: 'Informe o local de partida',
+                            hintStyle: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                            filled: true,
+                            fillColor: Theme.of(context).cardColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                  color: Color(0xFF0066CC), width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
+                          ),
                         );
                       },
                       itemBuilder: (context, suggestion) {
                         return ListTile(
-                          leading: Icon(
-                              suggestion['place_id'] == 'USE_CURRENT_LOCATION'
-                                  ? Icons.my_location
-                                  : Icons.location_on),
+                          leading: const Icon(Icons.location_on),
                           title: Text(suggestion['description'] ?? ''),
                         );
                       },
                       onSelected: (suggestion) {
-                        if (suggestion['place_id'] == 'USE_CURRENT_LOCATION') {
-                          _getCurrentLocationForOrigin();
-                        } else {
-                          originController.text =
-                              suggestion['description'] ?? '';
-                          _getPlaceDetails(suggestion['place_id'], true);
-                        }
-                        // Fechar teclado após seleção
-                        FocusScope.of(context).unfocus();
+                        originController.text = suggestion['description'] ?? '';
+                        _getPlaceDetails(suggestion['place_id'], true);
                       },
                       emptyBuilder: (context) => const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text('Nenhum local encontrado.'),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Local de Destino',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF0066CC),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     TypeAheadField<Map<String, dynamic>>(
                       controller: destinationController,
                       suggestionsCallback: (pattern) =>
-                          _getAutocompleteSuggestions(pattern, false),
+                          _getAutocompleteSuggestions(pattern),
                       builder: (context, controller, focusNode) {
-                        return TextFormField(
+                        return TextField(
                           controller: controller,
                           focusNode: focusNode,
-                          textInputAction: TextInputAction.next,
-                          decoration: const InputDecoration(
-                            labelText: 'Local de Chegada',
-                            border: OutlineInputBorder(),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
-                          validator: (value) => value!.isEmpty
-                              ? 'Informe o local de chegada'
-                              : null,
+                          decoration: InputDecoration(
+                            hintText: 'Informe o local de chegada',
+                            hintStyle: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                            filled: true,
+                            fillColor: Theme.of(context).cardColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                  color: Color(0xFF0066CC), width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
+                          ),
                         );
                       },
                       itemBuilder: (context, suggestion) {
@@ -364,41 +437,103 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                         destinationController.text =
                             suggestion['description'] ?? '';
                         _getPlaceDetails(suggestion['place_id'], false);
-                        // Fechar teclado após seleção
-                        FocusScope.of(context).unfocus();
                       },
                       emptyBuilder: (context) => const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text('Nenhum local encontrado.'),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: reasonController,
-                      decoration: const InputDecoration(
-                        labelText: 'Motivo (Opcional)',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 2,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) {
-                        // Fechar teclado ao pressionar done
-                        FocusScope.of(context).unfocus();
-                      },
-                    ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: _formIsValid ? _submit : null,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        textStyle: const TextStyle(fontSize: 16),
+                    const Text(
+                      'Motivo do Percurso',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF0066CC),
+                        fontWeight: FontWeight.w500,
                       ),
-                      child: const Text('Iniciar Percurso'),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: reasonController,
+                      maxLines: 3,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Descreva o motivo do percurso',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).cardColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                              color: Color(0xFF0066CC), width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ElevatedButton(
+                              onPressed: _formIsValid ? _submit : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF0066CC),
+                                foregroundColor: Colors.white,
+                                disabledBackgroundColor:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? const Color(0xFF22223A)
+                                        : Colors.grey.shade300,
+                                disabledForegroundColor:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Iniciar Percurso',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
+        ],
+      ),
     );
   }
 }
