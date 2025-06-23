@@ -46,13 +46,21 @@ class JourneyRepository {
     required String destination,
     required int initialOdometer,
     String? reason,
+    double? originLatitude,
+    double? originLongitude,
+    double? destinationLatitude,
+    double? destinationLongitude,
   }) async {
     try {
       // Converter para o formato esperado pela API
       final response = await ApiClient.post('Percurso/iniciar', {
         'idVeiculo': int.parse(vehicleId),
         'localPartida': origin,
+        'latitudePartida': originLatitude,
+        'longitudePartida': originLongitude,
         'localChegada': destination,
+        'latitudeChegada': destinationLatitude,
+        'longitudeChegada': destinationLongitude,
         'odometroInicial': initialOdometer,
         'motivo': reason ?? ''
       });
@@ -93,12 +101,10 @@ class JourneyRepository {
         if (journeyResponse.statusCode == 200) {
           final journeyData = jsonDecode(journeyResponse.body);
           return true;
-        }
-        else{
+        } else {
           return false;
         }
-      }
-      else{
+      } else {
         return false;
       }
     } catch (e) {

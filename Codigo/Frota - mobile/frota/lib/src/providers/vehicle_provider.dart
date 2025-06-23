@@ -93,6 +93,11 @@ class VehicleProvider with ChangeNotifier {
 
   // Definir veículo atual sem atribuição ao motorista (para navegação direta)
   void setCurrentVehicle(Vehicle vehicle) {
+    // Evitar notificação se o veículo for o mesmo
+    if (_currentVehicle?.id == vehicle.id) {
+      return;
+    }
+
     _currentVehicle = vehicle;
     // Usar Future.microtask para evitar notificação durante a fase de build
     Future.microtask(() => notifyListeners());

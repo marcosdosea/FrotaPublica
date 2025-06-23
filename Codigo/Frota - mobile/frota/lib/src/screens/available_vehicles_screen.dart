@@ -148,9 +148,10 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? const Color(0xFF3A3A5C)
-                                : Colors.grey.shade300,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF3A3A5C)
+                                    : Colors.grey.shade300,
                           ),
                         ),
                         child: TextField(
@@ -166,7 +167,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                           decoration: InputDecoration(
                             hintText: 'Buscar Placa ou Modelo',
                             hintStyle: TextStyle(
-                              color: Theme.of(context).textTheme.bodySmall?.color,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
                               fontSize: 16,
                             ),
                             prefixIcon: const Icon(
@@ -196,7 +198,10 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                         'Nenhum veículo encontrado',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Theme.of(context).textTheme.bodySmall?.color,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
                                         ),
                                       ),
                                       const SizedBox(height: 16),
@@ -298,7 +303,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                           fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 4),
@@ -306,7 +315,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                         'Placa: ${vehicle.licensePlate}',
                                                         style: TextStyle(
                                                           fontSize: 14,
-                                                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyLarge
+                                                                  ?.color,
                                                         ),
                                                       ),
                                                       const SizedBox(height: 2),
@@ -314,7 +327,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                         'Hodômetro: ${vehicle.odometer} km',
                                                         style: TextStyle(
                                                           fontSize: 12,
-                                                          color: Theme.of(context).textTheme.bodySmall?.color,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall
+                                                                  ?.color,
                                                         ),
                                                       ),
                                                     ],
@@ -330,9 +347,7 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
-                                                              JourneyRegistrationScreen(
-                                                                  vehicle:
-                                                                      vehicle),
+                                                              JourneyRegistrationScreen(),
                                                         ),
                                                       );
                                                     },

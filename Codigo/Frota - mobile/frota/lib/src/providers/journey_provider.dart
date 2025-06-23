@@ -41,6 +41,10 @@ class JourneyProvider with ChangeNotifier {
     required String destination,
     required int initialOdometer,
     String? reason,
+    double? originLatitude,
+    double? originLongitude,
+    double? destinationLatitude,
+    double? destinationLongitude,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -53,6 +57,10 @@ class JourneyProvider with ChangeNotifier {
         destination: destination,
         initialOdometer: initialOdometer,
         reason: reason,
+        originLatitude: originLatitude,
+        originLongitude: originLongitude,
+        destinationLatitude: destinationLatitude,
+        destinationLongitude: destinationLongitude,
       );
 
       if (journey != null) {

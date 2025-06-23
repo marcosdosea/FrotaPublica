@@ -7,6 +7,7 @@ import '../providers/vehicle_provider.dart';
 import '../screens/driver_home_screen.dart';
 import '../services/biometric_service.dart';
 import '../utils/formatters.dart';
+import '../widgets/keyboard_aware_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -80,13 +81,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _navigateAfterLogin(AuthProvider authProvider) async {
     // Verificar se o usuário tem um percurso ativo
-    final journeyProvider = Provider.of<JourneyProvider>(context, listen: false);
+    final journeyProvider =
+        Provider.of<JourneyProvider>(context, listen: false);
     await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
 
-    if (journeyProvider.hasActiveJourney && journeyProvider.activeJourney != null) {
+    if (journeyProvider.hasActiveJourney &&
+        journeyProvider.activeJourney != null) {
       // Se há jornada ativa, obter o veículo associado
-      final vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
-      final vehicle = await vehicleProvider.getVehicleById(journeyProvider.activeJourney!.vehicleId);
+      final vehicleProvider =
+          Provider.of<VehicleProvider>(context, listen: false);
+      final vehicle = await vehicleProvider
+          .getVehicleById(journeyProvider.activeJourney!.vehicleId);
 
       if (vehicle != null && mounted) {
         // Navegar para a tela de motorista com o veículo
@@ -131,190 +136,200 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: Image.asset(
-                    'assets/img/logo.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Welcome text
-                const Text(
-                  'Bem vindo!',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 40),
-
-                // CPF field
-                TextFormField(
-                  controller: _cpfController,
-                  decoration: const InputDecoration(
-                    hintText: 'CPF',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    CpfInputFormatter(),
-                  ],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, informe seu CPF';
-                    }
-                    final cpfRegex = RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
-                    if (!cpfRegex.hasMatch(value)) {
-                      return 'Digite um CPF válido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Password field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    hintText: 'Senha',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
+        child: KeyboardAwareWidget(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Logo
+                  SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: Image.asset(
+                      'assets/img/logo.png',
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, informe sua senha';
-                    }
-                    return null;
-                  },
-                ),
+                  const SizedBox(height: 24),
 
-                // Error message
-                if (authProvider.error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      authProvider.error!,
-                      style: const TextStyle(
-                        color: Colors.red,
+                  // Welcome text
+                  const Text(
+                    'Bem vindo!',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // CPF field
+                  TextFormField(
+                    controller: _cpfController,
+                    decoration: const InputDecoration(
+                      hintText: 'CPF',
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    inputFormatters: [
+                      CpfInputFormatter(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, informe seu CPF';
+                      }
+                      final cpfRegex = RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
+                      if (!cpfRegex.hasMatch(value)) {
+                        return 'Digite um CPF válido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Password field
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscureText,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) {
+                      // Fechar teclado ao pressionar done
+                      FocusScope.of(context).unfocus();
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Senha',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, informe sua senha';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // Error message
+                  if (authProvider.error != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        authProvider.error!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+
+                  // Forgot password
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Esqueci a senha',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0066CC),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Login button
+                  SizedBox(
+                    width: 200,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: authProvider.isLoading ? null : _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF116AD5),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: authProvider.isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                    ),
+                  ),
+
+                  // Biometric login button (only show if supported and enabled)
+                  if (_biometricSupported && _biometricEnabled) ...[
+                    const SizedBox(height: 16),
+                    const Text(
+                      'ou',
+                      style: TextStyle(
+                        color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                  ),
-
-                // Forgot password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Esqueci a senha',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0066CC),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: authProvider.isLoading ? null : _tryBiometricLogin,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF116AD5).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFF116AD5),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.fingerprint,
+                          size: 30,
+                          color: Color(0xFF116AD5),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Login button
-                SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: authProvider.isLoading ? null : _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF116AD5),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : const Text(
-                      'Entrar',
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Usar biometria',
                       style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: 'Poppins',
+                        color: Color(0xFF116AD5),
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ),
-
-                // Biometric login button (only show if supported and enabled)
-                if (_biometricSupported && _biometricEnabled) ...[
-                  const SizedBox(height: 16),
-                  const Text(
-                    'ou',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: authProvider.isLoading ? null : _tryBiometricLogin,
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF116AD5).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFF116AD5),
-                          width: 2,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.fingerprint,
-                        size: 30,
-                        color: Color(0xFF116AD5),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Usar biometria',
-                    style: TextStyle(
-                      color: Color(0xFF116AD5),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

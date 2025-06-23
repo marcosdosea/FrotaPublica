@@ -31,6 +31,10 @@ namespace FrotaApi.Controllers
             public string LocalChegada { get; set; }
             public int OdometroInicial { get; set; }
             public string? Motivo { get; set; }
+            public float? LatitudePartida { get; set; }
+            public float? LongitudePartida { get; set; }
+            public float? LatitudeChegada { get; set; }
+            public float? LongitudeChegada { get; set; }
         }
 
         public class FinalizarPercursoModel
@@ -70,7 +74,11 @@ namespace FrotaApi.Controllers
                             dataHoraSaida = percursoAtual.DataHoraSaida,
                             dataHoraRetorno = percursoAtual.DataHoraRetorno,
                             localPartida = percursoAtual.LocalPartida,
+                            latitudePartida = percursoAtual.LatitudePartida,
+                            longitudePartida = percursoAtual.LongitudePartida,
                             localChegada = percursoAtual.LocalChegada,
+                            latitudeChegada = percursoAtual.LatitudeChegada,
+                            longitudeChegada = percursoAtual.LongitudeChegada,
                             odometroInicial = percursoAtual.OdometroInicial,
                             odometroFinal = percursoAtual.OdometroFinal,
                             motivo = percursoAtual.Motivo
@@ -86,7 +94,11 @@ namespace FrotaApi.Controllers
                     DataHoraSaida = DateTime.Now,
                     DataHoraRetorno = DateTime.MinValue, 
                     LocalPartida = model.LocalPartida,
+                    LatitudePartida = model.LatitudePartida,
+                    LongitudePartida = model.LongitudePartida,
                     LocalChegada = model.LocalChegada,
+                    LatitudeChegada = model.LatitudeChegada,
+                    LongitudeChegada = model.LongitudeChegada,
                     OdometroInicial = model.OdometroInicial,
                     OdometroFinal = 0, 
                     Motivo = model.Motivo
@@ -108,7 +120,11 @@ namespace FrotaApi.Controllers
                         dataHoraSaida = percurso.DataHoraSaida,
                         dataHoraRetorno = percurso.DataHoraRetorno,
                         localPartida = percurso.LocalPartida,
+                        latitudePartida = percurso.LatitudePartida,
+                        longitudePartida = percurso.LongitudePartida,
                         localChegada = percurso.LocalChegada,
+                        latitudeChegada = percurso.LatitudeChegada,
+                        longitudeChegada = percurso.LongitudeChegada,
                         odometroInicial = percurso.OdometroInicial,
                         odometroFinal = percurso.OdometroFinal,
                         motivo = percurso.Motivo

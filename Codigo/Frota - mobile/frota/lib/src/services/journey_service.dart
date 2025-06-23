@@ -22,6 +22,10 @@ class JourneyService {
     required String destination,
     required int initialOdometer,
     String? reason,
+    double? originLatitude,
+    double? originLongitude,
+    double? destinationLatitude,
+    double? destinationLongitude,
   }) async {
     try {
       return await _journeyRepository.startJourney(
@@ -31,6 +35,10 @@ class JourneyService {
         destination: destination,
         initialOdometer: initialOdometer,
         reason: reason,
+        originLatitude: originLatitude,
+        originLongitude: originLongitude,
+        destinationLatitude: destinationLatitude,
+        destinationLongitude: destinationLongitude,
       );
     } catch (e) {
       print('Erro no serviço ao iniciar jornada: $e');

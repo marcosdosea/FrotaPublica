@@ -42,6 +42,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  // Controle para evitar múltiplas atualizações simultâneas
+  bool _isRefreshing = false;
+  DateTime? _lastRefreshTime;
+
   @override
   void initState() {
     super.initState();
@@ -124,7 +128,26 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
   // Método para atualizar todos os dados da tela
   Future<void> _refreshData() async {
+    // Evitar múltiplas atualizações simultâneas
+    if (_isRefreshing) {
+      print('Refresh já em andamento, ignorando chamada');
+      return;
+    }
+
+    // Debounce: evitar atualizações muito frequentes (mínimo 2 segundos entre atualizações)
+    final now = DateTime.now();
+    if (_lastRefreshTime != null &&
+        now.difference(_lastRefreshTime!).inSeconds < 2) {
+      print('Refresh muito recente, ignorando chamada');
+      return;
+    }
+
+    _isRefreshing = true;
+    _lastRefreshTime = now;
+
     try {
+      print('Iniciando refresh dos dados...');
+
       // Carregar percurso ativo
       await _loadActiveJourney();
 
@@ -133,7 +156,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           Provider.of<VehicleProvider>(context, listen: false);
       final updatedVehicle =
           await vehicleProvider.getVehicleById(_currentVehicle.id);
-      if (updatedVehicle != null) {
+      if (updatedVehicle != null && mounted) {
         setState(() {
           _currentVehicle = updatedVehicle;
         });
@@ -154,8 +177,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
       // Verificar status das vistorias
       await _checkInspectionStatus();
+
+      print('Refresh dos dados concluído');
     } catch (e) {
       print('Erro ao atualizar dados: $e');
+    } finally {
+      _isRefreshing = false;
     }
   }
 
