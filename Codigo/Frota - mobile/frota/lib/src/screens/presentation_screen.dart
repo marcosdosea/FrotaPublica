@@ -14,43 +14,102 @@ class PresentationScreen extends StatefulWidget {
   State<PresentationScreen> createState() => _PresentationScreenState();
 }
 
-class _PresentationScreenState extends State<PresentationScreen> {
+class _PresentationScreenState extends State<PresentationScreen>
+    with TickerProviderStateMixin {
   bool _isChecking = true;
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late AnimationController _scaleController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAuthStatus();
     });
   }
 
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    ));
+
+    // Iniciar animações em sequência
+    _fadeController.forward();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _slideController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 600), () {
+      _scaleController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
+    _scaleController.dispose();
+    super.dispose();
+  }
+
   Future<void> _checkAuthStatus() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Inicializa o provedor de autenticação se ainda não foi inicializado
     if (!authProvider.isLoading && authProvider.currentUser == null) {
       await authProvider.initialize();
     }
 
-    // Verifica se o usuário está autenticado
     if (authProvider.isAuthenticated) {
       final journeyProvider =
-      Provider.of<JourneyProvider>(context, listen: false);
+          Provider.of<JourneyProvider>(context, listen: false);
 
-      // Carrega o percurso ativo
       await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
 
       if (journeyProvider.hasActiveJourney &&
           journeyProvider.activeJourney != null) {
-        // Se tiver um percurso ativo, carrega o veículo
         final vehicleProvider =
-        Provider.of<VehicleProvider>(context, listen: false);
+            Provider.of<VehicleProvider>(context, listen: false);
         final vehicle = await vehicleProvider
             .getVehicleById(journeyProvider.activeJourney!.vehicleId);
 
         if (vehicle != null && mounted) {
-          // Navega para a tela principal com o veículo
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => DriverHomeScreen(vehicle: vehicle),
@@ -61,7 +120,6 @@ class _PresentationScreenState extends State<PresentationScreen> {
       }
 
       if (mounted) {
-        // Se não tiver percurso ativo, vai para a tela de veículos disponíveis
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const AvailableVehiclesScreen(),
@@ -69,7 +127,6 @@ class _PresentationScreenState extends State<PresentationScreen> {
         );
       }
     } else {
-      // Se não estiver autenticado, mantém na tela de apresentação
       setState(() {
         _isChecking = false;
       });
@@ -78,101 +135,238 @@ class _PresentationScreenState extends State<PresentationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Configurar barra de status para esta tela específica
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark, // Ícones pretos
-        statusBarBrightness: Brightness.dark, // Para iOS
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
     );
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _isChecking
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          // Imagem 3D no topo se estendendo até a barra de notificações
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.55 + MediaQuery.of(context).padding.top,
-              child: Image.asset(
-                'assets/img/presentation.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          const Color(0xFF0F0F23),
+                          const Color(0xFF1A1A2E),
+                          const Color(0xFF16213E),
+                        ]
+                      : [
+                          const Color(0xFFE3F2FD),
+                          const Color(0xFFBBDEFB),
+                          const Color(0xFF90CAF9),
+                        ],
+                ),
               ),
-            ),
-          ),
-          // Conteúdo de texto (ocupando o restante da tela)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Reinventamos o\ngerenciamento de\ngrandes frotas',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0066CC), // Azul como na imagem
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tenha acesso rápido a\ndiversas funcionalidades',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  // Botão "Acessar" com estilo similar ao da imagem
-                  SizedBox(
-                    width:
-                    200, // Largura fixa para o botão como na imagem
-                    height: 50, // Altura para o botão
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        const Color(0xFF116AD5), // Azul do botão
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              8), // Bordas levemente arredondadas
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF116AD5)),
+                ),
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          const Color(0xFF0F0F23),
+                          const Color(0xFF1A1A2E),
+                          const Color(0xFF16213E),
+                        ]
+                      : [
+                          const Color(0xFFE3F2FD),
+                          const Color(0xFFBBDEFB),
+                          const Color(0xFF90CAF9),
+                        ],
+                ),
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    // Seção da imagem com efeito glassmorphism
+                    Expanded(
+                      flex: 6,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Container(
+                          margin: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isDark
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Stack(
+                              children: [
+                                // Imagem de fundo
+                                Positioned.fill(
+                                  child: Image.asset(
+                                    'assets/img/presentation.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                // Overlay com gradiente sutil
+                                Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black.withOpacity(0.1),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Acessar',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
+                    ),
+
+                    // Seção de conteúdo
+                    Expanded(
+                      flex: 4,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Título principal com animação
+                              ScaleTransition(
+                                scale: _scaleAnimation,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) => LinearGradient(
+                                    colors: [
+                                      const Color(0xFF116AD5),
+                                      const Color(0xFF0066CC),
+                                      const Color(0xFF004BA7),
+                                    ],
+                                  ).createShader(bounds),
+                                  child: const Text(
+                                    'Reinventamos o\ngerenciamento de\ngrandes frotas',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 32,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      height: 1.2,
+                                      letterSpacing: -0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Subtítulo
+                              FadeTransition(
+                                opacity: _fadeAnimation,
+                                child: Text(
+                                  'Tenha acesso rápido a\ndiversas funcionalidades',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    color: isDark
+                                        ? Colors.white.withOpacity(0.8)
+                                        : Colors.black.withOpacity(0.7),
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 50),
+
+                              // Botão moderno com efeito glassmorphism
+                              ScaleTransition(
+                                scale: _scaleAnimation,
+                                child: Container(
+                                  width: 220,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xFF116AD5),
+                                        Color(0xFF0066CC),
+                                        Color(0xFF004BA7),
+                                      ],
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF116AD5).withOpacity(0.4),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(30),
+                                      onTap: () {
+                                        Navigator.pushNamed(context, '/login');
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(30),
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(0.2),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            'Acessar',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
