@@ -343,6 +343,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                                   height: 40,
                                                   child: ElevatedButton(
                                                     onPressed: () {
+                                                      Provider.of<VehicleProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .setCurrentVehicle(
+                                                              vehicle);
                                                       Navigator.push(
                                                         context,
                                                         MaterialPageRoute(

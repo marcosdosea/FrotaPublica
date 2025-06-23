@@ -146,12 +146,12 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
             data['results'] != null &&
             data['results'].isNotEmpty) {
           return List<Map<String, dynamic>>.from(data['results'].map((item) => {
-                'description': item['name'] +
-                    (item['formatted_address'] != null
-                        ? ' - ' + item['formatted_address']
-                        : ''),
-                'place_id': item['place_id'],
-              }));
+            'description': item['name'] +
+                (item['formatted_address'] != null
+                    ? ' - ' + item['formatted_address']
+                    : ''),
+            'place_id': item['place_id'],
+          }));
         }
       }
     } catch (_) {}
@@ -194,9 +194,9 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final journeyProvider =
-          Provider.of<JourneyProvider>(context, listen: false);
+      Provider.of<JourneyProvider>(context, listen: false);
       final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
+      Provider.of<VehicleProvider>(context, listen: false);
 
       User? currentUser = authProvider.currentUser;
       final vehicle = vehicleProvider.currentVehicle;
@@ -252,7 +252,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
           // Cabeçalho azul com cantos arredondados na parte inferior
           Container(
             padding:
-                const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
             decoration: const BoxDecoration(
               color: Color(0xFF116AD5),
               borderRadius: BorderRadius.only(
@@ -323,7 +323,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                             hintText: 'Informe o local de partida',
                             hintStyle: TextStyle(
                               color:
-                                  Theme.of(context).textTheme.bodySmall?.color,
+                              Theme.of(context).textTheme.bodySmall?.color,
                             ),
                             filled: true,
                             fillColor: Theme.of(context).cardColor,
@@ -331,7 +331,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
                                 color: Theme.of(context).brightness ==
-                                        Brightness.dark
+                                    Brightness.dark
                                     ? const Color(0xFF3A3A5C)
                                     : Colors.grey.shade300,
                               ),
@@ -340,7 +340,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
                                 color: Theme.of(context).brightness ==
-                                        Brightness.dark
+                                    Brightness.dark
                                     ? const Color(0xFF3A3A5C)
                                     : Colors.grey.shade300,
                               ),
@@ -395,7 +395,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                             hintText: 'Informe o local de chegada',
                             hintStyle: TextStyle(
                               color:
-                                  Theme.of(context).textTheme.bodySmall?.color,
+                              Theme.of(context).textTheme.bodySmall?.color,
                             ),
                             filled: true,
                             fillColor: Theme.of(context).cardColor,
@@ -403,7 +403,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
                                 color: Theme.of(context).brightness ==
-                                        Brightness.dark
+                                    Brightness.dark
                                     ? const Color(0xFF3A3A5C)
                                     : Colors.grey.shade300,
                               ),
@@ -412,7 +412,7 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(
                                 color: Theme.of(context).brightness ==
-                                        Brightness.dark
+                                    Brightness.dark
                                     ? const Color(0xFF3A3A5C)
                                     : Colors.grey.shade300,
                               ),
@@ -470,18 +470,18 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
+                            Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
                             color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
+                            Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF3A3A5C)
+                                : Colors.grey.shade300,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -500,32 +500,32 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
                       child: _isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : ElevatedButton(
-                              onPressed: _formIsValid ? _submit : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF0066CC),
-                                foregroundColor: Colors.white,
-                                disabledBackgroundColor:
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? const Color(0xFF22223A)
-                                        : Colors.grey.shade300,
-                                disabledForegroundColor:
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text(
-                                'Iniciar Percurso',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                        onPressed: _formIsValid ? _submit : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0066CC),
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                          Theme.of(context).brightness ==
+                              Brightness.dark
+                              ? const Color(0xFF22223A)
+                              : Colors.grey.shade300,
+                          disabledForegroundColor:
+                          Theme.of(context).brightness ==
+                              Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Iniciar Percurso',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -353,17 +353,23 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  // FIXED: Improved journey header with proper text overflow handling
   Widget _buildJourneyHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildLocationInfo('Partida', widget.journey.origin),
-        _buildLocationInfo('Destino', widget.journey.destination,
-            alignRight: true),
+        Expanded(
+          child: _buildLocationInfo('Partida', widget.journey.origin ?? 'Não informado'),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildLocationInfo('Destino', widget.journey.destination ?? 'Não informado',
+              alignRight: true),
+        ),
       ],
     );
   }
 
+  // FIXED: Improved location info with proper text overflow handling
   Widget _buildLocationInfo(String label, String location,
       {bool alignRight = false}) {
     return Column(
@@ -386,6 +392,8 @@ class _MapScreenState extends State<MapScreen> {
             color: Color(0xFF116AD5),
           ),
           textAlign: alignRight ? TextAlign.end : TextAlign.start,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
         ),
       ],
     );
@@ -464,19 +472,28 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  // FIXED: Improved info row with proper text overflow handling
   Widget _infoRow(String label, String value) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).textTheme.bodySmall?.color),
+        Expanded(
+          flex: 2,
+          child: Text(
+            label,
+            style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).textTheme.bodySmall?.color),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.end,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
@@ -489,7 +506,7 @@ class _MapScreenState extends State<MapScreen> {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            'Registros',
+            'Atalhos',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -545,134 +562,12 @@ class _MapScreenState extends State<MapScreen> {
                     inspectionStatus.departureInspectionCompleted &&
                         inspectionStatus.arrivalInspectionCompleted,
                   ),
-                  _buildActionCardHorizontal(
-                    icon: Icons.build,
-                    title: 'Solicitar Manutenção',
-                    onTap: () {
-                      if (currentVehicle == null) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MaintenanceRequestScreen(
-                            vehicleId: currentVehicle.id,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildActionCardHorizontal(
-                    icon: Icons.cancel,
-                    title: 'Finalizar Percurso',
-                    onTap: () {
-                      if (!inspectionStatus.departureInspectionCompleted ||
-                          !inspectionStatus.arrivalInspectionCompleted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'É necessário realizar ambas as vistorias antes de finalizar o percurso'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-                      _showFinishJourneyDialog();
-                    },
-                    iconColor: Colors.red,
-                    iconBgColor: Colors.red.withOpacity(0.1),
-                    isDisabled:
-                    !inspectionStatus.departureInspectionCompleted ||
-                        !inspectionStatus.arrivalInspectionCompleted,
-                  ),
                 ],
               ),
             );
           },
         ),
       ],
-    );
-  }
-
-  void _showFinishJourneyDialog() {
-    final journeyProvider =
-    Provider.of<JourneyProvider>(context, listen: false);
-    final vehicleProvider =
-    Provider.of<VehicleProvider>(context, listen: false);
-    final journey = journeyProvider.activeJourney;
-    final currentVehicle = vehicleProvider.currentVehicle;
-
-    if (currentVehicle == null || journey == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não há percurso ativo para finalizar.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    String duration = '0:00 h';
-    if (journey.departureTime != null) {
-      final difference = DateTime.now().difference(journey.departureTime!);
-      final hours = difference.inHours;
-      final minutes = difference.inMinutes.remainder(60);
-      duration = '${hours}:${minutes.toString().padLeft(2, '0')} h';
-    }
-
-    final odometerDifference =
-        (currentVehicle.odometer ?? 0) - (journey.initialOdometer ?? 0);
-    final distance = '${odometerDifference} km';
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: FinishJourneyDialog(
-            duration: duration,
-            distance: distance,
-            onFinish: (int odometer) async {
-              final inspectionService = InspectionService();
-              final result = await journeyProvider.finishJourney(odometer);
-
-              if (result == true) {
-                await inspectionService
-                    .clearInspectionStatus(currentVehicle.id);
-
-                final fuelProvider =
-                Provider.of<FuelProvider>(context, listen: false);
-                await fuelProvider.clearTotalLitersForJourney(journey.id);
-
-                setState(() {
-                  inspectionStatus = InspectionStatus();
-                });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Percurso finalizado com sucesso!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-
-                Navigator.pop(context); // Fecha o diálogo
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AvailableVehiclesScreen(),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Odômetro final inferior ao atual.'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-          ),
-        );
-      },
     );
   }
 

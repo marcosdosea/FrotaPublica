@@ -55,7 +55,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     // Atualizar o veículo atual no provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
+      Provider.of<VehicleProvider>(context, listen: false);
       vehicleProvider.setCurrentVehicle(_currentVehicle);
 
       // Carregar percurso ativo e verificar status das vistorias
@@ -90,14 +90,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     try {
       // Verificar vistoria de saída
       bool departureCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'S',
       );
 
       // Verificar vistoria de retorno
       bool arrivalCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
+      await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'R',
       );
@@ -119,7 +119,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   Future<void> _loadActiveJourney() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final journeyProvider =
-        Provider.of<JourneyProvider>(context, listen: false);
+    Provider.of<JourneyProvider>(context, listen: false);
 
     if (authProvider.currentUser != null) {
       await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
@@ -153,9 +153,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
       // Atualizar o veículo atual
       final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
+      Provider.of<VehicleProvider>(context, listen: false);
       final updatedVehicle =
-          await vehicleProvider.getVehicleById(_currentVehicle.id);
+      await vehicleProvider.getVehicleById(_currentVehicle.id);
       if (updatedVehicle != null && mounted) {
         setState(() {
           _currentVehicle = updatedVehicle;
@@ -169,7 +169,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
       // Carregar total de litros abastecidos do percurso ativo
       final journeyProvider =
-          Provider.of<JourneyProvider>(context, listen: false);
+      Provider.of<JourneyProvider>(context, listen: false);
       final journey = journeyProvider.activeJourney;
       if (journey != null) {
         await fuelProvider.loadTotalLitersForJourney(journey.id);
@@ -192,7 +192,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0xFF116AD5), // Mesma cor do topo do header
       statusBarIconBrightness:
-          Brightness.light, // Ícones claros na barra de status
+      Brightness.light, // Ícones claros na barra de status
     ));
 
     return WillPopScope(
@@ -255,11 +255,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       top: 10, left: 24, right: 24, bottom: 30),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                        MainAxisAlignment.end,
                                         children: [
                                           GestureDetector(
                                             onTap: () {
@@ -267,7 +267,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const ProfileScreen(),
+                                                  const ProfileScreen(),
                                                 ),
                                               );
                                             },
@@ -339,7 +339,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         // Registros section - movido para cima
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
+                          const EdgeInsets.only(left: 24.0, right: 24.0),
                           child: Row(
                             children: [
                               Text(
@@ -364,7 +364,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             padding:
-                                const EdgeInsets.only(left: 24.0, right: 24.0),
+                            const EdgeInsets.only(left: 24.0, right: 24.0),
                             children: [
                               _buildActionCardHorizontal(
                                 icon: Icons.local_gas_station,
@@ -375,8 +375,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           FuelRegistrationScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   );
                                 },
@@ -390,8 +390,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           InspectionSelectionScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   ).then((value) {
                                     // Sempre atualizar os dados ao retornar da tela de inspeção
@@ -407,11 +407,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                   });
                                 },
                                 hasNotification: !inspectionStatus
-                                        .departureInspectionCompleted ||
+                                    .departureInspectionCompleted ||
                                     !inspectionStatus
                                         .arrivalInspectionCompleted,
                                 isCompleted: inspectionStatus
-                                        .departureInspectionCompleted &&
+                                    .departureInspectionCompleted &&
                                     inspectionStatus.arrivalInspectionCompleted,
                               ),
                               _buildActionCardHorizontal(
@@ -423,8 +423,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           MaintenanceRequestScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
+                                            vehicleId: _currentVehicle.id,
+                                          ),
                                     ),
                                   );
                                 },
@@ -435,7 +435,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 onTap: () {
                                   // Verificar se ambas as vistorias foram realizadas
                                   if (!inspectionStatus
-                                          .departureInspectionCompleted ||
+                                      .departureInspectionCompleted ||
                                       !inspectionStatus
                                           .arrivalInspectionCompleted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -453,7 +453,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 iconBgColor: Colors.red.withOpacity(0.1),
                                 // Desabilitar o botão se as vistorias não foram feitas
                                 isDisabled: !inspectionStatus
-                                        .departureInspectionCompleted ||
+                                    .departureInspectionCompleted ||
                                     !inspectionStatus
                                         .arrivalInspectionCompleted,
                               ),
@@ -465,7 +465,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
+                          const EdgeInsets.only(left: 24.0, right: 24.0),
                           child: Row(
                             children: [
                               Text(
@@ -489,9 +489,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             _currentVehicle.maintenanceIssues!.isNotEmpty)
                           ..._currentVehicle.maintenanceIssues!
                               .map((issue) => _buildReminderCard(
-                                    title: issue,
-                                    onTap: () {},
-                                  ))
+                            title: issue,
+                            onTap: () {},
+                          ))
                               .toList()
                         else
                           Padding(
@@ -528,7 +528,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   // Widget do slider de cards
   Widget _buildSliderCard() {
     return Container(
-      height: 220,
+      height: 239,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -603,17 +603,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _currentVehicle.model,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                // Modelo do veículo - pode ser truncado se necessário
+                Expanded(
+                  child: Text(
+                    _currentVehicle.model,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
+                const SizedBox(width: 12),
+                // Placa - sempre visível completamente
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'Placa: ',
@@ -622,12 +629,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         fontSize: 14,
                       ),
                     ),
-                    Text(
-                      _currentVehicle.licensePlate,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0066CC).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: const Color(0xFF0066CC).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        _currentVehicle.licensePlate,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          letterSpacing: 1.0,
+                        ),
                       ),
                     ),
                   ],
@@ -663,7 +682,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             vehicleProvider.currentVehicle ?? _currentVehicle;
                         final odometerDifference = journey != null
                             ? (currentVehicle.odometer ?? 0) -
-                                (journey.initialOdometer ?? 0)
+                            (journey.initialOdometer ?? 0)
                             : 0;
 
                         return Text(
@@ -745,6 +764,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   }
 
   // Card de percurso (primeiro slide) - redesenhado seguindo o padrão do JourneyCard
+  // Card de percurso (primeiro slide) - otimizado para caber no espaço disponível
   Widget _buildJourneyCard() {
     return Consumer<JourneyProvider>(
       builder: (context, journeyProvider, child) {
@@ -763,12 +783,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(
+                    Icons.route_outlined,
+                    size: 40,
+                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 8),
                   Text(
                     'Nenhum percurso ativo no momento',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Theme.of(context).textTheme.bodySmall?.color,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -786,195 +813,268 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Origem e Destino
+                // Origem e Destino com ícone de rota - layout compacto
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Partida',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
-                        ),
-                        Text(
-                          journey.origin ?? 'Não informado',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0066CC),
-                          ),
-                        ),
-                      ],
+                    // Ícone de rota
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0066CC).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.route,
+                        color: Color(0xFF0066CC),
+                        size: 18,
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Destino',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
+                    const SizedBox(width: 12),
+                    // Locais de partida e destino - layout vertical compacto
+                    Expanded(
+                      child: Column(
+                        children: [
+                          // Partida
+                          Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF00C853),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Partida',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Theme.of(context).textTheme.bodySmall?.color,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      journey.origin ?? 'Não informado',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF00C853),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Text(
-                          journey.destination ?? 'Não informado',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          const SizedBox(height: 8),
+                          // Destino
+                          Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFF5722),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Destino',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Theme.of(context).textTheme.bodySmall?.color,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      journey.destination ?? 'Não informado',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
 
-                // Barra de progresso
-                Stack(
-                  children: [
-                    Container(
-                      height: 4,
-                      decoration: BoxDecoration(
+                const SizedBox(height: 12),
+
+                // Informações do percurso - layout horizontal compacto
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2A2A3A)
+                        : const Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      // Odômetro inicial
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0066CC).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.speed,
+                                color: Color(0xFF0066CC),
+                                size: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Odômetro',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${journey.initialOdometer ?? 0} km',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 24,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? const Color(0xFF3A3A5C)
                             : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
                       ),
-                    ),
-                    FractionallySizedBox(
-                      widthFactor: journey.progress ?? 0.0,
-                      child: Container(
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0066CC),
-                          borderRadius: BorderRadius.circular(2),
+                      // Horário de saída
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0066CC).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.schedule,
+                                color: Color(0xFF0066CC),
+                                size: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Saída',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    journey.formattedDepartureTime ?? 'N/A',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: -4,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF0066CC),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: -4,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: journey.isActive ?? false
-                              ? (Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFF3A3A5C)
-                                  : Colors.grey[300])
-                              : const Color(0xFF0066CC),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
 
-                // Informações inferiores e botão
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Odômetro inicial: ',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color,
-                              ),
-                            ),
-                            Text(
-                              '${journey.initialOdometer ?? 0} km',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
-                              ),
-                            ),
-                          ],
+                const SizedBox(height: 12),
+
+                // Botão Percurso - compacto
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (journey == null) {
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MapScreen(journey: journey),
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              'Saída: ',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color,
-                              ),
-                            ),
-                            Text(
-                              journey.formattedDepartureTime ?? 'Não informado',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
-                              ),
-                            ),
-                          ],
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0066CC),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.map_outlined, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'Ver Rota',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        if (journey == null) {
-                          return;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MapScreen(journey: journey),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.map, size: 16),
-                      label: const Text('Ver Mapa'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0066CC),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -988,9 +1088,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
   void _showFinishJourneyDialog() {
     // Obter dados do percurso e veículo
     final journeyProvider =
-        Provider.of<JourneyProvider>(context, listen: false);
+    Provider.of<JourneyProvider>(context, listen: false);
     final vehicleProvider =
-        Provider.of<VehicleProvider>(context, listen: false);
+    Provider.of<VehicleProvider>(context, listen: false);
     final journey = journeyProvider.activeJourney;
     final currentVehicle = vehicleProvider.currentVehicle ?? _currentVehicle;
 
@@ -1027,7 +1127,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
               // Finalizar o percurso usando o JourneyProvider
               final journeyProvider =
-                  Provider.of<JourneyProvider>(context, listen: false);
+              Provider.of<JourneyProvider>(context, listen: false);
               final result = await journeyProvider.finishJourney(odometer);
 
               if (result == true) {
@@ -1037,7 +1137,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                 // Limpar o total de litros abastecidos do percurso ativo
                 final fuelProvider =
-                    Provider.of<FuelProvider>(context, listen: false);
+                Provider.of<FuelProvider>(context, listen: false);
                 final journey = journeyProvider.activeJourney;
                 if (journey != null) {
                   await fuelProvider.clearTotalLitersForJourney(journey.id);
@@ -1211,6 +1311,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     fontSize: 14,
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ),
               Icon(
