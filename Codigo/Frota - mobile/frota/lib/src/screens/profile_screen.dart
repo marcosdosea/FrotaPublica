@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
-import '../services/biometric_service.dart';
+import '../utils/app_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,34 +14,23 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
-  bool _biometricEnabled = false;
-  bool _biometricSupported = false;
-  bool _isLoading = false;
-  
   late AnimationController _fadeController;
   late AnimationController _slideController;
-  late AnimationController _scaleController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
-    _checkBiometricSupport();
   }
 
   void _initializeAnimations() {
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-    _slideController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _scaleController = AnimationController(
+    _slideController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
@@ -61,20 +51,9 @@ class _ProfileScreenState extends State<ProfileScreen>
       curve: Curves.easeOutCubic,
     ));
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.9,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
       _slideController.forward();
-    });
-    Future.delayed(const Duration(milliseconds: 400), () {
-      _scaleController.forward();
     });
   }
 
@@ -82,265 +61,343 @@ class _ProfileScreenState extends State<ProfileScreen>
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _scaleController.dispose();
     super.dispose();
   }
 
-  Future<void> _checkBiometricSupport() async {
-    try {
-      final supported = await BiometricService.isDeviceSupported();
-      final canCheck = await BiometricService.canCheckBiometrics();
-      final enabled = await BiometricService.isBiometricEnabled();
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: isDark 
+          ? const Color(0xFF0F0F23)
+          : const Color(0xFFE3F2FD),
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
 
-      if (mounted) {
-        setState(() {
-          _biometricSupported = supported && canCheck;
-          _biometricEnabled = enabled;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _biometricSupported = false;
-          _biometricEnabled = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _toggleBiometric(bool value) async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      if (value) {
-        final success = await BiometricService.setupBiometric();
-        if (success) {
-          if (mounted) {
-            setState(() {
-              _biometricEnabled = true;
-            });
-            _showSnackBar('Biometria habilitada com sucesso!', Colors.green);
-          }
-        } else {
-          if (mounted) {
-            _showSnackBar('Falha ao habilitar biometria', Colors.red);
-          }
-        }
-      } else {
-        await BiometricService.setBiometricEnabled(false);
-        await BiometricService.clearSavedCredentials();
-        if (mounted) {
-          setState(() {
-            _biometricEnabled = false;
-          });
-          _showSnackBar('Biometria desabilitada', Colors.orange);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showSnackBar('Erro ao alterar configuração de biometria', Colors.red);
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _showSnackBar(String message, Color backgroundColor) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark 
+              ? AppTheme.backgroundGradientDark
+              : AppTheme.backgroundGradientLight,
+        ),
+        child: Column(
           children: [
-            Icon(
-              backgroundColor == Colors.green
-                  ? Icons.check_circle_rounded
-                  : backgroundColor == Colors.red
-                      ? Icons.error_rounded
-                      : Icons.info_rounded,
-              color: Colors.white,
-              size: 20,
+            // Header moderno
+            Container(
+              padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF116AD5),
+                    Color(0xFF0066CC),
+                    Color(0xFF004BA7),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x29000000),
+                    offset: Offset(0, 6),
+                    blurRadius: 12,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    'Perfil',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
+
+            // Conteúdo
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        
+                        // Card do perfil do usuário
+                        _buildUserProfileCard(isDark),
+                        const SizedBox(height: 24),
+                        
+                        // Card de configurações
+                        _buildSettingsCard(isDark),
+                        const SizedBox(height: 24),
+                        
+                        // Card de informações do app
+                        _buildAppInfoCard(isDark),
+                        const SizedBox(height: 32),
+                        
+                        // Botão de logout
+                        _buildLogoutButton(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        backgroundColor: backgroundColor,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        duration: const Duration(seconds: 3),
       ),
     );
   }
 
-  Future<void> _handleLogout() async {
-    // Mostrar diálogo de confirmação
-    final shouldLogout = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Text(
-          'Confirmar saída',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text('Tem certeza que deseja sair da sua conta?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+  Widget _buildUserProfileCard(bool isDark) {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        final user = authProvider.currentUser;
+        
+        return AppTheme.modernCard(
+          isDark: isDark,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              // Avatar com gradiente
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppTheme.primaryGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF116AD5).withOpacity(0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Container(
+                  margin: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+                  ),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    size: 50,
+                    color: Color(0xFF116AD5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Nome do usuário
+              Text(
+                user?.name ?? 'Usuário',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontFamily: 'Poppins',
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              
+              // CPF
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF116AD5).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF116AD5).withOpacity(0.3),
+                  ),
+                ),
+                child: Text(
+                  'CPF: ${user?.cpf ?? 'Não informado'}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF116AD5),
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Email (se disponível)
+              if (user?.email != null) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.email_rounded,
+                      size: 16,
+                      color: isDark 
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.black.withOpacity(0.6),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      user!.email!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark 
+                            ? Colors.white.withOpacity(0.8)
+                            : Colors.black.withOpacity(0.7),
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Sair'),
-          ),
-        ],
-      ),
+        );
+      },
     );
-
-    if (shouldLogout == true) {
-      try {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        await authProvider.logout();
-
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/login',
-            (route) => false,
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          _showSnackBar('Erro ao fazer logout', Colors.red);
-        }
-      }
-    }
   }
 
-  Widget _buildModernCard({
-    required Widget child,
-    EdgeInsets? padding,
-    Color? color,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Container(
-      padding: padding ?? const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: color ?? (isDark 
-            ? Colors.white.withOpacity(0.05)
-            : Colors.white.withOpacity(0.9)),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark 
-              ? Colors.white.withOpacity(0.1)
-              : Colors.grey.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-
-  Widget _buildInfoField(String label, String value) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF116AD5),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: isDark 
-                ? Colors.white.withOpacity(0.03)
-                : Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark 
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.3),
-            ),
-          ),
-          child: Text(
-            value,
+  Widget _buildSettingsCard(bool isDark) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Configurações',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
+              fontFamily: 'Poppins',
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 20),
+          
+          // Toggle tema escuro
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return _buildSettingItem(
+                icon: Icons.dark_mode_rounded,
+                title: 'Tema escuro',
+                subtitle: 'Ativar modo escuro',
+                trailing: Switch.adaptive(
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme();
+                  },
+                  activeColor: const Color(0xFF116AD5),
+                ),
+                isDark: isDark,
+              );
+            },
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Notificações
+          _buildSettingItem(
+            icon: Icons.notifications_rounded,
+            title: 'Notificações',
+            subtitle: 'Gerenciar notificações',
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: isDark 
+                  ? Colors.white.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.6),
+            ),
+            onTap: () {
+              // Implementar navegação para configurações de notificação
+            },
+            isDark: isDark,
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Privacidade
+          _buildSettingItem(
+            icon: Icons.privacy_tip_rounded,
+            title: 'Privacidade',
+            subtitle: 'Configurações de privacidade',
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: isDark 
+                  ? Colors.white.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.6),
+            ),
+            onTap: () {
+              // Implementar navegação para configurações de privacidade
+            },
+            isDark: isDark,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSettingItem({
     required IconData icon,
     required String title,
-    String? subtitle,
+    required String subtitle,
     required Widget trailing,
     VoidCallback? onTap,
+    required bool isDark,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: isDark 
-              ? Colors.white.withOpacity(0.03)
-              : Colors.grey.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark 
-                ? Colors.white.withOpacity(0.1)
-                : Colors.grey.withOpacity(0.2),
-          ),
-        ),
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF116AD5).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF116AD5).withOpacity(0.2),
+                    const Color(0xFF116AD5).withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
@@ -359,20 +416,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white : Colors.black87,
+                      fontFamily: 'Poppins',
                     ),
                   ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark 
-                            ? Colors.white.withOpacity(0.6)
-                            : Colors.grey.shade600,
-                      ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark 
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.black.withOpacity(0.6),
+                      fontFamily: 'Poppins',
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),
@@ -383,353 +440,261 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer2<AuthProvider, ThemeProvider>(
-      builder: (context, authProvider, themeProvider, child) {
-        final user = authProvider.currentUser;
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildAppInfoCard(bool isDark) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Sobre o App',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          _buildInfoItem(
+            icon: Icons.info_rounded,
+            title: 'Versão',
+            value: '1.0.0',
+            isDark: isDark,
+          ),
+          
+          const SizedBox(height: 16),
+          
+          _buildInfoItem(
+            icon: Icons.help_rounded,
+            title: 'Suporte',
+            value: 'Ajuda e FAQ',
+            onTap: () {
+              // Implementar navegação para suporte
+            },
+            isDark: isDark,
+          ),
+          
+          const SizedBox(height: 16),
+          
+          _buildInfoItem(
+            icon: Icons.description_rounded,
+            title: 'Termos de Uso',
+            value: 'Políticas e termos',
+            onTap: () {
+              // Implementar navegação para termos
+            },
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
 
-        return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark
-                    ? [
-                        const Color(0xFF0F0F23),
-                        const Color(0xFF1A1A2E),
-                        const Color(0xFF16213E),
-                      ]
-                    : [
-                        const Color(0xFFE3F2FD),
-                        const Color(0xFFBBDEFB),
-                        const Color(0xFF90CAF9),
-                      ],
+  Widget _buildInfoItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    VoidCallback? onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF116AD5).withOpacity(0.2),
+                    const Color(0xFF116AD5).withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF116AD5),
+                size: 20,
               ),
             ),
-            child: SafeArea(
+            const SizedBox(width: 16),
+            Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header moderno
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.2),
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.arrow_back_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                          const Expanded(
-                            child: Text(
-                              'Perfil',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 44),
-                        ],
-                      ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                      fontFamily: 'Poppins',
                     ),
                   ),
-
-                  // Conteúdo principal
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          // Card do usuário
-                          SlideTransition(
-                            position: _slideAnimation,
-                            child: _buildModernCard(
-                              child: Column(
-                                children: [
-                                  // Avatar e informações básicas
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              const Color(0xFF116AD5),
-                                              const Color(0xFF0066CC),
-                                            ],
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0xFF116AD5).withOpacity(0.3),
-                                              blurRadius: 15,
-                                              offset: const Offset(0, 5),
-                                            ),
-                                          ],
-                                        ),
-                                        child: const Icon(
-                                          Icons.person_rounded,
-                                          size: 40,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              user?.name ?? 'Nome do Usuário',
-                                              style: TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                                color: isDark ? Colors.white : Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 6,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    const Color(0xFF116AD5).withOpacity(0.2),
-                                                    const Color(0xFF0066CC).withOpacity(0.1),
-                                                  ],
-                                                ),
-                                                borderRadius: BorderRadius.circular(20),
-                                                border: Border.all(
-                                                  color: const Color(0xFF116AD5).withOpacity(0.3),
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                'Motorista',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Color(0xFF116AD5),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-
-                          // Informações pessoais
-                          ScaleTransition(
-                            scale: _scaleAnimation,
-                            child: _buildModernCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: 32,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF116AD5).withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Icon(
-                                          Icons.person_outline_rounded,
-                                          color: Color(0xFF116AD5),
-                                          size: 18,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Text(
-                                        'Informações Pessoais',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF116AD5),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  _buildInfoField('CPF', user?.cpf ?? 'CPF não informado'),
-                                  const SizedBox(height: 16),
-                                  _buildInfoField('Email', user?.email ?? 'Email não informado'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-
-                          // Configurações
-                          ScaleTransition(
-                            scale: _scaleAnimation,
-                            child: _buildModernCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: 32,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF116AD5).withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Icon(
-                                          Icons.settings_outlined,
-                                          color: Color(0xFF116AD5),
-                                          size: 18,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Text(
-                                        'Configurações',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF116AD5),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  
-                                  _buildSettingItem(
-                                    icon: Icons.dark_mode_rounded,
-                                    title: 'Tema escuro',
-                                    subtitle: 'Alternar entre tema claro e escuro',
-                                    trailing: Switch(
-                                      value: themeProvider.themeMode == ThemeMode.dark,
-                                      onChanged: (value) {
-                                        themeProvider.setThemeMode(
-                                          value ? ThemeMode.dark : ThemeMode.light,
-                                        );
-                                      },
-                                      activeColor: const Color(0xFF116AD5),
-                                    ),
-                                  ),
-                                  
-                                  if (_biometricSupported) ...[
-                                    const SizedBox(height: 16),
-                                    _buildSettingItem(
-                                      icon: Icons.fingerprint_rounded,
-                                      title: 'Biometria',
-                                      subtitle: 'Use sua impressão digital para fazer login',
-                                      trailing: Switch(
-                                        value: _biometricEnabled,
-                                        onChanged: _isLoading ? null : _toggleBiometric,
-                                        activeColor: const Color(0xFF116AD5),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 40),
-
-                          // Botão de logout moderno
-                          ScaleTransition(
-                            scale: _scaleAnimation,
-                            child: Container(
-                              width: double.infinity,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.red.shade400,
-                                    Colors.red.shade600,
-                                  ],
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.red.withOpacity(0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap: _handleLogout,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.2),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: const Center(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.logout_rounded,
-                                            color: Colors.white,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Sair da conta',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 40),
-                        ],
-                      ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark 
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.black.withOpacity(0.6),
+                      fontFamily: 'Poppins',
                     ),
                   ),
                 ],
+              ),
+            ),
+            if (onTap != null)
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: isDark 
+                    ? Colors.white.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.6),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        return Container(
+          width: double.infinity,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.red.shade400,
+                Colors.red.shade600,
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withOpacity(0.4),
+                blurRadius: 15,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: authProvider.isLoading ? null : () async {
+                final shouldLogout = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1A1A2E)
+                        : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    title: const Text(
+                      'Confirmar Logout',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: const Text(
+                      'Tem certeza que deseja sair da sua conta?',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text(
+                          'Sair',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (shouldLogout == true) {
+                  await authProvider.logout();
+                  if (mounted) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/presentation',
+                      (route) => false,
+                    );
+                  }
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Center(
+                  child: authProvider.isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.logout_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Sair da Conta',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
           ),

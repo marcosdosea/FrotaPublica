@@ -16,8 +16,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   final _cpfController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -25,147 +24,107 @@ class _LoginScreenState extends State<LoginScreen>
   bool _biometricEnabled = false;
   bool _biometricSupported = false;
 
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late AnimationController _scaleController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _scaleAnimation;
-
   @override
   void initState() {
     super.initState();
-    _initializeAnimations();
     _initializeLogin();
-  }
-
-  void _initializeAnimations() {
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
-
-    _scaleAnimation = Tween<double>(
-      begin: 0.9,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-
-    _fadeController.forward();
-    Future.delayed(const Duration(milliseconds: 200), () {
-      _slideController.forward();
-    });
-    Future.delayed(const Duration(milliseconds: 400), () {
-      _scaleController.forward();
-    });
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    _scaleController.dispose();
     _cpfController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   Future<void> _initializeLogin() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final supported = await BiometricService.isDeviceSupported();
-    final canCheck = await BiometricService.canCheckBiometrics();
-    final enabled = await BiometricService.isBiometricEnabled();
+      final supported = await BiometricService.isDeviceSupported();
+      final canCheck = await BiometricService.canCheckBiometrics();
+      final enabled = await BiometricService.isBiometricEnabled();
 
-    setState(() {
-      _biometricSupported = supported && canCheck;
-      _biometricEnabled = enabled;
-    });
+      if (mounted) {
+        setState(() {
+          _biometricSupported = supported && canCheck;
+          _biometricEnabled = enabled;
+        });
 
-    if (authProvider.lastLoggedCpf != null) {
-      _cpfController.text = authProvider.lastLoggedCpf!;
-    }
+        if (authProvider.lastLoggedCpf != null) {
+          _cpfController.text = authProvider.lastLoggedCpf!;
+        }
 
-    if (_biometricEnabled && !authProvider.isAuthenticated) {
-      _tryBiometricLogin();
+        if (_biometricEnabled && !authProvider.isAuthenticated) {
+          _tryBiometricLogin();
+        }
+      }
+    } catch (e) {
+      print('Erro na inicialização do login: $e');
     }
   }
 
   Future<void> _tryBiometricLogin() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.loginWithBiometrics();
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final success = await authProvider.loginWithBiometrics();
 
-    if (success && mounted) {
-      _navigateAfterLogin(authProvider);
+      if (success && mounted) {
+        _navigateAfterLogin(authProvider);
+      }
+    } catch (e) {
+      print('Erro no login biométrico: $e');
     }
   }
 
   Future<void> _login() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final success = await authProvider.login(
-        _cpfController.text,
-        _passwordController.text,
-        saveBiometric: _biometricEnabled,
-      );
+      try {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final success = await authProvider.login(
+          _cpfController.text,
+          _passwordController.text,
+          saveBiometric: _biometricEnabled,
+        );
 
-      if (success && mounted) {
-        _navigateAfterLogin(authProvider);
+        if (success && mounted) {
+          _navigateAfterLogin(authProvider);
+        }
+      } catch (e) {
+        print('Erro no login: $e');
       }
     }
   }
 
   Future<void> _navigateAfterLogin(AuthProvider authProvider) async {
-    final journeyProvider =
-        Provider.of<JourneyProvider>(context, listen: false);
-    await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+    try {
+      final journeyProvider =
+          Provider.of<JourneyProvider>(context, listen: false);
+      await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
 
-    if (journeyProvider.hasActiveJourney &&
-        journeyProvider.activeJourney != null) {
-      final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
-      final vehicle = await vehicleProvider
-          .getVehicleById(journeyProvider.activeJourney!.vehicleId);
+      if (journeyProvider.hasActiveJourney &&
+          journeyProvider.activeJourney != null) {
+        final vehicleProvider =
+            Provider.of<VehicleProvider>(context, listen: false);
+        final vehicle = await vehicleProvider
+            .getVehicleById(journeyProvider.activeJourney!.vehicleId);
 
-      if (vehicle != null && mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DriverHomeScreen(vehicle: vehicle),
-          ),
-        );
-        return;
+        if (vehicle != null && mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DriverHomeScreen(vehicle: vehicle),
+            ),
+          );
+          return;
+        }
       }
-    }
 
-    if (mounted) {
-      Navigator.pushReplacementNamed(context, '/available_vehicles');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/available_vehicles');
+      }
+    } catch (e) {
+      print('Erro na navegação após login: $e');
     }
   }
 
@@ -188,10 +147,10 @@ class _LoginScreenState extends State<LoginScreen>
         boxShadow: [
           BoxShadow(
             color: isDark 
-                ? Colors.black.withOpacity(0.3)
+                ? Colors.black.withOpacity(0.2)
                 : Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -259,17 +218,26 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: isDark 
+            ? const Color(0xFF0F0F23)
+            : const Color(0xFFE3F2FD),
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
     );
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       body: Container(
+        height: screenHeight,
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -291,80 +259,55 @@ class _LoginScreenState extends State<LoginScreen>
           child: KeyboardAwareWidget(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 60),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: screenHeight - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 40),
 
-                    // Logo com animação
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color(0xFF116AD5).withOpacity(0.2),
-                                const Color(0xFF0066CC).withOpacity(0.1),
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF116AD5).withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
+                      // Logo simples
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF116AD5).withOpacity(0.1),
+                          border: Border.all(
+                            color: const Color(0xFF116AD5).withOpacity(0.3),
+                            width: 2,
                           ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/img/logo.png',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.contain,
-                            ),
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/img/logo.png',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 40),
+                      const SizedBox(height: 40),
 
-                    // Título de boas-vindas
-                    SlideTransition(
-                      position: _slideAnimation,
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => LinearGradient(
-                          colors: [
-                            const Color(0xFF116AD5),
-                            const Color(0xFF0066CC),
-                          ],
-                        ).createShader(bounds),
-                        child: const Text(
-                          'Bem vindo!',
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
+                      // Título
+                      Text(
+                        'Bem vindo!',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF116AD5),
+                          letterSpacing: -0.5,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                    // Subtítulo
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Text(
+                      // Subtítulo
+                      Text(
                         'Faça login para continuar',
                         style: TextStyle(
                           fontSize: 16,
@@ -375,13 +318,10 @@ class _LoginScreenState extends State<LoginScreen>
                               : Colors.black.withOpacity(0.6),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 50),
+                      const SizedBox(height: 50),
 
-                    // Campo CPF
-                    SlideTransition(
-                      position: _slideAnimation,
-                      child: _buildModernTextField(
+                      // Campo CPF
+                      _buildModernTextField(
                         controller: _cpfController,
                         hintText: 'CPF',
                         keyboardType: TextInputType.number,
@@ -398,13 +338,10 @@ class _LoginScreenState extends State<LoginScreen>
                           return null;
                         },
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    // Campo Senha
-                    SlideTransition(
-                      position: _slideAnimation,
-                      child: _buildModernTextField(
+                      // Campo Senha
+                      _buildModernTextField(
                         controller: _passwordController,
                         hintText: 'Senha',
                         obscureText: _obscureText,
@@ -432,70 +369,67 @@ class _LoginScreenState extends State<LoginScreen>
                           return null;
                         },
                       ),
-                    ),
 
-                    // Mensagem de erro
-                    if (authProvider.error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
+                      // Mensagem de erro
+                      if (authProvider.error != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline_rounded,
-                                color: Colors.red,
-                                size: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.3),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  authProvider.error!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    authProvider.error!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      // Link "Esqueci a senha"
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Esqueci a senha',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF116AD5),
+                              decoration: TextDecoration.underline,
+                              decorationColor: const Color(0xFF116AD5),
+                            ),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 30),
 
-                    // Link "Esqueci a senha"
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Esqueci a senha',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF116AD5),
-                            decoration: TextDecoration.underline,
-                            decorationColor: const Color(0xFF116AD5),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Botão de login moderno
-                    ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Container(
+                      // Botão de login
+                      Container(
                         width: double.infinity,
                         height: 60,
                         decoration: BoxDecoration(
@@ -511,9 +445,9 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF116AD5).withOpacity(0.4),
-                              blurRadius: 15,
-                              offset: const Offset(0, 6),
+                              color: const Color(0xFF116AD5).withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -555,77 +489,60 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                    ),
 
-                    // Seção biometria
-                    if (_biometricSupported && _biometricEnabled) ...[
-                      const SizedBox(height: 30),
-                      
-                      // Divisor "ou"
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: isDark 
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'ou',
-                              style: TextStyle(
+                      // Seção biometria
+                      if (_biometricSupported && _biometricEnabled) ...[
+                        const SizedBox(height: 30),
+                        
+                        // Divisor "ou"
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 1,
                                 color: isDark 
-                                    ? Colors.white.withOpacity(0.6)
-                                    : Colors.grey.shade600,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.grey.withOpacity(0.3),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: isDark 
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.withOpacity(0.3),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                'ou',
+                                style: TextStyle(
+                                  color: isDark 
+                                      ? Colors.white.withOpacity(0.6)
+                                      : Colors.grey.shade600,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: isDark 
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.grey.withOpacity(0.3),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
 
-                      // Botão biometria
-                      ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: GestureDetector(
+                        // Botão biometria
+                        GestureDetector(
                           onTap: authProvider.isLoading ? null : _tryBiometricLogin,
                           child: Container(
                             width: 80,
                             height: 80,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color(0xFF116AD5).withOpacity(0.2),
-                                  const Color(0xFF0066CC).withOpacity(0.1),
-                                ],
-                              ),
+                              color: const Color(0xFF116AD5).withOpacity(0.1),
                               border: Border.all(
                                 color: const Color(0xFF116AD5).withOpacity(0.5),
                                 width: 2,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF116AD5).withOpacity(0.3),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
                             ),
                             child: const Icon(
                               Icons.fingerprint_rounded,
@@ -634,21 +551,21 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      
-                      Text(
-                        'Usar biometria',
-                        style: TextStyle(
-                          color: const Color(0xFF116AD5),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 12),
+                        
+                        Text(
+                          'Usar biometria',
+                          style: TextStyle(
+                            color: const Color(0xFF116AD5),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
+                      ],
+                      
+                      const SizedBox(height: 40),
                     ],
-                    
-                    const SizedBox(height: 60),
-                  ],
+                  ),
                 ),
               ),
             ),

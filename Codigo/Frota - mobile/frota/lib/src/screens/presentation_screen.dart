@@ -71,7 +71,6 @@ class _PresentationScreenState extends State<PresentationScreen>
       curve: Curves.elasticOut,
     ));
 
-    // Iniciar animações em sequência
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 300), () {
       _slideController.forward();
@@ -136,18 +135,26 @@ class _PresentationScreenState extends State<PresentationScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     
+    // Configurar barra de status com ícones escuros
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       body: _isChecking
           ? Container(
+              height: screenHeight,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -172,6 +179,7 @@ class _PresentationScreenState extends State<PresentationScreen>
               ),
             )
           : Container(
+              height: screenHeight,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -189,182 +197,201 @@ class _PresentationScreenState extends State<PresentationScreen>
                         ],
                 ),
               ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    // Seção da imagem com efeito glassmorphism
-                    Expanded(
-                      flex: 6,
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: Container(
-                          margin: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isDark
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.black.withOpacity(0.1),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
+              child: Column(
+                children: [
+                  // Seção da imagem ocupando toda a largura e incluindo status bar
+                  Expanded(
+                    flex: 6,
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Stack(
-                              children: [
-                                // Imagem de fundo
-                                Positioned.fill(
-                                  child: Image.asset(
-                                    'assets/img/presentation.png',
-                                    fit: BoxFit.cover,
-                                  ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.4)
+                                  : Colors.black.withOpacity(0.15),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                          child: Stack(
+                            children: [
+                              // Imagem de fundo ocupando toda a área
+                              Positioned.fill(
+                                child: Image.asset(
+                                  'assets/img/presentation.png',
+                                  fit: BoxFit.cover,
                                 ),
-                                // Overlay com gradiente sutil
-                                Positioned.fill(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.black.withOpacity(0.1),
-                                        ],
-                                      ),
+                              ),
+                              // Overlay com gradiente sutil
+                              Positioned.fill(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.1),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
+                  ),
 
-                    // Seção de conteúdo
-                    Expanded(
-                      flex: 4,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Título principal com animação
-                              ScaleTransition(
-                                scale: _scaleAnimation,
-                                child: ShaderMask(
-                                  shaderCallback: (bounds) => LinearGradient(
-                                    colors: [
-                                      const Color(0xFF116AD5),
-                                      const Color(0xFF0066CC),
-                                      const Color(0xFF004BA7),
-                                    ],
-                                  ).createShader(bounds),
-                                  child: const Text(
-                                    'Reinventamos o\ngerenciamento de\ngrandes frotas',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 32,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      height: 1.2,
-                                      letterSpacing: -0.5,
-                                    ),
-                                  ),
+                  // Seção de conteúdo adaptativa
+                  Expanded(
+                    flex: 4,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                            ),
+                            child: SlideTransition(
+                              position: _slideAnimation,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width * 0.08,
                                 ),
-                              ),
-                              const SizedBox(height: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 20),
 
-                              // Subtítulo
-                              FadeTransition(
-                                opacity: _fadeAnimation,
-                                child: Text(
-                                  'Tenha acesso rápido a\ndiversas funcionalidades',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    color: isDark
-                                        ? Colors.white.withOpacity(0.8)
-                                        : Colors.black.withOpacity(0.7),
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 50),
-
-                              // Botão moderno com efeito glassmorphism
-                              ScaleTransition(
-                                scale: _scaleAnimation,
-                                child: Container(
-                                  width: 220,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    gradient: const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xFF116AD5),
-                                        Color(0xFF0066CC),
-                                        Color(0xFF004BA7),
-                                      ],
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF116AD5).withOpacity(0.4),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 8),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(30),
-                                      onTap: () {
-                                        Navigator.pushNamed(context, '/login');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(30),
-                                          border: Border.all(
-                                            color: Colors.white.withOpacity(0.2),
-                                            width: 1,
+                                    // Título principal com animação
+                                    ScaleTransition(
+                                      scale: _scaleAnimation,
+                                      child: ShaderMask(
+                                        shaderCallback: (bounds) => LinearGradient(
+                                          colors: [
+                                            const Color(0xFF116AD5),
+                                            const Color(0xFF0066CC),
+                                            const Color(0xFF004BA7),
+                                          ],
+                                        ).createShader(bounds),
+                                        child: Text(
+                                          'Reinventamos o\ngerenciamento de\ngrandes frotas',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context).size.width * 0.075,
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            height: 1.2,
+                                            letterSpacing: -0.5,
                                           ),
                                         ),
-                                        child: const Center(
-                                          child: Text(
-                                            'Acessar',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                              letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    SizedBox(height: constraints.maxHeight * 0.05),
+
+                                    // Subtítulo
+                                    FadeTransition(
+                                      opacity: _fadeAnimation,
+                                      child: Text(
+                                        'Tenha acesso rápido a\ndiversas funcionalidades',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context).size.width * 0.045,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                          color: isDark
+                                              ? Colors.white.withOpacity(0.8)
+                                              : Colors.black.withOpacity(0.7),
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: constraints.maxHeight * 0.12),
+
+                                    // Botão moderno com efeito glassmorphism
+                                    ScaleTransition(
+                                      scale: _scaleAnimation,
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width * 0.6,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(30),
+                                          gradient: const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xFF116AD5),
+                                              Color(0xFF0066CC),
+                                              Color(0xFF004BA7),
+                                            ],
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFF116AD5).withOpacity(0.4),
+                                              blurRadius: 20,
+                                              offset: const Offset(0, 8),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(30),
+                                            onTap: () {
+                                              Navigator.pushNamed(context, '/login');
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(30),
+                                                border: Border.all(
+                                                  color: Colors.white.withOpacity(0.2),
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  'Acessar',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    SizedBox(height: constraints.maxHeight * 0.1),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 40),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
     );

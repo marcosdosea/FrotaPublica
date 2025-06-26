@@ -42,7 +42,6 @@ class _MapScreenState extends State<MapScreen> {
   String? _routeDistance;
   String? _routeDuration;
 
-  // CHAVE DA API DO GOOGLE MAPS
   static const String _googleMapsApiKey =
       'AIzaSyCxFxCvXpzIcSL_ck0CQyk2Xc2YvOmiLlc';
 
@@ -54,11 +53,9 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _setupMapData() async {
-    // Limpar dados antigos
     _markers.clear();
     _polylines.clear();
 
-    // Verificar se temos coordenadas válidas
     if (widget.journey.hasValidCoordinates) {
       print(
           '--- MAP_SCREEN: Coordenadas válidas encontradas. Origem: (${widget.journey.originLatitude}, ${widget.journey.originLongitude}), Destino: (${widget.journey.destinationLatitude}, ${widget.journey.destinationLongitude})');
@@ -72,17 +69,13 @@ class _MapScreenState extends State<MapScreen> {
         widget.journey.destinationLongitude!,
       );
 
-      // Adicionar marcadores de partida e chegada
       _addMarkers(departureLatLng, arrivalLatLng);
-
-      // Buscar e desenhar a rota
       await _getDirectionsRoute(departureLatLng, arrivalLatLng);
     } else {
       print(
           '--- MAP_SCREEN: Coordenadas inválidas ou ausentes. Exibindo mapa de Sergipe.');
     }
 
-    // Atualizar a UI
     if (mounted) {
       setState(() {});
     }
@@ -141,11 +134,9 @@ class _MapScreenState extends State<MapScreen> {
           final route = data['routes'][0];
           final leg = route['legs'][0];
 
-          // Extrair informações da rota
           _routeDistance = leg['distance']['text'];
           _routeDuration = leg['duration']['text'];
 
-          // Decodificar os pontos da rota e criar a polyline
           final String encodedPolyline = route['overview_polyline']['points'];
           _polylines.add(
             Polyline(
@@ -158,7 +149,6 @@ class _MapScreenState extends State<MapScreen> {
         } else {
           print(
               '--- MAP_SCREEN: API retornou status: ${data['status']}. Desenhando linha reta como fallback.');
-          // Fallback para linha reta se a API falhar
           _drawStraightLine(origin, destination);
         }
       } else {
@@ -249,7 +239,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    LatLng initialPosition = const LatLng(-10.9472, -37.0731); // Sergipe
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    LatLng initialPosition = const LatLng(-10.9472, -37.0731);
     double initialZoom = 8.0;
 
     if (widget.journey.hasValidCoordinates) {
@@ -258,57 +249,91 @@ class _MapScreenState extends State<MapScreen> {
       initialZoom = 12.0;
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Column(
-        children: [
-          // Blue header with rounded bottom corners
-          Container(
-            padding:
-            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
-            decoration: const BoxDecoration(
-              color: Color(0xFF116AD5),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(16),
-                bottomRight: Radius.circular(16),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x29000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  'Percurso',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: isDark 
+          ? const Color(0xFF0F0F23)
+          : const Color(0xFFE3F2FD),
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
 
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              color: Theme.of(context).scaffoldBackgroundColor,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark 
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF0F0F23),
+                    Color(0xFF1A1A2E),
+                    Color(0xFF16213E),
+                  ],
+                )
+              : const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFE3F2FD),
+                    Color(0xFFBBDEFB),
+                    Color(0xFF90CAF9),
+                  ],
+                ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding:
+              const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              decoration: const BoxDecoration(
+                color: Color(0xFF116AD5),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x29000000),
+                    offset: Offset(0, 3),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    'Percurso',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(top: 24, bottom: 24),
                 child: Column(
@@ -316,61 +341,72 @@ class _MapScreenState extends State<MapScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: _buildMapCard(initialPosition, initialZoom),
+                      child: _buildMapCard(initialPosition, initialZoom, isDark),
                     ),
                     const SizedBox(height: 32),
-                    _buildRegistrosSection(),
+                    _buildRegistrosSection(isDark),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMapCard(LatLng initialPosition, double initialZoom) {
-    return Card(
-      color: Theme.of(context).cardColor,
-      elevation: 4,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildJourneyHeader(),
-            const SizedBox(height: 16),
-            _buildMapContainer(initialPosition, initialZoom),
-            const SizedBox(height: 16),
-            _buildOdometerInfo(),
           ],
         ),
       ),
     );
   }
 
-  // FIXED: Improved journey header with proper text overflow handling
-  Widget _buildJourneyHeader() {
+  Widget _buildMapCard(LatLng initialPosition, double initialZoom, bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark 
+            ? Colors.white.withOpacity(0.05)
+            : Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark 
+              ? Colors.white.withOpacity(0.1)
+              : Colors.white.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildJourneyHeader(isDark),
+          const SizedBox(height: 16),
+          _buildMapContainer(initialPosition, initialZoom),
+          const SizedBox(height: 16),
+          _buildOdometerInfo(isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJourneyHeader(bool isDark) {
     return Row(
       children: [
         Expanded(
-          child: _buildLocationInfo('Partida', widget.journey.origin ?? 'Não informado'),
+          child: _buildLocationInfo('Partida', widget.journey.origin ?? 'Não informado', isDark),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildLocationInfo('Destino', widget.journey.destination ?? 'Não informado',
+          child: _buildLocationInfo('Destino', widget.journey.destination ?? 'Não informado', isDark,
               alignRight: true),
         ),
       ],
     );
   }
 
-  // FIXED: Improved location info with proper text overflow handling
-  Widget _buildLocationInfo(String label, String location,
+  Widget _buildLocationInfo(String label, String location, bool isDark,
       {bool alignRight = false}) {
     return Column(
       crossAxisAlignment:
@@ -380,7 +416,9 @@ class _MapScreenState extends State<MapScreen> {
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Theme.of(context).textTheme.bodySmall?.color,
+            color: isDark 
+                ? Colors.white.withOpacity(0.6)
+                : Colors.black.withOpacity(0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -400,11 +438,27 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildMapContainer(LatLng initialPosition, double initialZoom) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       height: 350,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(
+          color: isDark 
+              ? Colors.white.withOpacity(0.1)
+              : Colors.grey.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark 
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -429,9 +483,15 @@ class _MapScreenState extends State<MapScreen> {
               },
             ),
             if (_isLoadingRoute)
-              const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF116AD5),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF116AD5),
+                  ),
                 ),
               ),
           ],
@@ -440,15 +500,16 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildOdometerInfo() {
+  Widget _buildOdometerInfo(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Odômetros',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 12),
@@ -457,13 +518,13 @@ class _MapScreenState extends State<MapScreen> {
             final currentVehicle = vehicleProvider.currentVehicle;
             return Column(
               children: [
-                _infoRow('Inicial:', '${widget.journey.initialOdometer}km'),
+                _infoRow('Inicial:', '${widget.journey.initialOdometer}km', isDark),
                 const SizedBox(height: 4),
                 _infoRow('Final:',
-                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km'),
+                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km', isDark),
                 const SizedBox(height: 4),
                 _infoRow('Hora de Saída:',
-                    Formatters.formatDateTime(widget.journey.departureTime)),
+                    Formatters.formatDateTime(widget.journey.departureTime), isDark),
               ],
             );
           },
@@ -472,8 +533,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  // FIXED: Improved info row with proper text overflow handling
-  Widget _infoRow(String label, String value) {
+  Widget _infoRow(String label, String value, bool isDark) {
     return Row(
       children: [
         Expanded(
@@ -482,7 +542,9 @@ class _MapScreenState extends State<MapScreen> {
             label,
             style: TextStyle(
                 fontSize: 14,
-                color: Theme.of(context).textTheme.bodySmall?.color),
+                color: isDark 
+                    ? Colors.white.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.6)),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -490,7 +552,11 @@ class _MapScreenState extends State<MapScreen> {
           flex: 3,
           child: Text(
             value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14, 
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
             textAlign: TextAlign.end,
             overflow: TextOverflow.ellipsis,
           ),
@@ -499,17 +565,18 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildRegistrosSection() {
+  Widget _buildRegistrosSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             'Atalhos',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
             ),
           ),
         ),
@@ -524,7 +591,7 @@ class _MapScreenState extends State<MapScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildActionCardHorizontal(
+                  _buildModernActionCard(
                     icon: Icons.local_gas_station,
                     title: 'Registrar\nAbastecimento',
                     onTap: () {
@@ -538,8 +605,9 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                       );
                     },
+                    isDark: isDark,
                   ),
-                  _buildActionCardHorizontal(
+                  _buildModernActionCard(
                     icon: Icons.checklist,
                     title: 'Realizar Vistoria',
                     onTap: () {
@@ -561,6 +629,7 @@ class _MapScreenState extends State<MapScreen> {
                     isCompleted:
                     inspectionStatus.departureInspectionCompleted &&
                         inspectionStatus.arrivalInspectionCompleted,
+                    isDark: isDark,
                   ),
                 ],
               ),
@@ -571,40 +640,71 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildActionCardHorizontal({
+  Widget _buildModernActionCard({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
     Color iconColor = const Color(0xFF0066CC),
-    Color iconBgColor = const Color(0xFFE3F2FD),
+    Color? iconBgColor,
     bool hasNotification = false,
     bool isCompleted = false,
     bool isDisabled = false,
+    required bool isDark,
   }) {
     return Container(
       width: 130,
-      margin: const EdgeInsets.only(right: 8),
-      child: Card(
-        color: Theme.of(context).cardColor,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      margin: const EdgeInsets.only(right: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark 
+              ? Colors.white.withOpacity(0.05)
+              : Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark 
+                ? Colors.white.withOpacity(0.1)
+                : Colors.white.withOpacity(0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isDark 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: InkWell(
           onTap: isDisabled ? null : onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: iconBgColor,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            (iconBgColor ?? iconColor).withOpacity(0.2),
+                            (iconBgColor ?? iconColor).withOpacity(0.1),
+                          ],
+                        ),
                         shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (iconBgColor ?? iconColor).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Icon(
                         icon,
@@ -612,16 +712,17 @@ class _MapScreenState extends State<MapScreen> {
                         size: 24,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       title,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         fontSize: 12,
                         color: isDisabled
                             ? Colors.grey
-                            : Theme.of(context).textTheme.bodyLarge?.color,
+                            : isDark ? Colors.white : Colors.black87,
+                        height: 1.2,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -634,11 +735,18 @@ class _MapScreenState extends State<MapScreen> {
                   top: 8,
                   right: 8,
                   child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
                       color: Colors.red,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.5),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -647,16 +755,30 @@ class _MapScreenState extends State<MapScreen> {
                   top: 8,
                   right: 8,
                   child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF0066CC),
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF0066CC),
+                          Color(0xFF004499),
+                        ],
+                      ),
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0066CC).withOpacity(0.5),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: const Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: 12,
+                      size: 14,
                     ),
                   ),
                 ),
