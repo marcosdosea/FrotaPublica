@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Core.Service;

@@ -13,13 +13,13 @@
 		<a href="javascript:history.back()" class="voltar">
 			<i class="fa fa-arrow-left"></i> Voltar
 		</a>
-		<h1>Cadastro de Veículo</h1>
+		<h1>Cadastro de Veï¿½culo</h1>
 	</div>
 	<div class="fomulario">
 		<form asp-action="Edit">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="form-group">
-				<label asp-for="IdModeloVeiculo" class="label">Modelo Veículo</label>
+				<label asp-for="IdModeloVeiculo" class="label">Modelo Veï¿½culo</label>
 				<select asp-for="IdModeloVeiculo" class="custom-select select2">
 					@if (!modelos.Any())
 					{
@@ -46,17 +46,17 @@
 				<span asp-validation-for="Chassi" class="text-danger"></span>
 			</div>
 			<div class="form-group">
-				<label asp-for="Valor" class="label">Valor do Veículo</label>
+				<label asp-for="Valor" class="label">Valor do Veï¿½culo</label>
 				<input asp-for="Valor" class="form-control" placeholder="80000" />
 				<span asp-validation-for="Valor" class="text-danger"></span>
 			</div>
 			<div class="form-group">
-				<label asp-for="DataReferenciaValor" class="label">Data Referência (Valor)</label>
+				<label asp-for="DataReferenciaValor" class="label">Data Referï¿½ncia (Valor)</label>
 				<input asp-for="DataReferenciaValor" class="form-control campo-data" placeholder="" />
 				<span asp-validation-for="DataReferenciaValor" class="text-danger"></span>
 			</div>
 			<div class="form-group">
-				<label asp-for="Odometro" class="label">Odômetro</label>
+				<label asp-for="Odometro" class="label">Odï¿½metro</label>
 				<input asp-for="Odometro" class="form-control" placeholder="26000" />
 				<span asp-validation-for="Odometro" class="text-danger"></span>
 			</div>
@@ -108,7 +108,7 @@
 				<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
 			</div>
 			<div class="buttons">
-				<input type="submit" value="Salvar Alterações" class="btn btn-primary" />
+				<input type="submit" value="Salvar Alteraï¿½ï¿½es" class="btn btn-primary" />
 			</div>
 		</form>
 	</div>
@@ -127,7 +127,7 @@
 			$(".select2").select2({
 				language: {
 					noResults: function () {
-						return "Não encontrado";
+						return "Nï¿½o encontrado";
 					}
 				}
 			})

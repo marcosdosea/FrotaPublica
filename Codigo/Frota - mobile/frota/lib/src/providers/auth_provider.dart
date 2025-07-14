@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 import '../services/biometric_service.dart';
+import '../services/secure_storage_service.dart';
 import '../utils/api_client.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -29,19 +30,44 @@ class AuthProvider with ChangeNotifier {
       // Configurar callbacks do ApiClient
       _setupApiClientCallbacks();
 
+      // Carregar credenciais salvas (tanto biometria quanto "lembrar senha")
+      final biometricCredentials = await BiometricService.getSavedCredentials();
+      final savedCredentials = await SecureStorageService.getSavedCredentials();
+
+      // Priorizar credenciais salvas por "lembrar senha"
+      if (savedCredentials['username'] != null) {
+        _lastLoggedCpf = savedCredentials['username'];
+      } else if (biometricCredentials['username'] != null) {
+        _lastLoggedCpf = biometricCredentials['username'];
+      }
+
+      // Verificar se existe token válido
+      final token = await ApiClient.getToken();
+      final tokenValido = token != null && !(await ApiClient.isTokenExpired());
+
+      // Buscar usuário salvo localmente
       _currentUser = await _authService.getCurrentUser();
       _error = null;
 
       if (_currentUser != null) {
-        print('AuthProvider: Usuário autenticado na inicialização: ${_currentUser!.name}');
-        // Carregar o último CPF usado
-        final credentials = await BiometricService.getSavedCredentials();
-        _lastLoggedCpf = credentials['cpf'];
+        print(
+            'AuthProvider: Usuário autenticado na inicialização: ${_currentUser!.name}');
+      } else if (tokenValido) {
+        print(
+            'AuthProvider: Token válido, mas usuário não encontrado localmente.');
+        // Se biometria estiver ativada, tentar login biométrico automaticamente
+        final biometricEnabled = await BiometricService.isBiometricEnabled();
+        if (biometricEnabled) {
+          print(
+              'AuthProvider: Tentando login biométrico automático na inicialização.');
+          await loginWithBiometrics();
+        } else {
+          print(
+              'AuthProvider: Biometria não ativada. Usuário deve fazer login manual.');
+        }
       } else {
-        print('AuthProvider: Nenhum usuário autenticado na inicialização');
-        // Ainda assim, carregar o último CPF para facilitar o login
-        final credentials = await BiometricService.getSavedCredentials();
-        _lastLoggedCpf = credentials['cpf'];
+        print(
+            'AuthProvider: Nenhum usuário autenticado na inicialização e token inválido.');
       }
     } catch (e) {
       print('AuthProvider: Erro na inicialização: $e');
@@ -81,7 +107,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       print('AuthProvider: Tentando login com biometria');
-      
+
       // Verificar se a biometria está habilitada
       final biometricEnabled = await BiometricService.isBiometricEnabled();
       if (!biometricEnabled) {
@@ -111,7 +137,8 @@ class AuthProvider with ChangeNotifier {
       final success = _currentUser != null;
 
       if (success) {
-        print('AuthProvider: Login biométrico bem-sucedido para: ${_currentUser!.name}');
+        print(
+            'AuthProvider: Login biométrico bem-sucedido para: ${_currentUser!.name}');
         _lastLoggedCpf = cpf;
         _error = null;
       } else {
@@ -131,7 +158,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Login tradicional
-  Future<bool> login(String cpf, String password, {bool saveBiometric = false}) async {
+  Future<bool> login(String cpf, String password,
+      {bool saveBiometric = false, bool rememberMe = false}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -145,6 +173,15 @@ class AuthProvider with ChangeNotifier {
         print('AuthProvider: Login bem-sucedido para: ${_currentUser!.name}');
         _lastLoggedCpf = cpf;
         _error = null;
+
+        // Salvar credenciais se solicitado
+        if (rememberMe) {
+          await SecureStorageService.saveCredentials(
+            username: cpf,
+            password: password,
+            rememberMe: true,
+          );
+        }
 
         // Salvar credenciais se a biometria estiver habilitada
         if (saveBiometric && await BiometricService.isBiometricEnabled()) {
@@ -235,6 +272,13 @@ class AuthProvider with ChangeNotifier {
       await _authService.logout();
       _currentUser = null;
       _error = null;
+
+      // Limpar credenciais salvas se não estiver usando "lembrar senha"
+      final hasRememberMe = await SecureStorageService.hasSavedCredentials();
+      if (!hasRememberMe) {
+        await clearSavedCredentials();
+      }
+
       // Manter o último CPF para facilitar próximo login
       print('AuthProvider: Logout concluído com sucesso');
     } catch (e) {
@@ -250,5 +294,44 @@ class AuthProvider with ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  // Método público para forçar login biométrico (pode ser chamado pela tela de login)
+  Future<void> forceBiometricLoginIfNeeded() async {
+    final biometricEnabled = await BiometricService.isBiometricEnabled();
+    if (biometricEnabled && !isAuthenticated) {
+      await loginWithBiometrics();
+    }
+  }
+
+  // Método para fazer login automático com credenciais salvas
+  Future<bool> loginWithSavedCredentials() async {
+    try {
+      // Verificar se há credenciais salvas
+      final hasSaved = await SecureStorageService.hasSavedCredentials();
+      if (!hasSaved) {
+        return false;
+      }
+
+      // Obter credenciais salvas
+      final credentials = await SecureStorageService.getSavedCredentials();
+      final username = credentials['username'];
+      final password = credentials['password'];
+
+      if (username == null || password == null) {
+        return false;
+      }
+
+      // Fazer login com as credenciais salvas
+      return await login(username, password, rememberMe: false);
+    } catch (e) {
+      print('AuthProvider: Erro ao fazer login com credenciais salvas: $e');
+      return false;
+    }
+  }
+
+  // Método para limpar credenciais salvas
+  Future<void> clearSavedCredentials() async {
+    await SecureStorageService.clearCredentials();
   }
 }

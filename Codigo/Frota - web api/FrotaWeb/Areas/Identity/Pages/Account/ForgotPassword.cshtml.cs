@@ -55,21 +55,21 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
                 {
                     var user = await _userManager.FindByEmailAsync(Input.Email);
 
-                    // Verificar se o usuário existe
+                    // Verificar se o usuï¿½rio existe
                     if (user == null)
                     {
-                        ModelState.AddModelError("Input.Email", "Este email não está cadastrado no sistema.");
+                        ModelState.AddModelError("Input.Email", "Este email nï¿½o estï¿½ cadastrado no sistema.");
                         return Page();
                     }
 
-                    // Verificar se o email está confirmado
+                    // Verificar se o email estï¿½ confirmado
                     if (!(await _userManager.IsEmailConfirmedAsync(user)))
                     {
-                        ModelState.AddModelError("Input.Email", "Este email ainda não foi confirmado. Verifique sua caixa de entrada.");
+                        ModelState.AddModelError("Input.Email", "Este email ainda nï¿½o foi confirmado. Verifique sua caixa de entrada.");
                         return Page();
                     }
 
-                    // Gerar token de redefinição de senha
+                    // Gerar token de redefiniï¿½ï¿½o de senha
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     resetToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
 
@@ -80,9 +80,9 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
                         values: new { area = "Identity", code = resetToken },
                         protocol: Request.Scheme);
 
-                    // Obter informações do usuário para o envio de email
+                    // Obter informaï¿½ï¿½es do usuï¿½rio para o envio de email
                     var pessoa = _pessoaService.GetUserByEmailAsync(Input.Email);
-                    string nomeUsuario = pessoa?.Nome ?? "Usuário";
+                    string nomeUsuario = pessoa?.Nome ?? "Usuï¿½rio";
 
                     // Enviar email
                     await _emailSender.SendEmailAsync(
@@ -95,7 +95,7 @@ namespace FrotaWeb.Areas.Identity.Pages.Account
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, "Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.");
+                    ModelState.AddModelError(string.Empty, "Ocorreu um erro ao processar sua solicitaï¿½ï¿½o. Por favor, tente novamente.");
                 }
             }
 

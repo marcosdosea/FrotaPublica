@@ -1,4 +1,4 @@
-﻿using FrotaWeb.Models;
+using FrotaWeb.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Core;

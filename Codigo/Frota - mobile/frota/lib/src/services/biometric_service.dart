@@ -1,11 +1,8 @@
 import 'package:local_auth/local_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'secure_storage_service.dart';
 
 class BiometricService {
   static final LocalAuthentication _localAuth = LocalAuthentication();
-  static const String _biometricEnabledKey = 'biometric_enabled';
-  static const String _savedCpfKey = 'saved_cpf';
-  static const String _savedPasswordKey = 'saved_password';
 
   // Verificar se o dispositivo suporta biometria
   static Future<bool> isDeviceSupported() async {
@@ -39,14 +36,12 @@ class BiometricService {
 
   // Verificar se a biometria está habilitada pelo usuário
   static Future<bool> isBiometricEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_biometricEnabledKey) ?? false;
+    return await SecureStorageService.isBiometricEnabled();
   }
 
   // Habilitar/desabilitar biometria
   static Future<void> setBiometricEnabled(bool enabled) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_biometricEnabledKey, enabled);
+    await SecureStorageService.setBiometricEnabled(enabled);
   }
 
   // Autenticar com biometria
@@ -68,25 +63,20 @@ class BiometricService {
 
   // Salvar credenciais para uso com biometria
   static Future<void> saveCredentials(String cpf, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_savedCpfKey, cpf);
-    await prefs.setString(_savedPasswordKey, password);
+    await SecureStorageService.saveBiometricCredentials(
+      username: cpf,
+      password: password,
+    );
   }
 
   // Obter credenciais salvas
   static Future<Map<String, String?>> getSavedCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      'cpf': prefs.getString(_savedCpfKey),
-      'password': prefs.getString(_savedPasswordKey),
-    };
+    return await SecureStorageService.getSavedCredentials();
   }
 
   // Limpar credenciais salvas
   static Future<void> clearSavedCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_savedCpfKey);
-    await prefs.remove(_savedPasswordKey);
+    await SecureStorageService.clearBiometricCredentials();
   }
 
   // Configurar biometria (solicitar autenticação para confirmar)

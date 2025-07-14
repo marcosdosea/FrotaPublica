@@ -6,4 +6,3 @@ namespace FrotaWeb.Areas.Identity.Data;
 public class UsuarioIdentity : IdentityUser
 {
 }
-

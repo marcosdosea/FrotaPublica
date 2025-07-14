@@ -1,299 +1,221 @@
-@using Microsoft.AspNetCore.Identity
-@using Core;
-
-@inject SignInManager<UsuarioIdentity> SignInManager
-@inject UserManager<UsuarioIdentity> UserManager
-
-@{
-    var user = await UserManager.GetUserAsync(User);
-    var email = user?.Email;
-    var userName = email?.Split('@')[0];
-    string roleUser = "";
-    @foreach (var role in User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role))
-    {
-        roleUser = role.Value;
-    }
-}
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Frota Pública</title>
-    <link rel="icon" type="image/x-icon" href="~/logo.ico">
-    <link rel="stylesheet" href="~/css/navBar.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-</head>
-<body style="background-color: #D2E5F2">
-    <div class="wrapper d-flex align-items-stretch">
-        <aside class="sidebar">
-            <button class="toggle" type="button" onclick="toggleOpen()">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-            <div class="inner">
-                <div class="header">
-                    <img src="~/img/logo/logo.svg" class="logo" />
-                    <h1 class="tittle-application" style="{margin-left: 12px; margin-top: 2px; font-weight: 600; font-size: 16px !important; letter-spacing: 2px; color: #0C69AB;}">Frota Pública</h1>
-                </div>
-                <nav class="menu">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FrotaWeb</title>
 
-                    <button id="Home" type="button" onclick="window.location.href='@Url.Action("Index", "Home")';">
-                        <span class="material-symbols-outlined">home</span>
-                        <p>Página Inicial</p>
-                    </button>
-                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Mecânico")
-                    {
-                        <button id="Manutencao" type="button" onclick="toggleSubmenu('manutencao-submenu')">
-                            <span class="material-symbols-outlined">build</span>
-                            <p>Manutenção</p>
-                        </button>
-                        <!--expande manutenção-->
-                        <div class="submenu" id="manutencao-submenu">
-                            @if (roleUser == "Gestor" || roleUser == "Motorista")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Solicitacaomanutencao")';">
-                                    <p>Solicitar Manutenção</p>
-                                </button>
-                            }
-                            @if (roleUser == "Gestor" || roleUser == "Mecânico")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Manutencao")';">
-                                    <p>Manutenção</p>
-                                </button>
-                            }
-                            @if (roleUser == "Gestor" || roleUser == "Mecânico")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "ManutencaoPecaInsumo")';">
-                                    <p>Manutenção Peça e Insumo</p>
-                                </button>
-                            }
-                        </div>
-                    }
-                    <a></a>
-                    @if (roleUser == "Administrador")
-                    {
-                        <button id="Pecas" type="button" onclick="toggleSubmenu('pecasInsumos-submenu')">
-                            <span class="material-symbols-outlined">settings</span>
-                            <p>Peças e Insumos</p>
-                        </button>
-                        <!--expande peças e insumos-->
-                        <div class="submenu" id="pecasInsumos-submenu">
-                            <a></a>
-                            <button type="button" onclick="window.location.href='@Url.Action("Index", "PecaInsumo")';">
-                                <p>Peças</p>
-                            </button>
-                            <a></a>
-                            <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaPecaInsumo")';">
-                                <p>Marcas</p>
-                            </button>
-                        </div>
-                    }
-                    <a></a>
-                    @if (roleUser == "Gestor" || roleUser == "Motorista" || roleUser == "Administrador")
-                    {
-                        <button id="Veiculo" type="button" onclick="toggleSubmenu('veiculos-submenu')">
-                            <span class="material-symbols-outlined">directions_car</span>
-                            <p>Veículos</p>
-                        </button>
-                        <!--expande veiculos-->
-                        <div class="submenu" id="veiculos-submenu">
-                            @if (roleUser == "Gestor")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Veiculo")';">
-                                    <p>Veículos</p>
-                                </button>
-                            }
-                            @if (roleUser == "Gestor" || roleUser == "Motorista")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "Abastecimento")';">
-                                    <p>Abastecimentos</p>
-                                </button>
-                            }
-                            @if (roleUser == "Administrador")
-                            {
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "MarcaVeiculo")';">
-                                    <p>Marcas de Veículos</p>
-                                </button>
-                                <button type="button" onclick="window.location.href='@Url.Action("Index", "ModeloVeiculo")';">
-                                    <p>Modelos de Veículos</p>
-                                </button>
-                            }
-                        </div>
-                    }
-		    @if (roleUser == "Gestor" || roleUser == "Administrador")
-		    {
-                        <button id="Pessoa" type="button" onclick="window.location.href='@Url.Action("Index", "Pessoa")';">
-                            <span class="material-symbols-outlined">badge</span>
-                            <p>Usuários</p>
-                        </button>
-                    }
-                    @if (roleUser == "Gestor")
-                    {
-                        <button id="Fornecedor" type="button" onclick="window.location.href='@Url.Action("Index", "Fornecedor")';">
-                            <span class="material-symbols-outlined">package_2</span>
-                            <p>Fornecedores</p>
-                        </button>
-                        <button id="UnidadeAdministrativa" type="button" onclick="window.location.href='@Url.Action("Index", "UnidadeAdministrativa")';">
-                            <span class="material-symbols-outlined">apartment</span>
-                            <p>Unidade Administrativa</p>
-                        </button>
-                    }
-                    @if (roleUser == "Administrador")
-                    {
-                        <button id="Frota" type="button" onclick="window.location.href='@Url.Action("Index", "Frota")';">
-                            <span class="material-symbols-outlined">local_shipping</span>
-                            <p>Frota</p>
-                        </button>
-                    }
-                    @if (roleUser == "Gestor" || roleUser == "Motorista")
-                    {
-                        <button id="Vistoria" type="button" onclick="window.location.href='@Url.Action("Index", "Vistoria")';">
-                            <span class="material-symbols-outlined">playlist_add_check</span>
-                            <p>Vistoria</p>
-                        </button>
-                        <button id="Percurso" type="button" onclick="window.location.href='@Url.Action("Index", "Percurso")';">
-                            <span class="material-symbols-outlined">route</span>
-                            <p>Percurso</p>
-                        </button>
-                    }
-                </nav>
-            </div>
-            <div class="login-button">
-                <a class="manage-link" asp-area="Identity" asp-page="/Account/Manage/Index">
-                    <span class="material-symbols-outlined" style="margin-left: 22px;">account_circle</span>
-                    <p class="profile-link">@userName</p>
-                </a>
-                <a class="logout-link" data-bs-toggle="modal" data-bs-target="#sairModal">
-                    <span class="material-symbols-outlined" style="margin-right: 22px;">logout</span>
-                </a>
-            </div>
-        </aside>
-        <!-- Page Content -->
-        <div id="content">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <!-- Header -->
+        <div class="sidebar-header">
+            <img src="~/img/logo/logo.png" alt="Logo" class="sidebar-logo">
+            <h1 class="sidebar-title">FrotaWeb</h1>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
-    </div>
-    <!-- Modal Sair -->
-    <div id="sairModal" tabindex="-1" class="modal fade" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Sair <i class="fa fa-sign-out-alt"></i></h4>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+
+        <!-- Navigation -->
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
                 </div>
-                <div class="modal-body">
-                    <i class="fa fa-question-circle"></i> Tem certeza que deseja sair?
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Veículos</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link nav-toggle">
+                        <div class="nav-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <span class="nav-text">Veículos</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <div class="nav-submenu">
+                        <a href="@Url.Action("Index", "Veiculo")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <span class="nav-text">Listar Veículos</span>
+                        </a>
+                        <a href="@Url.Action("VeiculosDisponiveis", "Veiculo")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <span class="nav-text">Disponíveis</span>
+                        </a>
+                        <a href="@Url.Action("Index", "Abastecimento")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-gas-pump"></i>
+                            </div>
+                            <span class="nav-text">Abastecimentos</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <form asp-area="Identity" asp-page="/Account/Login" method="post" class="w-100">
-                        <button type="submit" class="btn btn-danger btn-block">Deslogar</button>
-                    </form>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "MarcaVeiculo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <span class="nav-text">Marcas</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "ModeloVeiculo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-car-side"></i>
+                        </div>
+                        <span class="nav-text">Modelos</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Manutenção</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link nav-toggle">
+                        <div class="nav-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <span class="nav-text">Manutenção</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <div class="nav-submenu">
+                        <a href="@Url.Action("Index", "SolicitacaoManutencao")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <span class="nav-text">Solicitações</span>
+                        </a>
+                        <a href="@Url.Action("Index", "Manutencao")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <span class="nav-text">Manutenções</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Vistoria")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <span class="nav-text">Vistorias</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Gestão</div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Pessoa")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="nav-text">Pessoas</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Fornecedor")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <span class="nav-text">Fornecedores</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "PecaInsumo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <span class="nav-text">Peças/Insumos</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="popup" class="popup" style="display: none">
-        <div class="popup__content">
-            <img id="popup-icon" class="popup__icon" alt="Popup Icon">
-            <h2 id="popup-title"></h2>
-            <div id="popup-message-container" class="labelmessage">
-                <p id="popup-message" class="popup__text"></p>
-            </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                <div class="theme-toggle-icon" id="themeToggleIcon">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </button>
+
+            <!-- User Profile -->
+            <a href="/Identity/Account/Manage" class="user-profile">
+                <div class="user-avatar">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @User.Identity.Name.Substring(0, 1).ToUpper()
+                    }
+                    else
+                    {
+                        <i class="fas fa-user"></i>
+                    }
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @User.Identity.Name
+                        }
+                        else
+                        {
+                            @("Usuário")
+                        }
+                    </div>
+                    <div class="user-role">Motorista</div>
+                </div>
+            </a>
+
+            <!-- Logout Button -->
+            <button class="logout-btn" onclick="showLogoutModal()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </button>
         </div>
-        <button id="popup-close" class="popup__close" onclick="closePopup()">
-            ✕
-        </button>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        @RenderBody()
+    </main>
+
+    <!-- Logout Form (Hidden) -->
+    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" style="display: none;">
+    </form>
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="~/js/navBar.js"></script>
-    <script src="~/js/home.js" asp-append-version="true"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-    <script>
-        function showPopup(type, title, message, timeout = 5000) {
-            console.log({ type, title, message });
-            const popup = document.getElementById('popup');
-            const popupIcon = document.getElementById('popup-icon');
-            const popupTitle = document.getElementById('popup-title');
-            const popupMessage = document.getElementById('popup-message');
-            const popupMessageContainer = document.getElementById('popup-message-container');
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <script src="~/js/sidebar.js" asp-append-version="true"></script>
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
-            // Configuração dos tipos de pop-up
-            const popupTypes = {
-                success: {
-                    icon: '/img/icons/success.png', // Caminho absoluto
-                    color: '#29EC74',
-                    message: '#006A29'
-                },
-                error: {
-                    icon: '/img/icons/error.png', // Caminho absoluto
-                    color: '#EC2929',
-                    message: '#ffffff95'
-                },
-                warning: {
-                    icon: '/img/icons/warning.png', // Caminho absoluto
-                    color: '#636363',
-                    message: '#ffffff95'
-                }
-            };
-
-            // Atribuir as configurações com base no tipo
-            const config = popupTypes[type];
-            if (config) {
-                popupIcon.src = config.icon;
-                popupMessageContainer.style.setProperty('background-color', config.color, 'important');
-                popupMessage.style.setProperty('color', config.message);
-                console.log('Cor aplicada:', popupMessageContainer.style.backgroundColor);
-            }
-
-            // Configurar título e mensagem
-            popupTitle.innerHTML = title;
-            popupMessage.innerHTML = message;
-            
-
-            // Exibir o pop-up
-            popup.style.display = 'block';
-
-            // Adicionar evento para fechar o pop-up manualmente
-            const popupClose = document.getElementById('popup-close');
-            popupClose.onclick = () => {
-                popup.style.display = 'none';
-            };
-
-            // Fechar automaticamente após o tempo especificado
-            setTimeout(() => {
-                popup.style.display = 'none';
-            }, timeout);
-        }
-
-        // Exemplo de inicialização dinâmica via TempData
-        document.addEventListener("DOMContentLoaded", function () {
-            const popupData = {
-                Type: '@TempData["PopupType"]',
-                Title: '@TempData["PopupTitle"]',
-                Message: '@TempData["PopupMessage"]'
-            };
-
-            if (popupData.Type && popupData.Title && popupData.Message) {
-                showPopup(popupData.Type, popupData.Title, popupData.Message);
-            }
-        });
-
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -13,6 +13,7 @@ import 'fuel_registration_screen.dart';
 import 'inspection_selection_screen.dart';
 import 'maintenance_request_screen.dart';
 import '../utils/formatters.dart';
+import '../utils/widgets/action_card.dart';
 import '../widgets/finish_journey_dialog.dart';
 import '../providers/journey_provider.dart';
 import '../providers/fuel_provider.dart';
@@ -214,7 +215,7 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _checkInspectionStatus() async {
     try {
       final vehicleProvider =
-      Provider.of<VehicleProvider>(context, listen: false);
+          Provider.of<VehicleProvider>(context, listen: false);
       final currentVehicle = vehicleProvider.currentVehicle;
 
       if (currentVehicle != null) {
@@ -252,17 +253,17 @@ class _MapScreenState extends State<MapScreen> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: isDark 
-          ? const Color(0xFF0F0F23)
-          : const Color(0xFFE3F2FD),
-      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor:
+          isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+      systemNavigationBarIconBrightness:
+          isDark ? Brightness.light : Brightness.dark,
     ));
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark 
+          gradient: isDark
               ? const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -285,8 +286,8 @@ class _MapScreenState extends State<MapScreen> {
         child: Column(
           children: [
             Container(
-              padding:
-              const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              padding: const EdgeInsets.only(
+                  top: 60, left: 16, right: 16, bottom: 20),
               decoration: const BoxDecoration(
                 color: Color(0xFF116AD5),
                 borderRadius: BorderRadius.only(
@@ -332,7 +333,6 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(top: 24, bottom: 24),
@@ -341,7 +341,8 @@ class _MapScreenState extends State<MapScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: _buildMapCard(initialPosition, initialZoom, isDark),
+                      child:
+                          _buildMapCard(initialPosition, initialZoom, isDark),
                     ),
                     const SizedBox(height: 32),
                     _buildRegistrosSection(isDark),
@@ -355,22 +356,23 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildMapCard(LatLng initialPosition, double initialZoom, bool isDark) {
+  Widget _buildMapCard(
+      LatLng initialPosition, double initialZoom, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? Colors.white.withOpacity(0.05)
             : Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? Colors.white.withOpacity(0.1)
               : Colors.white.withOpacity(0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: isDark 
+            color: isDark
                 ? Colors.black.withOpacity(0.3)
                 : Colors.black.withOpacity(0.1),
             blurRadius: 20,
@@ -395,11 +397,13 @@ class _MapScreenState extends State<MapScreen> {
     return Row(
       children: [
         Expanded(
-          child: _buildLocationInfo('Partida', widget.journey.origin ?? 'Não informado', isDark),
+          child: _buildLocationInfo(
+              'Partida', widget.journey.origin ?? 'Não informado', isDark),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _buildLocationInfo('Destino', widget.journey.destination ?? 'Não informado', isDark,
+          child: _buildLocationInfo(
+              'Destino', widget.journey.destination ?? 'Não informado', isDark,
               alignRight: true),
         ),
       ],
@@ -410,13 +414,13 @@ class _MapScreenState extends State<MapScreen> {
       {bool alignRight = false}) {
     return Column(
       crossAxisAlignment:
-      alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
             fontSize: 14,
-            color: isDark 
+            color: isDark
                 ? Colors.white.withOpacity(0.6)
                 : Colors.black.withOpacity(0.6),
           ),
@@ -439,20 +443,20 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildMapContainer(LatLng initialPosition, double initialZoom) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       height: 350,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? Colors.white.withOpacity(0.1)
               : Colors.grey.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: isDark 
+            color: isDark
                 ? Colors.black.withOpacity(0.3)
                 : Colors.black.withOpacity(0.1),
             blurRadius: 10,
@@ -518,13 +522,18 @@ class _MapScreenState extends State<MapScreen> {
             final currentVehicle = vehicleProvider.currentVehicle;
             return Column(
               children: [
-                _infoRow('Inicial:', '${widget.journey.initialOdometer}km', isDark),
+                _infoRow(
+                    'Inicial:', '${widget.journey.initialOdometer}km', isDark),
                 const SizedBox(height: 4),
-                _infoRow('Final:',
-                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km', isDark),
+                _infoRow(
+                    'Final:',
+                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km',
+                    isDark),
                 const SizedBox(height: 4),
-                _infoRow('Hora de Saída:',
-                    Formatters.formatDateTime(widget.journey.departureTime), isDark),
+                _infoRow(
+                    'Hora de Saída:',
+                    Formatters.formatDateTime(widget.journey.departureTime),
+                    isDark),
               ],
             );
           },
@@ -542,7 +551,7 @@ class _MapScreenState extends State<MapScreen> {
             label,
             style: TextStyle(
                 fontSize: 14,
-                color: isDark 
+                color: isDark
                     ? Colors.white.withOpacity(0.6)
                     : Colors.black.withOpacity(0.6)),
             overflow: TextOverflow.ellipsis,
@@ -553,7 +562,7 @@ class _MapScreenState extends State<MapScreen> {
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 14, 
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -591,7 +600,7 @@ class _MapScreenState extends State<MapScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildModernActionCard(
+                  ActionCard(
                     icon: Icons.local_gas_station,
                     title: 'Registrar\nAbastecimento',
                     onTap: () {
@@ -607,7 +616,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     isDark: isDark,
                   ),
-                  _buildModernActionCard(
+                  ActionCard(
                     icon: Icons.checklist,
                     title: 'Realizar Vistoria',
                     onTap: () {
@@ -624,11 +633,11 @@ class _MapScreenState extends State<MapScreen> {
                       });
                     },
                     hasNotification:
-                    !inspectionStatus.departureInspectionCompleted ||
-                        !inspectionStatus.arrivalInspectionCompleted,
+                        !inspectionStatus.departureInspectionCompleted ||
+                            !inspectionStatus.arrivalInspectionCompleted,
                     isCompleted:
-                    inspectionStatus.departureInspectionCompleted &&
-                        inspectionStatus.arrivalInspectionCompleted,
+                        inspectionStatus.departureInspectionCompleted &&
+                            inspectionStatus.arrivalInspectionCompleted,
                     isDark: isDark,
                   ),
                 ],
@@ -637,155 +646,6 @@ class _MapScreenState extends State<MapScreen> {
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildModernActionCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    Color iconColor = const Color(0xFF0066CC),
-    Color? iconBgColor,
-    bool hasNotification = false,
-    bool isCompleted = false,
-    bool isDisabled = false,
-    required bool isDark,
-  }) {
-    return Container(
-      width: 130,
-      margin: const EdgeInsets.only(right: 12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark 
-              ? Colors.white.withOpacity(0.05)
-              : Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDark 
-                ? Colors.white.withOpacity(0.1)
-                : Colors.white.withOpacity(0.3),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: InkWell(
-          onTap: isDisabled ? null : onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            (iconBgColor ?? iconColor).withOpacity(0.2),
-                            (iconBgColor ?? iconColor).withOpacity(0.1),
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: (iconBgColor ?? iconColor).withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        icon,
-                        color: isDisabled ? Colors.grey : iconColor,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                        color: isDisabled
-                            ? Colors.grey
-                            : isDark ? Colors.white : Colors.black87,
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              if (hasNotification)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(0.5),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (isCompleted)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF0066CC),
-                          Color(0xFF004499),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0066CC).withOpacity(0.5),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 14,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

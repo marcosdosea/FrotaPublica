@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/biometric_service.dart';
+import '../services/secure_storage_service.dart';
 import '../utils/app_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,11 +20,14 @@ class _ProfileScreenState extends State<ProfileScreen>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  bool _biometricEnabled = false;
+  bool _isLoadingBiometric = false;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
+    _initializeBiometricState();
   }
 
   void _initializeAnimations() {
@@ -57,6 +62,89 @@ class _ProfileScreenState extends State<ProfileScreen>
     });
   }
 
+  Future<void> _initializeBiometricState() async {
+    try {
+      final enabled = await BiometricService.isBiometricEnabled();
+      if (mounted) {
+        setState(() {
+          _biometricEnabled = enabled;
+        });
+      }
+    } catch (e) {
+      print('Erro ao inicializar estado da biometria: $e');
+    }
+  }
+
+  Future<void> _onBiometricToggleChanged(bool value) async {
+    if (_isLoadingBiometric) return;
+
+    setState(() {
+      _isLoadingBiometric = true;
+    });
+
+    try {
+      if (value) {
+        // Ativar biometria
+        final success = await BiometricService.setupBiometric();
+        if (success && mounted) {
+          setState(() {
+            _biometricEnabled = true;
+          });
+
+          // Salvar credenciais atuais para biometria
+          final authProvider =
+              Provider.of<AuthProvider>(context, listen: false);
+          if (authProvider.currentUser != null) {
+            final savedCredentials =
+                await SecureStorageService.getSavedCredentials();
+            if (savedCredentials['username'] != null &&
+                savedCredentials['password'] != null) {
+              await BiometricService.saveCredentials(
+                savedCredentials['username']!,
+                savedCredentials['password']!,
+              );
+            }
+          }
+        } else if (mounted) {
+          // Mostrar erro se não conseguiu ativar
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Não foi possível ativar a biometria. Verifique se há biometrias cadastradas no dispositivo.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        // Desativar biometria
+        await BiometricService.setBiometricEnabled(false);
+        await BiometricService.clearSavedCredentials();
+
+        if (mounted) {
+          setState(() {
+            _biometricEnabled = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Erro ao alterar configuração de biometria: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao configurar biometria: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingBiometric = false;
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     _fadeController.dispose();
@@ -67,21 +155,21 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: isDark 
-          ? const Color(0xFF0F0F23)
-          : const Color(0xFFE3F2FD),
-      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor:
+          isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+      systemNavigationBarIconBrightness:
+          isDark ? Brightness.light : Brightness.dark,
     ));
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark 
+          gradient: isDark
               ? AppTheme.backgroundGradientDark
               : AppTheme.backgroundGradientLight,
         ),
@@ -89,7 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             // Header moderno
             Container(
-              padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              padding: const EdgeInsets.only(
+                  top: 60, left: 16, right: 16, bottom: 20),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -154,19 +243,19 @@ class _ProfileScreenState extends State<ProfileScreen>
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        
+
                         // Card do perfil do usuário
                         _buildUserProfileCard(isDark),
                         const SizedBox(height: 24),
-                        
+
                         // Card de configurações
                         _buildSettingsCard(isDark),
                         const SizedBox(height: 24),
-                        
+
                         // Card de informações do app
                         _buildAppInfoCard(isDark),
                         const SizedBox(height: 32),
-                        
+
                         // Botão de logout
                         _buildLogoutButton(),
                         const SizedBox(height: 20),
@@ -186,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         final user = authProvider.currentUser;
-        
+
         return AppTheme.modernCard(
           isDark: isDark,
           padding: const EdgeInsets.all(24),
@@ -221,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Nome do usuário
               Text(
                 user?.name ?? 'Usuário',
@@ -234,10 +323,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              
+
               // CPF
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFF116AD5).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -256,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Email (se disponível)
               if (user?.email != null) ...[
                 Row(
@@ -265,7 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Icon(
                       Icons.email_rounded,
                       size: 16,
-                      color: isDark 
+                      color: isDark
                           ? Colors.white.withOpacity(0.6)
                           : Colors.black.withOpacity(0.6),
                     ),
@@ -274,7 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       user!.email!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark 
+                        color: isDark
                             ? Colors.white.withOpacity(0.8)
                             : Colors.black.withOpacity(0.7),
                         fontFamily: 'Poppins',
@@ -307,7 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Toggle tema escuro
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
@@ -326,9 +416,34 @@ class _ProfileScreenState extends State<ProfileScreen>
               );
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
+          // Toggle biometria
+          _buildSettingItem(
+            icon: Icons.fingerprint_rounded,
+            title: 'Login com biometria',
+            subtitle: 'Usar impressão digital ou Face ID',
+            trailing: _isLoadingBiometric
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF116AD5)),
+                    ),
+                  )
+                : Switch.adaptive(
+                    value: _biometricEnabled,
+                    onChanged: _onBiometricToggleChanged,
+                    activeColor: const Color(0xFF116AD5),
+                  ),
+            isDark: isDark,
+          ),
+
+          const SizedBox(height: 16),
+
           // Notificações
           _buildSettingItem(
             icon: Icons.notifications_rounded,
@@ -337,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
               size: 16,
-              color: isDark 
+              color: isDark
                   ? Colors.white.withOpacity(0.6)
                   : Colors.black.withOpacity(0.6),
             ),
@@ -346,9 +461,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             },
             isDark: isDark,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Privacidade
           _buildSettingItem(
             icon: Icons.privacy_tip_rounded,
@@ -357,7 +472,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             trailing: Icon(
               Icons.arrow_forward_ios_rounded,
               size: 16,
-              color: isDark 
+              color: isDark
                   ? Colors.white.withOpacity(0.6)
                   : Colors.black.withOpacity(0.6),
             ),
@@ -424,7 +539,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     subtitle,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark 
+                      color: isDark
                           ? Colors.white.withOpacity(0.6)
                           : Colors.black.withOpacity(0.6),
                       fontFamily: 'Poppins',
@@ -457,28 +572,13 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           const SizedBox(height: 20),
-          
           _buildInfoItem(
             icon: Icons.info_rounded,
             title: 'Versão',
             value: '1.0.0',
             isDark: isDark,
           ),
-          
           const SizedBox(height: 16),
-          
-          _buildInfoItem(
-            icon: Icons.help_rounded,
-            title: 'Suporte',
-            value: 'Ajuda e FAQ',
-            onTap: () {
-              // Implementar navegação para suporte
-            },
-            isDark: isDark,
-          ),
-          
-          const SizedBox(height: 16),
-          
           _buildInfoItem(
             icon: Icons.description_rounded,
             title: 'Termos de Uso',
@@ -545,7 +645,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     value,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark 
+                      color: isDark
                           ? Colors.white.withOpacity(0.6)
                           : Colors.black.withOpacity(0.6),
                       fontFamily: 'Poppins',
@@ -558,7 +658,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,
-                color: isDark 
+                color: isDark
                     ? Colors.white.withOpacity(0.6)
                     : Colors.black.withOpacity(0.6),
               ),
@@ -596,65 +696,68 @@ class _ProfileScreenState extends State<ProfileScreen>
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
-              onTap: authProvider.isLoading ? null : () async {
-                final shouldLogout = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1A1A2E)
-                        : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    title: const Text(
-                      'Confirmar Logout',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'Tem certeza que deseja sair da sua conta?',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontFamily: 'Poppins',
+              onTap: authProvider.isLoading
+                  ? null
+                  : () async {
+                      final shouldLogout = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF1A1A2E)
+                                  : Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text(
-                          'Sair',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
+                          title: const Text(
+                            'Confirmar Logout',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          content: const Text(
+                            'Tem certeza que deseja sair da sua conta?',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text(
+                                'Sair',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                );
+                      );
 
-                if (shouldLogout == true) {
-                  await authProvider.logout();
-                  if (mounted) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/presentation',
-                      (route) => false,
-                    );
-                  }
-                }
-              },
+                      if (shouldLogout == true) {
+                        await authProvider.logout();
+                        if (mounted) {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/presentation',
+                            (route) => false,
+                          );
+                        }
+                      }
+                    },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),

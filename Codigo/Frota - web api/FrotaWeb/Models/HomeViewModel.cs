@@ -1,4 +1,4 @@
-﻿namespace FrotaWeb.Models;
+namespace FrotaWeb.Models;
 
 public class HomeViewModel
 {

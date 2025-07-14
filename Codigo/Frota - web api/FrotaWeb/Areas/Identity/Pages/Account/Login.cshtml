@@ -1,296 +1,351 @@
-﻿@page
+@page
 @model LoginModel
 
 @{
-    ViewData["Title"] = "FrotaWeb";
+    ViewData["Title"] = "Login - FrotaWeb";
     Layout = null;
 }
+
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
     <style>
-        header, #sidebar {
-            display: none;
-        }
-
-        footer {
-            background-color: #08448c;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            background-color: #e6f0fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
         }
 
-        .container {
+        .login-container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .login-visual {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-2xl);
+            color: var(--text-inverse);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-visual::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .visual-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+            backdrop-filter: blur(10px);
+        }
+
+        .visual-icon i {
+            font-size: 3rem;
+            color: var(--text-inverse);
+        }
+
+        .visual-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .visual-subtitle {
+            font-size: var(--font-size-lg);
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .login-form {
+            padding: var(--spacing-2xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .form-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-base);
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .forgot-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--primary-color);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .login-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(12, 105, 171, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .error-messages {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .error-messages ul {
+            list-style: none;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: row;
-            width: 100vw;
-            background-color: #D9E9F4;
         }
 
-        .left-section {
-            position: relative;
-            width: 60%;
-            height: 100vh;
+        .error-messages li {
+            color: var(--error-color);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xs);
         }
 
-            .left-section img {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                fill: #0C69AB;
-            }
-
-        .right-section {
-            height: 100vh;
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .error-messages li:last-child {
+            margin-bottom: 0;
         }
 
-        .form-container {
-            width: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #D9E9F4;
+        @@media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .login-visual {
+                display: none;
+            }
+
+            .login-form {
+                padding: var(--spacing-xl);
+            }
+
+            .visual-title {
+                font-size: var(--font-size-2xl);
+            }
+
+            .form-title {
+                font-size: var(--font-size-xl);
+            }
         }
 
-            .form-container{
-                color: #0C69AB;
+        @@media (max-width: 480px) {
+            body {
+                padding: var(--spacing-sm);
             }
 
-        .right-section img {
-            width: 150px;
-            height: auto;
-            margin: 15px;
-        }
-
-        .form {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-        }
-
-            .form p {
-                height: 35px;
-                font-size: 18px;
-                display: flex;
-                flex-direction: column;
-                text-align: left;
-                justify-content: center;
-                font-weight: 600;
-            }
-
-            .form input {
-                padding: 10px;
-                font-size: 1em;
-                border: 2px solid rgba(0, 0, 0, 0.25);
-                border-radius: 10px;
-                background-color: #fff;
-            }
-
-                .form input:focus {
-                    border: 1px solid #ccc;
-                    outline: none;
-                    border-color: #0C69AB;
-                }
-
-            .form a {
-                text-align: left;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                height: 40px;
-                font-size: 17px;
-                color: #0C69AB;
-                text-decoration: none;
-                font-weight: 600;
-            }
-
-                .form a:hover {
-                    color: #000000;
-                }
-
-            .form button {
-                margin-top: 23px;
-                margin-bottom: 23px;
-                margin-left: 10%;
-                margin-right: 10%;
-                padding: 10px;
-                font-size: 1em;
-                color: white;
-                background-color: #0C69AB;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-
-                .form button:hover {
-                    background-color: #0B83D9;
-                }
-
-        .register-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #000000;
-            font-weight: 600;
-            width: 100%;
-            text-align: center;
-        }
-
-            .register-link div {
-                margin-top: 5px;
-                text-align: center;
-            }
-
-            .register-link a {
-                margin-left: 5px;
-                color: #1a73e8;
-                text-decoration: none;
-            }
-
-                .register-link a:hover {
-                    color: #000000;
-                }
-
-        .messages {
-            color: red;
-            text-align: center;
-            padding-top: 5px;
-            padding-bottom: 5px;
-        }
-
-            .messages li {
-                list-style-type: none;
-                padding-left: 0;
-                margin: 0;
-            }
-
-        #lembrar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            margin-top: 15px;
-            color: #000;
-        }
-
-        .container-input-icon, .container-input-icon {
-            position: relative;
-        }
-
-            .container-input-icon > input, .container-input-icon > input {
-                width: 100%;
-                padding-right: 40px;
-            }
-
-        #eye-icon {
-            position: absolute;
-            right: 10px;
-            top: calc(50% - 7px);
-            cursor: pointer;
-            color: #0C69AB;
-        }
-
-        #user-icon {
-            position: absolute;
-            right: 10px;
-            top: calc(50% - 7px);
-            color: #0C69AB;
-        }
-
-        @@media screen and (max-width: 930px) {
-            .left-section {
-                width: 0%;
-                height: 50vh;
-            }
-
-            .right-section {
-                width: 100%;
-                padding: 8px;
-            }
-
-            .form-container {
-                border: 2px solid #0C69AB;
-                border-radius: 10px;
-                padding: 20px;
-                margin-top: 8px;
-                margin-bottom: 8px;
-            }
-
-            .register-link {
-                margin-top: 15px;
-                position: relative;
-                bottom: 0;
+            .login-form {
+                padding: var(--spacing-lg);
             }
         }
     </style>
 </head>
-<div class="container">
-    <div class="left-section">
-        <img src="~/img/background-login.png" alt="background" />
-    </div>
-    <section class="right-section">
-        <form id="account" method="post">
-            <div class="form-container">
-                <img src="~/img/logo/logo.svg" alt="Frota logo" />
-                <h1>Frota Pública</h1>
-                <div asp-validation-summary="ModelOnly" class="messages"></div>
-                <div class="form">
-                    <p>Cpf</p>
-                    <div class="container-input-icon">
-                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="form-control" maxlength="14" required aria-required="true" />
-                        <i id="user-icon" class="fa fa-user" aria-hidden="true"></i>
-                    </div>
-                    <span asp-validation-for="Input.UserName" class="messages"></span>
-                    <p>Senha</p>
-                    <div class="container-input-icon">
-                        <input id="password" type="password" asp-for="Input.Password" class="form-control" autocomplete="current-password" required aria-required="true" />
-                        <i id="eye-icon" class="fa fa-eye cor" aria-hidden="true"></i>
-                    </div>
-                    <span asp-validation-for="Input.Password" class="messages"></span>
-                    <label id="lembrar">
-                        <input asp-for="Input.RememberMe" type="checkbox">
-                        <span>Lembrar de mim?</span>
-                    </label>
-                    <button id="login-submit" type="submit">Entrar</button>
+<body>
+    <div class="login-container">
+        <div class="login-visual">
+            <div class="visual-content">
+                <div class="visual-icon">
+                    <i class="fas fa-car"></i>
                 </div>
-                <div class="register-link">
-                    <a asp-page="./ForgotPassword">Esqueceu a senha?</a>
-                </div>
+                <h1 class="visual-title">FrotaWeb</h1>
+                <p class="visual-subtitle">Sistema moderno de gestão de frota com tecnologia avançada e interface intuitiva</p>
             </div>
-        </form>
-    </section>
-</div>
-<script src="~/js/authentication.js"></script>
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+        </div>
+
+        <div class="login-form">
+            <div class="form-header">
+                <img src="~/img/logo/logo.png" alt="Logo" class="form-logo">
+                <h2 class="form-title">Bem-vindo</h2>
+                <p class="form-subtitle">Faça login para acessar sua conta</p>
+            </div>
+
+            <form id="account" method="post">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-messages">
+                        <div asp-validation-summary="ModelOnly"></div>
+                    </div>
+                }
+
+                <div class="form-group">
+                    <label class="form-label" for="cpf-input">CPF</label>
+                    <div class="input-group">
+                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="form-input input-sm" maxlength="14" required aria-required="true" placeholder="000.000.000-00" />
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                    <span asp-validation-for="Input.UserName" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Senha</label>
+                    <div class="input-group">
+                        <input id="password" type="password" asp-for="Input.Password" class="form-input" autocomplete="current-password" required aria-required="true" placeholder="Digite sua senha" />
+                        <i class="fas fa-eye input-icon" id="togglePassword"></i>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="error-message"></span>
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input asp-for="Input.RememberMe" type="checkbox" id="rememberMe">
+                        <label for="rememberMe" class="checkbox-label">Lembrar de mim</label>
+                    </div>
+                    <a asp-page="./ForgotPassword" class="forgot-link">Esqueceu a senha?</a>
+                </div>
+
+                <button id="login-submit" type="submit" class="login-button">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // CPF Mask
+        document.getElementById('cpf-input').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Password Toggle
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const password = document.getElementById('password');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Form Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.login-form');
+            form.style.opacity = '0';
+            form.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                form.style.transition = 'all 0.6s ease';
+                form.style.opacity = '1';
+                form.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

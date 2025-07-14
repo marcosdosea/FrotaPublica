@@ -6,6 +6,7 @@ import '../providers/journey_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../screens/driver_home_screen.dart';
 import '../services/biometric_service.dart';
+import '../services/secure_storage_service.dart';
 import '../utils/formatters.dart';
 import '../widgets/keyboard_aware_widget.dart';
 
@@ -18,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
+  bool _rememberMe = false;
   final _cpfController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -51,12 +53,35 @@ class _LoginScreenState extends State<LoginScreen> {
           _biometricEnabled = enabled;
         });
 
-        if (authProvider.lastLoggedCpf != null) {
+        // Carregar credenciais salvas
+        final savedCredentials =
+            await SecureStorageService.getSavedCredentials();
+        if (savedCredentials['username'] != null) {
+          _cpfController.text = savedCredentials['username']!;
+          _passwordController.text = savedCredentials['password'] ?? '';
+          setState(() {
+            _rememberMe = true;
+          });
+        } else if (authProvider.lastLoggedCpf != null) {
           _cpfController.text = authProvider.lastLoggedCpf!;
         }
 
+        // Tentar login automático se há credenciais salvas
+        if (_rememberMe &&
+            savedCredentials['username'] != null &&
+            savedCredentials['password'] != null) {
+          final success = await authProvider.loginWithSavedCredentials();
+          if (success && mounted) {
+            _navigateAfterLogin(authProvider);
+            return;
+          }
+        }
+
         if (_biometricEnabled && !authProvider.isAuthenticated) {
-          _tryBiometricLogin();
+          await authProvider.forceBiometricLoginIfNeeded();
+          if (authProvider.isAuthenticated && mounted) {
+            _navigateAfterLogin(authProvider);
+          }
         }
       }
     } catch (e) {
@@ -85,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _cpfController.text,
           _passwordController.text,
           saveBiometric: _biometricEnabled,
+          rememberMe: _rememberMe,
         );
 
         if (success && mounted) {
@@ -140,13 +166,13 @@ class _LoginScreenState extends State<LoginScreen> {
     VoidCallback? onFieldSubmitted,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark 
+            color: isDark
                 ? Colors.black.withOpacity(0.2)
                 : Colors.black.withOpacity(0.05),
             blurRadius: 8,
@@ -160,7 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         textInputAction: textInputAction,
-        onFieldSubmitted: onFieldSubmitted != null ? (_) => onFieldSubmitted() : null,
+        onFieldSubmitted:
+            onFieldSubmitted != null ? (_) => onFieldSubmitted() : null,
         validator: validator,
         style: TextStyle(
           fontSize: 16,
@@ -170,12 +197,13 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: isDark ? Colors.white.withOpacity(0.5) : Colors.grey.shade500,
+            color:
+                isDark ? Colors.white.withOpacity(0.5) : Colors.grey.shade500,
             fontWeight: FontWeight.w400,
           ),
           suffixIcon: suffixIcon,
           filled: true,
-          fillColor: isDark 
+          fillColor: isDark
               ? Colors.white.withOpacity(0.05)
               : Colors.white.withOpacity(0.9),
           border: OutlineInputBorder(
@@ -185,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
-              color: isDark 
+              color: isDark
                   ? Colors.white.withOpacity(0.1)
                   : Colors.grey.withOpacity(0.2),
               width: 1,
@@ -225,10 +253,10 @@ class _LoginScreenState extends State<LoginScreen> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: isDark 
-            ? const Color(0xFF0F0F23)
-            : const Color(0xFFE3F2FD),
-        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor:
+            isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+        systemNavigationBarIconBrightness:
+            isDark ? Brightness.light : Brightness.dark,
       ),
     );
 
@@ -261,7 +289,9 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: screenHeight - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+                  minHeight: screenHeight -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom,
                 ),
                 child: Form(
                   key: _formKey,
@@ -331,7 +361,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, informe seu CPF';
                           }
-                          final cpfRegex = RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
+                          final cpfRegex =
+                              RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
                           if (!cpfRegex.hasMatch(value)) {
                             return 'Digite um CPF válido';
                           }
@@ -351,8 +382,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureText ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                            color: isDark 
+                            _obscureText
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                            color: isDark
                                 ? Colors.white.withOpacity(0.6)
                                 : Colors.grey.shade600,
                           ),
@@ -368,6 +401,45 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           return null;
                         },
+                      ),
+
+                      // Checkbox "Lembrar senha"
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
+                                value: _rememberMe,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _rememberMe = value ?? false;
+                                  });
+                                },
+                                activeColor: const Color(0xFF116AD5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Lembrar senha',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.8)
+                                      : Colors.black.withOpacity(0.7),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
 
                       // Mensagem de erro
@@ -493,24 +565,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Seção biometria
                       if (_biometricSupported && _biometricEnabled) ...[
                         const SizedBox(height: 30),
-                        
+
                         // Divisor "ou"
                         Row(
                           children: [
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: isDark 
+                                color: isDark
                                     ? Colors.white.withOpacity(0.2)
                                     : Colors.grey.withOpacity(0.3),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
                                 'ou',
                                 style: TextStyle(
-                                  color: isDark 
+                                  color: isDark
                                       ? Colors.white.withOpacity(0.6)
                                       : Colors.grey.shade600,
                                   fontSize: 14,
@@ -521,7 +594,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: isDark 
+                                color: isDark
                                     ? Colors.white.withOpacity(0.2)
                                     : Colors.grey.withOpacity(0.3),
                               ),
@@ -532,7 +605,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Botão biometria
                         GestureDetector(
-                          onTap: authProvider.isLoading ? null : _tryBiometricLogin,
+                          onTap: authProvider.isLoading
+                              ? null
+                              : _tryBiometricLogin,
                           child: Container(
                             width: 80,
                             height: 80,
@@ -552,7 +627,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        
+
                         Text(
                           'Usar biometria',
                           style: TextStyle(
@@ -562,7 +637,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ],
-                      
+
                       const SizedBox(height: 40),
                     ],
                   ),

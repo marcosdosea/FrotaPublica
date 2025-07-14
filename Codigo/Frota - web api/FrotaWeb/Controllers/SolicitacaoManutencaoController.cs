@@ -33,12 +33,12 @@ namespace FrotaWeb.Controllers
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
 
-            // Obter todos os veículos para o dropdown
+            // Obter todos os veï¿½culos para o dropdown
             var veiculos = veiculoService.GetVeiculoDTO(idFrota);
             ViewData["Veiculos"] = veiculos;
             ViewBag.IdVeiculoSelecionado = idVeiculo;
 
-            // Aplicar filtro por veículo se necessário
+            // Aplicar filtro por veï¿½culo se necessï¿½rio
             var query = service.GetAll(idFrota);
             if (idVeiculo.HasValue)
             {
@@ -85,12 +85,12 @@ namespace FrotaWeb.Controllers
                 {
                     var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
                     service.Create(solicitacao, idFrota);
-                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "A solicitação foi cadastrada com sucesso!");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "A solicitaï¿½ï¿½o foi cadastrada com sucesso!");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operaï¿½ï¿½o nï¿½o realizada", message: "Houveram inconsistï¿½ncias nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado jï¿½ foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     return View(solicitacaoModel);
@@ -121,12 +121,12 @@ namespace FrotaWeb.Controllers
                 {
                     var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
                     service.Edit(solicitacao, idFrota);
-                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "As alteraï¿½ï¿½es foram salvas com sucesso.");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operaï¿½ï¿½o nï¿½o realizada", message: "Houveram inconsistï¿½ncias nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado jï¿½ foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     return View(solicitacaoModel);
@@ -152,15 +152,14 @@ namespace FrotaWeb.Controllers
             try
             {
                 service.Delete(id);
-                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O registro foi removido com sucesso.");
+                PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "O registro foi removido com sucesso.");
             }
             catch (ServiceException exception)
             {
-                PopupHelper.AddPopup(this, type: "error", title: "Operação mal sucedida", message: "Não foi possível remover o registro.");
+                PopupHelper.AddPopup(this, type: "error", title: "Operaï¿½ï¿½o mal sucedida", message: "Nï¿½o foi possï¿½vel remover o registro.");
                 return View(solicitacaoModel);
             }
             return RedirectToAction(nameof(Index));
         }
     }
 }
-

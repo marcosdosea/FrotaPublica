@@ -472,4 +472,3 @@ namespace FrotaWeb.Controllers
         }
     }
 }
-

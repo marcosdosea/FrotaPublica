@@ -154,12 +154,10 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
             // Em caso de erro no processamento, usa a mensagem original
           }
           _errorMessage = errorMsg;
-        }
-        else if (errorMsg.contains("selecionar um posto")) {
+        } else if (errorMsg.contains("selecionar um posto")) {
           _errorMessage = "É necessário selecionar um posto de combustível";
           _highlightSupplier = true;
-        }
-        else if (errorMsg.contains("200") || errorMsg.contains("success")) {
+        } else if (errorMsg.contains("200") || errorMsg.contains("success")) {
           print('A API retornou sucesso, mas houve um problema de parser.');
           if (!mounted) return;
           Navigator.pop(context, true);
@@ -202,12 +200,12 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark 
+          gradient: isDark
               ? const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -230,8 +228,8 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         child: Column(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              padding: const EdgeInsets.only(
+                  top: 60, left: 16, right: 16, bottom: 20),
               decoration: const BoxDecoration(
                 color: Color(0xFF116AD5),
                 borderRadius: BorderRadius.only(
@@ -249,18 +247,23 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 24,
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   const Text(
-                    'Abastecimento',
+                    'Registrar Abastecimento',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -270,7 +273,6 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _loadSuppliers,
@@ -299,14 +301,13 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                         decoration: InputDecoration(
                           hintText: 'Informe a leitura',
                           hintStyle: TextStyle(
-                            color: isDark 
+                            color: isDark
                                 ? Colors.white.withOpacity(0.6)
                                 : Colors.black.withOpacity(0.6),
                           ),
                           filled: true,
-                          fillColor: isDark 
-                              ? const Color(0xFF1E1E2E)
-                              : Colors.white,
+                          fillColor:
+                              isDark ? const Color(0xFF1E1E2E) : Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
@@ -355,14 +356,13 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                         decoration: InputDecoration(
                           hintText: 'Informe a quantidade',
                           hintStyle: TextStyle(
-                            color: isDark 
+                            color: isDark
                                 ? Colors.white.withOpacity(0.6)
                                 : Colors.black.withOpacity(0.6),
                           ),
                           filled: true,
-                          fillColor: isDark 
-                              ? const Color(0xFF1E1E2E)
-                              : Colors.white,
+                          fillColor:
+                              isDark ? const Color(0xFF1E1E2E) : Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
@@ -400,9 +400,8 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: isDark 
-                              ? const Color(0xFF1E1E2E)
-                              : Colors.white,
+                          color:
+                              isDark ? const Color(0xFF1E1E2E) : Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: _highlightSupplier
@@ -459,7 +458,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                                         child: Text(
                                           'Selecionar Posto',
                                           style: TextStyle(
-                                            color: isDark 
+                                            color: isDark
                                                 ? Colors.white.withOpacity(0.6)
                                                 : Colors.black.withOpacity(0.6),
                                           ),
@@ -468,18 +467,20 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                                       isExpanded: true,
                                       icon: Icon(
                                         Icons.keyboard_arrow_down,
-                                        color: isDark 
+                                        color: isDark
                                             ? Colors.white.withOpacity(0.6)
                                             : Colors.black.withOpacity(0.6),
                                       ),
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16),
                                       borderRadius: BorderRadius.circular(8),
-                                      dropdownColor: isDark 
+                                      dropdownColor: isDark
                                           ? const Color(0xFF1E1E2E)
                                           : Colors.white,
                                       style: TextStyle(
-                                        color: isDark ? Colors.white : Colors.black87,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87,
                                       ),
                                       items: _suppliers.isEmpty
                                           ? [
@@ -489,9 +490,12 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                                                 child: Text(
                                                   'Nenhum fornecedor disponível',
                                                   style: TextStyle(
-                                                      color: isDark 
-                                                          ? Colors.white.withOpacity(0.6)
-                                                          : Colors.black.withOpacity(0.6)),
+                                                      color: isDark
+                                                          ? Colors.white
+                                                              .withOpacity(0.6)
+                                                          : Colors.black
+                                                              .withOpacity(
+                                                                  0.6)),
                                                 ),
                                               )
                                             ]
@@ -501,7 +505,9 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
                                                 child: Text(
                                                   supplier.name,
                                                   style: TextStyle(
-                                                    color: isDark ? Colors.white : Colors.black87,
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.black87,
                                                   ),
                                                 ),
                                               );

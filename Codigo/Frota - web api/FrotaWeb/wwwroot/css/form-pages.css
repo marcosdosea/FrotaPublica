@@ -1,4 +1,4 @@
-﻿/* Estilização genérica para páginas */
+/* Estilização genérica para páginas */
 body {
     background-color: #f8f9fa;
 }
@@ -284,4 +284,3 @@ select.custom-select {
     .buttons input:hover {
         background-color: #0B83D9;
     }
-

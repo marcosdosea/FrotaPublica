@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core;
 using Core.Service;
 using FrotaWeb.Models;
@@ -123,4 +123,3 @@ namespace FrotaWeb.Controllers
 		}
 	}
 }
-

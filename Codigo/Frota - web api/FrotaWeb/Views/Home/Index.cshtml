@@ -1,88 +1,618 @@
 @model FrotaWeb.Models.HomeViewModel
 
-<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+@{
+    ViewData["Title"] = "Dashboard";
+}
 
-
-
-<main class="main_content container">
-    <section>
-        <div class="content">
-            <div class="titulo">
-                <h1>Olá, @Model.NameUser!</h1>
-                <h2>Bem vindo ao painel do @Model.UserType</h2>
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="welcome-content">
+            <div class="welcome-text">
+                <h1 class="welcome-title">Olá, @Model.NameUser! 👋</h1>
+                <p class="welcome-subtitle">Bem-vindo ao painel do @Model.UserType</p>
             </div>
-            <div class="resource">
-                <img src="~/img/car.png" alt="">
+            <div class="welcome-visual">
+                <div class="welcome-icon">
+                    <i class="fas fa-car"></i>
+                </div>
             </div>
         </div>
-    </section>
-    @if (Model.UserType == "Motorista")
-    {
-        <section>
-            <div class="titulo-section">
-                <h1>Lembretes</h1>
-                <p>Total(@Model.CoutLembretes)</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-car"></i>
             </div>
-            <div class="lembretes">
-                @foreach (var lembrete in Model.Lembretes)
-                {
-                    <div class="lembrete-item">
-                        <p>@lembrete</p>
+            <div class="stat-content">
+                <h3 class="stat-number">24</h3>
+                <p class="stat-label">Veículos Ativos</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-gas-pump"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">156</h3>
+                <p class="stat-label">Abastecimentos</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class="fas fa-tools"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">8</h3>
+                <p class="stat-label">Manutenções</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon bg-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">3</h3>
+                <p class="stat-label">Alertas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <h2 class="section-title">Ações Rápidas</h2>
+                </div>
+                <div class="modern-card-body">
+                    <div class="quick-actions-grid">
+                        @if (Model.UserType == "Motorista")
+                        {
+                            <a href="@Url.Action("VeiculosDisponiveis", "Veiculo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <span>Usar Veículo</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Abastecimento")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-gas-pump"></i>
+                                </div>
+                                <span>Abastecer</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Vistoria")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </div>
+                                <span>Vistoria</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Create", "Veiculo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <span>Novo Veículo</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Pessoa")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span>Gerenciar Pessoas</span>
+                            </a>
+                            <a href="@Url.Action("Index", "SolicitacaoManutencao")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <span>Manutenções</span>
+                            </a>
+                        }
+                        <a href="@Url.Action("Index", "Percurso")" class="quick-action-item">
+                            <div class="action-icon">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <span>Percursos</span>
+                        </a>
                     </div>
-                }
+                </div>
             </div>
-        </section>
-    }
-    else if (Model.UserType == "Gestor")
-    {
-        <section>
-            <div class="titulo-section">
-                <h1>Lembretes</h1>
-                <p>Total(@Model.CoutLembretes)</p>
+        </div>
+
+        <!-- Reminders Section -->
+        <div class="reminders-section">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <h2 class="section-title">
+                        Lembretes
+                        <span class="reminder-count">@Model.CoutLembretes</span>
+                    </h2>
+                </div>
+                <div class="modern-card-body">
+                    @if (Model.Lembretes != null && Model.Lembretes.Any())
+                    {
+                        <div class="reminders-list">
+                            @foreach (var lembrete in Model.Lembretes)
+                            {
+                                <div class="reminder-item">
+                                    <div class="reminder-icon">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="reminder-content">
+                                        <p>@lembrete</p>
+                                    </div>
+                                    <div class="reminder-actions">
+                                        <button class="reminder-dismiss" title="Dispensar">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Nenhum lembrete pendente</p>
+                        </div>
+                    }
+                </div>
             </div>
-            <div class="lembretes">
-                @foreach (var lembrete in Model.Lembretes)
-                {
-                    <div class="lembrete-item">
-                        <p>@lembrete</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-section">
+        <div class="modern-card">
+            <div class="modern-card-header">
+                <h2 class="section-title">Atividade Recente</h2>
+                <a href="#" class="view-all-link">Ver todas</a>
+            </div>
+            <div class="modern-card-body">
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon bg-success">
+                            <i class="fas fa-gas-pump"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-title">Abastecimento realizado</p>
+                            <p class="activity-description">Veículo ABC-1234 - R$ 150,00</p>
+                            <span class="activity-time">2 horas atrás</span>
+                        </div>
                     </div>
-                }
-            </div>
-        </section>
-    }
-    else if (Model.UserType == "Administrador")
-    {
-        <section>
-            <div class="titulo-section">
-                <h1>Lembretes</h1>
-                <p>Total(@Model.CoutLembretes)</p>
-            </div>
-            <div class="lembretes">
-                @foreach (var lembrete in Model.Lembretes)
-                {
-                    <div class="lembrete-item">
-                        <p>@lembrete</p>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-primary">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-title">Veículo em uso</p>
+                            <p class="activity-description">Veículo XYZ-5678 iniciou percurso</p>
+                            <span class="activity-time">4 horas atrás</span>
+                        </div>
                     </div>
-                }
-            </div>
-        </section>
-    }
-    else if (Model.UserType == "Mecanico")
-    {
-        <section>
-            <div class="titulo-section">
-                <h1>Lembretes</h1>
-                <p>Total(@Model.CoutLembretes)</p>
-            </div>
-            <div class="lembretes">
-                @foreach (var lembrete in Model.Lembretes)
-                {
-                    <div class="lembrete-item">
-                        <p>@lembrete</p>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-warning">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-title">Manutenção agendada</p>
+                            <p class="activity-description">Veículo DEF-9012 - Revisão preventiva</p>
+                            <span class="activity-time">1 dia atrás</span>
+                        </div>
                     </div>
-                }
+                </div>
             </div>
-        </section>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.welcome-section {
+    margin-bottom: 2rem;
+}
+
+.welcome-content {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: rotate(45deg);
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.welcome-visual {
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.welcome-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reminder-count {
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-weight: 500;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.quick-action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: var(--background-color);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.quick-action-item:hover {
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.quick-action-item:hover .action-icon {
+    background: white;
+    color: var(--primary-color);
+}
+
+.quick-action-item span {
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.reminder-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--warning-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.reminder-content {
+    flex: 1;
+}
+
+.reminder-content p {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.reminder-dismiss {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.reminder-dismiss:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--success-color);
+    margin-bottom: 1rem;
+}
+
+.activity-section {
+    grid-column: 1 / -1;
+}
+
+.view-all-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.view-all-link:hover {
+    color: var(--primary-dark);
+    text-decoration: none;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem 0;
+    font-size: 0.875rem;
+}
+
+.activity-description {
+    color: var(--text-secondary);
+    margin: 0 0 0.25rem 0;
+    font-size: 0.8125rem;
+}
+
+.activity-time {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+@@media (max-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1fr;
     }
-</main>
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@@media (max-width: 768px) {
+    .welcome-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@@media (max-width: 480px) {
+    .welcome-content {
+        padding: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .quick-action-item {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats on load
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+        const finalNumber = parseInt(stat.textContent);
+        let currentNumber = 0;
+        const increment = finalNumber / 30;
+        
+        const timer = setInterval(() => {
+            currentNumber += increment;
+            if (currentNumber >= finalNumber) {
+                stat.textContent = finalNumber;
+                clearInterval(timer);
+            } else {
+                stat.textContent = Math.floor(currentNumber);
+            }
+        }, 50);
+    });
+    
+    // Reminder dismiss functionality
+    document.querySelectorAll('.reminder-dismiss').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.reminder-item').style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                this.closest('.reminder-item').remove();
+            }, 300);
+        });
+    });
+});
+</script>

@@ -13,13 +13,13 @@
 		<a href="javascript:history.back()" class="voltar">
 			<i class="fa fa-arrow-left"></i> Voltar
 		</a>
-		<h1>Criar Solicitação de Manutenção</h1>
+		<h1>Criar Solicitaï¿½ï¿½o de Manutenï¿½ï¿½o</h1>
 	</div>
 	<div class="fomulario">
 		<form asp-action="Edit">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="form-group w30">
-				<label asp-for="IdVeiculo" class="control-label">Veículo</label>
+				<label asp-for="IdVeiculo" class="control-label">Veï¿½culo</label>
 				<select asp-for="IdVeiculo" class="custom-select select2">
 					@if (!veiculos.Any())
 					{
@@ -53,18 +53,18 @@
 				<span asp-validation-for="IdPessoa" class="text-danger"></span>
 			</div>
 			<div class="form-group w20">
-				<label asp-for="DataSolicitacao" class="label">Data de Solicitação</label>
+				<label asp-for="DataSolicitacao" class="label">Data de Solicitaï¿½ï¿½o</label>
 				<input asp-for="DataSolicitacao" class="form-control" placeholder="" />
 				<span asp-validation-for="DataSolicitacao" class="text-danger"></span>
 			</div>
 			<hr class="divisor">
 			<div class="form-group w100">
-				<label asp-for="DescricaoProblema" class="label">Descrição</label>
-				<textarea asp-for="DescricaoProblema" class="form-control" placeholder="Manutenção necessária"></textarea>
+				<label asp-for="DescricaoProblema" class="label">Descriï¿½ï¿½o</label>
+				<textarea asp-for="DescricaoProblema" class="form-control" placeholder="Manutenï¿½ï¿½o necessï¿½ria"></textarea>
 				<span asp-validation-for="DescricaoProblema" class="text-danger"></span>
 			</div>
 			<div class="buttons">
-				<input type="submit" value="Salvar Alterações" class="btn btn-primary" />
+				<input type="submit" value="Salvar Alteraï¿½ï¿½es" class="btn btn-primary" />
 			</div>
 		</form>
 	</div>

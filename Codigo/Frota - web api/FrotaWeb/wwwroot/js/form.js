@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 	const camposDate = document.getElementsByClassName("campo-data");
 	Array.from(camposDate).forEach(campo => {
 		function atualizarPlaceholderColor() {

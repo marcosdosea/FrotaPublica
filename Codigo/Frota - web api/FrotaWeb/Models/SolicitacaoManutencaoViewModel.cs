@@ -33,4 +33,3 @@ public class SolicitacaoManutencaoViewModel
     public uint IdFrota { get; set; }
 
 }
-

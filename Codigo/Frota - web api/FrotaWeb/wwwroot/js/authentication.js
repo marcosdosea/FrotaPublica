@@ -1,4 +1,4 @@
-﻿const togglePassword = document.querySelector("#eye-icon")
+const togglePassword = document.querySelector("#eye-icon")
 const togglePasswordTwo = document.querySelector("#eye-icon-2") // Para confirmação da senha da página de registro
 const password = document.querySelector("#password")
 const confirmPassword = document.querySelector("#confirm-password") // Para confirmação da senha da página de registro

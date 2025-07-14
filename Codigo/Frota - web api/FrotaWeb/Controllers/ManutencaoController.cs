@@ -9,7 +9,7 @@ using Service;
 
 namespace FrotaWeb.Controllers
 {
-    [Authorize(Roles = "Gestor, Mecânico")]
+    [Authorize(Roles = "Gestor, Mecï¿½nico")]
     public class ManutencaoController : Controller
     {
         private readonly IManutencaoService manutencaoService;
@@ -99,12 +99,12 @@ namespace FrotaWeb.Controllers
                     var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
                     manutencao.IdFrota = (uint)idFrota;
                     manutencaoService.Create(manutencao);
-                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "A manutenção foi cadastrada com sucesso.");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "A manutenï¿½ï¿½o foi cadastrada com sucesso.");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operaï¿½ï¿½o nï¿½o realizada", message: "Houveram inconsistï¿½ncias nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado jï¿½ foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
@@ -139,12 +139,12 @@ namespace FrotaWeb.Controllers
                     var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
                     manutencao.IdFrota = (uint)idFrota;
                     manutencaoService.Edit(manutencao);
-                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "As alteraï¿½ï¿½es foram salvas com sucesso.");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operaï¿½ï¿½o nï¿½o realizada", message: "Houveram inconsistï¿½ncias nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado jï¿½ foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     ViewData["Fornecedores"] = fornecedorService.GetAllOrdemAlfabetica(idFrota);
@@ -170,11 +170,11 @@ namespace FrotaWeb.Controllers
             try
             {
                 manutencaoService.Delete(id);
-                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O registro foi removido com sucesso.");
+                PopupHelper.AddPopup(this, type: "success", title: "Operaï¿½ï¿½o concluï¿½da", message: "O registro foi removido com sucesso.");
             }
             catch (ServiceException exception)
             {
-                PopupHelper.AddPopup(this, type: "error", title: "Operação mal sucedida", message: "Não foi possível remover o registro.");
+                PopupHelper.AddPopup(this, type: "error", title: "Operaï¿½ï¿½o mal sucedida", message: "Nï¿½o foi possï¿½vel remover o registro.");
                 return View(manutencaoViewModel);
             }
             return RedirectToAction(nameof(Index));

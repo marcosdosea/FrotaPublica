@@ -78,8 +78,8 @@ public class LoginModel : PageModel
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        [CPF(ErrorMessage = "O cpf informado não é válido")]
-        [Required(ErrorMessage = "O cpf é obrigatório")]
+        [CPF(ErrorMessage = "O cpf informado nï¿½o ï¿½ vï¿½lido")]
+        [Required(ErrorMessage = "O cpf ï¿½ obrigatï¿½rio")]
         [StringLength(14, MinimumLength = 14, ErrorMessage = "O cpf deve ter 11 caracteres")]
         public string UserName { get; set; }
 
@@ -87,7 +87,7 @@ public class LoginModel : PageModel
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        [Required(ErrorMessage = "A senha é obrigatória")]
+        [Required(ErrorMessage = "A senha ï¿½ obrigatï¿½ria")]
         [StringLength(20, ErrorMessage = "A senha deve ter entre 8 e 20 caracteres", MinimumLength = 8)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -134,11 +134,11 @@ public class LoginModel : PageModel
                 var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // Persistir o id da frota na sessão
+                    // Persistir o id da frota na sessï¿½o
                     int idFrotaDoUsuario = (int)frotaService.GetFrotaByUsername(user.UserName);
                     HttpContext.Session.SetInt32("FrotaId", idFrotaDoUsuario);
 
-                    // Persistir o id da unidade na sessão
+                    // Persistir o id da unidade na sessï¿½o
                     int idUnidadeDoUsuario = (int)frotaService.GetUnidadeByUsername(user.UserName);
                     HttpContext.Session.SetInt32("UnidadeId", idUnidadeDoUsuario);
 
@@ -158,7 +158,7 @@ public class LoginModel : PageModel
                     }
                     await userManager.AddClaimAsync(user, new Claim("UnidadeId", idUnidadeDoUsuario.ToString()));
 
-                    // Reautenticar o usuário para carregar as novas claims
+                    // Reautenticar o usuï¿½rio para carregar as novas claims
                     await _signInManager.SignInAsync(user, isPersistent: true);
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
@@ -174,7 +174,7 @@ public class LoginModel : PageModel
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Login inválido");
+                    ModelState.AddModelError(string.Empty, "Login invï¿½lido");
                     return Page();
                 }
             }
