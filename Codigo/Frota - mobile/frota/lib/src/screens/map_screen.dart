@@ -20,6 +20,9 @@ import '../providers/fuel_provider.dart';
 import 'available_vehicles_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/local_database_service.dart';
 
 class MapScreen extends StatefulWidget {
   final Journey journey;
@@ -116,6 +119,41 @@ class _MapScreenState extends State<MapScreen> {
         '--- MAP_SCREEN: _getDirectionsRoute chamado com Origem: $origin, Destino: $destination');
 
     try {
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOnline = connectivity != ConnectivityResult.none;
+      final journeyId = widget.journey.id;
+      if (!isOnline) {
+        // Tentar carregar rota salva localmente
+        final savedRouteJson =
+            await LocalDatabaseService().getRouteForJourney(journeyId);
+        if (savedRouteJson != null) {
+          final data = json.decode(savedRouteJson);
+          if (data['status'] == 'OK' && (data['routes'] as List).isNotEmpty) {
+            final route = data['routes'][0];
+            final leg = route['legs'][0];
+            _routeDistance = leg['distance']['text'];
+            _routeDuration = leg['duration']['text'];
+            final String encodedPolyline = route['overview_polyline']['points'];
+            _polylines.add(
+              Polyline(
+                polylineId: const PolylineId('route'),
+                points: _decodePolyline(encodedPolyline),
+                color: const Color(0xFF116AD5),
+                width: 5,
+              ),
+            );
+            setState(() {});
+            _fitMarkersInView();
+            return;
+          }
+        }
+        // Se não houver rota salva, desenhar linha reta
+        _drawStraightLine(origin, destination);
+        setState(() {});
+        _fitMarkersInView();
+        return;
+      }
+      // Online: buscar rota normalmente
       final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
           'origin=${origin.latitude},${origin.longitude}&'
           'destination=${destination.latitude},${destination.longitude}&'
@@ -147,6 +185,9 @@ class _MapScreenState extends State<MapScreen> {
               width: 5,
             ),
           );
+          // Salvar rota localmente
+          await LocalDatabaseService()
+              .saveRouteForJourney(journeyId, response.body);
         } else {
           print(
               '--- MAP_SCREEN: API retornou status: ${data['status']}. Desenhando linha reta como fallback.');
@@ -603,22 +644,23 @@ class _MapScreenState extends State<MapScreen> {
                   ActionCard(
                     icon: Icons.local_gas_station,
                     title: 'Registrar\nAbastecimento',
-                    onTap: () {
-                      if (currentVehicle == null) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FuelRegistrationScreen(
-                            vehicleId: currentVehicle.id,
-                          ),
-                        ),
-                      );
-                    },
+                    onTap: currentVehicle == null
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FuelRegistrationScreen(
+                                  vehicleId: currentVehicle.id,
+                                ),
+                              ),
+                            );
+                          },
                     isDark: isDark,
                   ),
                   ActionCard(
                     icon: Icons.checklist,
-                    title: 'Realizar Vistoria',
+                    title: 'Realizar\nVistoria',
                     onTap: () {
                       if (currentVehicle == null) return;
                       Navigator.push(

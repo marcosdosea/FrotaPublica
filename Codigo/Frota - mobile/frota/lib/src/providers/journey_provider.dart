@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import '../models/journey.dart';
 import '../services/journey_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class JourneyProvider with ChangeNotifier {
   final JourneyService _journeyService = JourneyService();
@@ -22,11 +24,29 @@ class JourneyProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _activeJourney =
-          await _journeyService.getActiveJourneyForDriver(driverId);
-      _error = null;
-    } catch (e) {
-      _error = e.toString();
+      // Tentar carregar online
+      try {
+        _activeJourney =
+            await _journeyService.getActiveJourneyForDriver(driverId);
+        _error = null;
+        // Persistir localmente
+        if (_activeJourney != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+              'active_journey', json.encode(_activeJourney!.toJson()));
+        }
+      } catch (e) {
+        // Se falhar (provavelmente offline), tentar carregar localmente
+        final prefs = await SharedPreferences.getInstance();
+        final saved = prefs.getString('active_journey');
+        if (saved != null) {
+          _activeJourney = Journey.fromJson(json.decode(saved));
+          _error = null;
+        } else {
+          _activeJourney = null;
+          _error = 'Nenhum percurso ativo encontrado';
+        }
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -94,6 +114,9 @@ class JourneyProvider with ChangeNotifier {
       );
 
       if (journey == true) {
+        // Limpar percurso salvo localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('active_journey');
         return true;
       } else {
         _error = 'Não foi possível finalizar a jornada';

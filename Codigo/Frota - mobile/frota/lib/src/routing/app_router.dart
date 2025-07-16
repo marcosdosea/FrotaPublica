@@ -10,12 +10,26 @@ import '../screens/maintenance_request_screen.dart';
 import '../screens/presentation_screen.dart';
 import '../screens/journey_registration_screen.dart';
 import '../screens/profile_screen.dart';
+import '../screens/splash_screen.dart';
+import '../providers/vehicle_provider.dart';
+import 'package:provider/provider.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> routes = {
+    '/splash': (context) => const SplashScreen(),
     '/login': (context) => const LoginScreen(),
     '/available_vehicles': (context) => const AvailableVehiclesScreen(),
     '/exit_registration': (context) => const ExitRegistrationScreen(),
+    '/driver_home': (context) {
+      final vehicleProvider =
+          Provider.of<VehicleProvider>(context, listen: false);
+      final vehicle = vehicleProvider.currentVehicle;
+      if (vehicle == null) {
+        // fallback para tela de seleção de veículos
+        return const AvailableVehiclesScreen();
+      }
+      return DriverHomeScreen(vehicle: vehicle);
+    },
     '/maintenance_request': (context) {
       final args =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -25,7 +39,7 @@ class AppRouter {
     '/profile': (context) => const ProfileScreen(),
   };
 
-  static String get initialRoute => '/presentation';
+  static String get initialRoute => '/splash';
 
   // Custom page route with slide animation
   static Route<T> createRoute<T extends Object?>(Widget page) {

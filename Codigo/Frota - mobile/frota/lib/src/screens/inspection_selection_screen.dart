@@ -4,6 +4,7 @@ import '../providers/journey_provider.dart';
 import '../services/inspection_service.dart';
 import '../models/inspection_status.dart';
 import 'inspection_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InspectionSelectionScreen extends StatefulWidget {
   final String vehicleId;
@@ -31,43 +32,22 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
   }
 
   Future<void> _loadInspectionStatus() async {
+    // Verifica status online e local
+    final prefs = await SharedPreferences.getInstance();
+    final localDeparture =
+        prefs.getBool('inspection_departure_${widget.vehicleId}') ?? false;
+    // Consultar status online
+    bool onlineDeparture = await _inspectionService.hasInspectionBeenCompleted(
+        widget.vehicleId, 'S');
+    bool onlineArrival = await _inspectionService.hasInspectionBeenCompleted(
+        widget.vehicleId, 'R');
     setState(() {
-      _isLoading = true;
+      _departureCompleted = onlineDeparture || localDeparture;
+      _arrivalCompleted = onlineArrival;
+      _isLoading = false;
     });
-
-    try {
-      // Verificar se a vistoria de saída foi concluída
-      bool departureCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
-        widget.vehicleId,
-        'S',
-      );
-
-      // Verificar se a vistoria de chegada foi concluída
-      bool arrivalCompleted =
-          await _inspectionService.hasInspectionBeenCompleted(
-        widget.vehicleId,
-        'R',
-      );
-
-      if (mounted) {
-        setState(() {
-          _departureCompleted = departureCompleted;
-          _arrivalCompleted = arrivalCompleted;
-          _isLoading = false;
-        });
-
-        // Se ambas as vistorias estiverem completadas, enviar status atualizado para tela principal
-        _checkAndReturnStatus();
-      }
-    } catch (e) {
-      print('Erro ao verificar status das vistorias: $e');
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    // Se ambas as vistorias estiverem completadas, enviar status atualizado para tela principal
+    _checkAndReturnStatus();
   }
 
   void _checkAndReturnStatus() {

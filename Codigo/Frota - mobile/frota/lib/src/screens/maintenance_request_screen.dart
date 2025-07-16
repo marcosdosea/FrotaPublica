@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/maintenance_provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/local_database_service.dart';
 
 class MaintenanceRequestScreen extends StatefulWidget {
   final String vehicleId;
@@ -41,6 +43,29 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
     });
 
     try {
+      // Checar conectividade
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOnline = connectivity != ConnectivityResult.none;
+
+      if (!isOnline) {
+        // Salvar offline
+        await LocalDatabaseService().insertManutencaoOffline({
+          'vehicleId': widget.vehicleId,
+          'description': _descriptionController.text.trim(),
+          'dateTime': DateTime.now().toIso8601String(),
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registro registrado offline'),
+              backgroundColor: Colors.grey,
+            ),
+          );
+          Navigator.pop(context);
+        }
+        return;
+      }
+
       final success =
           await context.read<MaintenanceProvider>().createMaintenanceRequest(
                 vehicleId: widget.vehicleId,

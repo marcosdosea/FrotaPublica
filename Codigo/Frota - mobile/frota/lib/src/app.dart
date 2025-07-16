@@ -16,6 +16,7 @@ import 'screens/available_vehicles_screen.dart';
 import 'screens/driver_home_screen.dart';
 import 'screens/presentation_screen.dart';
 import 'providers/theme_provider.dart';
+import 'services/supplier_service.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -45,6 +46,7 @@ class AppContent extends StatefulWidget {
 
 class _AppContentState extends State<AppContent> {
   Timer? _tokenRefreshTimer;
+  Timer? _supplierUpdateTimer;
 
   @override
   void initState() {
@@ -53,12 +55,15 @@ class _AppContentState extends State<AppContent> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeApp();
       _startTokenRefreshCheck();
+      _updateSuppliersOnStart();
+      _startSupplierUpdateTimer();
     });
   }
 
   @override
   void dispose() {
     _tokenRefreshTimer?.cancel();
+    _supplierUpdateTimer?.cancel();
     super.dispose();
   }
 
@@ -125,6 +130,33 @@ class _AppContentState extends State<AppContent> {
         }
       }
     }
+  }
+
+  void _updateSuppliersOnStart() async {
+    try {
+      await SupplierService().updateLocalSuppliers();
+      print('Fornecedores atualizados ao abrir o app.');
+    } catch (e) {
+      print('Erro ao atualizar fornecedores ao abrir o app: '
+          ' [31m$e [0m');
+    }
+  }
+
+  void _startSupplierUpdateTimer() {
+    _supplierUpdateTimer =
+        Timer.periodic(const Duration(minutes: 10), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      try {
+        await SupplierService().updateLocalSuppliers();
+        print('Fornecedores atualizados pelo timer.');
+      } catch (e) {
+        print('Erro ao atualizar fornecedores pelo timer: '
+            '\u001b[31m$e\u001b[0m');
+      }
+    });
   }
 
   @override

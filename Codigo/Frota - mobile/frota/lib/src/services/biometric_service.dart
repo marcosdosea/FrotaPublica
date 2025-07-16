@@ -88,9 +88,9 @@ class BiometricService {
         return false;
       }
 
-      // Verificar se há biometrias cadastradas
-      final canCheck = await canCheckBiometrics();
-      if (!canCheck) {
+      // Verificar se há biometrias cadastradas de forma confiável
+      final availableBiometrics = await getAvailableBiometrics();
+      if (availableBiometrics.isEmpty) {
         return false;
       }
 

@@ -39,6 +39,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Função utilitária para formatar CPF (xxx.xxx.xxx-xx)
+  String _formatCpf(String cpf) {
+    final digitsOnly = cpf.replaceAll(RegExp(r'[^\d]'), '');
+    if (digitsOnly.length != 11) return cpf;
+    return '${digitsOnly.substring(0, 3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.substring(9, 11)}';
+  }
+
   Future<void> _initializeLogin() async {
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -57,32 +64,14 @@ class _LoginScreenState extends State<LoginScreen> {
         final savedCredentials =
             await SecureStorageService.getSavedCredentials();
         if (savedCredentials['username'] != null) {
-          _cpfController.text = savedCredentials['username']!;
-          _passwordController.text = savedCredentials['password'] ?? '';
+          _cpfController.text = _formatCpf(savedCredentials['username']!);
           setState(() {
-            _rememberMe = true;
+            _rememberMe = false; // Não marcar lembrar senha automaticamente
           });
         } else if (authProvider.lastLoggedCpf != null) {
-          _cpfController.text = authProvider.lastLoggedCpf!;
+          _cpfController.text = _formatCpf(authProvider.lastLoggedCpf!);
         }
-
-        // Tentar login automático se há credenciais salvas
-        if (_rememberMe &&
-            savedCredentials['username'] != null &&
-            savedCredentials['password'] != null) {
-          final success = await authProvider.loginWithSavedCredentials();
-          if (success && mounted) {
-            _navigateAfterLogin(authProvider);
-            return;
-          }
-        }
-
-        if (_biometricEnabled && !authProvider.isAuthenticated) {
-          await authProvider.forceBiometricLoginIfNeeded();
-          if (authProvider.isAuthenticated && mounted) {
-            _navigateAfterLogin(authProvider);
-          }
-        }
+        // Não fazer login automático ao inicializar
       }
     } catch (e) {
       print('Erro na inicialização do login: $e');
@@ -338,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Subtítulo
                       Text(
-                        'Faça login para continuar',
+                        'Faça login para acessar a sua conta',
                         style: TextStyle(
                           fontSize: 16,
                           fontFamily: 'Poppins',

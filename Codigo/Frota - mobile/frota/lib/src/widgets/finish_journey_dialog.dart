@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/local_database_service.dart';
+import '../providers/journey_provider.dart';
+import 'package:provider/provider.dart';
 
 class FinishJourneyDialog extends StatefulWidget {
   final String duration;
@@ -29,6 +33,21 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
 
   Future<void> _finishJourney() async {
     if (_formKey.currentState?.validate() ?? false) {
+      // Checar conectividade
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOnline = connectivity != ConnectivityResult.none;
+      if (!isOnline) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'É necessário estar conectado à internet para finalizar o percurso.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
       setState(() {
         _isLoading = true;
       });
@@ -36,6 +55,18 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
       try {
         final odometer = int.parse(odometerController.text);
         await widget.onFinish(odometer);
+        // Limpar rota salva localmente
+        if (widget.onFinish is Function(int, {String? journeyId})) {
+          // Se o callback passar o journeyId, use
+          // (não é o caso atual, então vamos buscar do Provider)
+        }
+        // Buscar o journeyId do percurso ativo
+        final journeyProvider =
+            Provider.of<JourneyProvider>(context, listen: false);
+        final journey = journeyProvider.activeJourney;
+        if (journey != null) {
+          await LocalDatabaseService().deleteRouteForJourney(journey.id);
+        }
         if (mounted) {
           Navigator.pop(context, true);
         }
@@ -155,9 +186,11 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF0066CC), width: 2),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF0066CC), width: 2),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

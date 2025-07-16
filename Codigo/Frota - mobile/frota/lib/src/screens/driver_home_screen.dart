@@ -600,169 +600,173 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Modelo do veículo - pode ser truncado se necessário
-                Expanded(
-                  child: Text(
-                    _currentVehicle.model,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
+        padding: const EdgeInsets.all(16.0), // igual ao _buildJourneyCard
+        child: SizedBox(
+          height: 187, // altura aproximada do conteúdo do card de percurso
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Modelo do veículo - pode ser truncado se necessário
+                  Expanded(
+                    child: Text(
+                      _currentVehicle.model,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
-                ),
-                const SizedBox(width: 12),
-                // Placa - sempre visível completamente
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Placa: ',
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0066CC).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: const Color(0xFF0066CC).withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        _currentVehicle.licensePlate,
+                  const SizedBox(width: 12),
+                  // Placa - sempre visível completamente
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Placa: ',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                           fontSize: 14,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          letterSpacing: 1.0,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0066CC).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.bar_chart,
-                        color: Color(0xFF0066CC),
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Consumer2<JourneyProvider, VehicleProvider>(
-                      builder:
-                          (context, journeyProvider, vehicleProvider, child) {
-                        final journey = journeyProvider.activeJourney;
-                        final currentVehicle =
-                            vehicleProvider.currentVehicle ?? _currentVehicle;
-                        final odometerDifference = journey != null
-                            ? (currentVehicle.odometer ?? 0) -
-                                (journey.initialOdometer ?? 0)
-                            : 0;
-
-                        return Text(
-                          '${odometerDifference} Km',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Color(0xFF0066CC),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0066CC).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: const Color(0xFF0066CC).withOpacity(0.3),
+                            width: 1,
                           ),
-                        );
-                      },
-                    ),
-                    Text(
-                      'Percorridos',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 1,
-                  height: 80,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF3A3A5C)
-                      : Colors.grey[300],
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0066CC).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.local_gas_station,
-                        color: Color(0xFF0066CC),
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Consumer2<JourneyProvider, FuelProvider>(
-                      builder: (context, journeyProvider, fuelProvider, child) {
-                        final journey = journeyProvider.activeJourney;
-                        double totalLiters = 0.0;
-
-                        if (journey != null) {
-                          totalLiters = fuelProvider.totalLitersForJourney;
-                        }
-
-                        return Text(
-                          '${totalLiters.toStringAsFixed(2)} L',
-                          style: const TextStyle(
+                        ),
+                        child: Text(
+                          _currentVehicle.licensePlate,
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Color(0xFF0066CC),
+                            fontSize: 14,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                            letterSpacing: 1.0,
                           ),
-                        );
-                      },
-                    ),
-                    Text(
-                      'Abastecidos',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0066CC).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.bar_chart,
+                          color: Color(0xFF0066CC),
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Consumer2<JourneyProvider, VehicleProvider>(
+                        builder:
+                            (context, journeyProvider, vehicleProvider, child) {
+                          final journey = journeyProvider.activeJourney;
+                          final currentVehicle =
+                              vehicleProvider.currentVehicle ?? _currentVehicle;
+                          final odometerDifference = journey != null
+                              ? (currentVehicle.odometer ?? 0) -
+                                  (journey.initialOdometer ?? 0)
+                              : 0;
+
+                          return Text(
+                            '${odometerDifference} Km',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color(0xFF0066CC),
+                            ),
+                          );
+                        },
+                      ),
+                      Text(
+                        'Percorridos',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 1,
+                    height: 80,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF3A3A5C)
+                        : Colors.grey[300],
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0066CC).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.local_gas_station,
+                          color: Color(0xFF0066CC),
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Consumer2<JourneyProvider, FuelProvider>(
+                        builder:
+                            (context, journeyProvider, fuelProvider, child) {
+                          final journey = journeyProvider.activeJourney;
+                          double totalLiters = 0.0;
+
+                          if (journey != null) {
+                            totalLiters = fuelProvider.totalLitersForJourney;
+                          }
+
+                          return Text(
+                            '${totalLiters.toStringAsFixed(2)} L',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Color(0xFF0066CC),
+                            ),
+                          );
+                        },
+                      ),
+                      Text(
+                        'Abastecidos',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -978,7 +982,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Odômetro',
+                                    'Odômetro atual',
                                     style: TextStyle(
                                       fontSize: 9,
                                       color: Theme.of(context)
@@ -989,7 +993,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     ),
                                   ),
                                   Text(
-                                    '${journey.initialOdometer ?? 0} km',
+                                    // Odômetro atual: finalOdometer, ou odômetro do veículo se não houver
+                                    '${journey.finalOdometer ?? _currentVehicle.odometer ?? 0} km',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -1024,7 +1029,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
-                                Icons.schedule,
+                                Icons.timer,
                                 color: Color(0xFF0066CC),
                                 size: 12,
                               ),
@@ -1035,7 +1040,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Saída',
+                                    'Duração',
                                     style: TextStyle(
                                       fontSize: 9,
                                       color: Theme.of(context)
@@ -1046,7 +1051,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                     ),
                                   ),
                                   Text(
-                                    journey.formattedDepartureTime ?? 'N/A',
+                                    // Duração do percurso abreviada (d, h, m)
+                                    (() {
+                                      final now = DateTime.now();
+                                      final start = journey.departureTime;
+                                      final end = journey.arrivalTime ?? now;
+                                      final duration = end.difference(start);
+                                      final days = duration.inDays;
+                                      final hours = duration.inHours % 24;
+                                      final minutes = duration.inMinutes % 60;
+                                      final parts = <String>[];
+                                      if (days > 0) parts.add('${days}d');
+                                      if (hours > 0) parts.add('${hours}h');
+                                      if (minutes > 0) parts.add('${minutes}m');
+                                      if (parts.isEmpty) return '0m';
+                                      return parts.join(' ');
+                                    })(),
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,

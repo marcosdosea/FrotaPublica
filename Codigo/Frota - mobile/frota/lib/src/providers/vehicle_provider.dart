@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import '../models/vehicle.dart';
 import '../models/user.dart';
 import '../services/vehicle_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class VehicleProvider with ChangeNotifier {
   final VehicleService _vehicleService = VehicleService();
@@ -48,21 +50,24 @@ class VehicleProvider with ChangeNotifier {
   }
 
   // Obter veículo por ID
-  Future<Vehicle?> getVehicleById(String vehicleId) async {
-    _isLoading = true;
-    notifyListeners();
-
+  Future<Vehicle?> getVehicleById(String id) async {
     try {
-      final vehicle = await _vehicleService.getVehicleById(vehicleId);
-      _error = null;
-      return vehicle;
+      final vehicle = await _vehicleService.getVehicleById(id);
+      if (vehicle != null) {
+        // Salvar localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('vehicle_$id', json.encode(vehicle.toJson()));
+        return vehicle;
+      }
     } catch (e) {
-      _error = e.toString();
-      return null;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      // Se falhar (offline), tentar carregar localmente
+      final prefs = await SharedPreferences.getInstance();
+      final saved = prefs.getString('vehicle_$id');
+      if (saved != null) {
+        return Vehicle.fromJson(json.decode(saved));
+      }
     }
+    return null;
   }
 
   // Selecionar veículo atual

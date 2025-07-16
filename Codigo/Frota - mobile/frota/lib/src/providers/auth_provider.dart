@@ -4,6 +4,8 @@ import '../services/auth_service.dart';
 import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
 import '../utils/api_client.dart';
+import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -22,8 +24,6 @@ class AuthProvider with ChangeNotifier {
   // Inicializar - verificar se há um usuário logado
   Future<void> initialize() async {
     _isLoading = true;
-    notifyListeners();
-
     try {
       print('AuthProvider: Inicializando e verificando usuário atual');
 
@@ -49,21 +49,51 @@ class AuthProvider with ChangeNotifier {
       _currentUser = await _authService.getCurrentUser();
       _error = null;
 
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOnline = connectivity != ConnectivityResult.none;
+
       if (_currentUser != null) {
         print(
             'AuthProvider: Usuário autenticado na inicialização: ${_currentUser!.name}');
       } else if (tokenValido) {
         print(
             'AuthProvider: Token válido, mas usuário não encontrado localmente.');
-        // Se biometria estiver ativada, tentar login biométrico automaticamente
-        final biometricEnabled = await BiometricService.isBiometricEnabled();
-        if (biometricEnabled) {
-          print(
-              'AuthProvider: Tentando login biométrico automático na inicialização.');
-          await loginWithBiometrics();
+        if (isOnline) {
+          // Se biometria estiver ativada, tentar login biométrico automaticamente
+          final biometricEnabled = await BiometricService.isBiometricEnabled();
+          if (biometricEnabled) {
+            print(
+                'AuthProvider: Tentando login biométrico automático na inicialização.');
+            await loginWithBiometrics();
+          } else if (savedCredentials['username'] != null &&
+              savedCredentials['password'] != null) {
+            print(
+                'AuthProvider: Tentando login automático com credenciais salvas.');
+            await login(
+                savedCredentials['username']!, savedCredentials['password']!,
+                rememberMe: true);
+          } else {
+            print(
+                'AuthProvider: Biometria não ativada. Usuário deve fazer login manual.');
+          }
         } else {
-          print(
-              'AuthProvider: Biometria não ativada. Usuário deve fazer login manual.');
+          // OFFLINE: Permitir acesso se token válido e credenciais salvas
+          if (savedCredentials['username'] != null) {
+            print(
+                'AuthProvider: Usuário offline, token válido e credenciais salvas. Permitindo acesso offline.');
+            _currentUser = User(
+              id: savedCredentials['username']!,
+              name: savedCredentials['username']!,
+              email: '',
+              cpf: savedCredentials['username']!,
+              role: 'Motorista',
+              unidadeAdministrativaId: 1,
+            );
+            _error = null;
+          } else {
+            print(
+                'AuthProvider: Usuário offline, token válido mas sem credenciais salvas.');
+          }
         }
       } else {
         print(
@@ -269,17 +299,17 @@ class AuthProvider with ChangeNotifier {
 
     try {
       print('AuthProvider: Realizando logout');
+      // Salvar o último CPF antes de limpar o usuário
+      if (_currentUser != null) {
+        _lastLoggedCpf = _currentUser!.cpf;
+      }
       await _authService.logout();
       _currentUser = null;
       _error = null;
 
-      // Limpar credenciais salvas se não estiver usando "lembrar senha"
-      final hasRememberMe = await SecureStorageService.hasSavedCredentials();
-      if (!hasRememberMe) {
-        await clearSavedCredentials();
-      }
+      // Sempre limpar credenciais salvas ao fazer logout
+      await clearSavedCredentials();
 
-      // Manter o último CPF para facilitar próximo login
       print('AuthProvider: Logout concluído com sucesso');
     } catch (e) {
       print('AuthProvider: Erro durante logout: $e');

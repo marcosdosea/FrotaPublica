@@ -5,6 +5,8 @@ import '../providers/vehicle_provider.dart';
 import '../providers/auth_provider.dart';
 import 'driver_home_screen.dart';
 import 'journey_registration_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../providers/journey_provider.dart';
 
 class AvailableVehiclesScreen extends StatefulWidget {
   const AvailableVehiclesScreen({super.key});
@@ -19,14 +21,42 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
   String _searchQuery = '';
   bool _isLoading = true;
   List<Vehicle> _vehicles = [];
+  bool _isOffline = false;
 
   @override
   void initState() {
     super.initState();
-    // Usar WidgetsBinding para garantir que a chamada ocorra após o build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadVehicles();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _isOffline = result == ConnectivityResult.none;
+      });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkActiveJourneyAndLoadVehicles();
+    });
+  }
+
+  Future<void> _checkActiveJourneyAndLoadVehicles() async {
+    final journeyProvider =
+        Provider.of<JourneyProvider>(context, listen: false);
+    final vehicleProvider =
+        Provider.of<VehicleProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await journeyProvider.loadActiveJourney(authProvider.currentUser?.id ?? '');
+    if (journeyProvider.activeJourney != null) {
+      final vehicle = await vehicleProvider
+          .getVehicleById(journeyProvider.activeJourney!.vehicleId);
+      if (vehicle != null && mounted) {
+        vehicleProvider.setCurrentVehicle(vehicle);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => DriverHomeScreen(vehicle: vehicle),
+          ),
+        );
+        return;
+      }
+    }
+    await _loadVehicles();
   }
 
   Future<void> _loadVehicles() async {
@@ -99,6 +129,24 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
       child: Scaffold(
         body: Column(
           children: [
+            // Indicador de conexão offline
+            if (_isOffline)
+              Container(
+                width: double.infinity,
+                color: Colors.red.withOpacity(0.1),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.wifi_off_rounded, color: Colors.red, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'Sem conexão com a internet',
+                      style: TextStyle(color: Colors.red, fontSize: 15),
+                    ),
+                  ],
+                ),
+              ),
             // Blue header with rounded bottom corners
             Container(
               padding: const EdgeInsets.only(
@@ -194,26 +242,39 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        'Nenhum veículo encontrado',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.color,
+                                      if (_isOffline) ...[
+                                        const Icon(Icons.wifi_off_rounded,
+                                            color: Colors.red, size: 40),
+                                        const SizedBox(height: 12),
+                                        const Text(
+                                          'Sem conexão para carregar veículos',
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 16),
                                         ),
-                                      ),
+                                      ] else ...[
+                                        Text(
+                                          'Nenhum veículo encontrado',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
+                                          ),
+                                        ),
+                                      ],
                                       const SizedBox(height: 16),
-                                      RefreshIndicator(
-                                        onRefresh: _loadVehicles,
-                                        color: const Color(0xFF0066CC),
-                                        child: ListView(
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          children: const [
-                                            SizedBox(height: 200),
-                                          ],
+                                      Expanded(
+                                        child: RefreshIndicator(
+                                          onRefresh: _loadVehicles,
+                                          color: const Color(0xFF0066CC),
+                                          child: ListView(
+                                            physics:
+                                                const AlwaysScrollableScrollPhysics(),
+                                            children: const [
+                                              SizedBox(height: 200),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],

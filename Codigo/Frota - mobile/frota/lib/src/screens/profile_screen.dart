@@ -6,6 +6,7 @@ import '../providers/theme_provider.dart';
 import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
 import '../utils/app_theme.dart';
+import '../screens/offline_sync_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -397,6 +398,31 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           const SizedBox(height: 20),
+
+          // Notificações
+          _buildSettingItem(
+            icon: Icons.cloud_sync_rounded,
+            title: 'Sincronização',
+            subtitle: 'Ver dados não sincronizados',
+            trailing: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: isDark
+                  ? Colors.white.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.6),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const OfflineSyncScreen(),
+                ),
+              );
+            },
+            isDark: isDark,
+          ),
+
+          const SizedBox(height: 16),
 
           // Toggle tema escuro
           Consumer<ThemeProvider>(

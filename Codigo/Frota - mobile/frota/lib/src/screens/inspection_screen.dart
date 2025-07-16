@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../services/inspection_service.dart';
 import '../providers/journey_provider.dart';
 import '../providers/auth_provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/local_database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InspectionScreen extends StatefulWidget {
   final String title;
@@ -48,6 +51,30 @@ class _InspectionScreenState extends State<InspectionScreen> {
     });
 
     try {
+      // Checar conectividade
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOnline = connectivity != ConnectivityResult.none;
+
+      if (!isOnline && widget.type == 'S') {
+        // Salvar offline apenas para vistoria de saída
+        await LocalDatabaseService().insertVistoriaSaidaOffline({
+          'vehicleId': widget.vehicleId,
+          'journeyId': Provider.of<JourneyProvider>(context, listen: false)
+                  .activeJourney
+                  ?.id ??
+              '',
+          'inspectionData': problemsController.text.trim(),
+          'dateTime': DateTime.now().toIso8601String(),
+        });
+        // Marcar como concluída localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('inspection_departure_${widget.vehicleId}', true);
+        if (!mounted) return;
+        Navigator.pop(context, true);
+        _showSuccessMessage('Registro registrado offline', color: Colors.grey);
+        return;
+      }
+
       final result = await _inspectionService.registerInspection(
         vehicleId: widget.vehicleId,
         type: widget.type,
@@ -87,11 +114,11 @@ class _InspectionScreenState extends State<InspectionScreen> {
     );
   }
 
-  void _showSuccessMessage(String message) {
+  void _showSuccessMessage(String message, {Color color = Colors.green}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.green,
+        backgroundColor: color,
       ),
     );
   }
@@ -99,12 +126,12 @@ class _InspectionScreenState extends State<InspectionScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: isDark 
+          gradient: isDark
               ? const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -127,8 +154,8 @@ class _InspectionScreenState extends State<InspectionScreen> {
         child: Column(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
+              padding: const EdgeInsets.only(
+                  top: 60, left: 16, right: 16, bottom: 20),
               decoration: const BoxDecoration(
                 color: Color(0xFF116AD5),
                 borderRadius: BorderRadius.only(
@@ -167,7 +194,6 @@ class _InspectionScreenState extends State<InspectionScreen> {
                 ],
               ),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -193,18 +219,17 @@ class _InspectionScreenState extends State<InspectionScreen> {
                         hintText:
                             'Descreva os problemas ou escreva "Nenhum" caso não haja',
                         hintStyle: TextStyle(
-                          color: isDark 
+                          color: isDark
                               ? Colors.white.withOpacity(0.6)
                               : Colors.black.withOpacity(0.6),
                         ),
                         filled: true,
-                        fillColor: isDark 
-                            ? const Color(0xFF1E1E2E)
-                            : Colors.white,
+                        fillColor:
+                            isDark ? const Color(0xFF1E1E2E) : Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
-                            color: isDark 
+                            color: isDark
                                 ? const Color(0xFF3A3A5C)
                                 : Colors.grey.shade300,
                           ),
@@ -212,7 +237,7 @@ class _InspectionScreenState extends State<InspectionScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
-                            color: isDark 
+                            color: isDark
                                 ? const Color(0xFF3A3A5C)
                                 : Colors.grey.shade300,
                           ),

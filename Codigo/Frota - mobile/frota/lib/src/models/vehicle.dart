@@ -105,7 +105,7 @@ class Vehicle {
         imageUrl: json['image_url'] ?? json['fotoUrl'],
         isAvailable: json['is_available'] ?? json['disponivel'] ?? disponivel,
         currentDriverId:
-        json['current_driver_id'] ?? json['motoristaAtualId']?.toString(),
+            json['current_driver_id'] ?? json['motoristaAtualId']?.toString(),
         maintenanceIssues: json['maintenance_issues'] != null
             ? List<String>.from(json['maintenance_issues'])
             : null,
@@ -178,7 +178,24 @@ class Vehicle {
       distanceTraveled: distanceTraveled ?? this.distanceTraveled,
       fuelEfficiency: fuelEfficiency ?? this.fuelEfficiency,
       unidadeAdministrativaId:
-      unidadeAdministrativaId ?? this.unidadeAdministrativaId,
+          unidadeAdministrativaId ?? this.unidadeAdministrativaId,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'model': model,
+      'license_plate': licensePlate,
+      'odometro': odometer,
+      'image_url': imageUrl,
+      'is_available': isAvailable,
+      'current_driver_id': currentDriverId,
+      'maintenance_issues': maintenanceIssues,
+      'fuel_spent': fuelSpent,
+      'distance_traveled': distanceTraveled,
+      'fuel_efficiency': fuelEfficiency,
+      'unidadeAdministrativaId': unidadeAdministrativaId,
+    };
   }
 }
