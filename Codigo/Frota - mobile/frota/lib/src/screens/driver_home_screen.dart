@@ -173,7 +173,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           Provider.of<JourneyProvider>(context, listen: false);
       final journey = journeyProvider.activeJourney;
       if (journey != null) {
-        await fuelProvider.loadTotalLitersForJourney(journey.id);
+        await fuelProvider.loadTotalLitersForJourney(journey.id,
+            vehicleId: _currentVehicle.id);
       }
 
       // Verificar status das vistorias
@@ -349,7 +350,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 30),
                         Padding(
                           padding:
                               const EdgeInsets.only(left: 24.0, right: 24.0),
@@ -366,7 +367,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         SizedBox(
                           height:
                               120, // Voltou para 120 para acomodar melhor os ícones
@@ -531,13 +532,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
       height: 260, // aumentado para evitar overflow
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // Removido o sombreamento
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -559,8 +554,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 5),
-            // Indicadores de página
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -569,6 +562,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 _buildPageIndicator(1),
               ],
             ),
+            const SizedBox(height: 15),
           ],
         ),
       ),

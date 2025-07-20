@@ -85,13 +85,26 @@ class BiometricService {
       // Verificar se o dispositivo suporta biometria
       final isSupported = await isDeviceSupported();
       if (!isSupported) {
+        print('Dispositivo não suporta biometria');
         return false;
       }
 
-      // Verificar se há biometrias cadastradas de forma confiável
-      final availableBiometrics = await getAvailableBiometrics();
-      if (availableBiometrics.isEmpty) {
+      // Verificar se há biometrias cadastradas
+      final canCheck = await canCheckBiometrics();
+      if (!canCheck) {
+        print('Não é possível verificar biometrias');
         return false;
+      }
+
+      // Obter tipos de biometria disponíveis
+      final availableBiometrics = await getAvailableBiometrics();
+      print('Biometrias disponíveis: $availableBiometrics');
+
+      // Para dispositivos Xiaomi e outros, aceitar qualquer tipo de biometria
+      if (availableBiometrics.isEmpty) {
+        // Tentar autenticação mesmo sem biometrias detectadas
+        // Alguns dispositivos podem não reportar corretamente
+        print('Nenhuma biometria detectada, tentando autenticação direta');
       }
 
       // Solicitar autenticação para confirmar a configuração
@@ -105,12 +118,51 @@ class BiometricService {
 
       if (authenticated) {
         await setBiometricEnabled(true);
+        print('Biometria configurada com sucesso');
         return true;
+      } else {
+        print('Autenticação falhou');
+        return false;
       }
-
-      return false;
     } catch (e) {
       print('Erro ao configurar biometria: $e');
+      return false;
+    }
+  }
+
+  // Verificar se a biometria está disponível e funcionando
+  static Future<bool> isBiometricAvailable() async {
+    try {
+      final isSupported = await isDeviceSupported();
+      if (!isSupported) return false;
+
+      final canCheck = await canCheckBiometrics();
+      if (!canCheck) return false;
+
+      final availableBiometrics = await getAvailableBiometrics();
+
+      // Para dispositivos que podem ter problemas de detecção,
+      // tentar uma verificação mais permissiva
+      if (availableBiometrics.isEmpty) {
+        // Tentar autenticação para verificar se funciona
+        try {
+          final result = await _localAuth.authenticate(
+            localizedReason: 'Verificando biometria',
+            options: const AuthenticationOptions(
+              biometricOnly: false,
+              stickyAuth: false,
+            ),
+          );
+          return result;
+        } catch (e) {
+          print('Erro na verificação de biometria: $e');
+          return false;
+        }
+      }
+
+      return availableBiometrics.isNotEmpty;
+    } catch (e) {
+      print('Erro ao verificar disponibilidade de biometria: $e');
       return false;
     }
   }

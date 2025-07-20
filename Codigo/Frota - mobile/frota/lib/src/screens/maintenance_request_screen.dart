@@ -57,7 +57,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Registro registrado offline'),
+              content: Text('Solicitação registrada offline'),
               backgroundColor: Colors.grey,
             ),
           );

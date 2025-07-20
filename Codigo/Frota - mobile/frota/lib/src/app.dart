@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'providers/auth_provider.dart';
 import 'providers/fuel_provider.dart';
 import 'providers/inspection_provider.dart';
@@ -17,6 +18,7 @@ import 'screens/driver_home_screen.dart';
 import 'screens/presentation_screen.dart';
 import 'providers/theme_provider.dart';
 import 'services/supplier_service.dart';
+import 'services/offline_sync_service.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -47,6 +49,7 @@ class AppContent extends StatefulWidget {
 class _AppContentState extends State<AppContent> {
   Timer? _tokenRefreshTimer;
   Timer? _supplierUpdateTimer;
+  final OfflineSyncService _offlineSyncService = OfflineSyncService();
 
   @override
   void initState() {
@@ -57,6 +60,7 @@ class _AppContentState extends State<AppContent> {
       _startTokenRefreshCheck();
       _updateSuppliersOnStart();
       _startSupplierUpdateTimer();
+      _initializeOfflineSync();
     });
   }
 
@@ -64,6 +68,7 @@ class _AppContentState extends State<AppContent> {
   void dispose() {
     _tokenRefreshTimer?.cancel();
     _supplierUpdateTimer?.cancel();
+    _offlineSyncService.dispose();
     super.dispose();
   }
 
@@ -113,20 +118,32 @@ class _AppContentState extends State<AppContent> {
     await authProvider.initialize();
 
     if (authProvider.isAuthenticated) {
-      // Se o usuário estiver autenticado, verifica se há uma jornada ativa
       final journeyProvider =
           Provider.of<JourneyProvider>(context, listen: false);
-      await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+      final vehicleProvider =
+          Provider.of<VehicleProvider>(context, listen: false);
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOffline = connectivity == ConnectivityResult.none;
+
+      if (isOffline) {
+        await journeyProvider.loadLocalJourney();
+      } else {
+        await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+      }
 
       if (journeyProvider.hasActiveJourney) {
-        // Se houver uma jornada ativa, carrega o veículo dessa jornada
-        final vehicleProvider =
-            Provider.of<VehicleProvider>(context, listen: false);
         final vehicle = await vehicleProvider
             .getVehicleById(journeyProvider.activeJourney!.vehicleId);
-
         if (vehicle != null) {
           vehicleProvider.setCurrentVehicle(vehicle);
+          // Navegar para DriverHomeScreen se não estiver nela
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (_) => DriverHomeScreen(vehicle: vehicle)),
+              (route) => false,
+            );
+          });
         }
       }
     }
@@ -159,6 +176,12 @@ class _AppContentState extends State<AppContent> {
     });
   }
 
+  void _initializeOfflineSync() {
+    // Inicializar serviço de sincronização offline
+    _offlineSyncService.start();
+    print('Serviço de sincronização offline inicializado');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<AuthProvider, ThemeProvider>(
@@ -169,7 +192,7 @@ class _AppContentState extends State<AppContent> {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRouter.initialRoute,
+          initialRoute: '/splash',
           routes: AppRouter.routes,
           builder: (context, child) {
             // Configurações globais para melhorar comportamento do teclado

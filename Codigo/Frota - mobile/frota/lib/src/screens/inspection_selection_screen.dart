@@ -5,6 +5,7 @@ import '../services/inspection_service.dart';
 import '../models/inspection_status.dart';
 import 'inspection_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class InspectionSelectionScreen extends StatefulWidget {
   final String vehicleId;
@@ -24,11 +25,25 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
   bool _isLoading = true;
   bool _departureCompleted = false;
   bool _arrivalCompleted = false;
+  bool _isOffline = false;
 
   @override
   void initState() {
     super.initState();
+    _checkConnectivity();
     _loadInspectionStatus();
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _isOffline = result == ConnectivityResult.none;
+      });
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivity = await Connectivity().checkConnectivity();
+    setState(() {
+      _isOffline = connectivity == ConnectivityResult.none;
+    });
   }
 
   Future<void> _loadInspectionStatus() async {
@@ -133,7 +148,10 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : RefreshIndicator(
-                    onRefresh: _loadInspectionStatus,
+                    onRefresh: () async {
+                      await _checkConnectivity();
+                      await _loadInspectionStatus();
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
@@ -192,8 +210,8 @@ class _InspectionSelectionScreenState extends State<InspectionSelectionScreen> {
                             const SizedBox(height: 24),
                           ],
 
-                          // Vistoria de Chegada
-                          if (!_arrivalCompleted) ...[
+                          // Vistoria de Chegada (só se online)
+                          if (!_arrivalCompleted && !_isOffline) ...[
                             const Text(
                               'Vistoria de Chegada',
                               style: TextStyle(

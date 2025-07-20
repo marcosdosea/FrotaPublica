@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/fuel_refill.dart';
 import '../services/fuel_service.dart';
+import '../services/local_database_service.dart';
 
 class FuelProvider with ChangeNotifier {
   final FuelService _fuelService = FuelService();
@@ -81,13 +82,27 @@ class FuelProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Obter total de litros abastecidos para o percurso
-  Future<void> loadTotalLitersForJourney(String journeyId) async {
+  // Obter total de litros abastecidos para o percurso (considerando offline)
+  Future<void> loadTotalLitersForJourney(String journeyId,
+      {String? vehicleId}) async {
     _isLoading = true;
     notifyListeners();
     try {
-      _totalLitersForJourney =
+      // Litros online/persistido
+      double totalOnline =
           await _fuelService.getTotalLitersForJourney(journeyId);
+      // Litros offline
+      double totalOffline = 0.0;
+      if (vehicleId != null) {
+        final offlineList =
+            await LocalDatabaseService().getAbastecimentosOffline();
+        totalOffline = offlineList
+            .where((item) =>
+                item['journeyId'] == journeyId &&
+                item['vehicleId'] == vehicleId)
+            .fold(0.0, (sum, item) => sum + (item['liters'] as num? ?? 0.0));
+      }
+      _totalLitersForJourney = totalOnline + totalOffline;
       _error = null;
     } catch (e) {
       _error = e.toString();

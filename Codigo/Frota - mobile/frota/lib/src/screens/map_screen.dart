@@ -635,11 +635,9 @@ class _MapScreenState extends State<MapScreen> {
           builder: (context, vehicleProvider, child) {
             final currentVehicle = vehicleProvider.currentVehicle;
 
-            return SizedBox(
-              height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+            return Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ActionCard(
                     icon: Icons.local_gas_station,
@@ -658,6 +656,7 @@ class _MapScreenState extends State<MapScreen> {
                           },
                     isDark: isDark,
                   ),
+                  const SizedBox(width: 24),
                   ActionCard(
                     icon: Icons.checklist,
                     title: 'Realizar\nVistoria',

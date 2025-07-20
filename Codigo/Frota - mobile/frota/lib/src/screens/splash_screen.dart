@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
 import '../providers/vehicle_provider.dart';
+import '../models/vehicle.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -32,11 +33,23 @@ class _SplashScreenState extends State<SplashScreen> {
       if (journeyProvider.activeJourney != null) {
         final vehicleProvider =
             Provider.of<VehicleProvider>(context, listen: false);
-        final vehicle = await vehicleProvider
-            .getVehicleById(journeyProvider.activeJourney!.vehicleId);
+        final journey = journeyProvider.activeJourney!;
+        Vehicle? vehicle =
+            await vehicleProvider.getVehicleById(journey.vehicleId);
         print('SplashScreen: Veículo do percurso: '
             '${vehicle != null ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}');
-        if (vehicle != null && mounted) {
+        if (vehicle == null) {
+          // Criar objeto mínimo a partir do percurso
+          vehicle = Vehicle(
+            id: journey.vehicleId,
+            model: 'Modelo desconhecido',
+            licensePlate: 'Sem placa',
+            odometer: journey.initialOdometer ?? 0,
+            isAvailable: false,
+          );
+          print('SplashScreen: Veículo mínimo criado a partir do percurso.');
+        }
+        if (mounted) {
           vehicleProvider.setCurrentVehicle(vehicle);
           print('SplashScreen: Navegando para driver_home');
           WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -71,7 +71,7 @@ class _InspectionScreenState extends State<InspectionScreen> {
         await prefs.setBool('inspection_departure_${widget.vehicleId}', true);
         if (!mounted) return;
         Navigator.pop(context, true);
-        _showSuccessMessage('Registro registrado offline', color: Colors.grey);
+        _showSuccessMessage('Vistoria registrada offline', color: Colors.grey);
         return;
       }
 

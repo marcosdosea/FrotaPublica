@@ -107,14 +107,25 @@ class _ProfileScreenState extends State<ProfileScreen>
             }
           }
         } else if (mounted) {
-          // Mostrar erro se não conseguiu ativar
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Não foi possível ativar a biometria. Verifique se há biometrias cadastradas no dispositivo.'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          // Verificar se o problema é de disponibilidade
+          final isAvailable = await BiometricService.isBiometricAvailable();
+          if (!isAvailable) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Biometria não disponível. Verifique se há biometrias cadastradas no dispositivo e se o app tem permissão.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Não foi possível ativar a biometria. Tente novamente.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       } else {
         // Desativar biometria

@@ -84,6 +84,21 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   }
 
   Future<void> _syncSuppliers() async {
+    // Verificar conexão antes de tentar sincronizar
+    final connectivity = await Connectivity().checkConnectivity();
+    final isOnline = connectivity != ConnectivityResult.none;
+    if (!isOnline) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Sem conexão. Conecte-se à internet para sincronizar fornecedores.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
     setState(() {
       _isSyncingSuppliers = true;
     });
@@ -194,7 +209,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         });
         if (!mounted) return;
         Navigator.pop(context, true);
-        _showSuccessMessage('Registro registrado offline', color: Colors.grey);
+        _showSuccessMessage('Abastecimento registrado offline', color: Colors.grey);
         return;
       }
 
