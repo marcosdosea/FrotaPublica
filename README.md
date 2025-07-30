@@ -21,13 +21,6 @@
 <table align="center">
   <tr>
     <td align="center" width="160px">
-      <a href="https://github.com/Guilherme-Yeager" target="_blank">
-        <img src="https://github.com/user-attachments/assets/be390fee-3558-430a-ab3a-ae4190ee1c48" width="100px" alt="Foto de Guilherme Lima Santos"/>
-        <br><strong>Guilherme Lima Santos</strong><br>
-      </a>
-      Desenvolvedor
-    </td>
-    <td align="center" width="160px">
       <a href="https://github.com/K4U4dev" target="_blank">
         <img src="https://avatars.githubusercontent.com/u/102272784?s=400&u=f7cdd52b6640b4130a18f6b0d6fa8b3193a877cf&v=4" width="100px" alt="Foto de Kauã de Oliveira Santos Menezes"/>
         <br><strong>Kauã Oliveira</strong><br><br>
