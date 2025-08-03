@@ -15,10 +15,12 @@ import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
 import '../services/inspection_service.dart';
 import '../providers/fuel_provider.dart';
-import '../utils/widgets/action_card.dart';
+import '../utils/app_theme.dart';
 import 'available_vehicles_screen.dart';
 import 'profile_screen.dart';
 import 'map_screen.dart';
+import 'offline_sync_screen.dart';
+import '../services/offline_sync_service.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -33,77 +35,98 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen>
-    with WidgetsBindingObserver {
-  // Estado para controlar quais vistorias já foram realizadas
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   InspectionStatus inspectionStatus = InspectionStatus();
   late Vehicle _currentVehicle;
   final InspectionService _inspectionService = InspectionService();
-
-  // Controlador do PageView para o slider
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  // Controle para evitar múltiplas atualizações simultâneas
   bool _isRefreshing = false;
   DateTime? _lastRefreshTime;
+  bool _isJourneyExpanded = false;
+  bool _isVehicleExpanded = false;
+  late AnimationController _journeyAnimationController;
+  late AnimationController _vehicleAnimationController;
+  late Animation<double> _journeyAnimation;
+  late Animation<double> _vehicleAnimation;
+  final OfflineSyncService _offlineSyncService = OfflineSyncService();
+  bool _hasPendingSync = false;
 
   @override
   void initState() {
     super.initState();
     _currentVehicle = widget.vehicle;
-    // Registrar observer para detectar mudanças no ciclo de vida da aplicação
     WidgetsBinding.instance.addObserver(this);
-    // Atualizar o veículo atual no provider
+
+    // Inicializar animações
+    _journeyAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _vehicleAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _journeyAnimation = CurvedAnimation(
+      parent: _journeyAnimationController,
+      curve: Curves.easeInOut,
+    );
+    _vehicleAnimation = CurvedAnimation(
+      parent: _vehicleAnimationController,
+      curve: Curves.easeInOut,
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final vehicleProvider =
           Provider.of<VehicleProvider>(context, listen: false);
       vehicleProvider.setCurrentVehicle(_currentVehicle);
-
-      // Carregar percurso ativo e verificar status das vistorias
       _refreshData();
+      _checkPendingSync();
     });
   }
 
   @override
   void dispose() {
-    // Cancelar o observer ao destruir o widget
     WidgetsBinding.instance.removeObserver(this);
-    _pageController.dispose();
+    _journeyAnimationController.dispose();
+    _vehicleAnimationController.dispose();
     super.dispose();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Não atualizar aqui para evitar múltiplas atualizações
-  }
-
-  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Quando o app volta para o foreground, atualizar dados
     if (state == AppLifecycleState.resumed) {
       _refreshData();
+      _checkPendingSync();
     }
   }
 
-  // Método para verificar o status das vistorias
+  Future<void> _checkPendingSync() async {
+    try {
+      final hasPending = await _offlineSyncService.hasPendingSync();
+      if (mounted) {
+        setState(() {
+          _hasPendingSync = hasPending;
+        });
+      }
+    } catch (e) {
+      print('Erro ao verificar sincronização pendente: $e');
+    }
+  }
+
   Future<void> _checkInspectionStatus() async {
     try {
-      // Verificar vistoria de saída
       bool departureCompleted =
           await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'S',
       );
 
-      // Verificar vistoria de retorno
       bool arrivalCompleted =
           await _inspectionService.hasInspectionBeenCompleted(
         _currentVehicle.id,
         'R',
       );
 
-      // Evitar atualização se o widget foi desmontado
       if (mounted) {
         setState(() {
           inspectionStatus = InspectionStatus(
@@ -127,19 +150,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     }
   }
 
-  // Método para atualizar todos os dados da tela
   Future<void> _refreshData() async {
-    // Evitar múltiplas atualizações simultâneas
-    if (_isRefreshing) {
-      print('Refresh já em andamento, ignorando chamada');
-      return;
-    }
+    if (_isRefreshing) return;
 
-    // Debounce: evitar atualizações muito frequentes (mínimo 2 segundos entre atualizações)
     final now = DateTime.now();
     if (_lastRefreshTime != null &&
         now.difference(_lastRefreshTime!).inSeconds < 2) {
-      print('Refresh muito recente, ignorando chamada');
       return;
     }
 
@@ -147,12 +163,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     _lastRefreshTime = now;
 
     try {
-      print('Iniciando refresh dos dados...');
-
-      // Carregar percurso ativo
       await _loadActiveJourney();
 
-      // Atualizar o veículo atual
       final vehicleProvider =
           Provider.of<VehicleProvider>(context, listen: false);
       final updatedVehicle =
@@ -164,11 +176,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
         vehicleProvider.setCurrentVehicle(updatedVehicle);
       }
 
-      // Carregar abastecimentos do veículo
       final fuelProvider = Provider.of<FuelProvider>(context, listen: false);
       await fuelProvider.loadVehicleRefills(_currentVehicle.id);
 
-      // Carregar total de litros abastecidos do percurso ativo
       final journeyProvider =
           Provider.of<JourneyProvider>(context, listen: false);
       final journey = journeyProvider.activeJourney;
@@ -177,10 +187,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
             vehicleId: _currentVehicle.id);
       }
 
-      // Verificar status das vistorias
       await _checkInspectionStatus();
-
-      print('Refresh dos dados concluído');
+      await _checkPendingSync();
     } catch (e) {
       print('Erro ao atualizar dados: $e');
     } finally {
@@ -188,942 +196,239 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     }
   }
 
+  void _toggleJourneyExpansion() {
+    setState(() {
+      _isJourneyExpanded = !_isJourneyExpanded;
+    });
+    if (_isJourneyExpanded) {
+      _journeyAnimationController.forward();
+    } else {
+      _journeyAnimationController.reverse();
+    }
+  }
+
+  void _toggleVehicleExpansion() {
+    setState(() {
+      _isVehicleExpanded = !_isVehicleExpanded;
+    });
+    if (_isVehicleExpanded) {
+      _vehicleAnimationController.forward();
+    } else {
+      _vehicleAnimationController.reverse();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Cor da barra de notificações igual ao topo do header (Color(0xFF116AD5))
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF116AD5), // Mesma cor do topo do gradiente
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFFE3F2FD),
-      systemNavigationBarIconBrightness: Brightness.dark,
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness:
+          isDark ? Brightness.light : Brightness.dark,
     ));
 
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: const Color(
-            0xFF116AD5), // Cor de fundo que aparece na barra de status
+        backgroundColor:
+            isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+        extendBodyBehindAppBar: true,
         body: Container(
           decoration: BoxDecoration(
             gradient: isDark
-                ? const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF0F0F23),
-                      Color(0xFF1A1A2E),
-                      Color(0xFF16213E),
-                    ],
-                  )
-                : const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFE3F2FD),
-                      Color(0xFFBBDEFB),
-                      Color(0xFF90CAF9),
-                    ],
-                  ),
+                ? AppTheme.backgroundGradientDark
+                : AppTheme.backgroundGradientLight,
           ),
-          child: Column(
+          child: Stack(
             children: [
-              // Container com a cor do header que fica atrás da barra de status
-              Container(
-                height: MediaQuery.of(context).padding.top,
-                color: const Color(0xFF116AD5),
-              ),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: _refreshData,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.topCenter,
-                          children: [
-                            Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: 280.0,
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Color(0xFF116AD5),
-                                        Color(0xFF116AD5),
-                                        Color(0xFF004BA7)
-                                      ],
-                                      stops: [0.0, 0.5, 1.0],
-                                    ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(20),
-                                      bottomRight: Radius.circular(20),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0x29000000),
-                                        offset: Offset(0, 3),
-                                        blurRadius: 6,
-                                      ),
-                                    ],
-                                  ),
-                                  padding: const EdgeInsets.only(
-                                      top: 10, left: 24, right: 24, bottom: 30),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const ProfileScreen(),
-                                                ),
-                                              );
-                                            },
-                                            child: Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.2),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                Icons.person,
-                                                color: Colors.white,
-                                                size: 24,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Consumer<AuthProvider>(
-                                        builder:
-                                            (context, authProvider, child) {
-                                          final user = authProvider.currentUser;
-                                          final firstName =
-                                              user?.name?.split(' ').first ??
-                                                  'Motorista';
-
-                                          return Text(
-                                            'Olá, $firstName!',
-                                            style: const TextStyle(
-                                              fontSize: 28,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(height: 12),
-                                      const Text(
-                                        'Realize aqui todos os registros ao longo do percurso.',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 130),
-                              ],
-                            ),
-                            Positioned(
-                              top: 180.0,
-                              left: 24,
-                              right: 24,
-                              child: _buildSliderCard(),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Registros',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          height:
-                              120, // Voltou para 120 para acomodar melhor os ícones
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding:
-                                const EdgeInsets.only(left: 24.0, right: 24.0),
-                            children: [
-                              ActionCard(
-                                icon: Icons.local_gas_station,
-                                title: 'Registrar\nAbastecimento',
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FuelRegistrationScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                isDark: isDark,
-                              ),
-                              ActionCard(
-                                icon: Icons.checklist,
-                                title: 'Realizar\nVistoria',
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          InspectionSelectionScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
-                                    ),
-                                  ).then((value) {
-                                    _refreshData();
-
-                                    if (value != null &&
-                                        value is InspectionStatus) {
-                                      setState(() {
-                                        inspectionStatus = value;
-                                      });
-                                    }
-                                  });
-                                },
-                                hasNotification: !inspectionStatus
-                                        .departureInspectionCompleted ||
-                                    !inspectionStatus
-                                        .arrivalInspectionCompleted,
-                                isCompleted: inspectionStatus
-                                        .departureInspectionCompleted &&
-                                    inspectionStatus.arrivalInspectionCompleted,
-                                isDark: isDark,
-                              ),
-                              ActionCard(
-                                icon: Icons.build,
-                                title: 'Solicitar\nManutenção',
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          MaintenanceRequestScreen(
-                                        vehicleId: _currentVehicle.id,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                isDark: isDark,
-                              ),
-                              ActionCard(
-                                icon: Icons.cancel,
-                                title: 'Finalizar\nPercurso',
-                                onTap: () {
-                                  if (!inspectionStatus
-                                          .departureInspectionCompleted ||
-                                      !inspectionStatus
-                                          .arrivalInspectionCompleted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'É necessário realizar ambas as vistorias antes de finalizar o percurso'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                  _showFinishJourneyDialog();
-                                },
-                                iconColor: Colors.red,
-                                iconBgColor: Colors.red.withOpacity(0.1),
-                                isDisabled: !inspectionStatus
-                                        .departureInspectionCompleted ||
-                                    !inspectionStatus
-                                        .arrivalInspectionCompleted,
-                                isDark: isDark,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 24.0, right: 24.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Lembretes',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        if (_currentVehicle.maintenanceIssues != null &&
-                            _currentVehicle.maintenanceIssues!.isNotEmpty)
-                          ..._currentVehicle.maintenanceIssues!
-                              .map((issue) => _buildReminderCard(
-                                    title: issue,
-                                    onTap: () {},
-                                    isDark: isDark,
-                                  ))
-                              .toList()
-                        else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0, vertical: 12.0),
-                            child: Center(
-                              child: Text(
-                                'Nenhum lembrete para este veículo',
-                                style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.6)
-                                      : Colors.black.withOpacity(0.6),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        const SizedBox(height: 24),
-                      ],
+              // Conteúdo principal
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: CustomScrollView(
+                  slivers: [
+                    // Header com saudação
+                    SliverToBoxAdapter(
+                      child: _buildHeader(isDark),
                     ),
-                  ),
+
+                    // Cards de informações compactos
+                    SliverToBoxAdapter(
+                      child: _buildCompactInfoCards(isDark),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: AppTheme.spacing24),
+                    ),
+                    // Ações principais
+                    SliverToBoxAdapter(
+                      child: _buildQuickActions(isDark),
+                    ),
+
+                    // Notificações/Lembretes
+                    SliverToBoxAdapter(
+                      child: _buildNotifications(isDark),
+                    ),
+
+                    // Espaço para a navbar fixa
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: 30),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Navbar fixa na parte inferior
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: _buildBottomNavBar(isDark),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(bool isDark) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + AppTheme.spacing20,
+        left: AppTheme.spacing24,
+        right: AppTheme.spacing24,
+        bottom: AppTheme.spacing32,
+      ),
+      child: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          final user = authProvider.currentUser;
+          final firstName = user?.name?.split(' ').first ?? 'Motorista';
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Olá, $firstName',
+                style: AppTheme.displayMedium.copyWith(
+                  color: isDark ? AppTheme.darkText : AppTheme.lightText,
                 ),
               ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  // Widget do slider de cards
-  Widget _buildSliderCard() {
+  Widget _buildCompactInfoCards(bool isDark) {
     return Container(
-      height: 260, // aumentado para evitar overflow
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        // Removido o sombreamento
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
-                },
-                children: [
-                  SingleChildScrollView(
-                      child: _buildJourneyCard()), // evita overflow
-                  SingleChildScrollView(
-                      child: _buildVehicleDataCard()), // evita overflow
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildPageIndicator(0),
-                const SizedBox(width: 8),
-                _buildPageIndicator(1),
-              ],
-            ),
-            const SizedBox(height: 15),
-          ],
-        ),
+      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+      child: Column(
+        children: [
+          // Card do Percurso
+          _buildCompactJourneyCard(isDark),
+          const SizedBox(height: AppTheme.spacing16),
+          // Card do Veículo
+          _buildCompactVehicleCard(isDark),
+        ],
       ),
     );
   }
 
-  // Indicador de página
-  Widget _buildPageIndicator(int index) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: _currentPage == index ? 24 : 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: _currentPage == index
-            ? const Color(0xFF0066CC)
-            : Colors.grey.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(4),
-      ),
-    );
-  }
-
-  // Card de dados do veículo (segundo slide)
-  Widget _buildVehicleDataCard() {
-    return Card(
-      color: Theme.of(context).cardColor,
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0), // igual ao _buildJourneyCard
-        child: SizedBox(
-          height: 187, // altura aproximada do conteúdo do card de percurso
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  // Modelo do veículo - pode ser truncado se necessário
-                  Expanded(
-                    child: Text(
-                      _currentVehicle.model,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Placa - sempre visível completamente
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Placa: ',
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0066CC).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: const Color(0xFF0066CC).withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          _currentVehicle.licensePlate,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0066CC).withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.bar_chart,
-                          color: Color(0xFF0066CC),
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Consumer2<JourneyProvider, VehicleProvider>(
-                        builder:
-                            (context, journeyProvider, vehicleProvider, child) {
-                          final journey = journeyProvider.activeJourney;
-                          final currentVehicle =
-                              vehicleProvider.currentVehicle ?? _currentVehicle;
-                          final odometerDifference = journey != null
-                              ? (currentVehicle.odometer ?? 0) -
-                                  (journey.initialOdometer ?? 0)
-                              : 0;
-
-                          return Text(
-                            '${odometerDifference} Km',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Color(0xFF0066CC),
-                            ),
-                          );
-                        },
-                      ),
-                      Text(
-                        'Percorridos',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: 1,
-                    height: 80,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF3A3A5C)
-                        : Colors.grey[300],
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0066CC).withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.local_gas_station,
-                          color: Color(0xFF0066CC),
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Consumer2<JourneyProvider, FuelProvider>(
-                        builder:
-                            (context, journeyProvider, fuelProvider, child) {
-                          final journey = journeyProvider.activeJourney;
-                          double totalLiters = 0.0;
-
-                          if (journey != null) {
-                            totalLiters = fuelProvider.totalLitersForJourney;
-                          }
-
-                          return Text(
-                            '${totalLiters.toStringAsFixed(2)} L',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Color(0xFF0066CC),
-                            ),
-                          );
-                        },
-                      ),
-                      Text(
-                        'Abastecidos',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Card de percurso (primeiro slide) - redesenhado seguindo o padrão do JourneyCard
-  // Card de percurso (primeiro slide) - otimizado para caber no espaço disponível
-  Widget _buildJourneyCard() {
+  Widget _buildCompactJourneyCard(bool isDark) {
     return Consumer<JourneyProvider>(
       builder: (context, journeyProvider, child) {
         final journey = journeyProvider.activeJourney;
 
-        if (journey == null) {
-          return Card(
-            color: Theme.of(context).cardColor,
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.route_outlined,
-                    size: 40,
-                    color: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.color
-                        ?.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Nenhum percurso ativo no momento',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).textTheme.bodySmall?.color,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        return Card(
-          color: Theme.of(context).cardColor,
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Origem e Destino com ícone de rota - layout compacto
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        return AppTheme.modernCard(
+          isDark: isDark,
+          padding: EdgeInsets.zero,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _toggleJourneyExpansion,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+              child: Padding(
+                padding: const EdgeInsets.all(AppTheme.spacing20),
+                child: Column(
                   children: [
-                    // Ícone de rota
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0066CC).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.route,
-                        color: Color(0xFF0066CC),
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Locais de partida e destino - layout vertical compacto
-                    Expanded(
-                      child: Column(
-                        children: [
-                          // Partida
-                          Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF00C853),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Partida',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.color,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Text(
-                                      journey.origin ?? 'Não informado',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF00C853),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          // Destino
-                          Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFF5722),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Destino',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.color,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Text(
-                                      journey.destination ?? 'Não informado',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // Informações do percurso - layout horizontal compacto
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF2A2A3A)
-                        : const Color(0xFFF8F9FA),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      // Odômetro inicial
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0066CC).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(
-                                Icons.speed,
-                                color: Color(0xFF0066CC),
-                                size: 12,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Odômetro atual',
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.color,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    // Odômetro atual: finalOdometer, ou odômetro do veículo se não houver
-                                    '${journey.finalOdometer ?? _currentVehicle.odometer ?? 0} km',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 24,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF3A3A5C)
-                            : Colors.grey[300],
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                      ),
-                      // Horário de saída
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0066CC).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(
-                                Icons.timer,
-                                color: Color(0xFF0066CC),
-                                size: 12,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Duração',
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.color,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    // Duração do percurso abreviada (d, h, m)
-                                    (() {
-                                      final now = DateTime.now();
-                                      final start = journey.departureTime;
-                                      final end = journey.arrivalTime ?? now;
-                                      final duration = end.difference(start);
-                                      final days = duration.inDays;
-                                      final hours = duration.inHours % 24;
-                                      final minutes = duration.inMinutes % 60;
-                                      final parts = <String>[];
-                                      if (days > 0) parts.add('${days}d');
-                                      if (hours > 0) parts.add('${hours}h');
-                                      if (minutes > 0) parts.add('${minutes}m');
-                                      if (parts.isEmpty) return '0m';
-                                      return parts.join(' ');
-                                    })(),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Botão Percurso - compacto
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (journey == null) {
-                        return;
-                      }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MapScreen(journey: journey),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0066CC),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    // Header sempre visível
+                    Row(
                       children: [
-                        Icon(Icons.map_outlined, size: 16),
-                        SizedBox(width: 6),
-                        Text(
-                          'Percurso',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                        Container(
+                          padding: const EdgeInsets.all(AppTheme.spacing8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppTheme.radiusSmall),
+                          ),
+                          child: const Icon(
+                            Icons.route,
+                            color: AppTheme.primaryColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: AppTheme.spacing12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                journey == null
+                                    ? 'Nenhum percurso ativo'
+                                    : 'Percurso Ativo',
+                                style: AppTheme.titleMedium.copyWith(
+                                  color: isDark
+                                      ? AppTheme.darkText
+                                      : AppTheme.lightText,
+                                ),
+                              ),
+                              if (journey != null) ...[
+                                const SizedBox(height: AppTheme.spacing4),
+                                Text(
+                                  '${journey.origin} → ${journey.destination}',
+                                  style: AppTheme.bodySmall.copyWith(
+                                    color: isDark
+                                        ? AppTheme.darkTextSecondary
+                                        : AppTheme.lightTextSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        AnimatedRotation(
+                          turns: _isJourneyExpanded ? 0.5 : 0,
+                          duration: const Duration(milliseconds: 300),
+                          child: Icon(
+                            Icons.expand_more,
+                            color: isDark
+                                ? AppTheme.darkTextSecondary
+                                : AppTheme.lightTextSecondary,
                           ),
                         ),
                       ],
                     ),
-                  ),
+
+                    // Conteúdo expandido
+                    AnimatedBuilder(
+                      animation: _journeyAnimation,
+                      builder: (context, child) {
+                        return SizeTransition(
+                          sizeFactor: _journeyAnimation,
+                          child: journey == null
+                              ? _buildNoJourneyExpandedContent(isDark)
+                              : _buildJourneyExpandedContent(journey, isDark),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -1131,9 +436,823 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     );
   }
 
-  // Método para mostrar o diálogo de finalização de percurso
+  Widget _buildNoJourneyExpandedContent(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppTheme.spacing16),
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            ),
+            child: const Icon(
+              Icons.route_outlined,
+              size: 24,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing12),
+          Text(
+            'Inicie um novo percurso para começar',
+            style: AppTheme.bodyMedium.copyWith(
+              color: isDark
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJourneyExpandedContent(Journey journey, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppTheme.spacing16),
+      child: Column(
+        children: [
+          // Estatísticas
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.timer_outlined,
+                  label: 'Duração',
+                  value: _formatDuration(journey),
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacing12),
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.speed,
+                  label: 'Odômetro',
+                  value:
+                      '${journey.finalOdometer ?? _currentVehicle.odometer ?? 0} km',
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppTheme.spacing16),
+
+          // Botão do mapa
+          SizedBox(
+            width: double.infinity,
+            child: AppTheme.actionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapScreen(journey: journey),
+                  ),
+                );
+              },
+              isPrimary: true,
+              isDark: isDark,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.map_outlined, size: 18),
+                  SizedBox(width: AppTheme.spacing8),
+                  Text('Ver no Mapa'),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactVehicleCard(bool isDark) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: EdgeInsets.zero,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _toggleVehicleExpansion,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacing20),
+            child: Column(
+              children: [
+                // Header sempre visível
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacing8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusSmall),
+                      ),
+                      child: const Icon(
+                        Icons.directions_car,
+                        color: AppTheme.primaryColor,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: AppTheme.spacing12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _currentVehicle.model,
+                            style: AppTheme.titleMedium.copyWith(
+                              color: isDark
+                                  ? AppTheme.darkText
+                                  : AppTheme.lightText,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacing4),
+                          Text(
+                            'Placa: ${_currentVehicle.licensePlate}',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: isDark
+                                  ? AppTheme.darkTextSecondary
+                                  : AppTheme.lightTextSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: _isVehicleExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Icon(
+                        Icons.expand_more,
+                        color: isDark
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Conteúdo expandido
+                AnimatedBuilder(
+                  animation: _vehicleAnimation,
+                  builder: (context, child) {
+                    return SizeTransition(
+                      sizeFactor: _vehicleAnimation,
+                      child: _buildVehicleExpandedContent(isDark),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleExpandedContent(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppTheme.spacing16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Consumer2<JourneyProvider, VehicleProvider>(
+              builder: (context, journeyProvider, vehicleProvider, child) {
+                final journey = journeyProvider.activeJourney;
+                final currentVehicle =
+                    vehicleProvider.currentVehicle ?? _currentVehicle;
+                final odometerDifference = journey != null
+                    ? (currentVehicle.odometer ?? 0) -
+                        (journey.initialOdometer ?? 0)
+                    : 0;
+
+                return _buildStatItem(
+                  icon: Icons.straighten,
+                  label: 'Percorridos',
+                  value: '$odometerDifference km',
+                  isDark: isDark,
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacing12),
+          Expanded(
+            child: Consumer2<JourneyProvider, FuelProvider>(
+              builder: (context, journeyProvider, fuelProvider, child) {
+                final journey = journeyProvider.activeJourney;
+                double totalLiters = 0.0;
+
+                if (journey != null) {
+                  totalLiters = fuelProvider.totalLitersForJourney;
+                }
+
+                return _buildStatItem(
+                  icon: Icons.local_gas_station,
+                  label: 'Abastecidos',
+                  value: '${totalLiters.toStringAsFixed(1)}L',
+                  isDark: isDark,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacing12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppTheme.darkSurface.withOpacity(0.5)
+            : AppTheme.lightSurface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: AppTheme.primaryColor,
+            size: 18,
+          ),
+          const SizedBox(height: AppTheme.spacing4),
+          Text(
+            value,
+            style: AppTheme.labelMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text(
+            label,
+            style: AppTheme.bodySmall.copyWith(
+              color: isDark
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(Journey journey) {
+    final now = DateTime.now();
+    final start = journey.departureTime;
+    final end = journey.arrivalTime ?? now;
+    final duration = end.difference(start);
+
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  Widget _buildQuickActions(bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Ações Rápidas',
+            style: AppTheme.headlineMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+          // Grid de ações
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            crossAxisCount: 2,
+            crossAxisSpacing: AppTheme.spacing16,
+            mainAxisSpacing: AppTheme.spacing16,
+            childAspectRatio: 1.2,
+            children: [
+              _buildActionCard(
+                icon: Icons.local_gas_station,
+                title: 'Abastecimento',
+                subtitle: 'Registrar combustível',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FuelRegistrationScreen(
+                        vehicleId: _currentVehicle.id,
+                      ),
+                    ),
+                  );
+                },
+                isDark: isDark,
+              ),
+              _buildActionCard(
+                icon: Icons.checklist,
+                title: 'Vistoria',
+                subtitle: 'Realizar inspeção',
+                hasNotification:
+                    !inspectionStatus.departureInspectionCompleted ||
+                        !inspectionStatus.arrivalInspectionCompleted,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InspectionSelectionScreen(
+                        vehicleId: _currentVehicle.id,
+                      ),
+                    ),
+                  ).then((value) {
+                    _refreshData();
+                    if (value != null && value is InspectionStatus) {
+                      setState(() {
+                        inspectionStatus = value;
+                      });
+                    }
+                  });
+                },
+                isDark: isDark,
+              ),
+              _buildActionCard(
+                icon: Icons.build,
+                title: 'Manutenção',
+                subtitle: 'Solicitar reparo',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MaintenanceRequestScreen(
+                        vehicleId: _currentVehicle.id,
+                      ),
+                    ),
+                  );
+                },
+                isDark: isDark,
+              ),
+              _buildActionCard(
+                icon: Icons.stop_circle,
+                title: 'Finalizar',
+                subtitle: 'Encerrar percurso',
+                isDestructive: true,
+                isDisabled: !inspectionStatus.departureInspectionCompleted ||
+                    !inspectionStatus.arrivalInspectionCompleted,
+                onTap: () {
+                  if (!inspectionStatus.departureInspectionCompleted ||
+                      !inspectionStatus.arrivalInspectionCompleted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Complete as vistorias antes de finalizar'),
+                        backgroundColor: AppTheme.warningColor,
+                      ),
+                    );
+                    return;
+                  }
+                  _showFinishJourneyDialog();
+                },
+                isDark: isDark,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    required bool isDark,
+    bool hasNotification = false,
+    bool isDestructive = false,
+    bool isDisabled = false,
+  }) {
+    Color iconColor =
+        isDestructive ? AppTheme.errorColor : AppTheme.primaryColor;
+
+    if (isDisabled) {
+      iconColor =
+          isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
+    }
+
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: EdgeInsets.zero,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isDisabled ? null : onTap,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacing16),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacing12),
+                      decoration: BoxDecoration(
+                        color: iconColor.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: iconColor,
+                        size: 24,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      title,
+                      style: AppTheme.titleMedium.copyWith(
+                        color: isDisabled
+                            ? (isDark
+                                ? AppTheme.darkTextSecondary
+                                : AppTheme.lightTextSecondary)
+                            : (isDark ? AppTheme.darkText : AppTheme.lightText),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacing4),
+                    Text(
+                      subtitle,
+                      style: AppTheme.bodySmall.copyWith(
+                        color: isDark
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Indicador de notificação
+                if (hasNotification)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.errorColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotifications(bool isDark) {
+    // Simular notificações com prioridades
+    final notifications = _getNotificationsByPriority();
+
+    return Container(
+      width: double.infinity,
+      constraints:
+          const BoxConstraints(maxWidth: 800), // Max width para computadores
+      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Notificações',
+            style: AppTheme.headlineMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+          if (notifications.isEmpty)
+            SizedBox(
+              width: double.infinity,
+              child: AppTheme.modernCard(
+                isDark: isDark,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppTheme.successColor.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                      ),
+                      child: const Icon(
+                        Icons.check_circle_outline,
+                        color: AppTheme.successColor,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacing12),
+                    Text(
+                      'Tudo em ordem!',
+                      style: AppTheme.titleMedium.copyWith(
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacing4),
+                    Text(
+                      'Nenhuma notificação no momento',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: isDark
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ...notifications
+                .map((notification) => Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: AppTheme.spacing8),
+                      child: _buildNotificationCard(
+                        title: notification['title'],
+                        priority: notification['priority'],
+                        isDark: isDark,
+                      ),
+                    ))
+                .toList(),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _getNotificationsByPriority() {
+    List<Map<String, dynamic>> notifications = [];
+
+    // Adicionar notificações baseadas no estado atual
+    if (_currentVehicle.maintenanceIssues != null &&
+        _currentVehicle.maintenanceIssues!.isNotEmpty) {
+      for (String issue in _currentVehicle.maintenanceIssues!) {
+        notifications.add({
+          'title': issue,
+          'priority': 'high', // Manutenção sempre alta prioridade
+        });
+      }
+    }
+
+    // Verificar vistorias pendentes
+    if (!inspectionStatus.departureInspectionCompleted) {
+      notifications.add({
+        'title': 'Vistoria de saída pendente',
+        'priority': 'medium',
+      });
+    }
+
+    if (!inspectionStatus.arrivalInspectionCompleted) {
+      notifications.add({
+        'title': 'Vistoria de chegada pendente',
+        'priority': 'low',
+      });
+    }
+
+    // Ordenar por prioridade: high -> medium -> low
+    notifications.sort((a, b) {
+      const priorityOrder = {'high': 0, 'medium': 1, 'low': 2};
+      return priorityOrder[a['priority']]!
+          .compareTo(priorityOrder[b['priority']]!);
+    });
+
+    return notifications;
+  }
+
+  Widget _buildNotificationCard({
+    required String title,
+    required String priority,
+    required bool isDark,
+  }) {
+    IconData icon;
+    Color color;
+
+    switch (priority) {
+      case 'high':
+        icon = Icons.error_rounded;
+        color = AppTheme.errorColor;
+        break;
+      case 'medium':
+        icon = Icons.warning_rounded;
+        color = AppTheme.warningColor;
+        break;
+      default:
+        icon = Icons.info_rounded;
+        color = AppTheme.primaryColor;
+    }
+
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacing8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacing12),
+          Expanded(
+            child: Text(
+              title,
+              style: AppTheme.bodyMedium.copyWith(
+                color: isDark ? AppTheme.darkText : AppTheme.lightText,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: isDark
+                ? AppTheme.darkTextSecondary
+                : AppTheme.lightTextSecondary,
+            size: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNavBar(bool isDark) {
+    return AppTheme.bottomNavBar(
+      isDark: isDark,
+      child: Container(
+        height: 106,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacing16,
+          vertical: AppTheme.spacing16,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(
+              icon: Icons.home_rounded,
+              label: 'Início',
+              isActive: true,
+              onTap: () {},
+              isDark: isDark,
+            ),
+            _buildNavItem(
+              icon: Icons.map_outlined,
+              label: 'Mapa',
+              onTap: () {
+                final journeyProvider =
+                    Provider.of<JourneyProvider>(context, listen: false);
+                final journey = journeyProvider.activeJourney;
+                if (journey != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MapScreen(journey: journey),
+                    ),
+                  );
+                }
+              },
+              isDark: isDark,
+            ),
+            _buildNavItem(
+              icon: Icons.sync,
+              label: 'Sincronizar',
+              hasNotification: _hasPendingSync,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const OfflineSyncScreen(),
+                  ),
+                ).then((_) => _checkPendingSync());
+              },
+              isDark: isDark,
+            ),
+            _buildNavItem(
+              icon: Icons.person_rounded,
+              label: 'Perfil',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
+                  ),
+                );
+              },
+              isDark: isDark,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required bool isDark,
+    bool isActive = false,
+    bool hasNotification = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 80,
+        height: 66,
+        decoration: BoxDecoration(
+          color: isActive
+              ? AppTheme.primaryColor.withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    color: isActive
+                        ? AppTheme.primaryColor
+                        : (isDark
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary),
+                    size: 24,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    label,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: isActive
+                          ? AppTheme.primaryColor
+                          : (isDark
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.lightTextSecondary),
+                      fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            // Indicador de notificação
+            if (hasNotification)
+              Positioned(
+                top: -2,
+                right: -2,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: AppTheme.errorColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showFinishJourneyDialog() {
-    // Obter dados do percurso e veículo
     final journeyProvider =
         Provider.of<JourneyProvider>(context, listen: false);
     final vehicleProvider =
@@ -1141,7 +1260,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     final journey = journeyProvider.activeJourney;
     final currentVehicle = vehicleProvider.currentVehicle ?? _currentVehicle;
 
-    // Calcular duração do percurso
     String duration = '0:00 h';
     if (journey?.departureTime != null) {
       final startTime = journey!.departureTime!;
@@ -1153,7 +1271,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
       duration = '${hours}:${minutes.toString().padLeft(2, '0')} h';
     }
 
-    // Calcular distância percorrida
     final odometerDifference = journey != null
         ? (currentVehicle.odometer ?? 0) - (journey.initialOdometer ?? 0)
         : 0;
@@ -1169,20 +1286,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
             duration: duration,
             distance: distance,
             onFinish: (int odometer) async {
-              // Obter instância do InspectionService para limpar vistorias
               final inspectionService = InspectionService();
-
-              // Finalizar o percurso usando o JourneyProvider
-              final journeyProvider =
-                  Provider.of<JourneyProvider>(context, listen: false);
               final result = await journeyProvider.finishJourney(odometer);
 
               if (result == true) {
-                // Limpar as vistorias salvas localmente
                 await inspectionService
                     .clearInspectionStatus(_currentVehicle.id);
 
-                // Limpar o total de litros abastecidos do percurso ativo
                 final fuelProvider =
                     Provider.of<FuelProvider>(context, listen: false);
                 final journey = journeyProvider.activeJourney;
@@ -1190,7 +1300,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                   await fuelProvider.clearTotalLitersForJourney(journey.id);
                 }
 
-                // Resetar o status das vistorias na tela
                 setState(() {
                   inspectionStatus = InspectionStatus();
                 });
@@ -1198,14 +1307,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Percurso finalizado com sucesso!'),
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppTheme.successColor,
                   ),
                 );
 
-                // Fechar o modal antes de redirecionar
                 Navigator.pop(context);
 
-                // Redirecionar para a tela de veículos disponíveis após fechar o modal
                 Future.delayed(const Duration(milliseconds: 100), () {
                   Navigator.pushReplacement(
                     context,
@@ -1217,8 +1324,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Odometro final inferior ao atual.'),
-                    backgroundColor: Colors.red,
+                    content: Text('Odômetro final inferior ao atual.'),
+                    backgroundColor: AppTheme.errorColor,
                   ),
                 );
               }
@@ -1226,96 +1333,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           ),
         );
       },
-    );
-  }
-
-  Widget _buildReminderCard({
-    required String title,
-    required VoidCallback onTap,
-    required bool isDark,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 24),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF1E1E2E).withOpacity(0.9)
-              : Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.1),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 14.0),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            const Color(0xFF0066CC).withOpacity(0.2),
-                            const Color(0xFF0066CC).withOpacity(0.1),
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.notifications_rounded,
-                        color: Color(0xFF0066CC),
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 16,
-                      color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

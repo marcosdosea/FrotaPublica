@@ -8,6 +8,7 @@ import '../screens/driver_home_screen.dart';
 import '../services/biometric_service.dart';
 import '../services/secure_storage_service.dart';
 import '../utils/formatters.dart';
+import '../utils/app_theme.dart';
 import '../widgets/keyboard_aware_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +18,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   bool _obscureText = true;
   bool _rememberMe = false;
   final _cpfController = TextEditingController();
@@ -26,20 +28,59 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _biometricEnabled = false;
   bool _biometricSupported = false;
 
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
     _initializeLogin();
+  }
+
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _fadeController.forward();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _slideController.forward();
+    });
   }
 
   @override
   void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
     _cpfController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  // Função utilitária para formatar CPF (xxx.xxx.xxx-xx)
   String _formatCpf(String cpf) {
     final digitsOnly = cpf.replaceAll(RegExp(r'[^\d]'), '');
     if (digitsOnly.length != 11) return cpf;
@@ -60,18 +101,16 @@ class _LoginScreenState extends State<LoginScreen> {
           _biometricEnabled = enabled;
         });
 
-        // Carregar credenciais salvas
         final savedCredentials =
             await SecureStorageService.getSavedCredentials();
         if (savedCredentials['username'] != null) {
           _cpfController.text = _formatCpf(savedCredentials['username']!);
           setState(() {
-            _rememberMe = false; // Não marcar lembrar senha automaticamente
+            _rememberMe = false;
           });
         } else if (authProvider.lastLoggedCpf != null) {
           _cpfController.text = _formatCpf(authProvider.lastLoggedCpf!);
         }
-        // Não fazer login automático ao inicializar
       }
     } catch (e) {
       print('Erro na inicialização do login: $e');
@@ -143,94 +182,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Widget _buildModernTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required String? Function(String?) validator,
-    bool obscureText = false,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    TextInputAction? textInputAction,
-    VoidCallback? onFieldSubmitted,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        inputFormatters: inputFormatters,
-        textInputAction: textInputAction,
-        onFieldSubmitted:
-            onFieldSubmitted != null ? (_) => onFieldSubmitted() : null,
-        validator: validator,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : Colors.black87,
-        ),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color:
-                isDark ? Colors.white.withOpacity(0.5) : Colors.grey.shade500,
-            fontWeight: FontWeight.w400,
-          ),
-          suffixIcon: suffixIcon,
-          filled: true,
-          fillColor: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.white.withOpacity(0.9),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: isDark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.2),
-              width: 1,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Color(0xFF116AD5),
-              width: 2,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Colors.red,
-              width: 1,
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -241,398 +192,416 @@ class _LoginScreenState extends State<LoginScreen> {
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor:
-            isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+        systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness:
             isDark ? Brightness.light : Brightness.dark,
       ),
     );
 
     return Scaffold(
+      backgroundColor:
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       extendBodyBehindAppBar: true,
-      extendBody: true,
       body: Container(
         height: screenHeight,
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    const Color(0xFF0F0F23),
-                    const Color(0xFF1A1A2E),
-                    const Color(0xFF16213E),
-                  ]
-                : [
-                    const Color(0xFFE3F2FD),
-                    const Color(0xFFBBDEFB),
-                    const Color(0xFF90CAF9),
-                  ],
-          ),
+          gradient: isDark
+              ? AppTheme.backgroundGradientDark
+              : AppTheme.backgroundGradientLight,
         ),
         child: SafeArea(
           child: KeyboardAwareWidget(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppTheme.spacing32),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: screenHeight -
                       MediaQuery.of(context).padding.top -
                       MediaQuery.of(context).padding.bottom,
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 40),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: AppTheme.spacing48),
 
-                      // Logo simples
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF116AD5).withOpacity(0.1),
-                          border: Border.all(
-                            color: const Color(0xFF116AD5).withOpacity(0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/img/logo.png',
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-
-                      // Título
-                      Text(
-                        'Bem vindo!',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF116AD5),
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Subtítulo
-                      Text(
-                        'Faça login para acessar a sua conta',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                          color: isDark
-                              ? Colors.white.withOpacity(0.7)
-                              : Colors.black.withOpacity(0.6),
-                        ),
-                      ),
-                      const SizedBox(height: 50),
-
-                      // Campo CPF
-                      _buildModernTextField(
-                        controller: _cpfController,
-                        hintText: 'CPF',
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.next,
-                        inputFormatters: [CpfInputFormatter()],
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, informe seu CPF';
-                          }
-                          final cpfRegex =
-                              RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
-                          if (!cpfRegex.hasMatch(value)) {
-                            return 'Digite um CPF válido';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Campo Senha
-                      _buildModernTextField(
-                        controller: _passwordController,
-                        hintText: 'Senha',
-                        obscureText: _obscureText,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: () {
-                          FocusScope.of(context).unfocus();
-                        },
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureText
-                                ? Icons.visibility_off_rounded
-                                : Icons.visibility_rounded,
-                            color: isDark
-                                ? Colors.white.withOpacity(0.6)
-                                : Colors.grey.shade600,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, informe sua senha';
-                          }
-                          return null;
-                        },
-                      ),
-
-                      // Checkbox "Lembrar senha"
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Checkbox(
-                                value: _rememberMe,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _rememberMe = value ?? false;
-                                  });
-                                },
-                                activeColor: const Color(0xFF116AD5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Lembrar senha',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.8)
-                                      : Colors.black.withOpacity(0.7),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Mensagem de erro
-                      if (authProvider.error != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
+                          // Logo
+                          Container(
+                            width: 120,
+                            height: 120,
                             decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusXLarge),
                               border: Border.all(
-                                color: Colors.red.withOpacity(0.3),
+                                color: AppTheme.primaryColor.withOpacity(0.2),
+                                width: 1,
                               ),
                             ),
+                            child: Center(
+                              child: Image.asset(
+                                'assets/icon/icon.png',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacing48),
+
+                          // Título
+                          Text(
+                            'Bem-vindo',
+                            style: AppTheme.displayLarge.copyWith(
+                              color: isDark
+                                  ? AppTheme.darkText
+                                  : AppTheme.lightText,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacing8),
+
+                          // Subtítulo
+                          Text(
+                            'Faça login para acessar sua conta',
+                            style: AppTheme.bodyLarge.copyWith(
+                              color: isDark
+                                  ? AppTheme.darkTextSecondary
+                                  : AppTheme.lightTextSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppTheme.spacing48),
+
+                          // Campo CPF
+                          _buildTextField(
+                            controller: _cpfController,
+                            hintText: 'CPF',
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            inputFormatters: [CpfInputFormatter()],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, informe seu CPF';
+                              }
+                              final cpfRegex =
+                                  RegExp(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$');
+                              if (!cpfRegex.hasMatch(value)) {
+                                return 'Digite um CPF válido';
+                              }
+                              return null;
+                            },
+                            isDark: isDark,
+                          ),
+                          const SizedBox(height: AppTheme.spacing20),
+
+                          // Campo Senha
+                          _buildTextField(
+                            controller: _passwordController,
+                            hintText: 'Senha',
+                            obscureText: _obscureText,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: () {
+                              FocusScope.of(context).unfocus();
+                            },
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText
+                                    ? Icons.visibility_off_rounded
+                                    : Icons.visibility_rounded,
+                                color: isDark
+                                    ? AppTheme.darkTextSecondary
+                                    : AppTheme.lightTextSecondary,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText = !_obscureText;
+                                });
+                              },
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, informe sua senha';
+                              }
+                              return null;
+                            },
+                            isDark: isDark,
+                          ),
+
+                          // Checkbox "Lembrar senha"
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: AppTheme.spacing20),
                             child: Row(
                               children: [
-                                const Icon(
-                                  Icons.error_outline_rounded,
-                                  color: Colors.red,
-                                  size: 20,
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Checkbox(
+                                    value: _rememberMe,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _rememberMe = value ?? false;
+                                      });
+                                    },
+                                    activeColor: AppTheme.primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          AppTheme.radiusSmall),
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: AppTheme.spacing12),
                                 Expanded(
                                   child: Text(
-                                    authProvider.error!,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+                                    'Lembrar senha',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: isDark
+                                          ? AppTheme.darkText
+                                          : AppTheme.lightText,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
 
-                      // Link "Esqueci a senha"
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Esqueci a senha',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF116AD5),
-                              decoration: TextDecoration.underline,
-                              decorationColor: const Color(0xFF116AD5),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-
-                      // Botão de login
-                      Container(
-                        width: double.infinity,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFF116AD5),
-                              Color(0xFF0066CC),
-                              Color(0xFF004BA7),
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF116AD5).withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: authProvider.isLoading ? null : _login,
-                            child: Container(
+                          // Mensagem de erro
+                          if (authProvider.error != null)
+                            Container(
+                              margin: const EdgeInsets.only(
+                                  top: AppTheme.spacing20),
+                              padding: const EdgeInsets.all(AppTheme.spacing16),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
+                                color: AppTheme.errorColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusMedium),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: AppTheme.errorColor.withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
-                              child: Center(
-                                child: authProvider.isLoading
-                                    ? const SizedBox(
-                                        width: 24,
-                                        height: 24,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const Text(
-                                        'Entrar',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                          letterSpacing: 0.5,
-                                        ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline_rounded,
+                                    color: AppTheme.errorColor,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: AppTheme.spacing8),
+                                  Expanded(
+                                    child: Text(
+                                      authProvider.error!,
+                                      style: AppTheme.bodyMedium.copyWith(
+                                        color: AppTheme.errorColor,
                                       ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ),
-                      ),
 
-                      // Seção biometria
-                      if (_biometricSupported && _biometricEnabled) ...[
-                        const SizedBox(height: 30),
-
-                        // Divisor "ou"
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.2)
-                                    : Colors.grey.withOpacity(0.3),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                          // Link "Esqueci a senha"
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {},
                               child: Text(
-                                'ou',
-                                style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.6)
-                                      : Colors.grey.shade600,
-                                  fontSize: 14,
+                                'Esqueci a senha',
+                                style: AppTheme.bodyMedium.copyWith(
+                                  color: AppTheme.primaryColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
-                            Expanded(
+                          ),
+                          const SizedBox(height: AppTheme.spacing32),
+
+                          // Botão de login
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: AppTheme.actionButton(
+                              onPressed:
+                                  authProvider.isLoading ? () {} : _login,
+                              isPrimary: true,
+                              isDark: isDark,
+                              child: authProvider.isLoading
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Entrar',
+                                      style: AppTheme.titleMedium.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                            ),
+                          ),
+
+                          // Seção biometria
+                          if (_biometricSupported && _biometricEnabled) ...[
+                            const SizedBox(height: AppTheme.spacing40),
+
+                            // Divisor "ou"
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: isDark
+                                        ? AppTheme.darkBorder
+                                        : AppTheme.lightBorder,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacing16),
+                                  child: Text(
+                                    'ou',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: isDark
+                                          ? AppTheme.darkTextSecondary
+                                          : AppTheme.lightTextSecondary,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: isDark
+                                        ? AppTheme.darkBorder
+                                        : AppTheme.lightBorder,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppTheme.spacing32),
+
+                            // Botão biometria
+                            GestureDetector(
+                              onTap: authProvider.isLoading
+                                  ? null
+                                  : _tryBiometricLogin,
                               child: Container(
-                                height: 1,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.2)
-                                    : Colors.grey.withOpacity(0.3),
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                      AppTheme.radiusXLarge),
+                                  border: Border.all(
+                                    color:
+                                        AppTheme.primaryColor.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.fingerprint_rounded,
+                                  size: 36,
+                                  color: AppTheme.primaryColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spacing12),
+
+                            Text(
+                              'Usar biometria',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 30),
 
-                        // Botão biometria
-                        GestureDetector(
-                          onTap: authProvider.isLoading
-                              ? null
-                              : _tryBiometricLogin,
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFF116AD5).withOpacity(0.1),
-                              border: Border.all(
-                                color: const Color(0xFF116AD5).withOpacity(0.5),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.fingerprint_rounded,
-                              size: 36,
-                              color: Color(0xFF116AD5),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        Text(
-                          'Usar biometria',
-                          style: TextStyle(
-                            color: const Color(0xFF116AD5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-
-                      const SizedBox(height: 40),
-                    ],
+                          const SizedBox(height: AppTheme.spacing48),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required bool isDark,
+    String? Function(String?)? validator,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    TextInputAction? textInputAction,
+    VoidCallback? onFieldSubmitted,
+  }) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: EdgeInsets.zero,
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        textInputAction: textInputAction,
+        onFieldSubmitted:
+            onFieldSubmitted != null ? (_) => onFieldSubmitted() : null,
+        validator: validator,
+        style: AppTheme.bodyLarge.copyWith(
+          color: isDark ? AppTheme.darkText : AppTheme.lightText,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTheme.bodyLarge.copyWith(
+            color: isDark
+                ? AppTheme.darkTextSecondary
+                : AppTheme.lightTextSecondary,
+          ),
+          suffixIcon: suffixIcon,
+          filled: true,
+          fillColor: Colors.transparent,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: const BorderSide(
+              color: AppTheme.primaryColor,
+              width: 2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: const BorderSide(
+              color: AppTheme.errorColor,
+              width: 1,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacing20,
+            vertical: AppTheme.spacing20,
           ),
         ),
       ),

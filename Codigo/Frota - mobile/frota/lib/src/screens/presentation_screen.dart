@@ -137,7 +137,7 @@ class _PresentationScreenState extends State<PresentationScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenHeight = MediaQuery.of(context).size.height;
     final statusBarHeight = MediaQuery.of(context).padding.top;
-    
+
     // Configurar barra de status com ícones escuros
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -172,9 +172,15 @@ class _PresentationScreenState extends State<PresentationScreen>
                         ],
                 ),
               ),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF116AD5)),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF116AD5)),
+                  ),
                 ),
               ),
             )
@@ -271,7 +277,8 @@ class _PresentationScreenState extends State<PresentationScreen>
                               position: _slideAnimation,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: MediaQuery.of(context).size.width * 0.08,
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.08,
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -282,7 +289,8 @@ class _PresentationScreenState extends State<PresentationScreen>
                                     ScaleTransition(
                                       scale: _scaleAnimation,
                                       child: ShaderMask(
-                                        shaderCallback: (bounds) => LinearGradient(
+                                        shaderCallback: (bounds) =>
+                                            LinearGradient(
                                           colors: [
                                             const Color(0xFF116AD5),
                                             const Color(0xFF0066CC),
@@ -293,7 +301,10 @@ class _PresentationScreenState extends State<PresentationScreen>
                                           'Reinventamos o\ngerenciamento de\ngrandes frotas',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: MediaQuery.of(context).size.width * 0.075,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.075,
                                             fontFamily: 'Poppins',
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
@@ -303,7 +314,8 @@ class _PresentationScreenState extends State<PresentationScreen>
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: constraints.maxHeight * 0.05),
+                                    SizedBox(
+                                        height: constraints.maxHeight * 0.05),
 
                                     // Subtítulo
                                     FadeTransition(
@@ -312,7 +324,10 @@ class _PresentationScreenState extends State<PresentationScreen>
                                         'Tenha acesso rápido a\ndiversas funcionalidades',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.045,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.045,
                                           fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w400,
                                           color: isDark
@@ -322,16 +337,20 @@ class _PresentationScreenState extends State<PresentationScreen>
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: constraints.maxHeight * 0.12),
+                                    SizedBox(
+                                        height: constraints.maxHeight * 0.12),
 
                                     // Botão moderno com efeito glassmorphism
                                     ScaleTransition(
                                       scale: _scaleAnimation,
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width * 0.6,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
                                         height: 60,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(30),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                           gradient: const LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
@@ -343,7 +362,8 @@ class _PresentationScreenState extends State<PresentationScreen>
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color(0xFF116AD5).withOpacity(0.4),
+                                              color: const Color(0xFF116AD5)
+                                                  .withOpacity(0.4),
                                               blurRadius: 20,
                                               offset: const Offset(0, 8),
                                             ),
@@ -352,15 +372,19 @@ class _PresentationScreenState extends State<PresentationScreen>
                                         child: Material(
                                           color: Colors.transparent,
                                           child: InkWell(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             onTap: () {
-                                              Navigator.pushNamed(context, '/login');
+                                              Navigator.pushNamed(
+                                                  context, '/login');
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(30),
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
                                                 border: Border.all(
-                                                  color: Colors.white.withOpacity(0.2),
+                                                  color: Colors.white
+                                                      .withOpacity(0.2),
                                                   width: 1,
                                                 ),
                                               ),
@@ -381,7 +405,8 @@ class _PresentationScreenState extends State<PresentationScreen>
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: constraints.maxHeight * 0.1),
+                                    SizedBox(
+                                        height: constraints.maxHeight * 0.1),
                                   ],
                                 ),
                               ),

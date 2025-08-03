@@ -23,6 +23,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/local_database_service.dart';
+import '../utils/app_theme.dart';
 
 class MapScreen extends StatefulWidget {
   final Journey journey;
@@ -45,6 +46,7 @@ class _MapScreenState extends State<MapScreen> {
   bool _isLoadingRoute = false;
   String? _routeDistance;
   String? _routeDuration;
+  bool _isExpanded = false;
 
   static const String _googleMapsApiKey =
       'AIzaSyCxFxCvXpzIcSL_ck0CQyk2Xc2YvOmiLlc';
@@ -138,7 +140,7 @@ class _MapScreenState extends State<MapScreen> {
               Polyline(
                 polylineId: const PolylineId('route'),
                 points: _decodePolyline(encodedPolyline),
-                color: const Color(0xFF116AD5),
+                color: AppTheme.primaryColor,
                 width: 5,
               ),
             );
@@ -181,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
             Polyline(
               polylineId: const PolylineId('route'),
               points: _decodePolyline(encodedPolyline),
-              color: const Color(0xFF116AD5),
+              color: AppTheme.primaryColor,
               width: 5,
             ),
           );
@@ -217,7 +219,7 @@ class _MapScreenState extends State<MapScreen> {
       Polyline(
         polylineId: const PolylineId('route'),
         points: [origin, destination],
-        color: const Color(0xFF116AD5),
+        color: AppTheme.primaryColor,
         width: 5,
       ),
     );
@@ -295,353 +297,558 @@ class _MapScreenState extends State<MapScreen> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
       systemNavigationBarColor:
-          isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       systemNavigationBarIconBrightness:
           isDark ? Brightness.light : Brightness.dark,
     ));
 
     return Scaffold(
+      backgroundColor:
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       extendBodyBehindAppBar: true,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: isDark
-              ? const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF0F0F23),
-                    Color(0xFF1A1A2E),
-                    Color(0xFF16213E),
-                  ],
-                )
-              : const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFE3F2FD),
-                    Color(0xFFBBDEFB),
-                    Color(0xFF90CAF9),
-                  ],
-                ),
-        ),
-        child: Column(
-          children: [
+      body: Stack(
+        children: [
+          // Mapa em tela cheia
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: initialPosition,
+              zoom: initialZoom,
+            ),
+            markers: _markers,
+            polylines: _polylines,
+            onMapCreated: (GoogleMapController controller) {
+              _mapController = controller;
+              _fitMarkersInView();
+            },
+            zoomControlsEnabled: false,
+            mapToolbarEnabled: false,
+            myLocationButtonEnabled: false,
+            gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+              Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer()),
+            },
+          ),
+
+          // Loading overlay
+          if (_isLoadingRoute)
             Container(
-              padding: const EdgeInsets.only(
-                  top: 60, left: 16, right: 16, bottom: 20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF116AD5),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppTheme.primaryColor,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x29000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 6,
-                  ),
-                ],
+              ),
+            ),
+
+          // Header
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + AppTheme.spacing16,
+                left: AppTheme.spacing24,
+                right: AppTheme.spacing24,
+                bottom: AppTheme.spacing20,
               ),
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                    onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: isDark
+                            ? AppTheme.darkCard.withOpacity(0.8)
+                            : AppTheme.lightCard.withOpacity(0.8),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                        border: Border.all(
+                          color: isDark
+                              ? AppTheme.darkBorder
+                              : AppTheme.lightBorder,
+                          width: 0.5,
+                        ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back_rounded,
-                        color: Colors.white,
-                        size: 24,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Text(
-                    'Percurso',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  const SizedBox(width: AppTheme.spacing16),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing16,
+                        vertical: AppTheme.spacing12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppTheme.darkCard.withOpacity(0.8)
+                            : AppTheme.lightCard.withOpacity(0.8),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                        border: Border.all(
+                          color: isDark
+                              ? AppTheme.darkBorder
+                              : AppTheme.lightBorder,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Text(
+                        'Percurso',
+                        style: AppTheme.titleMedium.copyWith(
+                          color:
+                              isDark ? AppTheme.darkText : AppTheme.lightText,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(top: 24, bottom: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child:
-                          _buildMapCard(initialPosition, initialZoom, isDark),
+          ),
+
+          // Painel de informações deslizante
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                height: _isExpanded ? 400 : 200,
+                decoration: BoxDecoration(
+                  color: isDark ? AppTheme.darkSurface : Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(AppTheme.radiusXLarge),
+                    topRight: Radius.circular(AppTheme.radiusXLarge),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
                     ),
-                    const SizedBox(height: 32),
-                    _buildRegistrosSection(isDark),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Handle do painel
+                    Container(
+                      margin: const EdgeInsets.only(top: AppTheme.spacing12),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+
+                    // Conteúdo do painel
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(AppTheme.spacing24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildJourneyInfo(isDark),
+                            if (_isExpanded) ...[
+                              const SizedBox(height: AppTheme.spacing24),
+                              _buildRouteStats(isDark),
+                              const SizedBox(height: AppTheme.spacing24),
+                              _buildQuickActions(isDark),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapCard(
-      LatLng initialPosition, double initialZoom, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildJourneyHeader(isDark),
-          const SizedBox(height: 16),
-          _buildMapContainer(initialPosition, initialZoom),
-          const SizedBox(height: 16),
-          _buildOdometerInfo(isDark),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildJourneyHeader(bool isDark) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildLocationInfo(
-              'Partida', widget.journey.origin ?? 'Não informado', isDark),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildLocationInfo(
-              'Destino', widget.journey.destination ?? 'Não informado', isDark,
-              alignRight: true),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLocationInfo(String label, String location, bool isDark,
-      {bool alignRight = false}) {
-    return Column(
-      crossAxisAlignment:
-          alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark
-                ? Colors.white.withOpacity(0.6)
-                : Colors.black.withOpacity(0.6),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          location,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF116AD5),
-          ),
-          textAlign: alignRight ? TextAlign.end : TextAlign.start,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMapContainer(LatLng initialPosition, double initialZoom) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      height: 350,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : Colors.grey.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: initialPosition,
-                zoom: initialZoom,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-                _fitMarkersInView();
-              },
-              zoomControlsEnabled: true,
-              mapToolbarEnabled: false,
-              myLocationButtonEnabled: true,
-              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer()),
-              },
-            ),
-            if (_isLoadingRoute)
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF116AD5),
+          // Botões de navegação
+          Positioned(
+            right: AppTheme.spacing24,
+            bottom: _isExpanded ? 420 : 220,
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppTheme.darkCard.withOpacity(0.8)
+                        : AppTheme.lightCard.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                    border: Border.all(
+                      color:
+                          isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.radiusMedium),
+                      onTap: () {
+                        if (_mapController != null && _markers.isNotEmpty) {
+                          _fitMarkersInView();
+                        }
+                      },
+                      child: Icon(
+                        Icons.my_location,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
+                const SizedBox(height: AppTheme.spacing8),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppTheme.darkCard.withOpacity(0.8)
+                        : AppTheme.lightCard.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                    border: Border.all(
+                      color:
+                          isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.radiusMedium),
+                      onTap: () {
+                        _mapController?.animateCamera(CameraUpdate.zoomIn());
+                      },
+                      child: Icon(
+                        Icons.add,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacing8),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppTheme.darkCard.withOpacity(0.8)
+                        : AppTheme.lightCard.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                    border: Border.all(
+                      color:
+                          isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius:
+                          BorderRadius.circular(AppTheme.radiusMedium),
+                      onTap: () {
+                        _mapController?.animateCamera(CameraUpdate.zoomOut());
+                      },
+                      child: Icon(
+                        Icons.remove,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildOdometerInfo(bool isDark) {
+  Widget _buildJourneyInfo(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacing8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+              ),
+              child: const Icon(
+                Icons.route,
+                color: AppTheme.primaryColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacing12),
+            Expanded(
+              child: Text(
+                'Informações do Percurso',
+                style: AppTheme.titleLarge.copyWith(
+                  color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                ),
+              ),
+            ),
+            Icon(
+              _isExpanded ? Icons.expand_less : Icons.expand_more,
+              color: isDark
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
+            ),
+          ],
+        ),
+
+        const SizedBox(height: AppTheme.spacing16),
+
+        // Origem e destino
+        Row(
+          children: [
+            Expanded(
+              child: _buildLocationInfo(
+                'Origem',
+                widget.journey.origin ?? 'Não informado',
+                Icons.radio_button_checked,
+                AppTheme.successColor,
+                isDark,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacing16),
+            Expanded(
+              child: _buildLocationInfo(
+                'Destino',
+                widget.journey.destination ?? 'Não informado',
+                Icons.location_on,
+                AppTheme.errorColor,
+                isDark,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationInfo(
+      String label, String location, IconData icon, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacing12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppTheme.darkSurface.withOpacity(0.5)
+            : AppTheme.lightSurface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: color, size: 16),
+              const SizedBox(width: AppTheme.spacing8),
+              Text(
+                label,
+                style: AppTheme.labelMedium.copyWith(
+                  color: isDark
+                      ? AppTheme.darkTextSecondary
+                      : AppTheme.lightTextSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacing4),
+          Text(
+            location,
+            style: AppTheme.bodyMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRouteStats(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Odômetros',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
+          'Estatísticas',
+          style: AppTheme.titleMedium.copyWith(
+            color: isDark ? AppTheme.darkText : AppTheme.lightText,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppTheme.spacing12),
         Consumer<VehicleProvider>(
           builder: (context, vehicleProvider, child) {
             final currentVehicle = vehicleProvider.currentVehicle;
-            return Column(
+            return Row(
               children: [
-                _infoRow(
-                    'Inicial:', '${widget.journey.initialOdometer}km', isDark),
-                const SizedBox(height: 4),
-                _infoRow(
-                    'Final:',
-                    '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? '...'}km',
-                    isDark),
-                const SizedBox(height: 4),
-                _infoRow(
-                    'Hora de Saída:',
-                    Formatters.formatDateTime(widget.journey.departureTime),
-                    isDark),
+                Expanded(
+                  child: _buildStatCard(
+                    icon: Icons.timer_outlined,
+                    label: 'Duração',
+                    value: _formatDuration(),
+                    isDark: isDark,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacing12),
+                Expanded(
+                  child: _buildStatCard(
+                    icon: Icons.speed,
+                    label: 'Odômetro',
+                    value:
+                        '${widget.journey.finalOdometer ?? currentVehicle?.odometer ?? 0} km',
+                    isDark: isDark,
+                  ),
+                ),
               ],
             );
           },
         ),
+        if (_routeDistance != null && _routeDuration != null) ...[
+          const SizedBox(height: AppTheme.spacing12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  icon: Icons.straighten,
+                  label: 'Distância',
+                  value: _routeDistance!,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacing12),
+              Expanded(
+                child: _buildStatCard(
+                  icon: Icons.access_time,
+                  label: 'Tempo Est.',
+                  value: _routeDuration!,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
 
-  Widget _infoRow(String label, String value, bool isDark) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            label,
-            style: TextStyle(
-                fontSize: 14,
-                color: isDark
-                    ? Colors.white.withOpacity(0.6)
-                    : Colors.black.withOpacity(0.6)),
-            overflow: TextOverflow.ellipsis,
-          ),
+  Widget _buildStatCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacing12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppTheme.darkSurface.withOpacity(0.5)
+            : AppTheme.lightSurface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+          width: 0.5,
         ),
-        Expanded(
-          flex: 3,
-          child: Text(
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: AppTheme.primaryColor,
+            size: 20,
+          ),
+          const SizedBox(height: AppTheme.spacing4),
+          Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+            style: AppTheme.labelLarge.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
+              fontWeight: FontWeight.w600,
             ),
-            textAlign: TextAlign.end,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+          Text(
+            label,
+            style: AppTheme.bodySmall.copyWith(
+              color: isDark
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildRegistrosSection(bool isDark) {
+  String _formatDuration() {
+    final now = DateTime.now();
+    final start = widget.journey.departureTime;
+    final end = widget.journey.arrivalTime ?? now;
+    final duration = end.difference(start);
+
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+
+    if (hours > 0) {
+      return '${hours}h ${minutes}m';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  Widget _buildQuickActions(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(
-            'Atalhos',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
+        Text(
+          'Ações Rápidas',
+          style: AppTheme.titleMedium.copyWith(
+            color: isDark ? AppTheme.darkText : AppTheme.lightText,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spacing12),
         Consumer<VehicleProvider>(
           builder: (context, vehicleProvider, child) {
             final currentVehicle = vehicleProvider.currentVehicle;
 
-            return Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ActionCard(
+            return Row(
+              children: [
+                Expanded(
+                  child: _buildActionButton(
                     icon: Icons.local_gas_station,
-                    title: 'Registrar\nAbastecimento',
+                    label: 'Abastecimento',
                     onTap: currentVehicle == null
                         ? null
                         : () {
@@ -656,10 +863,15 @@ class _MapScreenState extends State<MapScreen> {
                           },
                     isDark: isDark,
                   ),
-                  const SizedBox(width: 24),
-                  ActionCard(
+                ),
+                const SizedBox(width: AppTheme.spacing12),
+                Expanded(
+                  child: _buildActionButton(
                     icon: Icons.checklist,
-                    title: 'Realizar\nVistoria',
+                    label: 'Vistoria',
+                    hasNotification:
+                        !inspectionStatus.departureInspectionCompleted ||
+                            !inspectionStatus.arrivalInspectionCompleted,
                     onTap: () {
                       if (currentVehicle == null) return;
                       Navigator.push(
@@ -673,20 +885,76 @@ class _MapScreenState extends State<MapScreen> {
                         _checkInspectionStatus();
                       });
                     },
-                    hasNotification:
-                        !inspectionStatus.departureInspectionCompleted ||
-                            !inspectionStatus.arrivalInspectionCompleted,
-                    isCompleted:
-                        inspectionStatus.departureInspectionCompleted &&
-                            inspectionStatus.arrivalInspectionCompleted,
                     isDark: isDark,
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onTap,
+    required bool isDark,
+    bool hasNotification = false,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+        child: Container(
+          padding: const EdgeInsets.all(AppTheme.spacing12),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    color: AppTheme.primaryColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppTheme.spacing8),
+                  Text(
+                    label,
+                    style: AppTheme.labelMedium.copyWith(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              if (hasNotification)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.errorColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

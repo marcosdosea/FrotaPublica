@@ -136,14 +136,7 @@ class _AppContentState extends State<AppContent> {
             .getVehicleById(journeyProvider.activeJourney!.vehicleId);
         if (vehicle != null) {
           vehicleProvider.setCurrentVehicle(vehicle);
-          // Navegar para DriverHomeScreen se não estiver nela
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (_) => DriverHomeScreen(vehicle: vehicle)),
-              (route) => false,
-            );
-          });
+          // O redirecionamento será tratado no onGenerateRoute
         }
       }
     }
@@ -215,6 +208,23 @@ class _AppContentState extends State<AppContent> {
                 settings.name != '/presentation') {
               print('Usuário não autenticado. Redirecionando para login.');
               return MaterialPageRoute(builder: (_) => const LoginScreen());
+            }
+
+            // Verificar redirecionamento para DriverHomeScreen na rota inicial
+            if (settings.name == '/splash' && authProvider.isAuthenticated) {
+              final journeyProvider =
+                  Provider.of<JourneyProvider>(context, listen: false);
+              final vehicleProvider =
+                  Provider.of<VehicleProvider>(context, listen: false);
+
+              if (journeyProvider.hasActiveJourney &&
+                  vehicleProvider.hasCurrentVehicle) {
+                print('Redirecionando da splash para DriverHomeScreen.');
+                return MaterialPageRoute(
+                  builder: (_) => DriverHomeScreen(
+                      vehicle: vehicleProvider.currentVehicle!),
+                );
+              }
             }
 
             if (authProvider.isAuthenticated) {

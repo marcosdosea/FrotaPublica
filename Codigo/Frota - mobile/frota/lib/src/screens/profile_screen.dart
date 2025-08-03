@@ -85,14 +85,12 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     try {
       if (value) {
-        // Ativar biometria
         final success = await BiometricService.setupBiometric();
         if (success && mounted) {
           setState(() {
             _biometricEnabled = true;
           });
 
-          // Salvar credenciais atuais para biometria
           final authProvider =
               Provider.of<AuthProvider>(context, listen: false);
           if (authProvider.currentUser != null) {
@@ -107,14 +105,13 @@ class _ProfileScreenState extends State<ProfileScreen>
             }
           }
         } else if (mounted) {
-          // Verificar se o problema é de disponibilidade
           final isAvailable = await BiometricService.isBiometricAvailable();
           if (!isAvailable) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
                     'Biometria não disponível. Verifique se há biometrias cadastradas no dispositivo e se o app tem permissão.'),
-                backgroundColor: Colors.red,
+                backgroundColor: AppTheme.errorColor,
               ),
             );
           } else {
@@ -122,13 +119,12 @@ class _ProfileScreenState extends State<ProfileScreen>
               const SnackBar(
                 content: Text(
                     'Não foi possível ativar a biometria. Tente novamente.'),
-                backgroundColor: Colors.red,
+                backgroundColor: AppTheme.errorColor,
               ),
             );
           }
         }
       } else {
-        // Desativar biometria
         await BiometricService.setBiometricEnabled(false);
         await BiometricService.clearSavedCredentials();
 
@@ -144,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao configurar biometria: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.errorColor,
           ),
         );
       }
@@ -170,14 +166,15 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor:
-          isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness:
           isDark ? Brightness.light : Brightness.dark,
     ));
 
     return Scaffold(
+      backgroundColor:
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
@@ -187,57 +184,46 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         child: Column(
           children: [
-            // Header moderno
+            // Header
             Container(
-              padding: const EdgeInsets.only(
-                  top: 60, left: 16, right: 16, bottom: 20),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF116AD5),
-                    Color(0xFF0066CC),
-                    Color(0xFF004BA7),
-                  ],
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x29000000),
-                    offset: Offset(0, 6),
-                    blurRadius: 12,
-                  ),
-                ],
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + AppTheme.spacing16,
+                left: AppTheme.spacing24,
+                right: AppTheme.spacing24,
+                bottom: AppTheme.spacing20,
               ),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: isDark
+                            ? AppTheme.darkCard.withOpacity(0.8)
+                            : AppTheme.lightCard.withOpacity(0.8),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                        border: Border.all(
+                          color: isDark
+                              ? AppTheme.darkBorder
+                              : AppTheme.lightBorder,
+                          width: 0.5,
+                        ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back_rounded,
-                        color: Colors.white,
-                        size: 24,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Text(
+                  const SizedBox(width: AppTheme.spacing16),
+                  Text(
                     'Perfil',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
+                    style: AppTheme.headlineMedium.copyWith(
+                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
                     ),
                   ),
                 ],
@@ -246,31 +232,29 @@ class _ProfileScreenState extends State<ProfileScreen>
 
             // Conteúdo
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppTheme.spacing24),
                     child: Column(
                       children: [
-                        const SizedBox(height: 20),
-
                         // Card do perfil do usuário
                         _buildUserProfileCard(isDark),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppTheme.spacing24),
 
                         // Card de configurações
                         _buildSettingsCard(isDark),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppTheme.spacing24),
 
                         // Card de informações do app
                         _buildAppInfoCard(isDark),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: AppTheme.spacing32),
 
                         // Botão de logout
-                        _buildLogoutButton(),
-                        const SizedBox(height: 20),
+                        _buildLogoutButton(isDark),
+                        const SizedBox(height: AppTheme.spacing20),
                       ],
                     ),
                   ),
@@ -290,77 +274,75 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         return AppTheme.modernCard(
           isDark: isDark,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppTheme.spacing32),
           child: Column(
             children: [
               // Avatar com gradiente
               Container(
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppTheme.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF116AD5).withOpacity(0.4),
+                      color: AppTheme.primaryColor.withOpacity(0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: Container(
-                  margin: const EdgeInsets.all(3),
+                  margin: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isDark ? const Color(0xFF1A1A2E) : Colors.white,
+                    color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
                   ),
                   child: const Icon(
                     Icons.person_rounded,
-                    size: 50,
-                    color: Color(0xFF116AD5),
+                    size: 60,
+                    color: AppTheme.primaryColor,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppTheme.spacing24),
 
               // Nome do usuário
               Text(
                 user?.name ?? 'Usuário',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                  fontFamily: 'Poppins',
+                style: AppTheme.displayMedium.copyWith(
+                  color: isDark ? AppTheme.darkText : AppTheme.lightText,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppTheme.spacing8),
 
               // CPF
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacing16,
+                  vertical: AppTheme.spacing8,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF116AD5).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
                   border: Border.all(
-                    color: const Color(0xFF116AD5).withOpacity(0.3),
+                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    width: 1,
                   ),
                 ),
                 child: Text(
                   'CPF: ${user?.cpf ?? 'Não informado'}',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTheme.bodyMedium.copyWith(
+                    color: AppTheme.primaryColor,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF116AD5),
-                    fontFamily: 'Poppins',
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
 
               // Email (se disponível)
               if (user?.email != null) ...[
+                const SizedBox(height: AppTheme.spacing16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -368,18 +350,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                       Icons.email_rounded,
                       size: 16,
                       color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
+                          ? AppTheme.darkTextSecondary
+                          : AppTheme.lightTextSecondary,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppTheme.spacing8),
                     Text(
                       user!.email!,
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: AppTheme.bodyMedium.copyWith(
                         color: isDark
-                            ? Colors.white.withOpacity(0.8)
-                            : Colors.black.withOpacity(0.7),
-                        fontFamily: 'Poppins',
+                            ? AppTheme.darkTextSecondary
+                            : AppTheme.lightTextSecondary,
                       ),
                     ),
                   ],
@@ -395,46 +375,17 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget _buildSettingsCard(bool isDark) {
     return AppTheme.modernCard(
       isDark: isDark,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppTheme.spacing24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Configurações',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-              fontFamily: 'Poppins',
+            style: AppTheme.headlineMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
             ),
           ),
-          const SizedBox(height: 20),
-
-          // Notificações
-          _buildSettingItem(
-            icon: Icons.cloud_sync_rounded,
-            title: 'Sincronização',
-            subtitle: 'Ver dados não sincronizados',
-            trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16,
-              color: isDark
-                  ? Colors.white.withOpacity(0.6)
-                  : Colors.black.withOpacity(0.6),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const OfflineSyncScreen(),
-                ),
-              );
-            },
-            isDark: isDark,
-          ),
-
-          const SizedBox(height: 16),
-
+          const SizedBox(height: AppTheme.spacing24),
           // Toggle tema escuro
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
@@ -447,14 +398,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                   onChanged: (value) {
                     themeProvider.toggleTheme();
                   },
-                  activeColor: const Color(0xFF116AD5),
+                  activeColor: AppTheme.primaryColor,
                 ),
                 isDark: isDark,
               );
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing16),
 
           // Toggle biometria
           _buildSettingItem(
@@ -462,24 +413,24 @@ class _ProfileScreenState extends State<ProfileScreen>
             title: 'Login com biometria',
             subtitle: 'Usar impressão digital ou Face ID',
             trailing: _isLoadingBiometric
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFF116AD5)),
+                          AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                     ),
                   )
                 : Switch.adaptive(
                     value: _biometricEnabled,
                     onChanged: _onBiometricToggleChanged,
-                    activeColor: const Color(0xFF116AD5),
+                    activeColor: AppTheme.primaryColor,
                   ),
             isDark: isDark,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing16),
 
           // Notificações
           _buildSettingItem(
@@ -487,11 +438,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             title: 'Notificações',
             subtitle: 'Gerenciar notificações',
             trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16,
+              Icons.chevron_right_rounded,
+              size: 20,
               color: isDark
-                  ? Colors.white.withOpacity(0.6)
-                  : Colors.black.withOpacity(0.6),
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
             ),
             onTap: () {
               // Implementar navegação para configurações de notificação
@@ -499,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             isDark: isDark,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing16),
 
           // Privacidade
           _buildSettingItem(
@@ -507,11 +458,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             title: 'Privacidade',
             subtitle: 'Configurações de privacidade',
             trailing: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16,
+              Icons.chevron_right_rounded,
+              size: 20,
               color: isDark
-                  ? Colors.white.withOpacity(0.6)
-                  : Colors.black.withOpacity(0.6),
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.lightTextSecondary,
             ),
             onTap: () {
               // Implementar navegação para configurações de privacidade
@@ -533,53 +484,41 @@ class _ProfileScreenState extends State<ProfileScreen>
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(AppTheme.spacing12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF116AD5).withOpacity(0.2),
-                    const Color(0xFF116AD5).withOpacity(0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF116AD5),
+                color: AppTheme.primaryColor,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppTheme.spacing16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontFamily: 'Poppins',
+                    style: AppTheme.titleMedium.copyWith(
+                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppTheme.spacing4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: AppTheme.bodySmall.copyWith(
                       color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
-                      fontFamily: 'Poppins',
+                          ? AppTheme.darkTextSecondary
+                          : AppTheme.lightTextSecondary,
                     ),
                   ),
                 ],
@@ -595,27 +534,24 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget _buildAppInfoCard(bool isDark) {
     return AppTheme.modernCard(
       isDark: isDark,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppTheme.spacing24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Sobre o App',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-              fontFamily: 'Poppins',
+            style: AppTheme.headlineMedium.copyWith(
+              color: isDark ? AppTheme.darkText : AppTheme.lightText,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppTheme.spacing24),
           _buildInfoItem(
             icon: Icons.info_rounded,
             title: 'Versão',
             value: '1.0.0',
             isDark: isDark,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing16),
           _buildInfoItem(
             icon: Icons.description_rounded,
             title: 'Termos de Uso',
@@ -639,53 +575,41 @@ class _ProfileScreenState extends State<ProfileScreen>
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(AppTheme.spacing12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF116AD5).withOpacity(0.2),
-                    const Color(0xFF116AD5).withOpacity(0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
               ),
               child: Icon(
                 icon,
-                color: const Color(0xFF116AD5),
+                color: AppTheme.primaryColor,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppTheme.spacing16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontFamily: 'Poppins',
+                    style: AppTheme.titleMedium.copyWith(
+                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppTheme.spacing4),
                   Text(
                     value,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: AppTheme.bodySmall.copyWith(
                       color: isDark
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.black.withOpacity(0.6),
-                      fontFamily: 'Poppins',
+                          ? AppTheme.darkTextSecondary
+                          : AppTheme.lightTextSecondary,
                     ),
                   ),
                 ],
@@ -693,11 +617,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
             if (onTap != null)
               Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
+                Icons.chevron_right_rounded,
+                size: 20,
                 color: isDark
-                    ? Colors.white.withOpacity(0.6)
-                    : Colors.black.withOpacity(0.6),
+                    ? AppTheme.darkTextSecondary
+                    : AppTheme.lightTextSecondary,
               ),
           ],
         ),
@@ -705,138 +629,105 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(bool isDark) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
-        return Container(
+        return SizedBox(
           width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.red.shade400,
-                Colors.red.shade600,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.red.withOpacity(0.4),
-                blurRadius: 15,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: authProvider.isLoading
-                  ? null
-                  : () async {
-                      final shouldLogout = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFF1A1A2E)
-                                  : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          title: const Text(
-                            'Confirmar Logout',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          content: const Text(
-                            'Tem certeza que deseja sair da sua conta?',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text(
-                                'Cancelar',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              child: const Text(
-                                'Sair',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+          height: 56,
+          child: AppTheme.actionButton(
+            onPressed: authProvider.isLoading
+                ? () {}
+                : () async {
+                    final shouldLogout = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor:
+                            isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusLarge),
                         ),
-                      );
-
-                      if (shouldLogout == true) {
-                        await authProvider.logout();
-                        if (mounted) {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/presentation',
-                            (route) => false,
-                          );
-                        }
-                      }
-                    },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Center(
-                  child: authProvider.isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
+                        title: Text(
+                          'Confirmar Logout',
+                          style: AppTheme.headlineMedium.copyWith(
+                            color:
+                                isDark ? AppTheme.darkText : AppTheme.lightText,
                           ),
-                        )
-                      : const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.logout_rounded,
-                              color: Colors.white,
-                              size: 20,
+                        ),
+                        content: Text(
+                          'Tem certeza que deseja sair da sua conta?',
+                          style: AppTheme.bodyLarge.copyWith(
+                            color: isDark
+                                ? AppTheme.darkTextSecondary
+                                : AppTheme.lightTextSecondary,
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text(
+                              'Cancelar',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: isDark
+                                    ? AppTheme.darkTextSecondary
+                                    : AppTheme.lightTextSecondary,
+                              ),
                             ),
-                            SizedBox(width: 8),
-                            Text(
-                              'Sair da Conta',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Poppins',
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text(
+                              'Sair',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: AppTheme.errorColor,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (shouldLogout == true) {
+                      await authProvider.logout();
+                      if (mounted) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/presentation',
+                          (route) => false,
+                        );
+                      }
+                    }
+                  },
+            isDestructive: true,
+            isDark: isDark,
+            child: authProvider.isLoading
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.logout_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: AppTheme.spacing8),
+                      Text(
+                        'Sair da Conta',
+                        style: AppTheme.titleMedium.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
                         ),
-                ),
-              ),
-            ),
+                      ),
+                    ],
+                  ),
           ),
         );
       },

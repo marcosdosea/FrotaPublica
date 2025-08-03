@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import '../providers/journey_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/vehicle.dart';
+import '../utils/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,11 +13,56 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late AnimationController _scaleController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
     _checkAuthAndNavigate();
+  }
+
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    ));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    ));
+
+    _fadeController.forward();
+    _scaleController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _scaleController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkAuthAndNavigate() async {
@@ -74,22 +120,111 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF0F0F23) : const Color(0xFFE3F2FD),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/img/logo.png', width: 120, height: 120),
-            const SizedBox(height: 32),
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            const Text(
-              'Carregando...',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? AppTheme.backgroundGradientDark
+              : AppTheme.backgroundGradientLight,
+        ),
+        child: SafeArea(
+          child: Center(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: AppTheme.modernCard(
+                  isDark: isDark,
+                  padding: const EdgeInsets.all(AppTheme.spacing32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Logo
+                      Container(
+                        width: screenWidth * 0.3,
+                        height: screenWidth * 0.3,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusLarge),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withOpacity(0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusLarge),
+                          child: Image.asset(
+                            'assets/img/logo.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.04),
+
+                      // Título
+                      Text(
+                        'Frota Pública',
+                        style: AppTheme.displayLarge.copyWith(
+                          color:
+                              isDark ? AppTheme.darkText : AppTheme.lightText,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      SizedBox(height: screenHeight * 0.02),
+
+                      // Subtítulo
+                      Text(
+                        'Sistema de Gestão de Frota',
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: isDark
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.lightTextSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      SizedBox(height: screenHeight * 0.06),
+
+                      // Loading indicator
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: AppTheme.primaryColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // Texto de carregamento
+                      Text(
+                        'Carregando...',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: isDark
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.lightTextSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );

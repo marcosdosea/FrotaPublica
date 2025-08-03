@@ -5,6 +5,8 @@ import '../services/supplier_service.dart';
 import '../services/fuel_service.dart';
 import '../providers/journey_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/vehicle_provider.dart';
+import '../utils/app_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/local_database_service.dart';
 
@@ -20,7 +22,8 @@ class FuelRegistrationScreen extends StatefulWidget {
   State<FuelRegistrationScreen> createState() => _FuelRegistrationScreenState();
 }
 
-class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
+class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
+    with TickerProviderStateMixin {
   Supplier? selectedSupplier;
   final TextEditingController odometerController = TextEditingController();
   final TextEditingController litersController = TextEditingController();
@@ -34,12 +37,43 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   String? _errorMessage;
   String? _journeyId;
   bool _isSyncingSuppliers = false;
+  int _currentOdometer = 0;
+
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
     _loadSuppliers();
     _carregarPercursoAtivo();
+    _loadCurrentOdometer();
+  }
+
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    ));
+
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    odometerController.dispose();
+    litersController.dispose();
+    super.dispose();
   }
 
   Future<void> _carregarPercursoAtivo() async {
@@ -62,6 +96,18 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
     }
   }
 
+  Future<void> _loadCurrentOdometer() async {
+    final vehicleProvider =
+        Provider.of<VehicleProvider>(context, listen: false);
+    final vehicle = vehicleProvider.currentVehicle;
+
+    if (vehicle != null) {
+      setState(() {
+        _currentOdometer = vehicle.odometer;
+      });
+    }
+  }
+
   Future<void> _loadSuppliers() async {
     setState(() {
       _isLoading = true;
@@ -73,6 +119,8 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
       final suppliers = await _supplierService.getAllSuppliers();
       setState(() {
         _suppliers = suppliers;
+        // Reset selectedSupplier para evitar problemas com valores não encontrados
+        selectedSupplier = null;
         _isLoading = false;
       });
     } catch (e) {
@@ -84,7 +132,6 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   }
 
   Future<void> _syncSuppliers() async {
-    // Verificar conexão antes de tentar sincronizar
     final connectivity = await Connectivity().checkConnectivity();
     final isOnline = connectivity != ConnectivityResult.none;
     if (!isOnline) {
@@ -93,7 +140,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
           const SnackBar(
             content: Text(
                 'Sem conexão. Conecte-se à internet para sincronizar fornecedores.'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.errorColor,
           ),
         );
       }
@@ -109,7 +156,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fornecedores sincronizados com sucesso!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppTheme.successColor,
           ),
         );
       }
@@ -118,7 +165,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erro ao sincronizar fornecedores: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.errorColor,
           ),
         );
       }
@@ -156,9 +203,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
       final liters = double.parse(litersController.text);
       final odometer = int.parse(odometerController.text);
 
-      // Buscar maior odômetro já registrado (online e offline)
       int maxOdometer = 0;
-      // 1. Odômetro inicial do percurso
       final journeyProvider =
           Provider.of<JourneyProvider>(context, listen: false);
       final journey = journeyProvider.activeJourney;
@@ -169,7 +214,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
           maxOdometer = journey.finalOdometer!;
         }
       }
-      // 2. Maior odômetro de abastecimentos online (se disponível)
+
       final abastecimentosOnline =
           await _fuelService.getFuelRefillsForJourney(_journeyId!);
       for (final ab in abastecimentosOnline) {
@@ -177,13 +222,13 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
           maxOdometer = ab.odometerReading;
         }
       }
-      // 3. Maior odômetro de abastecimentos offline
+
       final maxOffline = await LocalDatabaseService()
           .getMaxOdometerAbastecimentoOffline(widget.vehicleId, _journeyId!);
       if (maxOffline != null && maxOffline > maxOdometer) {
         maxOdometer = maxOffline;
       }
-      // 4. Validar
+
       if (odometer < maxOdometer) {
         _showErrorMessage(
             'O odômetro informado não pode ser menor que o último registrado ($maxOdometer km)');
@@ -193,12 +238,10 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         return;
       }
 
-      // Checar conectividade
       final connectivity = await Connectivity().checkConnectivity();
       final isOnline = connectivity != ConnectivityResult.none;
 
       if (!isOnline) {
-        // Salvar offline
         await LocalDatabaseService().insertAbastecimentoOffline({
           'vehicleId': widget.vehicleId,
           'journeyId': _journeyId!,
@@ -209,24 +252,10 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         });
         if (!mounted) return;
         Navigator.pop(context, true);
-        _showSuccessMessage('Abastecimento registrado offline', color: Colors.grey);
+        _showSuccessMessage('Abastecimento registrado offline',
+            color: AppTheme.warningColor);
         return;
       }
-
-      print('Enviando abastecimento:');
-      print('Fornecedor ID: ${selectedSupplier!.id}');
-      print('Fornecedor Nome: ${selectedSupplier!.name}');
-      print('Veículo ID: ${widget.vehicleId}');
-      print('Percurso ID: $_journeyId');
-      print('Litros: $liters');
-      print('Odômetro: $odometer');
-
-      print('Parâmetros do abastecimento:');
-      print('journeyId: $_journeyId');
-      print('vehicleId: ${widget.vehicleId}');
-      print('gasStation: ${selectedSupplier!.id}');
-      print('liters: $liters');
-      print('odometer: $odometer');
 
       final result = await _fuelService.registerFuelRefill(
         journeyId: _journeyId!,
@@ -237,36 +266,28 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
         odometerReading: odometer,
       );
 
-      print('Resultado do registerFuelRefill: $result');
-
       if (!mounted) return;
 
       Navigator.pop(context, true);
       await _fuelService.addLitersToJourneyTotal(_journeyId!, liters);
       _showSuccessMessage('Abastecimento registrado com sucesso!');
     } catch (e) {
-      print('Exceção capturada ao registrar abastecimento: $e');
-
       setState(() {
         _isSubmitting = false;
 
         String errorMsg = e.toString();
-        print('Erro ao registrar abastecimento: $errorMsg');
 
         if (errorMsg.contains("odômetro informado") &&
             errorMsg.contains("não pode ser menor")) {
           try {
             errorMsg = errorMsg.replaceAll('Exception: ', '');
             errorMsg = errorMsg.replaceAll('"', '');
-          } catch (_) {
-            // Em caso de erro no processamento, usa a mensagem original
-          }
+          } catch (_) {}
           _errorMessage = errorMsg;
         } else if (errorMsg.contains("selecionar um posto")) {
           _errorMessage = "É necessário selecionar um posto de combustível";
           _highlightSupplier = true;
         } else if (errorMsg.contains("200") || errorMsg.contains("success")) {
-          print('A API retornou sucesso, mas houve um problema de parser.');
           if (!mounted) return;
           Navigator.pop(context, true);
           _showSuccessMessage('Abastecimento registrado com sucesso!');
@@ -284,12 +305,13 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: AppTheme.errorColor,
       ),
     );
   }
 
-  void _showSuccessMessage(String message, {Color color = Colors.green}) {
+  void _showSuccessMessage(String message,
+      {Color color = AppTheme.successColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -299,429 +321,424 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen> {
   }
 
   @override
-  void dispose() {
-    odometerController.dispose();
-    litersController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor:
+          isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
-              ? const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF0F0F23),
-                    Color(0xFF1A1A2E),
-                    Color(0xFF16213E),
-                  ],
-                )
-              : const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFE3F2FD),
-                    Color(0xFFBBDEFB),
-                    Color(0xFF90CAF9),
-                  ],
-                ),
+              ? AppTheme.backgroundGradientDark
+              : AppTheme.backgroundGradientLight,
         ),
         child: Column(
           children: [
+            // Header
             Container(
-              padding: const EdgeInsets.only(
-                  top: 60, left: 16, right: 16, bottom: 20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF116AD5),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x29000000),
-                    offset: Offset(0, 3),
-                    blurRadius: 6,
-                  ),
-                ],
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + AppTheme.spacing16,
+                left: AppTheme.spacing24,
+                right: AppTheme.spacing24,
+                bottom: AppTheme.spacing20,
               ),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: isDark
+                            ? AppTheme.darkCard.withOpacity(0.8)
+                            : AppTheme.lightCard.withOpacity(0.8),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusMedium),
+                        border: Border.all(
+                          color: isDark
+                              ? AppTheme.darkBorder
+                              : AppTheme.lightBorder,
+                          width: 0.5,
+                        ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back_rounded,
-                        color: Colors.white,
-                        size: 24,
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                        size: 20,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Text(
+                  const SizedBox(width: AppTheme.spacing16),
+                  Text(
                     'Registrar Abastecimento',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    style: AppTheme.headlineMedium.copyWith(
+                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Conteúdo
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: _loadSuppliers,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Leitura do Odômetro',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF0066CC),
-                          fontWeight: FontWeight.w500,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: RefreshIndicator(
+                  onRefresh: _loadSuppliers,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(AppTheme.spacing24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Campo Odômetro
+                        _buildFieldSection(
+                          title: 'Leitura do Odômetro',
+                          child: _buildTextField(
+                            controller: odometerController,
+                            hintText:
+                                'Atual: $_currentOdometer km',
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            isDark: isDark,
+                          ),
+                          isDark: isDark,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: odometerController,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.next,
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black87,
+
+                        const SizedBox(height: AppTheme.spacing24),
+
+                        // Campo Litros
+                        _buildFieldSection(
+                          title: 'Litros Abastecidos',
+                          child: _buildTextField(
+                            controller: litersController,
+                            hintText: 'Informe a quantidade em litros',
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: () {
+                              FocusScope.of(context).unfocus();
+                            },
+                            isDark: isDark,
+                          ),
+                          isDark: isDark,
                         ),
-                        decoration: InputDecoration(
-                          hintText: 'Informe a leitura',
-                          hintStyle: TextStyle(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.6)
-                                : Colors.black.withOpacity(0.6),
-                          ),
-                          filled: true,
-                          fillColor:
-                              isDark ? const Color(0xFF1E1E2E) : Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? const Color(0xFF3A3A5C)
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? const Color(0xFF3A3A5C)
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF0066CC), width: 2),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Litros Abastecidos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF0066CC),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: litersController,
-                        keyboardType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) {
-                          FocusScope.of(context).unfocus();
-                        },
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Informe a quantidade',
-                          hintStyle: TextStyle(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.6)
-                                : Colors.black.withOpacity(0.6),
-                          ),
-                          filled: true,
-                          fillColor:
-                              isDark ? const Color(0xFF1E1E2E) : Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? const Color(0xFF3A3A5C)
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: isDark
-                                  ? const Color(0xFF3A3A5C)
-                                  : Colors.grey.shade300,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF0066CC), width: 2),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Selecione o Posto',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF0066CC),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? const Color(0xFF1E1E2E)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: _highlightSupplier
-                                      ? Colors.red
-                                      : (isDark
-                                          ? const Color(0xFF3A3A5C)
-                                          : Colors.grey.shade300),
-                                  width: _highlightSupplier ? 2 : 1,
-                                ),
+
+                        const SizedBox(height: AppTheme.spacing24),
+
+                        // Campo Posto
+                        _buildFieldSection(
+                          title: 'Selecione o Posto',
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _buildSupplierDropdown(isDark),
                               ),
-                              child: _isLoading
-                                  ? const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
-                                      child: Center(
-                                        child: SizedBox(
-                                          height: 24,
-                                          width: 24,
+                              const SizedBox(width: AppTheme.spacing12),
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? AppTheme.darkCard
+                                      : AppTheme.lightCard,
+                                  borderRadius: BorderRadius.circular(
+                                      AppTheme.radiusMedium),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? AppTheme.darkBorder
+                                        : AppTheme.lightBorder,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                child: IconButton(
+                                  tooltip: 'Sincronizar fornecedores',
+                                  onPressed: _isSyncingSuppliers
+                                      ? null
+                                      : _syncSuppliers,
+                                  icon: _isSyncingSuppliers
+                                      ? SizedBox(
+                                          width: 20,
+                                          height: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : _errorMessage != null
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12, horizontal: 16),
-                                          child: Row(
-                                            children: [
-                                              const Icon(Icons.error_outline,
-                                                  color: Colors.red),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  _errorMessage!,
-                                                  style: const TextStyle(
-                                                      color: Colors.red),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: _loadSuppliers,
-                                                child: const Text(
-                                                    'Tentar novamente'),
-                                              ),
-                                            ],
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    AppTheme.primaryColor),
                                           ),
                                         )
-                                      : DropdownButtonHideUnderline(
-                                          child: DropdownButton<Supplier>(
-                                            value: selectedSupplier,
-                                            hint: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16),
-                                              child: Text(
-                                                'Selecionar Posto',
-                                                style: TextStyle(
-                                                  color: isDark
-                                                      ? Colors.white
-                                                          .withOpacity(0.6)
-                                                      : Colors.black
-                                                          .withOpacity(0.6),
-                                                ),
-                                              ),
-                                            ),
-                                            isExpanded: true,
-                                            icon: Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: isDark
-                                                  ? Colors.white
-                                                      .withOpacity(0.6)
-                                                  : Colors.black
-                                                      .withOpacity(0.6),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            dropdownColor: isDark
-                                                ? const Color(0xFF1E1E2E)
-                                                : Colors.white,
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : Colors.black87,
-                                            ),
-                                            items: _suppliers.isEmpty
-                                                ? [
-                                                    DropdownMenuItem<Supplier>(
-                                                      value: null,
-                                                      enabled: false,
-                                                      child: Text(
-                                                        'Nenhum fornecedor disponível',
-                                                        style: TextStyle(
-                                                            color: isDark
-                                                                ? Colors.white
-                                                                    .withOpacity(
-                                                                        0.6)
-                                                                : Colors.black
-                                                                    .withOpacity(
-                                                                        0.6)),
-                                                      ),
-                                                    )
-                                                  ]
-                                                : _suppliers
-                                                    .map((Supplier supplier) {
-                                                    return DropdownMenuItem<
-                                                        Supplier>(
-                                                      value: supplier,
-                                                      child: Text(
-                                                        supplier.name,
-                                                        style: TextStyle(
-                                                          color: isDark
-                                                              ? Colors.white
-                                                              : Colors.black87,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                            onChanged: _suppliers.isEmpty
-                                                ? null
-                                                : (Supplier? newValue) {
-                                                    setState(() {
-                                                      selectedSupplier =
-                                                          newValue;
-                                                      _highlightSupplier =
-                                                          false;
-                                                    });
-                                                  },
-                                          ),
+                                      : Icon(
+                                          Icons.sync_rounded,
+                                          color: AppTheme.primaryColor,
+                                          size: 20,
                                         ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            height: 48,
-                            width: 48,
-                            child: IconButton(
-                              tooltip: 'Sincronizar fornecedores',
-                              onPressed:
-                                  _isSyncingSuppliers ? null : _syncSuppliers,
-                              icon: _isSyncingSuppliers
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    )
-                                  : Icon(Icons.sync,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Color(0xFF0066CC)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: (!_isLoading &&
-                                  !_isSubmitting &&
-                                  selectedSupplier != null &&
-                                  odometerController.text.isNotEmpty &&
-                                  litersController.text.isNotEmpty)
-                              ? _registrarAbastecimento
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0066CC),
-                            foregroundColor: Colors.white,
-                            disabledBackgroundColor: isDark
-                                ? const Color(0xFF2A2A3E)
-                                : Colors.grey.shade300,
-                            disabledForegroundColor: isDark
-                                ? const Color(0xFF9E9E9E)
-                                : Colors.grey.shade600,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: _isSubmitting
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  'Registrar',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
                                 ),
+                              ),
+                            ],
+                          ),
+                          isDark: isDark,
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(height: AppTheme.spacing48),
+
+                        // Botão de registro
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: AppTheme.actionButton(
+                            onPressed: (!_isLoading &&
+                                    !_isSubmitting &&
+                                    selectedSupplier != null &&
+                                    odometerController.text.isNotEmpty &&
+                                    litersController.text.isNotEmpty)
+                                ? _registrarAbastecimento
+                                : () {},
+                            isPrimary: true,
+                            isDark: isDark,
+                            child: _isSubmitting
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    'Registrar Abastecimento',
+                                    style: AppTheme.titleMedium.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFieldSection({
+    required String title,
+    required Widget child,
+    required bool isDark,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTheme.titleMedium.copyWith(
+            color: isDark ? AppTheme.darkText : AppTheme.lightText,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacing8),
+        child,
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required bool isDark,
+    TextInputType? keyboardType,
+    TextInputAction? textInputAction,
+    VoidCallback? onFieldSubmitted,
+  }) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: EdgeInsets.zero,
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        textInputAction: textInputAction,
+        onSubmitted:
+            onFieldSubmitted != null ? (_) => onFieldSubmitted() : null,
+        style: AppTheme.bodyLarge.copyWith(
+          color: isDark ? AppTheme.darkText : AppTheme.lightText,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTheme.bodyLarge.copyWith(
+            color: isDark
+                ? AppTheme.darkTextSecondary
+                : AppTheme.lightTextSecondary,
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            borderSide: const BorderSide(
+              color: AppTheme.primaryColor,
+              width: 2,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacing20,
+            vertical: AppTheme.spacing16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSupplierDropdown(bool isDark) {
+    return AppTheme.modernCard(
+      isDark: isDark,
+      padding: EdgeInsets.zero,
+      backgroundColor:
+          _highlightSupplier ? AppTheme.errorColor.withOpacity(0.1) : null,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+          border: _highlightSupplier
+              ? Border.all(color: AppTheme.errorColor, width: 1)
+              : null,
+        ),
+        child: _isLoading
+            ? Container(
+                height: 56,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
+                child: Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                    ),
+                  ),
+                ),
+              )
+            : _errorMessage != null
+                ? Container(
+                    height: 56,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacing20),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: AppTheme.errorColor, size: 20),
+                        const SizedBox(width: AppTheme.spacing8),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: AppTheme.bodyMedium
+                                .copyWith(color: AppTheme.errorColor),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _loadSuppliers,
+                          child: Text(
+                            'Tentar novamente',
+                            style: AppTheme.bodySmall
+                                .copyWith(color: AppTheme.primaryColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : DropdownButtonHideUnderline(
+                    child: DropdownButton<Supplier>(
+                      value: _suppliers.contains(selectedSupplier)
+                          ? selectedSupplier
+                          : null,
+                      hint: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacing20),
+                        child: Text(
+                          'Selecionar Posto',
+                          style: AppTheme.bodyLarge.copyWith(
+                            color: isDark
+                                ? AppTheme.darkTextSecondary
+                                : AppTheme.lightTextSecondary,
+                          ),
+                        ),
+                      ),
+                      isExpanded: true,
+                      icon: Padding(
+                        padding:
+                            const EdgeInsets.only(right: AppTheme.spacing20),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: isDark
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.lightTextSecondary,
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+                      dropdownColor:
+                          isDark ? AppTheme.darkCard : AppTheme.lightCard,
+                      style: AppTheme.bodyLarge.copyWith(
+                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                      ),
+                      items: _suppliers.isEmpty
+                          ? [
+                              DropdownMenuItem<Supplier>(
+                                value: null,
+                                enabled: false,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacing20),
+                                  child: Text(
+                                    'Nenhum fornecedor disponível',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: isDark
+                                          ? AppTheme.darkTextSecondary
+                                          : AppTheme.lightTextSecondary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ]
+                          : _suppliers.map((Supplier supplier) {
+                              return DropdownMenuItem<Supplier>(
+                                value: supplier,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacing20),
+                                  child: Text(
+                                    supplier.name,
+                                    style: AppTheme.bodyLarge.copyWith(
+                                      color: isDark
+                                          ? AppTheme.darkText
+                                          : AppTheme.lightText,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      onChanged: _suppliers.isEmpty
+                          ? null
+                          : (Supplier? newValue) {
+                              setState(() {
+                                selectedSupplier = newValue;
+                                _highlightSupplier = false;
+                              });
+                            },
+                    ),
+                  ),
       ),
     );
   }

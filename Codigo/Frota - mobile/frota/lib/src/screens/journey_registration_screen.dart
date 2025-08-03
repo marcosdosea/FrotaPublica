@@ -16,7 +16,8 @@ import '../widgets/keyboard_aware_widget.dart';
 import 'driver_home_screen.dart';
 
 class JourneyRegistrationScreen extends StatefulWidget {
-  const JourneyRegistrationScreen({super.key});
+  final Vehicle? vehicle;
+  const JourneyRegistrationScreen({super.key, this.vehicle});
 
   @override
   State<JourneyRegistrationScreen> createState() =>

@@ -120,6 +120,14 @@ class LocalDatabaseService {
     await db.delete('manutencoes_offline', where: 'id = ?', whereArgs: [id]);
   }
 
+  // Método para fechar a conexão com o banco
+  Future<void> close() async {
+    if (_db != null) {
+      await _db!.close();
+      _db = null;
+    }
+  }
+
   // Fornecedores
   Future<void> insertOrUpdateFornecedor(Map<String, dynamic> data) async {
     final db = await database;
