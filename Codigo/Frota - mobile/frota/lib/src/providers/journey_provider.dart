@@ -157,7 +157,6 @@ class JourneyProvider with ChangeNotifier {
       );
 
       if (journey == true) {
-        // Limpar percurso salvo localmente
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('active_journey');
 
@@ -211,7 +210,6 @@ class JourneyProvider with ChangeNotifier {
         _activeJourney = journey;
         _error = null;
 
-        // Atualizar dados locais
         await _saveActiveJourneyAndVehicle(_activeJourney!);
 
         return true;
@@ -228,7 +226,6 @@ class JourneyProvider with ChangeNotifier {
     }
   }
 
-  // Limpar erro
   void clearError() {
     _error = null;
     notifyListeners();
@@ -246,7 +243,7 @@ class JourneyProvider with ChangeNotifier {
             'vehicle_${vehicle.id}', json.encode(vehicle.toJson()));
       }
     } catch (e) {
-      // Ignorar erro silenciosamente
+      // Ignorar
     }
   }
 }

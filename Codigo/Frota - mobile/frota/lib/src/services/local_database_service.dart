@@ -23,8 +23,9 @@ class LocalDatabaseService {
     final path = join(documentsDirectory.path, 'frota_app.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Atualizado de 1 para 2 para forçar recriação
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -54,6 +55,7 @@ class LocalDatabaseService {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         vehicleId TEXT,
         description TEXT,
+        priority TEXT,
         dateTime TEXT
       )
     ''');
@@ -69,6 +71,37 @@ class LocalDatabaseService {
         routeJson TEXT
       )
     ''');
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Backup dos dados existentes (opcional)
+      final manutencoesAntigas = await db.query('manutencoes_offline');
+
+      // Remover tabelas antigas
+      await db.execute('DROP TABLE IF EXISTS manutencoes_offline');
+
+      // Recriar tabela com novo esquema
+      await db.execute('''
+        CREATE TABLE manutencoes_offline (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          vehicleId TEXT,
+          description TEXT,
+          priority TEXT,
+          dateTime TEXT
+        )
+      ''');
+
+      // Restaurar dados antigos com prioridade padrão 'M'
+      for (final manutencao in manutencoesAntigas) {
+        await db.insert('manutencoes_offline', {
+          'vehicleId': manutencao['vehicleId'],
+          'description': manutencao['description'],
+          'priority': 'M', // Prioridade padrão para registros antigos
+          'dateTime': manutencao['dateTime'],
+        });
+      }
+    }
   }
 
   // Abastecimento offline
@@ -125,6 +158,23 @@ class LocalDatabaseService {
     if (_db != null) {
       await _db!.close();
       _db = null;
+    }
+  }
+
+  // Método para limpar o banco e forçar recriação
+  Future<void> clearDatabase() async {
+    if (_db != null) {
+      await _db!.close();
+      _db = null;
+    }
+    
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    final path = join(documentsDirectory.path, 'frota_app.db');
+    
+    // Deletar arquivo do banco
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 

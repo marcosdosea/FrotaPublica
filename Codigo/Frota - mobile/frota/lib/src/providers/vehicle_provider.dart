@@ -150,15 +150,43 @@ class VehicleProvider with ChangeNotifier {
 
       if (vehicle != null) {
         _currentVehicle = vehicle;
+
+        // Salvar localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+            'vehicle_${vehicle.id}', json.encode(vehicle.toJson()));
+
         _error = null;
         return true;
       } else {
-        _error = 'Não foi possível atualizar o odômetro';
-        return false;
+        // Se falhar online, atualizar apenas localmente
+        final updatedVehicle = _currentVehicle!.copyWith(odometer: newOdometer);
+        _currentVehicle = updatedVehicle;
+
+        // Salvar localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('vehicle_${updatedVehicle.id}',
+            json.encode(updatedVehicle.toJson()));
+
+        _error = null;
+        return true;
       }
     } catch (e) {
-      _error = e.toString();
-      return false;
+      // Se falhar online, atualizar apenas localmente
+      final updatedVehicle = _currentVehicle!.copyWith(odometer: newOdometer);
+      _currentVehicle = updatedVehicle;
+
+      // Salvar localmente
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('vehicle_${updatedVehicle.id}',
+            json.encode(updatedVehicle.toJson()));
+      } catch (saveError) {
+        print('Erro ao salvar veículo localmente: $saveError');
+      }
+
+      _error = null;
+      return true;
     } finally {
       _isLoading = false;
       notifyListeners();

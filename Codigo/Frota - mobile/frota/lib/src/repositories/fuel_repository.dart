@@ -42,7 +42,6 @@ class FuelRepository {
         // Extrair o ID do abastecimento da resposta JSON
         String abastecimentoId;
         if (data is Map<String, dynamic>) {
-          // Tentar obter o ID do formato do objeto retornado
           if (data.containsKey('idAbastecimento')) {
             abastecimentoId = data['idAbastecimento'].toString();
           } else if (data.containsKey('abastecimento') &&
@@ -56,13 +55,11 @@ class FuelRepository {
           } else if (data.containsKey('IdAbastecimento')) {
             abastecimentoId = data['IdAbastecimento'].toString();
           } else {
-            // Não foi possível encontrar o ID na resposta, usando um valor temporário
             print(
                 'Aviso: ID do abastecimento não encontrado na resposta. Usando ID temporário.');
             abastecimentoId = 'temp-${DateTime.now().millisecondsSinceEpoch}';
           }
         } else {
-          // Formato inesperado, usando um valor temporário
           print('Aviso: Resposta em formato inesperado. Usando ID temporário.');
           abastecimentoId = 'temp-${DateTime.now().millisecondsSinceEpoch}';
         }
@@ -105,7 +102,7 @@ class FuelRepository {
       }
     } catch (e) {
       print('Exceção ao registrar abastecimento: $e');
-      rethrow; // Propagar a exceção para que seja tratada na UI
+      rethrow;
     }
   }
 
@@ -146,9 +143,6 @@ class FuelRepository {
 
   // Obter abastecimentos para um veículo específico
   Future<List<FuelRefill>> getFuelRefillsForVehicle(String vehicleId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 800));
-
     return _mockFuelRefills
         .where((refill) => refill.vehicleId == vehicleId)
         .toList();
@@ -156,9 +150,6 @@ class FuelRepository {
 
   // Obter abastecimentos para uma jornada específica
   Future<List<FuelRefill>> getFuelRefillsForJourney(String journeyId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 800));
-
     return _mockFuelRefills
         .where((refill) => refill.journeyId == journeyId)
         .toList();
@@ -166,9 +157,6 @@ class FuelRepository {
 
   // Calcular total de combustível abastecido para um veículo
   Future<double> getTotalFuelCostForVehicle(String vehicleId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 500));
-
     final refills =
         _mockFuelRefills.where((refill) => refill.vehicleId == vehicleId);
 

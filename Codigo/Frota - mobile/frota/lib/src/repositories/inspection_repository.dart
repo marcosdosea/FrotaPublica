@@ -5,7 +5,6 @@ import '../utils/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InspectionRepository {
-  // Chaves para armazenamento local das vistorias completadas
   static const String _completedDepartureKey = 'inspection_departure_';
   static const String _completedArrivalKey = 'inspection_arrival_';
 
@@ -37,7 +36,6 @@ class InspectionRepository {
           timestamp: DateTime.now(),
         );
 
-        // Salvar que essa vistoria foi concluída
         await _markInspectionAsCompleted(vehicleId, type);
 
         return inspection;

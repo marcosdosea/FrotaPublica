@@ -4,6 +4,7 @@ import '../providers/maintenance_provider.dart';
 import '../utils/app_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/local_database_service.dart';
+import '../models/maintenance_priority.dart';
 
 class MaintenanceRequestScreen extends StatefulWidget {
   final String vehicleId;
@@ -22,23 +23,14 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
     with TickerProviderStateMixin {
   final TextEditingController _descriptionController = TextEditingController();
   bool _isSubmitting = false;
-  String _selectedPriority = 'Média';
-  String _selectedCategory = 'Mecânica';
+  MaintenancePriority _selectedPriority = MaintenancePriority.media;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  final List<String> _priorities = ['Baixa', 'Média', 'Alta', 'Urgente'];
-  final List<String> _categories = [
-    'Mecânica',
-    'Elétrica',
-    'Pneus',
-    'Carroceria',
-    'Interior',
-    'Outros'
-  ];
+  final List<MaintenancePriority> _priorities = MaintenancePriority.values;
 
   @override
   void initState() {
@@ -109,8 +101,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
         await LocalDatabaseService().insertManutencaoOffline({
           'vehicleId': widget.vehicleId,
           'description': _descriptionController.text.trim(),
-          'priority': _selectedPriority,
-          'category': _selectedCategory,
+          'priority': _selectedPriority.code,
           'dateTime': DateTime.now().toIso8601String(),
         });
         if (mounted) {
@@ -129,6 +120,7 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
           await context.read<MaintenanceProvider>().createMaintenanceRequest(
                 vehicleId: widget.vehicleId,
                 description: _descriptionController.text.trim(),
+                priority: _selectedPriority,
               );
 
       if (success) {
@@ -280,15 +272,6 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
 
                         const SizedBox(height: AppTheme.spacing32),
 
-                        // Categoria
-                        _buildFieldSection(
-                          title: 'Categoria',
-                          child: _buildCategorySelector(isDark),
-                          isDark: isDark,
-                        ),
-
-                        const SizedBox(height: AppTheme.spacing24),
-
                         // Prioridade
                         _buildFieldSection(
                           title: 'Prioridade',
@@ -409,66 +392,22 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
     );
   }
 
-  Widget _buildCategorySelector(bool isDark) {
-    return Wrap(
-      spacing: AppTheme.spacing8,
-      runSpacing: AppTheme.spacing8,
-      children: _categories.map((category) {
-        final isSelected = _selectedCategory == category;
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedCategory = category;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacing16,
-              vertical: AppTheme.spacing8,
-            ),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppTheme.primaryColor
-                  : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
-              borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
-              border: Border.all(
-                color: isSelected
-                    ? AppTheme.primaryColor
-                    : (isDark ? AppTheme.darkBorder : AppTheme.lightBorder),
-                width: 0.5,
-              ),
-            ),
-            child: Text(
-              category,
-              style: AppTheme.bodyMedium.copyWith(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? AppTheme.darkText : AppTheme.lightText),
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
   Widget _buildPrioritySelector(bool isDark) {
     return Row(
       children: _priorities.map((priority) {
         final isSelected = _selectedPriority == priority;
         Color priorityColor;
         switch (priority) {
-          case 'Baixa':
+          case MaintenancePriority.baixa:
             priorityColor = AppTheme.successColor;
             break;
-          case 'Média':
+          case MaintenancePriority.media:
             priorityColor = AppTheme.infoColor;
             break;
-          case 'Alta':
+          case MaintenancePriority.alta:
             priorityColor = AppTheme.warningColor;
             break;
-          case 'Urgente':
+          case MaintenancePriority.urgente:
             priorityColor = AppTheme.errorColor;
             break;
           default:
@@ -487,29 +426,39 @@ class _MaintenanceRequestScreenState extends State<MaintenanceRequestScreen>
                 });
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
+                height: 48,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? priorityColor.withOpacity(0.1)
+                      ? priorityColor
                       : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                   border: Border.all(
                     color: isSelected
                         ? priorityColor
                         : (isDark ? AppTheme.darkBorder : AppTheme.lightBorder),
-                    width: isSelected ? 1.5 : 0.5,
+                    width: isSelected ? 2.0 : 1.0,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: priorityColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
-                child: Text(
-                  priority,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: isSelected
-                        ? priorityColor
-                        : (isDark ? AppTheme.darkText : AppTheme.lightText),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                child: Center(
+                  child: Text(
+                    priority.label,
+                    style: AppTheme.labelMedium.copyWith(
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? AppTheme.darkText : AppTheme.lightText),
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),

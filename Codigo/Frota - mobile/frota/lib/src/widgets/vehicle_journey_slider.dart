@@ -69,8 +69,26 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
   }
 
   Widget _buildVehicleCard() {
-    // Calcular km percorridos
+    // Calcular duração do percurso
     final journey = widget.journey;
+    String duration = 'N/A';
+
+    if (journey != null && journey.departureTime != null) {
+      final now = DateTime.now();
+      final start = journey.departureTime!;
+      final durationObj = now.difference(start);
+
+      final hours = durationObj.inHours;
+      final minutes = durationObj.inMinutes % 60;
+
+      if (hours > 0) {
+        duration = '${hours}h ${minutes}m';
+      } else {
+        duration = '${minutes}m';
+      }
+    }
+
+    // Calcular km percorridos
     final odometerDifference = journey != null
         ? (widget.vehicle.odometer ?? 0) - (journey.initialOdometer ?? 0)
         : 0;
@@ -120,7 +138,7 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
               ],
             ),
             const SizedBox(height: 24),
-            // Dados de consumo
+            // Dados de duração e distância percorrida
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -134,14 +152,14 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.bar_chart,
+                        Icons.timer,
                         color: Color(0xFF0066CC),
                         size: 28,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '$odometerDifference',
+                      duration,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -149,7 +167,7 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                       ),
                     ),
                     Text(
-                      'Km percorridos',
+                      'Duração',
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).textTheme.bodySmall?.color,
@@ -174,14 +192,14 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.local_gas_station,
+                        Icons.straighten,
                         color: Color(0xFF0066CC),
                         size: 28,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'R\$ ${(widget.totalLiters * 5.50).toStringAsFixed(2)}',
+                      '$odometerDifference',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -189,7 +207,7 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                       ),
                     ),
                     Text(
-                      'Abastecidos',
+                      'Km percorridos',
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).textTheme.bodySmall?.color,
@@ -315,7 +333,7 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
               ),
             ),
             const SizedBox(height: 16),
-            // Informações de odômetros e botão
+            // Informações de odômetro atual e litros abastecidos
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -323,21 +341,14 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Odômetros',
+                      'Odômetro Atual',
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                     Text(
-                      'Inicial: ${journey.initialOdometer ?? 0}km',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                    ),
-                    Text(
-                      'Final: ${widget.vehicle.odometer ?? 0}km',
+                      '${widget.vehicle.odometer ?? 0} km',
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).textTheme.bodySmall?.color,
@@ -360,7 +371,8 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0066CC),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

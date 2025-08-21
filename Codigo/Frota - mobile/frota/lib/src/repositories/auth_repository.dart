@@ -72,26 +72,23 @@ class AuthRepository {
         final data = jsonDecode(response.body);
 
         if (data['success'] == true) {
-          // Salvar o token JWT
           final token = data['token'];
           final userName = data['userName'];
 
-          // Como não temos refreshToken na resposta, usamos o mesmo token
           await ApiClient.saveToken(
               token,
-              token, // Usando o mesmo token como refreshToken
+              token,
               DateTime.now().add(const Duration(
-                  days: 7)) // Expira em 7 dias (conforme JWT no exemplo)
+                  days: 7))
               );
 
-          // Construir um usuário básico com as informações da resposta
           final user = User(
             id: userName,
             name: data['nome'] ?? userName,
             email: userName,
             cpf: userName,
             role: data['role'] ?? 'Motorista',
-            unidadeAdministrativaId: 1, // Valor padrão (será atualizado depois)
+            unidadeAdministrativaId: 1,
           );
 
           // Salvar dados do usuário localmente
@@ -145,9 +142,7 @@ class AuthRepository {
 
   Future<void> logout() async {
     try {
-      // Remove o token localmente
       await ApiClient.removeToken();
-      // Remove os dados do usuário
       await _removeSavedUserData();
     } catch (e) {
       print('Erro ao realizar logout: $e');
@@ -161,7 +156,6 @@ class AuthRepository {
       final token = await ApiClient.getToken();
       if (token == null) return null;
 
-      // Obter usuário salvo localmente
       final savedUser = await _getSavedUserData();
       if (savedUser != null) {
         print('Usuário recuperado do armazenamento local: ${savedUser.name}');

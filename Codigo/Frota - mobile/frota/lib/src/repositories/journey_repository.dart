@@ -52,7 +52,6 @@ class JourneyRepository {
     double? destinationLongitude,
   }) async {
     try {
-      // Converter para o formato esperado pela API
       final response = await ApiClient.post('Percurso/iniciar', {
         'idVeiculo': int.parse(vehicleId),
         'localPartida': origin,
@@ -95,7 +94,6 @@ class JourneyRepository {
           {'idPercurso': int.parse(journeyId), 'odometroFinal': finalOdometer});
 
       if (response.statusCode == 200) {
-        // Vamos obter os detalhes do percurso finalizado
         final journeyResponse = await ApiClient.get('Percurso/${journeyId}');
 
         if (journeyResponse.statusCode == 200) {
@@ -115,9 +113,6 @@ class JourneyRepository {
   // Obter histórico de jornadas para um motorista
   Future<List<Journey>> getJourneyHistoryForDriver(String driverId) async {
     try {
-      // A API não tem um endpoint específico para histórico de percursos
-      // Seria necessário implementar na API esse endpoint, por enquanto
-      // retornamos lista vazia
       return [];
     } catch (e) {
       print('Erro ao obter histórico de jornadas: $e');
@@ -129,8 +124,6 @@ class JourneyRepository {
   Future<Journey?> addFuelRefillToJourney(
       String journeyId, String fuelRefillId) async {
     try {
-      // A API precisaria ter um endpoint para associar abastecimento ao percurso
-      // Por enquanto, retornamos null
       return null;
     } catch (e) {
       print('Erro ao adicionar abastecimento à jornada: $e');

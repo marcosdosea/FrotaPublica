@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ import '../providers/journey_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../widgets/keyboard_aware_widget.dart';
+import '../utils/app_theme.dart';
 import 'driver_home_screen.dart';
 
 class JourneyRegistrationScreen extends StatefulWidget {
@@ -24,7 +26,8 @@ class JourneyRegistrationScreen extends StatefulWidget {
       _JourneyRegistrationScreenState();
 }
 
-class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
+class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen>
+    with TickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController originController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
@@ -38,12 +41,18 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
   bool _isLoading = false;
   bool _formIsValid = false;
 
+  late AnimationController _fadeController;
+  late AnimationController _slideController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
   static const String _googleMapsApiKey =
       'AIzaSyCxFxCvXpzIcSL_ck0CQyk2Xc2YvOmiLlc';
 
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
     _validateForm();
 
     // Adicionar listeners aos controllers para validar o formulário
@@ -52,8 +61,43 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
     reasonController.addListener(_validateForm);
   }
 
+  void _initializeAnimations() {
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    ));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _fadeController.forward();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _slideController.forward();
+    });
+  }
+
   @override
   void dispose() {
+    _fadeController.dispose();
+    _slideController.dispose();
+    
     // Remover listeners dos controllers
     originController.removeListener(_validateForm);
     destinationController.removeListener(_validateForm);
@@ -246,294 +290,286 @@ class _JourneyRegistrationScreenState extends State<JourneyRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Column(
-        children: [
-          // Cabeçalho azul com cantos arredondados na parte inferior
-          Container(
-            padding:
-            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 20),
-            decoration: const BoxDecoration(
-              color: Color(0xFF116AD5),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(16),
-                bottomRight: Radius.circular(16),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x29000000),
-                  offset: Offset(0, 3),
-                  blurRadius: 6,
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  'Registrar Percurso',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
+
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+        extendBodyBehindAppBar: true,
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: isDark 
+                ? AppTheme.backgroundGradientDark 
+                : AppTheme.backgroundGradientLight,
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + AppTheme.spacing20,
+                  left: AppTheme.spacing24,
+                  right: AppTheme.spacing24,
+                  bottom: AppTheme.spacing32,
+                ),
+                child: Row(
                   children: [
-                    const Text(
-                      'Local de Saída',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF0066CC),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TypeAheadField<Map<String, dynamic>>(
-                      controller: originController,
-                      suggestionsCallback: (pattern) =>
-                          _getAutocompleteSuggestions(pattern),
-                      builder: (context, controller, focusNode) {
-                        return TextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Informe o local de partida',
-                            hintStyle: TextStyle(
-                              color:
-                              Theme.of(context).textTheme.bodySmall?.color,
-                            ),
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                  color: Color(0xFF0066CC), width: 2),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 14),
-                          ),
-                        );
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
                       },
-                      itemBuilder: (context, suggestion) {
-                        return ListTile(
-                          leading: const Icon(Icons.location_on),
-                          title: Text(suggestion['description'] ?? ''),
-                        );
-                      },
-                      onSelected: (suggestion) {
-                        originController.text = suggestion['description'] ?? '';
-                        _getPlaceDetails(suggestion['place_id'], true);
-                      },
-                      emptyBuilder: (context) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Nenhum local encontrado.'),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Local de Destino',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF0066CC),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TypeAheadField<Map<String, dynamic>>(
-                      controller: destinationController,
-                      suggestionsCallback: (pattern) =>
-                          _getAutocompleteSuggestions(pattern),
-                      builder: (context, controller, focusNode) {
-                        return TextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Informe o local de chegada',
-                            hintStyle: TextStyle(
-                              color:
-                              Theme.of(context).textTheme.bodySmall?.color,
-                            ),
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                    ? const Color(0xFF3A3A5C)
-                                    : Colors.grey.shade300,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                  color: Color(0xFF0066CC), width: 2),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 14),
-                          ),
-                        );
-                      },
-                      itemBuilder: (context, suggestion) {
-                        return ListTile(
-                          leading: const Icon(Icons.location_on),
-                          title: Text(suggestion['description'] ?? ''),
-                        );
-                      },
-                      onSelected: (suggestion) {
-                        destinationController.text =
-                            suggestion['description'] ?? '';
-                        _getPlaceDetails(suggestion['place_id'], false);
-                      },
-                      emptyBuilder: (context) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Nenhum local encontrado.'),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Motivo do Percurso',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF0066CC),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: reasonController,
-                      maxLines: 3,
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Descreva o motivo do percurso',
-                        hintStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodySmall?.color,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                         ),
-                        filled: true,
-                        fillColor: Theme.of(context).cardColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? const Color(0xFF3A3A5C)
-                                : Colors.grey.shade300,
-                          ),
+                        child: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: AppTheme.primaryColor,
+                          size: 20,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? const Color(0xFF3A3A5C)
-                                : Colors.grey.shade300,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF0066CC), width: 2),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
                       ),
                     ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: _isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : ElevatedButton(
-                        onPressed: _formIsValid ? _submit : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0066CC),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor:
-                          Theme.of(context).brightness ==
-                              Brightness.dark
-                              ? const Color(0xFF22223A)
-                              : Colors.grey.shade300,
-                          disabledForegroundColor:
-                          Theme.of(context).brightness ==
-                              Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Iniciar Percurso',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    const SizedBox(width: AppTheme.spacing16),
+                    Expanded(
+                      child: Text(
+                        'Registrar Percurso',
+                        style: AppTheme.headlineMedium.copyWith(
+                          color: isDark ? AppTheme.darkText : AppTheme.lightText,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+
+              // Conteúdo
+              Expanded(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(AppTheme.spacing24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Local de Saída
+                            Text(
+                              'Local de Saída',
+                              style: AppTheme.titleLarge.copyWith(
+                                color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spacing8),
+                            
+                            // Campo de origem
+                            AppTheme.modernCard(
+                              isDark: isDark,
+                              padding: EdgeInsets.zero,
+                              child: TypeAheadField<Map<String, dynamic>>(
+                                controller: originController,
+                                suggestionsCallback: (pattern) =>
+                                    _getAutocompleteSuggestions(pattern),
+                                builder: (context, controller, focusNode) {
+                                  return TextField(
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    style: AppTheme.bodyLarge.copyWith(
+                                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: 'Informe o local de partida',
+                                      hintStyle: AppTheme.bodyMedium.copyWith(
+                                        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.all(AppTheme.spacing16),
+                                    ),
+                                  );
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    leading: Icon(
+                                      Icons.location_on_rounded,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                    title: Text(
+                                      suggestion['description'] ?? '',
+                                      style: AppTheme.bodyMedium.copyWith(
+                                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onSelected: (suggestion) {
+                                  originController.text = suggestion['description'] ?? '';
+                                  _getPlaceDetails(suggestion['place_id'], true);
+                                },
+                                emptyBuilder: (context) => Padding(
+                                  padding: const EdgeInsets.all(AppTheme.spacing16),
+                                  child: Text(
+                                    'Nenhum local encontrado.',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: AppTheme.spacing24),
+                            
+                            // Local de Destino
+                            Text(
+                              'Local de Destino',
+                              style: AppTheme.titleLarge.copyWith(
+                                color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spacing8),
+                            
+                            // Campo de destino
+                            AppTheme.modernCard(
+                              isDark: isDark,
+                              padding: EdgeInsets.zero,
+                              child: TypeAheadField<Map<String, dynamic>>(
+                                controller: destinationController,
+                                suggestionsCallback: (pattern) =>
+                                    _getAutocompleteSuggestions(pattern),
+                                builder: (context, controller, focusNode) {
+                                  return TextField(
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    style: AppTheme.bodyLarge.copyWith(
+                                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: 'Informe o local de chegada',
+                                      hintStyle: AppTheme.bodyMedium.copyWith(
+                                        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.all(AppTheme.spacing16),
+                                    ),
+                                  );
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    leading: Icon(
+                                      Icons.location_on_rounded,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                    title: Text(
+                                      suggestion['description'] ?? '',
+                                      style: AppTheme.bodyMedium.copyWith(
+                                        color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onSelected: (suggestion) {
+                                  destinationController.text = suggestion['description'] ?? '';
+                                  _getPlaceDetails(suggestion['place_id'], false);
+                                },
+                                emptyBuilder: (context) => Padding(
+                                  padding: const EdgeInsets.all(AppTheme.spacing16),
+                                  child: Text(
+                                    'Nenhum local encontrado.',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: AppTheme.spacing24),
+                            
+                            // Motivo do Percurso
+                            Text(
+                              'Motivo do Percurso',
+                              style: AppTheme.titleLarge.copyWith(
+                                color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                              ),
+                            ),
+                            const SizedBox(height: AppTheme.spacing8),
+                            
+                            // Campo de motivo
+                            AppTheme.modernCard(
+                              isDark: isDark,
+                              padding: EdgeInsets.zero,
+                              child: TextField(
+                                controller: reasonController,
+                                maxLines: 3,
+                                style: AppTheme.bodyLarge.copyWith(
+                                  color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Descreva o motivo do percurso',
+                                  hintStyle: AppTheme.bodyMedium.copyWith(
+                                    color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.all(AppTheme.spacing16),
+                                ),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: AppTheme.spacing40),
+                            
+                            // Botão de iniciar percurso
+                            SizedBox(
+                              width: double.infinity,
+                              child: _isLoading
+                                  ? AppTheme.modernCard(
+                                      isDark: isDark,
+                                      child: const Center(
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : AppTheme.actionButton(
+                                      onPressed: _formIsValid ? () => _submit() : () {},
+                                      isPrimary: true,
+                                      isDark: isDark,
+                                      child: Text(
+                                        'Iniciar Percurso',
+                                        style: AppTheme.labelLarge.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

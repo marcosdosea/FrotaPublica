@@ -1,7 +1,6 @@
 import '../models/reminder.dart';
 
 class ReminderRepository {
-  // Lista de lembretes mockados
   final List<Reminder> _mockReminders = [
     Reminder(
       id: '1',
@@ -42,9 +41,6 @@ class ReminderRepository {
 
   // Obter lembretes para um veículo específico
   Future<List<Reminder>> getRemindersForVehicle(String vehicleId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 800));
-    
     return _mockReminders
         .where((reminder) => reminder.vehicleId == vehicleId)
         .toList();
@@ -52,9 +48,6 @@ class ReminderRepository {
 
   // Marcar um lembrete como concluído
   Future<Reminder> markReminderAsCompleted(String reminderId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 500));
-    
     final index = _mockReminders.indexWhere((reminder) => reminder.id == reminderId);
     if (index != -1) {
       final updatedReminder = _mockReminders[index].copyWith(isCompleted: true);
@@ -71,9 +64,6 @@ class ReminderRepository {
     required String title,
     String? description,
   }) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(seconds: 1));
-    
     final newReminder = Reminder(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       vehicleId: vehicleId,

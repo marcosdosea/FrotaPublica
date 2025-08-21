@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/maintenance_request.dart';
+import '../models/maintenance_priority.dart';
 import '../services/maintenance_service.dart';
 
 class MaintenanceProvider with ChangeNotifier {
@@ -17,6 +18,7 @@ class MaintenanceProvider with ChangeNotifier {
   Future<bool> createMaintenanceRequest({
     required String vehicleId,
     required String description,
+    MaintenancePriority? priority,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -25,6 +27,7 @@ class MaintenanceProvider with ChangeNotifier {
       final request = await _maintenanceService.createMaintenanceRequest(
         vehicleId: vehicleId,
         description: description,
+        priority: priority,
       );
 
       if (request != null) {

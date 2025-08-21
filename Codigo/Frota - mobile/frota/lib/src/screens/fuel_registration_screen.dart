@@ -9,6 +9,7 @@ import '../providers/vehicle_provider.dart';
 import '../utils/app_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/local_database_service.dart';
+import '../models/vehicle.dart';
 
 class FuelRegistrationScreen extends StatefulWidget {
   final String vehicleId;
@@ -48,6 +49,13 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
     _initializeAnimations();
     _loadSuppliers();
     _carregarPercursoAtivo();
+    _loadCurrentOdometer();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recarregar odômetro quando as dependências mudarem (ex: quando retornar de outra tela)
     _loadCurrentOdometer();
   }
 
@@ -99,11 +107,18 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
   Future<void> _loadCurrentOdometer() async {
     final vehicleProvider =
         Provider.of<VehicleProvider>(context, listen: false);
-    final vehicle = vehicleProvider.currentVehicle;
 
-    if (vehicle != null) {
+    // Tentar obter o veículo atualizado do provider
+    Vehicle? currentVehicle = vehicleProvider.currentVehicle;
+
+    // Se não houver veículo no provider, tentar buscar pelo ID
+    if (currentVehicle == null || currentVehicle.id != widget.vehicleId) {
+      currentVehicle = await vehicleProvider.getVehicleById(widget.vehicleId);
+    }
+
+    if (currentVehicle != null) {
       setState(() {
-        _currentOdometer = vehicle.odometer;
+        _currentOdometer = currentVehicle!.odometer;
       });
     }
   }
@@ -250,6 +265,10 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
           'odometer': odometer,
           'dateTime': DateTime.now().toIso8601String(),
         });
+
+        // Atualizar odômetro local após abastecimento offline
+        await _updateLocalOdometer(odometer);
+
         if (!mounted) return;
         Navigator.pop(context, true);
         _showSuccessMessage('Abastecimento registrado offline',
@@ -267,6 +286,9 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
       );
 
       if (!mounted) return;
+
+      // Atualizar odômetro local após abastecimento online
+      await _updateLocalOdometer(odometer);
 
       Navigator.pop(context, true);
       await _fuelService.addLitersToJourneyTotal(_journeyId!, liters);
@@ -298,6 +320,26 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
       });
 
       _showErrorMessage(_errorMessage ?? 'Erro ao registrar abastecimento');
+    }
+  }
+
+  // Método para atualizar o odômetro local
+  Future<void> _updateLocalOdometer(int newOdometer) async {
+    try {
+      final vehicleProvider =
+          Provider.of<VehicleProvider>(context, listen: false);
+
+      // Atualizar o odômetro no provider
+      await vehicleProvider.updateOdometer(newOdometer);
+
+      // Atualizar o estado local
+      setState(() {
+        _currentOdometer = newOdometer;
+      });
+
+      print('Odômetro atualizado localmente para: $newOdometer km');
+    } catch (e) {
+      print('Erro ao atualizar odômetro local: $e');
     }
   }
 
@@ -399,8 +441,7 @@ class _FuelRegistrationScreenState extends State<FuelRegistrationScreen>
                           title: 'Leitura do Odômetro',
                           child: _buildTextField(
                             controller: odometerController,
-                            hintText:
-                                'Atual: $_currentOdometer km',
+                            hintText: 'Atual: $_currentOdometer km',
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             isDark: isDark,

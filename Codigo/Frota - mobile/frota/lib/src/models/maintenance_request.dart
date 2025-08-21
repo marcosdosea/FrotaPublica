@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'maintenance_priority.dart';
 
 class MaintenanceRequest {
   final String id;
@@ -9,6 +10,7 @@ class MaintenanceRequest {
   final String status;
   final String? technicianNotes;
   final DateTime? completionDate;
+  final MaintenancePriority priority;
 
   MaintenanceRequest({
     required this.id,
@@ -19,6 +21,7 @@ class MaintenanceRequest {
     required this.status,
     this.technicianNotes,
     this.completionDate,
+    this.priority = MaintenancePriority.media,
   });
 
   factory MaintenanceRequest.fromJson(Map<String, dynamic> json) {
@@ -33,6 +36,9 @@ class MaintenanceRequest {
       completionDate: json['dataConclusao'] != null
           ? DateTime.parse(json['dataConclusao'])
           : null,
+      priority: json['prioridade'] != null
+          ? MaintenancePriority.fromCode(json['prioridade'])
+          : MaintenancePriority.media,
     );
   }
 
@@ -46,6 +52,7 @@ class MaintenanceRequest {
       'status': status,
       'observacoesTecnico': technicianNotes,
       'dataConclusao': completionDate?.toIso8601String(),
+      'prioridade': priority.code,
     };
   }
 }

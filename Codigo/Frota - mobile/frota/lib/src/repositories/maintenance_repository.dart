@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../models/maintenance_request.dart';
+import '../models/maintenance_priority.dart';
 import '../utils/api_client.dart';
 
 class MaintenanceRepository {
@@ -10,12 +11,21 @@ class MaintenanceRepository {
   Future<MaintenanceRequest?> registerMaintenanceRequest({
     required String vehicleId,
     required String description,
+    MaintenancePriority? priority,
   }) async {
     try {
-      final response = await ApiClient.post('SolicitacaoManutencao/registrar', {
+      final Map<String, dynamic> requestData = {
         'idVeiculo': int.parse(vehicleId),
         'descricao': description,
-      });
+      };
+
+      // Adicionar campo de prioridade se fornecido
+      if (priority != null) {
+        requestData['prioridade'] = priority.code;
+      }
+
+      final response =
+          await ApiClient.post('SolicitacaoManutencao/registrar', requestData);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);

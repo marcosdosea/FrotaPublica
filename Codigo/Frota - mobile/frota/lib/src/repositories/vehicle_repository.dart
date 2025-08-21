@@ -46,11 +46,9 @@ class VehicleRepository {
             print(
                 'Processando veículo ${i + 1}/${data.length}: ${vehicleJson['placa'] ?? 'sem placa'}');
 
-            // Log detalhado dos campos mais importantes
             print(
                 'ID: ${vehicleJson['id']}, Modelo: ${vehicleJson['idModeloVeiculo']}, Status: ${vehicleJson['status']}');
 
-            // Converter o ID para string antes de criar o objeto Vehicle
             vehicleJson['id'] = vehicleJson['id'].toString();
 
             final vehicle = Vehicle.fromJson(vehicleJson);
@@ -64,7 +62,6 @@ class VehicleRepository {
           } catch (e, st) {
             print('ERRO ao processar veículo $i: $e');
             print('Stack trace: $st');
-            // Continua processando os próximos veículos
           }
         }
 
@@ -110,7 +107,6 @@ class VehicleRepository {
         final data = jsonDecode(response.body);
         final vehicle = Vehicle.fromJson(data);
 
-        // Buscar o nome do modelo do veículo
         final modelName = await _getVehicleModelName(id);
         return vehicle.copyWith(model: modelName);
       }

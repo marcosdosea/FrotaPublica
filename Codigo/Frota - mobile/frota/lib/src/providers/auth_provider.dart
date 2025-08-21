@@ -59,7 +59,6 @@ class AuthProvider with ChangeNotifier {
         print(
             'AuthProvider: Token válido, mas usuário não encontrado localmente.');
         if (isOnline) {
-          // Se biometria estiver ativada, tentar login biométrico automaticamente
           final biometricEnabled = await BiometricService.isBiometricEnabled();
           if (biometricEnabled) {
             print(
@@ -77,7 +76,6 @@ class AuthProvider with ChangeNotifier {
                 'AuthProvider: Biometria não ativada. Usuário deve fazer login manual.');
           }
         } else {
-          // OFFLINE: Permitir acesso se token válido e credenciais salvas
           if (savedCredentials['username'] != null) {
             print(
                 'AuthProvider: Usuário offline, token válido e credenciais salvas. Permitindo acesso offline.');
@@ -108,7 +106,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Configurar callbacks do ApiClient para manter sincronização
   void _setupApiClientCallbacks() {
     ApiClient.onTokenUpdated = (token, refreshToken, expiry) {
       print('AuthProvider: Token atualizado pelo ApiClient');
@@ -162,7 +159,6 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Fazer login com as credenciais salvas
       _currentUser = await _authService.login(cpf, password);
       final success = _currentUser != null;
 

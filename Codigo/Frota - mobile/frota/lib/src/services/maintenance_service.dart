@@ -1,5 +1,6 @@
 import '../repositories/maintenance_repository.dart';
 import '../models/maintenance_request.dart';
+import '../models/maintenance_priority.dart';
 
 class MaintenanceService {
   final MaintenanceRepository _maintenanceRepository = MaintenanceRepository();
@@ -8,11 +9,13 @@ class MaintenanceService {
   Future<MaintenanceRequest?> createMaintenanceRequest({
     required String vehicleId,
     required String description,
+    MaintenancePriority? priority,
   }) async {
     try {
       return await _maintenanceRepository.registerMaintenanceRequest(
         vehicleId: vehicleId,
         description: description,
+        priority: priority,
       );
     } catch (e) {
       print('Erro ao criar solicitação de manutenção: $e');

@@ -12,7 +12,8 @@ class AvailableVehiclesScreen extends StatefulWidget {
   const AvailableVehiclesScreen({super.key});
 
   @override
-  State<AvailableVehiclesScreen> createState() => _AvailableVehiclesScreenState();
+  State<AvailableVehiclesScreen> createState() =>
+      _AvailableVehiclesScreenState();
 }
 
 class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
@@ -62,7 +63,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
   }
 
   Future<void> _loadVehicles() async {
-    final vehicleProvider = Provider.of<VehicleProvider>(context, listen: false);
+    final vehicleProvider =
+        Provider.of<VehicleProvider>(context, listen: false);
     await vehicleProvider.loadAvailableVehicles();
   }
 
@@ -81,18 +83,20 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarIconBrightness:
+          isDark ? Brightness.light : Brightness.dark,
     ));
 
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+        backgroundColor:
+            isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
         extendBodyBehindAppBar: true,
         body: Container(
           decoration: BoxDecoration(
-            gradient: isDark 
-                ? AppTheme.backgroundGradientDark 
+            gradient: isDark
+                ? AppTheme.backgroundGradientDark
                 : AppTheme.backgroundGradientLight,
           ),
           child: Column(
@@ -108,7 +112,6 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Saudação e perfil
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -116,22 +119,27 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                           child: Consumer<AuthProvider>(
                             builder: (context, authProvider, child) {
                               final user = authProvider.currentUser;
-                              final firstName = user?.name?.split(' ').first ?? 'Motorista';
-                              
+                              final firstName =
+                                  user?.name?.split(' ').first ?? 'Motorista';
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Olá, $firstName',
                                     style: AppTheme.displayMedium.copyWith(
-                                      color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                      color: isDark
+                                          ? AppTheme.darkText
+                                          : AppTheme.lightText,
                                     ),
                                   ),
                                   const SizedBox(height: AppTheme.spacing4),
                                   Text(
                                     'Selecione um veículo para começar',
                                     style: AppTheme.bodyLarge.copyWith(
-                                      color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                      color: isDark
+                                          ? AppTheme.darkTextSecondary
+                                          : AppTheme.lightTextSecondary,
                                     ),
                                   ),
                                 ],
@@ -139,7 +147,7 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                             },
                           ),
                         ),
-                        
+
                         // Avatar do usuário
                         GestureDetector(
                           onTap: () {
@@ -155,7 +163,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                             height: 48,
                             decoration: BoxDecoration(
                               color: AppTheme.primaryColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusMedium),
                               border: Border.all(
                                 color: AppTheme.primaryColor.withOpacity(0.2),
                                 width: 1,
@@ -185,7 +194,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                         if (vehicleProvider.isLoading) {
                           return const Center(
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.primaryColor),
                             ),
                           );
                         }
@@ -200,7 +210,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                                   height: 80,
                                   decoration: BoxDecoration(
                                     color: AppTheme.errorColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
+                                    borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusXLarge),
                                   ),
                                   child: const Icon(
                                     Icons.error_outline_rounded,
@@ -212,14 +223,18 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                                 Text(
                                   'Erro ao carregar veículos',
                                   style: AppTheme.titleLarge.copyWith(
-                                    color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                    color: isDark
+                                        ? AppTheme.darkText
+                                        : AppTheme.lightText,
                                   ),
                                 ),
                                 const SizedBox(height: AppTheme.spacing8),
                                 Text(
                                   vehicleProvider.error!,
                                   style: AppTheme.bodyMedium.copyWith(
-                                    color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                    color: isDark
+                                        ? AppTheme.darkTextSecondary
+                                        : AppTheme.lightTextSecondary,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -245,7 +260,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                                   height: 80,
                                   decoration: BoxDecoration(
                                     color: AppTheme.infoColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusXLarge),
+                                    borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusXLarge),
                                   ),
                                   child: const Icon(
                                     Icons.directions_car_outlined,
@@ -257,14 +273,18 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                                 Text(
                                   'Nenhum veículo disponível',
                                   style: AppTheme.titleLarge.copyWith(
-                                    color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                                    color: isDark
+                                        ? AppTheme.darkText
+                                        : AppTheme.lightText,
                                   ),
                                 ),
                                 const SizedBox(height: AppTheme.spacing8),
                                 Text(
                                   'Não há veículos disponíveis no momento',
                                   style: AppTheme.bodyMedium.copyWith(
-                                    color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                                    color: isDark
+                                        ? AppTheme.darkTextSecondary
+                                        : AppTheme.lightTextSecondary,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -279,9 +299,11 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                             padding: const EdgeInsets.all(AppTheme.spacing24),
                             itemCount: vehicleProvider.availableVehicles.length,
                             itemBuilder: (context, index) {
-                              final vehicle = vehicleProvider.availableVehicles[index];
+                              final vehicle =
+                                  vehicleProvider.availableVehicles[index];
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: AppTheme.spacing16),
+                                padding: const EdgeInsets.only(
+                                    bottom: AppTheme.spacing16),
                                 child: _buildVehicleCard(vehicle, isDark),
                               );
                             },
@@ -306,11 +328,18 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
+          onTap: () async {
+            // Definir o veículo atual no provider antes de navegar
+            final vehicleProvider =
+                Provider.of<VehicleProvider>(context, listen: false);
+            vehicleProvider.setCurrentVehicle(vehicle);
+
+            // Navegar para a tela de registro de percurso
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => JourneyRegistrationScreen(vehicle: vehicle),
+                builder: (context) =>
+                    JourneyRegistrationScreen(vehicle: vehicle),
               ),
             );
           },
@@ -333,9 +362,9 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                     size: 28,
                   ),
                 ),
-                
+
                 const SizedBox(width: AppTheme.spacing16),
-                
+
                 // Informações do veículo
                 Expanded(
                   child: Column(
@@ -344,14 +373,17 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                       Text(
                         vehicle.model,
                         style: AppTheme.titleLarge.copyWith(
-                          color: isDark ? AppTheme.darkText : AppTheme.lightText,
+                          color:
+                              isDark ? AppTheme.darkText : AppTheme.lightText,
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacing4),
                       Text(
                         'Placa: ${vehicle.licensePlate}',
                         style: AppTheme.bodyMedium.copyWith(
-                          color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                          color: isDark
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.lightTextSecondary,
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacing8),
@@ -364,7 +396,8 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                             ),
                             decoration: BoxDecoration(
                               color: AppTheme.successColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusSmall),
                             ),
                             child: Text(
                               'Disponível',
@@ -378,7 +411,9 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                           Text(
                             '${vehicle.odometer ?? 0} km',
                             style: AppTheme.bodySmall.copyWith(
-                              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                              color: isDark
+                                  ? AppTheme.darkTextSecondary
+                                  : AppTheme.lightTextSecondary,
                             ),
                           ),
                         ],
@@ -386,11 +421,13 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
                     ],
                   ),
                 ),
-                
+
                 // Seta
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                  color: isDark
+                      ? AppTheme.darkTextSecondary
+                      : AppTheme.lightTextSecondary,
                   size: 24,
                 ),
               ],

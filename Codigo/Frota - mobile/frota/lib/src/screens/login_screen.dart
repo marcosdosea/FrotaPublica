@@ -407,20 +407,6 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                             ),
 
-                          // Link "Esqueci a senha"
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Esqueci a senha',
-                                style: AppTheme.bodyMedium.copyWith(
-                                  color: AppTheme.primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
                           const SizedBox(height: AppTheme.spacing32),
 
                           // Botão de login

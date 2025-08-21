@@ -35,6 +35,13 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recarregar odômetro quando as dependências mudarem
+    _loadCurrentOdometer();
+  }
+
+  @override
   void dispose() {
     odometerController.dispose();
     super.dispose();
@@ -43,12 +50,32 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
   Future<void> _loadCurrentOdometer() async {
     final vehicleProvider =
         Provider.of<VehicleProvider>(context, listen: false);
+
+    // Tentar obter o veículo atualizado do provider
     final vehicle = vehicleProvider.currentVehicle;
 
     if (vehicle != null) {
       setState(() {
         _currentOdometer = vehicle.odometer;
+        // Preencher automaticamente o campo com o odômetro atual
+        odometerController.text = _currentOdometer.toString();
       });
+    } else {
+      // Se não houver veículo no provider, tentar buscar do journey provider
+      final journeyProvider =
+          Provider.of<JourneyProvider>(context, listen: false);
+      final journey = journeyProvider.activeJourney;
+
+      if (journey != null) {
+        final vehicle = await vehicleProvider.getVehicleById(journey.vehicleId);
+        if (vehicle != null) {
+          setState(() {
+            _currentOdometer = vehicle.odometer;
+            // Preencher automaticamente o campo com o odômetro atual
+            odometerController.text = _currentOdometer.toString();
+          });
+        }
+      }
     }
   }
 

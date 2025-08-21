@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui';
 import 'package:provider/provider.dart';
-import '../widgets/journey_card.dart';
-import '../widgets/finish_journey_dialog.dart';
-import '../models/inspection_status.dart';
-import '../models/journey.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:ui';
 import '../models/vehicle.dart';
+import '../models/journey.dart';
+import '../models/inspection_status.dart';
+import '../providers/journey_provider.dart';
 import '../providers/vehicle_provider.dart';
+import '../providers/fuel_provider.dart';
+import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
+import '../services/inspection_service.dart';
+import '../utils/app_theme.dart';
+import '../utils/widgets/action_card.dart';
+import '../widgets/vehicle_journey_slider.dart';
+import '../widgets/finish_journey_dialog.dart';
+import 'available_vehicles_screen.dart';
+import 'maintenance_request_screen.dart';
 import 'fuel_registration_screen.dart';
 import 'inspection_selection_screen.dart';
-import 'maintenance_request_screen.dart';
-import '../providers/auth_provider.dart';
-import '../providers/journey_provider.dart';
-import '../services/inspection_service.dart';
-import '../providers/fuel_provider.dart';
-import '../utils/app_theme.dart';
-import 'available_vehicles_screen.dart';
 import 'profile_screen.dart';
 import 'map_screen.dart';
 import 'offline_sync_screen.dart';
@@ -487,12 +490,20 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               ),
               const SizedBox(width: AppTheme.spacing12),
               Expanded(
-                child: _buildStatItem(
-                  icon: Icons.speed,
-                  label: 'Odômetro',
-                  value:
-                      '${journey.finalOdometer ?? _currentVehicle.odometer ?? 0} km',
-                  isDark: isDark,
+                child: Consumer2<JourneyProvider, VehicleProvider>(
+                  builder: (context, journeyProvider, vehicleProvider, child) {
+                    final currentVehicle =
+                        vehicleProvider.currentVehicle ?? _currentVehicle;
+                    final odometerDifference = (currentVehicle.odometer ?? 0) -
+                        (journey.initialOdometer ?? 0);
+
+                    return _buildStatItem(
+                      icon: Icons.straighten,
+                      label: 'Percorridos',
+                      value: '$odometerDifference km',
+                      isDark: isDark,
+                    );
+                  },
                 ),
               ),
             ],
@@ -620,20 +631,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
       child: Row(
         children: [
           Expanded(
-            child: Consumer2<JourneyProvider, VehicleProvider>(
-              builder: (context, journeyProvider, vehicleProvider, child) {
-                final journey = journeyProvider.activeJourney;
+            child: Consumer<VehicleProvider>(
+              builder: (context, vehicleProvider, child) {
                 final currentVehicle =
                     vehicleProvider.currentVehicle ?? _currentVehicle;
-                final odometerDifference = journey != null
-                    ? (currentVehicle.odometer ?? 0) -
-                        (journey.initialOdometer ?? 0)
-                    : 0;
 
                 return _buildStatItem(
-                  icon: Icons.straighten,
-                  label: 'Percorridos',
-                  value: '$odometerDifference km',
+                  icon: Icons.speed,
+                  label: 'Odômetro',
+                  value: '${currentVehicle.odometer ?? 0} km',
                   isDark: isDark,
                 );
               },
@@ -754,8 +760,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 icon: Icons.local_gas_station,
                 title: 'Abastecimento',
                 subtitle: 'Registrar combustível',
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => FuelRegistrationScreen(
@@ -763,6 +769,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                       ),
                     ),
                   );
+
+                  // Se o abastecimento foi registrado com sucesso, atualizar os dados
+                  if (result == true) {
+                    await _refreshData();
+                  }
                 },
                 isDark: isDark,
               ),
@@ -1252,7 +1263,25 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     );
   }
 
-  void _showFinishJourneyDialog() {
+  void _showFinishJourneyDialog() async {
+    // Verificar conectividade antes de abrir o diálogo
+    final connectivity = await Connectivity().checkConnectivity();
+    final isOnline = connectivity != ConnectivityResult.none;
+
+    if (!isOnline) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'É necessário estar conectado à internet para finalizar o percurso.'),
+            backgroundColor: AppTheme.errorColor,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
     final journeyProvider =
         Provider.of<JourneyProvider>(context, listen: false);
     final vehicleProvider =
@@ -1276,63 +1305,65 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
         : 0;
     final distance = '${odometerDifference} km';
 
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: FinishJourneyDialog(
-            duration: duration,
-            distance: distance,
-            onFinish: (int odometer) async {
-              final inspectionService = InspectionService();
-              final result = await journeyProvider.finishJourney(odometer);
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (context) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: FinishJourneyDialog(
+              duration: duration,
+              distance: distance,
+              onFinish: (int odometer) async {
+                final inspectionService = InspectionService();
+                final result = await journeyProvider.finishJourney(odometer);
 
-              if (result == true) {
-                await inspectionService
-                    .clearInspectionStatus(_currentVehicle.id);
+                if (result == true) {
+                  await inspectionService
+                      .clearInspectionStatus(_currentVehicle.id);
 
-                final fuelProvider =
-                    Provider.of<FuelProvider>(context, listen: false);
-                final journey = journeyProvider.activeJourney;
-                if (journey != null) {
-                  await fuelProvider.clearTotalLitersForJourney(journey.id);
-                }
+                  final fuelProvider =
+                      Provider.of<FuelProvider>(context, listen: false);
+                  final journey = journeyProvider.activeJourney;
+                  if (journey != null) {
+                    await fuelProvider.clearTotalLitersForJourney(journey.id);
+                  }
 
-                setState(() {
-                  inspectionStatus = InspectionStatus();
-                });
+                  setState(() {
+                    inspectionStatus = InspectionStatus();
+                  });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Percurso finalizado com sucesso!'),
-                    backgroundColor: AppTheme.successColor,
-                  ),
-                );
-
-                Navigator.pop(context);
-
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AvailableVehiclesScreen(),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Percurso finalizado com sucesso!'),
+                      backgroundColor: AppTheme.successColor,
                     ),
                   );
-                });
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Odômetro final inferior ao atual.'),
-                    backgroundColor: AppTheme.errorColor,
-                  ),
-                );
-              }
-            },
-          ),
-        );
-      },
-    );
+
+                  Navigator.pop(context);
+
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AvailableVehiclesScreen(),
+                      ),
+                    );
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Odômetro final inferior ao atual.'),
+                      backgroundColor: AppTheme.errorColor,
+                    ),
+                  );
+                }
+              },
+            ),
+          );
+        },
+      );
+    }
   }
 }
