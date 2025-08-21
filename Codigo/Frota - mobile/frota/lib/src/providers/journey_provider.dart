@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 import '../models/journey.dart';
 import '../services/journey_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,7 +107,11 @@ class JourneyProvider with ChangeNotifier {
     double? destinationLongitude,
   }) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final journey = await _journeyService.startJourney(
@@ -139,7 +144,11 @@ class JourneyProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -148,7 +157,11 @@ class JourneyProvider with ChangeNotifier {
     if (_activeJourney == null) return false;
 
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final journey = await _journeyService.finishJourney(
@@ -162,6 +175,10 @@ class JourneyProvider with ChangeNotifier {
 
         _activeJourney = null;
         _error = null;
+        
+        // Limpar dados do veículo localmente sem notificar o provider
+        await prefs.remove('vehicle_${_activeJourney?.vehicleId}');
+        
         return true;
       } else {
         _error = 'Não foi possível finalizar a jornada';
@@ -172,14 +189,22 @@ class JourneyProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Carregar histórico de jornadas
   Future<void> loadJourneyHistory(String driverId) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _journeyHistory =
@@ -189,7 +214,11 @@ class JourneyProvider with ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -198,7 +227,11 @@ class JourneyProvider with ChangeNotifier {
     if (_activeJourney == null) return false;
 
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final journey = await _journeyService.addFuelRefillToJourney(
@@ -222,13 +255,21 @@ class JourneyProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   void clearError() {
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   Future<void> _saveActiveJourneyAndVehicle(Journey journey) async {

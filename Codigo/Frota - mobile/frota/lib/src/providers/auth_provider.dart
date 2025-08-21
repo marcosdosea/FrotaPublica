@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 import '../models/user.dart';
 import '../services/auth_service.dart';
 import '../services/biometric_service.dart';
@@ -109,7 +110,11 @@ class AuthProvider with ChangeNotifier {
   void _setupApiClientCallbacks() {
     ApiClient.onTokenUpdated = (token, refreshToken, expiry) {
       print('AuthProvider: Token atualizado pelo ApiClient');
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     };
 
     ApiClient.onTokenExpired = () {
@@ -123,14 +128,22 @@ class AuthProvider with ChangeNotifier {
     print('AuthProvider: Lidando com expiração de token');
     _currentUser = null;
     _error = 'Sessão expirada. Faça login novamente.';
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   // Login com biometria
   Future<bool> loginWithBiometrics() async {
     _isLoading = true;
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       print('AuthProvider: Tentando login com biometria');
@@ -179,7 +192,11 @@ class AuthProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -188,7 +205,11 @@ class AuthProvider with ChangeNotifier {
       {bool saveBiometric = false, bool rememberMe = false}) async {
     _isLoading = true;
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       print('AuthProvider: Tentando login com CPF: $cpf');
@@ -225,7 +246,11 @@ class AuthProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -243,7 +268,11 @@ class AuthProvider with ChangeNotifier {
         print('AuthProvider: Falha ao renovar token');
         _error = 'Falha ao renovar sessão';
         _currentUser = null;
-        notifyListeners();
+        
+        // Usar addPostFrameCallback para evitar setState durante build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
       }
 
       return success;
@@ -251,7 +280,11 @@ class AuthProvider with ChangeNotifier {
       print('AuthProvider: Erro ao renovar token: $e');
       _error = 'Erro ao renovar sessão: $e';
       _currentUser = null;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
       return false;
     }
   }
@@ -291,7 +324,11 @@ class AuthProvider with ChangeNotifier {
   // Logout
   Future<void> logout() async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       print('AuthProvider: Realizando logout');
@@ -312,14 +349,22 @@ class AuthProvider with ChangeNotifier {
       _error = 'Erro ao fazer logout';
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Limpar erro
   void clearError() {
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   // Método público para forçar login biométrico (pode ser chamado pela tela de login)

@@ -27,7 +27,10 @@ class _AvailableVehiclesScreenState extends State<AvailableVehiclesScreen>
   void initState() {
     super.initState();
     _initializeAnimations();
-    _loadVehicles();
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadVehicles();
+    });
   }
 
   void _initializeAnimations() {

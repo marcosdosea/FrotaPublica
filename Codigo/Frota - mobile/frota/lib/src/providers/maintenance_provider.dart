@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 import '../models/maintenance_request.dart';
 import '../models/maintenance_priority.dart';
 import '../services/maintenance_service.dart';
@@ -21,7 +22,11 @@ class MaintenanceProvider with ChangeNotifier {
     MaintenancePriority? priority,
   }) async {
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final request = await _maintenanceService.createMaintenanceRequest(
@@ -43,14 +48,22 @@ class MaintenanceProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Carregar solicitações do motorista
   Future<void> loadRequests() async {
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _requests = await _maintenanceService.getMaintenanceRequests();
@@ -59,13 +72,21 @@ class MaintenanceProvider with ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoading = false;
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Limpar erro
   void clearError() {
     _error = null;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

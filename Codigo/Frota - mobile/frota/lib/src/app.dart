@@ -114,32 +114,35 @@ class _AppContentState extends State<AppContent> {
   }
 
   Future<void> _initializeApp() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.initialize();
+    // Usar addPostFrameCallback para garantir que a inicialização aconteça após o build
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.initialize();
 
-    if (authProvider.isAuthenticated) {
-      final journeyProvider =
-          Provider.of<JourneyProvider>(context, listen: false);
-      final vehicleProvider =
-          Provider.of<VehicleProvider>(context, listen: false);
-      final connectivity = await Connectivity().checkConnectivity();
-      final isOffline = connectivity == ConnectivityResult.none;
+      if (authProvider.isAuthenticated) {
+        final journeyProvider =
+            Provider.of<JourneyProvider>(context, listen: false);
+        final vehicleProvider =
+            Provider.of<VehicleProvider>(context, listen: false);
+        final connectivity = await Connectivity().checkConnectivity();
+        final isOffline = connectivity == ConnectivityResult.none;
 
-      if (isOffline) {
-        await journeyProvider.loadLocalJourney();
-      } else {
-        await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
-      }
+        if (isOffline) {
+          await journeyProvider.loadLocalJourney();
+        } else {
+          await journeyProvider.loadActiveJourney(authProvider.currentUser!.id);
+        }
 
-      if (journeyProvider.hasActiveJourney) {
-        final vehicle = await vehicleProvider
-            .getVehicleById(journeyProvider.activeJourney!.vehicleId);
-        if (vehicle != null) {
-          vehicleProvider.setCurrentVehicle(vehicle);
-          // O redirecionamento será tratado no onGenerateRoute
+        if (journeyProvider.hasActiveJourney) {
+          final vehicle = await vehicleProvider
+              .getVehicleById(journeyProvider.activeJourney!.vehicleId);
+          if (vehicle != null) {
+            vehicleProvider.setCurrentVehicle(vehicle);
+            // O redirecionamento será tratado no onGenerateRoute
+          }
         }
       }
-    }
+    });
   }
 
   void _updateSuppliersOnStart() async {
@@ -177,95 +180,92 @@ class _AppContentState extends State<AppContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<AuthProvider, ThemeProvider>(
-      builder: (context, authProvider, themeProvider, child) {
-        return MaterialApp(
-          title: 'Frota App',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeProvider.themeMode,
-          debugShowCheckedModeBanner: false,
-          initialRoute: '/splash',
-          routes: AppRouter.routes,
-          builder: (context, child) {
-            // Configurações globais para melhorar comportamento do teclado
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                // Evitar que o teclado redimensione a tela
-                viewInsets: MediaQuery.of(context).viewInsets,
-                // Configurar comportamento do teclado
-                viewPadding: MediaQuery.of(context).viewPadding,
-              ),
-              child: child!,
-            );
-          },
-          onGenerateRoute: (settings) {
-            // Intercepta a navegação para verificar se é necessário redirecionar
-
-            // Se não estiver autenticado e não estiver indo para login ou apresentação
-            if (!authProvider.isAuthenticated &&
-                settings.name != '/login' &&
-                settings.name != '/presentation') {
-              print('Usuário não autenticado. Redirecionando para login.');
-              return MaterialPageRoute(builder: (_) => const LoginScreen());
-            }
-
-            // Verificar redirecionamento para DriverHomeScreen na rota inicial
-            if (settings.name == '/splash' && authProvider.isAuthenticated) {
-              final journeyProvider =
-                  Provider.of<JourneyProvider>(context, listen: false);
-              final vehicleProvider =
-                  Provider.of<VehicleProvider>(context, listen: false);
-
-              if (journeyProvider.hasActiveJourney &&
-                  vehicleProvider.hasCurrentVehicle) {
-                print('Redirecionando da splash para DriverHomeScreen.');
-                return MaterialPageRoute(
-                  builder: (_) => DriverHomeScreen(
-                      vehicle: vehicleProvider.currentVehicle!),
-                );
-              }
-            }
-
-            if (authProvider.isAuthenticated) {
-              final journeyProvider =
-                  Provider.of<JourneyProvider>(context, listen: false);
-              final vehicleProvider =
-                  Provider.of<VehicleProvider>(context, listen: false);
-
-              // Se estiver tentando ir para veículos disponíveis enquanto existe percurso ativo, redireciona
-              if (settings.name == '/available_vehicles' &&
-                  journeyProvider.hasActiveJourney) {
-                print(
-                    'Jornada ativa encontrada. Redirecionando para DriverHomeScreen.');
-                // Precisamos garantir que temos o veículo antes de redirecionar
-                if (vehicleProvider.hasCurrentVehicle) {
-                  return MaterialPageRoute(
-                    builder: (_) => DriverHomeScreen(
-                        vehicle: vehicleProvider.currentVehicle!),
-                  );
-                } else {
-                  // Caso não tenha o veículo carregado, direciona para a tela de apresentação
-                  // que vai iniciar o carregamento do veículo corretamente
-                  return MaterialPageRoute(
-                      builder: (_) => const PresentationScreen());
-                }
-              }
-
-              // Se não houver percurso ativo e estiver indo para a tela inicial, redireciona para veículos disponíveis
-              if (settings.name == '/presentation' &&
-                  !journeyProvider.hasActiveJourney) {
-                print(
-                    'Nenhuma jornada ativa. Redirecionando para veículos disponíveis.');
-                return MaterialPageRoute(
-                    builder: (_) => const AvailableVehiclesScreen());
-              }
-            }
-
-            // Processa normalmente se não houver redirecionamento
-            return null;
-          },
+    return MaterialApp(
+      title: 'Frota App',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/splash',
+      routes: AppRouter.routes,
+      builder: (context, child) {
+        // Configurações globais para melhorar comportamento do teclado
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            // Evitar que o teclado redimensione a tela
+            viewInsets: MediaQuery.of(context).viewInsets,
+            // Configurar comportamento do teclado
+            viewPadding: MediaQuery.of(context).viewPadding,
+          ),
+          child: child!,
         );
+      },
+      onGenerateRoute: (settings) {
+        // Intercepta a navegação para verificar se é necessário redirecionar
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        // Se não estiver autenticado e não estiver indo para login ou apresentação
+        if (!authProvider.isAuthenticated &&
+            settings.name != '/login' &&
+            settings.name != '/presentation' &&
+            settings.name != '/splash') {
+          print('Usuário não autenticado. Redirecionando para login.');
+          return MaterialPageRoute(builder: (_) => const LoginScreen());
+        }
+
+        // Verificar redirecionamento para DriverHomeScreen na rota inicial
+        if (settings.name == '/splash' && authProvider.isAuthenticated) {
+          final journeyProvider =
+              Provider.of<JourneyProvider>(context, listen: false);
+          final vehicleProvider =
+              Provider.of<VehicleProvider>(context, listen: false);
+
+          if (journeyProvider.hasActiveJourney &&
+              vehicleProvider.hasCurrentVehicle) {
+            print('Redirecionando da splash para DriverHomeScreen.');
+            return MaterialPageRoute(
+              builder: (_) => DriverHomeScreen(
+                  vehicle: vehicleProvider.currentVehicle!),
+            );
+          }
+        }
+
+        if (authProvider.isAuthenticated) {
+          final journeyProvider =
+              Provider.of<JourneyProvider>(context, listen: false);
+          final vehicleProvider =
+              Provider.of<VehicleProvider>(context, listen: false);
+
+          // Se estiver tentando ir para veículos disponíveis enquanto existe percurso ativo, redireciona
+          if (settings.name == '/available_vehicles' &&
+              journeyProvider.hasActiveJourney) {
+            print(
+                'Jornada ativa encontrada. Redirecionando para DriverHomeScreen.');
+            // Precisamos garantir que temos o veículo antes de redirecionar
+            if (vehicleProvider.hasCurrentVehicle) {
+              return MaterialPageRoute(
+                builder: (_) => DriverHomeScreen(
+                    vehicle: vehicleProvider.currentVehicle!),
+              );
+            } else {
+              // Caso não tenha o veículo carregado, direciona para a tela de apresentação
+              // que vai iniciar o carregamento do veículo corretamente
+              return MaterialPageRoute(
+                  builder: (_) => const PresentationScreen());
+            }
+          }
+
+          // Se não houver percurso ativo e estiver indo para a tela inicial, redireciona para veículos disponíveis
+          if (settings.name == '/presentation' &&
+              !journeyProvider.hasActiveJourney) {
+            print(
+                'Nenhuma jornada ativa. Redirecionando para veículos disponíveis.');
+            return MaterialPageRoute(
+                builder: (_) => const AvailableVehiclesScreen());
+          }
+        }
+
+        // Processa normalmente se não houver redirecionamento
+        return null;
       },
     );
   }

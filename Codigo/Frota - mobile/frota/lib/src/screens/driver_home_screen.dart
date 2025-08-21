@@ -1330,8 +1330,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     await fuelProvider.clearTotalLitersForJourney(journey.id);
                   }
 
-                  setState(() {
-                    inspectionStatus = InspectionStatus();
+                  // Limpar veículo atual silenciosamente para evitar setState durante build
+                  vehicleProvider.clearCurrentVehicleSilently();
+
+                  // Usar addPostFrameCallback para evitar setState durante build
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    setState(() {
+                      inspectionStatus = InspectionStatus();
+                    });
                   });
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -1343,7 +1349,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
                   Navigator.pop(context);
 
-                  Future.delayed(const Duration(milliseconds: 100), () {
+                  // Usar addPostFrameCallback para garantir que a navegação aconteça após o build
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

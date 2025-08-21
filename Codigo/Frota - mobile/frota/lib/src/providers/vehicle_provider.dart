@@ -4,6 +4,7 @@ import '../models/user.dart';
 import '../services/vehicle_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 
 class VehicleProvider with ChangeNotifier {
   final VehicleService _vehicleService = VehicleService();
@@ -28,7 +29,11 @@ class VehicleProvider with ChangeNotifier {
   Future<void> fetchAvailableVehicles({User? currentUser}) async {
     print('Iniciando busca de veículos disponíveis via provider...');
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       print(
@@ -45,7 +50,11 @@ class VehicleProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       print('Notificando ouvintes sobre atualização de veículos disponíveis');
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -73,7 +82,11 @@ class VehicleProvider with ChangeNotifier {
   // Selecionar veículo atual
   Future<bool> selectVehicle(String vehicleId, String driverId) async {
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final vehicle =
@@ -92,20 +105,33 @@ class VehicleProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Definir veículo atual sem atribuição ao motorista (para navegação direta)
   void setCurrentVehicle(Vehicle vehicle) {
-    // Evitar notificação se o veículo for o mesmo
-    if (_currentVehicle?.id == vehicle.id) {
-      return;
-    }
-
     _currentVehicle = vehicle;
-    // Usar Future.microtask para evitar notificação durante a fase de build
-    Future.microtask(() => notifyListeners());
+    _error = null;
+    notifyListeners();
+  }
+
+  // Limpar veículo atual sem notificar (para evitar setState durante build)
+  void clearCurrentVehicleSilently() {
+    _currentVehicle = null;
+    _error = null;
+    // Não chama notifyListeners() para evitar setState durante build
+  }
+
+  // Limpar veículo atual com notificação
+  void clearCurrentVehicle() {
+    _currentVehicle = null;
+    _error = null;
+    notifyListeners();
   }
 
   // Liberar veículo atual
@@ -113,7 +139,11 @@ class VehicleProvider with ChangeNotifier {
     if (_currentVehicle == null) return false;
 
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final vehicle = await _vehicleService.releaseVehicle(_currentVehicle!.id);
@@ -131,7 +161,11 @@ class VehicleProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -140,7 +174,11 @@ class VehicleProvider with ChangeNotifier {
     if (_currentVehicle == null) return false;
 
     _isLoading = true;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final vehicle = await _vehicleService.updateVehicleOdometer(
@@ -189,13 +227,21 @@ class VehicleProvider with ChangeNotifier {
       return true;
     } finally {
       _isLoading = false;
-      notifyListeners();
+
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Limpar erro
   void clearError() {
     _error = null;
-    notifyListeners();
+
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

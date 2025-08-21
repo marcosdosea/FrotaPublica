@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 import '../models/inspection.dart';
 import '../models/inspection_status.dart';
 import '../services/inspection_service.dart';
@@ -19,7 +20,11 @@ class InspectionProvider with ChangeNotifier {
   // Carregar status de inspeção para uma jornada
   Future<void> loadInspectionStatus(String journeyId) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _inspectionStatus =
@@ -29,7 +34,11 @@ class InspectionProvider with ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -40,7 +49,11 @@ class InspectionProvider with ChangeNotifier {
     String? problems,
   }) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final inspection = await _inspectionService.registerInspection(
@@ -70,14 +83,22 @@ class InspectionProvider with ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Carregar inspeções para um veículo
   Future<void> loadVehicleInspections(String vehicleId) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _vehicleInspections =
@@ -87,13 +108,21 @@ class InspectionProvider with ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Limpar erro
   void clearError() {
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

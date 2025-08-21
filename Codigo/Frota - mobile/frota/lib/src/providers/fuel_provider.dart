@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart'; // Added for WidgetsBinding
 import '../models/fuel_refill.dart';
 import '../services/fuel_service.dart';
 import '../services/local_database_service.dart';
@@ -29,7 +30,11 @@ class FuelProvider with ChangeNotifier {
     required int odometerReading,
   }) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final refill = await _fuelService.registerFuelRefill(
@@ -55,14 +60,22 @@ class FuelProvider with ChangeNotifier {
       return null;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Carregar abastecimentos para um veículo
   Future<void> loadVehicleRefills(String vehicleId) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _vehicleRefills = await _fuelService.getFuelRefillsForVehicle(vehicleId);
@@ -72,21 +85,34 @@ class FuelProvider with ChangeNotifier {
       _error = e.toString();
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
   // Limpar erro
   void clearError() {
     _error = null;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   // Obter total de litros abastecidos para o percurso (considerando offline)
   Future<void> loadTotalLitersForJourney(String journeyId,
       {String? vehicleId}) async {
     _isLoading = true;
-    notifyListeners();
+    
+    // Usar addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+    
     try {
       // Litros online/persistido
       double totalOnline =
@@ -109,7 +135,11 @@ class FuelProvider with ChangeNotifier {
       _totalLitersForJourney = 0.0;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -118,7 +148,11 @@ class FuelProvider with ChangeNotifier {
     try {
       await _fuelService.clearTotalLitersForJourney(journeyId);
       _totalLitersForJourney = 0.0;
-      notifyListeners();
+      
+      // Usar addPostFrameCallback para evitar setState durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _error = e.toString();
     }
