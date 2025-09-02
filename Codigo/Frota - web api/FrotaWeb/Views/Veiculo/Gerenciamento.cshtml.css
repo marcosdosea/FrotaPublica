@@ -1,0 +1,62 @@
+.card {
+    background: #f0f4f8;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+    .card h2 {
+        margin: 0;
+    }
+
+    .card .status {
+        font-weight: bold;
+        color: green;
+    }
+
+.actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+    .actions button {
+        background: white;
+        border: none;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.2s;
+    }
+
+        .actions button:hover {
+            background: #e0e7ef;
+        }
+
+.reminders {
+    background: #e4f0f8;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+    .reminders ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .reminders li {
+        background: white;
+        border-left: 4px solid red;
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        border-radius: 6px;
+    }

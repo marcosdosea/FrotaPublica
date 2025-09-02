@@ -1,0 +1,133 @@
+@model FrotaWeb.Models.UnidadeAdministrativaViewModel
+
+@{
+	var estados = ViewData["Estados"] as List<string>;
+}
+
+<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+
+<main class="main_content container">
+	<div class="titulo-pagina">
+		<a href="javascript:history.back()" class="voltar">
+			<i class="fa fa-arrow-left"></i> Voltar
+		</a>
+		<h1>Cadastro de Unidade Administrativa</h1>
+	</div>
+	<div class="fomulario">
+		<form asp-action="Edit">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Nome" class="label">Nome</label>
+				<input asp-for="Nome" class="form-control" placeholder="" />
+				<span asp-validation-for="Nome" class="text-danger"></span>
+			</div>
+			<hr class="divisor">
+			<div class="form-group w40">
+				<label asp-for="Cep" class="control-label"></label>
+				<input asp-for="Cep" class="form-control" id="cep" maxlength="9" />
+				<span asp-validation-for="Cep" class="text-danger"></span>
+			</div>
+			<div class="form-group w50">
+				<label asp-for="Rua" class="control-label"></label>
+				<input asp-for="Rua" class="form-control" id="rua" />
+				<span asp-validation-for="Rua" class="text-danger"></span>
+			</div>
+			<div class="form-group w40">
+				<label asp-for="Bairro" class="control-label"></label>
+				<input asp-for="Bairro" class="form-control" id="bairro" />
+				<span asp-validation-for="Bairro" class="text-danger"></span>
+			</div>
+			<div class="form-group w60">
+				<label asp-for="Complemento" class="control-label"></label>
+				<input asp-for="Complemento" class="form-control" />
+				<span asp-validation-for="Complemento" class="text-danger"></span>
+			</div>
+			<div class="form-group w10">
+				<label asp-for="Numero" class="control-label"></label>
+				<input asp-for="Numero" class="form-control" />
+				<span asp-validation-for="Numero" class="text-danger"></span>
+			</div>
+			<div class="form-group w40">
+				<label asp-for="Cidade" class="control-label"></label>
+				<input asp-for="Cidade" class="form-control" id="cidade" />
+				<span asp-validation-for="Cidade" class="text-danger"></span>
+			</div>
+			<div class="form-group w10">
+				<label asp-for="Estado" class="control-label"></label>
+				<select asp-for="Estado" class="custom-select select2" id="Estado">
+					@if (!estados.Any())
+					{
+						<option value="" disabled selected hidden>Frota</option>
+					}
+					else
+					{
+						foreach (var estado in estados)
+						{
+							<option value="@estado">@estado</option>
+						}
+					}
+				</select>
+				<span asp-validation-for="Estado" class="text-danger"></span>
+			</div>
+			<hr class="divisor">
+			<div class="form-group">
+				<label asp-for="Latitude" class="label">Latitude</label>
+				<input asp-for="Latitude" class="form-control" placeholder="" />
+				<span asp-validation-for="Latitude" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Longitude" class="label">Status</label>
+				<input asp-for="Longitude" class="form-control" placeholder="" />
+				<span asp-validation-for="Longitude" class="text-danger"></span>
+			</div>
+			<div class="buttons">
+				<input type="submit" value="Salvar Alterações" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</main>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+
+	<script>
+		document.getElementById("cep").addEventListener("blur", function () {
+			const cep = this.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+
+			if (cep.length === 8) {
+				fetch(`https://viacep.com.br/ws/${cep}/json/`)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("Erro ao buscar CEP.");
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.erro) {
+							alert("CEP não encontrado.");
+							return;
+						}
+
+						// Preenche os campos com os dados retornados
+						document.getElementById("rua").value = data.logradouro || "";
+						document.getElementById("bairro").value = data.bairro || "";
+						document.getElementById("cidade").value = data.localidade || "";
+						// Seletor para estado
+						const estadoSelect = document.getElementById("Estado");
+						estadoSelect.value = data.uf || "";
+						if (!estadoSelect.value) {
+							alert("Estado não encontrado no seletor.");
+						}
+					})
+					.catch(error => {
+						console.error("Erro ao consultar o CEP:", error);
+						alert("Não foi possível consultar o CEP.");
+					});
+			} else {
+				alert("CEP inválido. Por favor, insira um CEP válido.");
+			}
+		});
+	</script>
+}

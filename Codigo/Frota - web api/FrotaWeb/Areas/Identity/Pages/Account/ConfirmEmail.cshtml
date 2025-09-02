@@ -1,0 +1,198 @@
+@page
+@model ConfirmEmailModel
+
+@{
+	ViewData["Title"] = "Confirmação concluída";
+	Layout = null;
+}
+<head>
+	<style>
+		header, #sidebar {
+			display: none;
+		}
+
+		footer {
+			background-color: #08448c;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background-color: #e6f0fa;
+		}
+
+		.container {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: row;
+			width: 100vw;
+			background-color: #D9E9F4;
+		}
+
+		.left-section {
+			position: relative;
+			width: 60%;
+			height: 100vh;
+		}
+
+			.left-section img {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+		.right-section {
+			height: 100vh;
+			width: 40%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.form-container {
+			width: 300px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: #D9E9F4;
+		}
+
+		.right-section img {
+			width: 150px;
+			height: auto;
+			margin: 15px;
+		}
+
+		.form {
+			width: 100%;
+			max-width: 350px;
+			display: flex;
+			flex-direction: column;
+		}
+
+			.form p {
+				height: 35px;
+				font-size: 15px;
+				display: flex;
+				flex-direction: column;
+				text-align: left;
+				justify-content: center;
+				font-weight: 600;
+			}
+
+			.form input {
+				padding: 10px;
+				font-size: 1em;
+				border: 0px;
+				border-radius: 5px;
+				background-color: #fff;
+			}
+
+				.form input:focus {
+					border: 1px solid #ccc;
+					outline: none;
+					border-color: #0C69AB;
+				}
+
+			.form a {
+				text-align: left;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				height: 40px;
+				font-size: 17px;
+				color: #0C69AB;
+				text-decoration: none;
+				font-weight: 600;
+			}
+
+				.form a:hover {
+					color: #000000;
+				}
+
+			.form button {
+				margin-top: 23px;
+				margin-left: 10%;
+				margin-right: 10%;
+				padding: 10px;
+				font-size: 1em;
+				color: white;
+				background-color: #0C69AB;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s ease;
+			}
+
+				.form button:hover {
+					background-color: #155cb0;
+				}
+
+		#check-symbol {
+			width: 22px;
+			height: 22px;
+			margin-left: 8px;
+		}
+
+		h1 > div {
+			display: flex;
+			align-items: center;
+			white-space: nowrap;
+		}
+
+		@@media screen and (max-width: 930px) {
+			.left-section {
+				width: 0%;
+				height: 50vh;
+			}
+
+			.right-section {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<div class="container">
+	<div class="left-section">
+		<img src="~/img/background-login.png" alt="background" />
+	</div>
+	<section class="right-section">
+		<form asp-page="./Login" id="account" method="get">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-container">
+				<img src="~/img/logo.png" alt="Frota logo" />
+				<h1>
+					<div>
+						@ViewData["Title"]
+						<img id="check-symbol" src="~/img/check-symbol.png" alt="Símbolo de verificado" />
+					</div>
+				</h1>
+				<div class="form">
+					<button type="submit" class="button-to-login">Login</button>
+				</div>
+			</div>
+		</form>
+	</section>
+</div>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

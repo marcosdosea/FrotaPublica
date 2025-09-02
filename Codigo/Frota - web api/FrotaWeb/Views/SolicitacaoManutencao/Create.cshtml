@@ -1,0 +1,78 @@
+@model FrotaWeb.Models.SolicitacaoManutencaoViewModel
+@using Core.DTO
+
+@{
+	var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
+	var pessoas = ViewData["Pessoas"] as IEnumerable<PessoaDTO> ?? Enumerable.Empty<PessoaDTO>();
+}
+
+<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+
+<main class="main_content container">
+	<div class="titulo-pagina">
+		<a href="javascript:history.back()" class="voltar">
+			<i class="fa fa-arrow-left"></i> Voltar
+		</a>
+		<h1>Criar Solicitação de Manutenção</h1>
+	</div>
+	<div class="fomulario">
+		<form asp-action="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group w30">
+				<label asp-for="IdVeiculo" class="control-label">Veículo</label>
+				<select asp-for="IdVeiculo" class="custom-select select2">
+					@if (!veiculos.Any())
+					{
+						<option value="" disabled selected hidden>Veiculo</option>
+					}
+					else
+					{
+						foreach (var veiculo in veiculos)
+						{
+							<option value="@veiculo.Id">@veiculo.Placa</option>
+						}
+					}
+				</select>
+				<span asp-validation-for="IdVeiculo" class="text-danger"></span>
+			</div>
+			<div class="form-group w40">
+				<label asp-for="IdPessoa" class="control-label">Solicitante</label>
+				<select asp-for="IdPessoa" class="custom-select select2">
+					@if (!pessoas.Any())
+					{
+						<option value="" disabled selected hidden>Veiculo</option>
+					}
+					else
+					{
+						foreach (var pessoa in pessoas)
+						{
+							<option value="@pessoa.Id">@pessoa.Nome</option>
+						}
+					}
+				</select>
+				<span asp-validation-for="IdPessoa" class="text-danger"></span>
+			</div>
+			<div class="form-group w20">
+				<label asp-for="DataSolicitacao" class="label">Data de Solicitação</label>
+				<input asp-for="DataSolicitacao" class="form-control" placeholder="" />
+				<span asp-validation-for="DataSolicitacao" class="text-danger"></span>
+			</div>
+			<hr class="divisor">
+			<div class="form-group w100">
+				<label asp-for="DescricaoProblema" class="label">Descrição</label>
+				<textarea asp-for="DescricaoProblema" class="form-control" placeholder="Manutenção necessária"></textarea>
+				<span asp-validation-for="DescricaoProblema" class="text-danger"></span>
+			</div>
+			<div class="buttons">
+				<input type="submit" value="Criar Solicitação" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</main>
+
+@section Scripts {
+	<script src="~/js/form.js" asp-append-version="true"></script>
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

@@ -1,0 +1,32 @@
+@model FrotaWeb.Models.MarcaPecaInsumoViewModel
+
+<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Cadastro de Marca de Peças e Insumos</h1>
+    </div>
+    <div class="fomulario">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Descricao" class="label">Descricão</label>
+                <textarea asp-for="Descricao" class="form-control" placeholder=""></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+            <div class="buttons">
+                <input type="submit" value="Cadastrar Marca" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/form.js" asp-append-version="true"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
