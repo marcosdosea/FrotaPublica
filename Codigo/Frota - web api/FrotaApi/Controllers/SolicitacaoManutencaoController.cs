@@ -33,6 +33,7 @@ namespace FrotaApi.Controllers
         {
             public uint IdVeiculo { get; set; }
             public string Descricao { get; set; }
+            public string? Prioridade { get; set; } = "M";
         }
 
         [HttpPost("registrar")]
@@ -64,12 +65,19 @@ namespace FrotaApi.Controllers
                     return BadRequest("Você precisa estar em um percurso ativo com este veículo para solicitar manutenção");
                 }
 
+                // Validar prioridade
+                if (!string.IsNullOrEmpty(model.Prioridade) && !"BMUA".Contains(model.Prioridade.ToUpper()))
+                {
+                    return BadRequest("Prioridade deve ser B (Baixa), M (Média), A (Alta) ou U (Urgente)");
+                }
+
                 // Criar a solicitação de manutenção
                 var solicitacao = new Solicitacaomanutencao
                 {
                     IdPessoa = idPessoa,
                     IdVeiculo = model.IdVeiculo,
                     DescricaoProblema = model.Descricao,
+                    Prioridade = model.Prioridade?.ToUpper() ?? "M",
                     DataSolicitacao = DateTime.Now,
                     IdFrota = pessoa.IdFrota,
                 };

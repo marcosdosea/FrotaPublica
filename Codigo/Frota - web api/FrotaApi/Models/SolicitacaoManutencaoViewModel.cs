@@ -28,5 +28,9 @@ public class SolicitacaoManutencaoViewModel
     [StringLength(500, ErrorMessage = "A {0} pode ter no máximo 500 caracteres")]
     public string DescricaoProblema { get; set; } = null!;
 
+    [DisplayName("Prioridade")]
+    [StringLength(1, ErrorMessage = "A prioridade deve ser B, M, A ou U")]
+    public string? Prioridade { get; set; } = "M";
+
 }
 
