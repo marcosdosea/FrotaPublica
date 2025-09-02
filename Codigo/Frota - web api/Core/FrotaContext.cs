@@ -436,10 +436,10 @@ public partial class FrotaContext : DbContext
             entity.Property(e => e.LatitudeChegada).HasColumnName("latitudeChegada");
             entity.Property(e => e.LatitudePartida).HasColumnName("latitudePartida");
             entity.Property(e => e.LocalChegada)
-                .HasMaxLength(50)
+                .HasMaxLength(150)
                 .HasColumnName("localChegada");
             entity.Property(e => e.LocalPartida)
-                .HasMaxLength(50)
+                .HasMaxLength(150)
                 .HasColumnName("localPartida");
             entity.Property(e => e.LongitudeChegada).HasColumnName("longitudeChegada");
             entity.Property(e => e.LongitudePartida).HasColumnName("longitudePartida");
@@ -559,6 +559,12 @@ public partial class FrotaContext : DbContext
                 .HasColumnName("idFrota");
             entity.Property(e => e.IdPessoa).HasColumnName("idPessoa");
             entity.Property(e => e.IdVeiculo).HasColumnName("idVeiculo");
+            entity.Property(e => e.Prioridade)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("'M'")
+                .IsFixedLength()
+                .HasComment("B=Baixa, M=Média, A=Alta, U=Urgente")
+                .HasColumnName("prioridade");
 
             entity.HasOne(d => d.IdFrotaNavigation).WithMany(p => p.Solicitacaomanutencaos)
                 .HasForeignKey(d => d.IdFrota)

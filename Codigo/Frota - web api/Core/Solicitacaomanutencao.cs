@@ -17,6 +17,11 @@ public partial class Solicitacaomanutencao
 
     public uint IdFrota { get; set; }
 
+    /// <summary>
+    /// B=Baixa, M=Média, A=Alta, U=Urgente
+    /// </summary>
+    public string? Prioridade { get; set; }
+
     public virtual Frotum IdFrotaNavigation { get; set; } = null!;
 
     public virtual Pessoa IdPessoaNavigation { get; set; } = null!;
