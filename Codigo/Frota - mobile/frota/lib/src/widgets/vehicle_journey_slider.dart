@@ -46,15 +46,12 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
                 });
               },
               children: [
-                // Card 1: Dados do veículo
                 _buildVehicleCard(),
-                // Card 2: Dados do percurso
                 _buildJourneyCard(),
               ],
             ),
           ),
           const SizedBox(height: 12),
-          // Indicadores de página (dots)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -104,7 +101,6 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // Header com modelo e placa
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -138,7 +134,6 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
               ],
             ),
             const SizedBox(height: 24),
-            // Dados de duração e distância percorrida
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -260,7 +255,6 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // Header com partida e destino
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -307,7 +301,6 @@ class _VehicleJourneySliderState extends State<VehicleJourneySlider> {
               ],
             ),
             const SizedBox(height: 16),
-            // Linha de progresso
             Container(
               height: 2,
               decoration: BoxDecoration(

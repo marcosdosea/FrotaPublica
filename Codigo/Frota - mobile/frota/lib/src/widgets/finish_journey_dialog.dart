@@ -37,7 +37,6 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Recarregar odômetro quando as dependências mudarem
     _loadCurrentOdometer();
   }
 
@@ -51,13 +50,11 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
     final vehicleProvider =
         Provider.of<VehicleProvider>(context, listen: false);
 
-    // Tentar obter o veículo atualizado do provider
     final vehicle = vehicleProvider.currentVehicle;
 
     if (vehicle != null) {
       setState(() {
         _currentOdometer = vehicle.odometer;
-        // Preencher automaticamente o campo com o odômetro atual
         odometerController.text = _currentOdometer.toString();
       });
     } else {
@@ -71,7 +68,6 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
         if (vehicle != null) {
           setState(() {
             _currentOdometer = vehicle.odometer;
-            // Preencher automaticamente o campo com o odômetro atual
             odometerController.text = _currentOdometer.toString();
           });
         }
@@ -105,8 +101,6 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
         await widget.onFinish(odometer);
         // Limpar rota salva localmente
         if (widget.onFinish is Function(int, {String? journeyId})) {
-          // Se o callback passar o journeyId, use
-          // (não é o caso atual, então vamos buscar do Provider)
         }
         // Buscar o journeyId do percurso ativo
         final journeyProvider =
@@ -119,7 +113,6 @@ class _FinishJourneyDialogState extends State<FinishJourneyDialog> {
           Navigator.pop(context, true);
         }
       } catch (e) {
-        // Tratar erro
       } finally {
         if (mounted) {
           setState(() {

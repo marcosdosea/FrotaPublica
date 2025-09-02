@@ -73,7 +73,7 @@ class _AppContentState extends State<AppContent> {
   }
 
   void _startTokenRefreshCheck() {
-    // Verificar a cada 10 minutos se o token está válido (aumentado de 5 para 10 minutos)
+    // Verificar a cada 10 minutos se o token está válido
     _tokenRefreshTimer =
         Timer.periodic(const Duration(minutes: 10), (timer) async {
       print('Verificando validade do token...');
@@ -138,7 +138,6 @@ class _AppContentState extends State<AppContent> {
               .getVehicleById(journeyProvider.activeJourney!.vehicleId);
           if (vehicle != null) {
             vehicleProvider.setCurrentVehicle(vehicle);
-            // O redirecionamento será tratado no onGenerateRoute
           }
         }
       }
@@ -173,7 +172,6 @@ class _AppContentState extends State<AppContent> {
   }
 
   void _initializeOfflineSync() {
-    // Inicializar serviço de sincronização offline
     _offlineSyncService.start();
     print('Serviço de sincronização offline inicializado');
   }
@@ -188,12 +186,9 @@ class _AppContentState extends State<AppContent> {
       initialRoute: '/splash',
       routes: AppRouter.routes,
       builder: (context, child) {
-        // Configurações globais para melhorar comportamento do teclado
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            // Evitar que o teclado redimensione a tela
             viewInsets: MediaQuery.of(context).viewInsets,
-            // Configurar comportamento do teclado
             viewPadding: MediaQuery.of(context).viewPadding,
           ),
           child: child!,
@@ -240,15 +235,12 @@ class _AppContentState extends State<AppContent> {
               journeyProvider.hasActiveJourney) {
             print(
                 'Jornada ativa encontrada. Redirecionando para DriverHomeScreen.');
-            // Precisamos garantir que temos o veículo antes de redirecionar
             if (vehicleProvider.hasCurrentVehicle) {
               return MaterialPageRoute(
                 builder: (_) => DriverHomeScreen(
                     vehicle: vehicleProvider.currentVehicle!),
               );
             } else {
-              // Caso não tenha o veículo carregado, direciona para a tela de apresentação
-              // que vai iniciar o carregamento do veículo corretamente
               return MaterialPageRoute(
                   builder: (_) => const PresentationScreen());
             }
@@ -263,8 +255,6 @@ class _AppContentState extends State<AppContent> {
                 builder: (_) => const AvailableVehiclesScreen());
           }
         }
-
-        // Processa normalmente se não houver redirecionamento
         return null;
       },
     );

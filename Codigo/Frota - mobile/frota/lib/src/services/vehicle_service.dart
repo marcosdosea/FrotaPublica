@@ -8,7 +8,6 @@ class VehicleService {
   Future<List<Vehicle>> getAvailableVehicles(
       {int? unidadeAdministrativaId}) async {
     try {
-      // O parâmetro unidadeAdministrativaId foi mantido para compatibilidade, mas não é mais utilizado
       return await _vehicleRepository.getAvailableVehicles(null);
     } catch (e) {
       print('Erro no serviço ao obter veículos disponíveis: $e');

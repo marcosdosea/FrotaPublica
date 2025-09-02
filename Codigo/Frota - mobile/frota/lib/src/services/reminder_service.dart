@@ -9,7 +9,6 @@ class ReminderService {
     try {
       return await _reminderRepository.getRemindersForVehicle(vehicleId);
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
       return [];
     }
   }
@@ -19,7 +18,6 @@ class ReminderService {
     try {
       return await _reminderRepository.markReminderAsCompleted(reminderId);
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
       return null;
     }
   }
@@ -37,7 +35,6 @@ class ReminderService {
         description: description,
       );
     } catch (e) {
-      // Em um app real, você pode querer registrar o erro
       return null;
     }
   }

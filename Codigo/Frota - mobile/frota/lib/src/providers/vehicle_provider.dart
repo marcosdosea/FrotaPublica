@@ -30,7 +30,6 @@ class VehicleProvider with ChangeNotifier {
     print('Iniciando busca de veículos disponíveis via provider...');
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -51,7 +50,6 @@ class VehicleProvider with ChangeNotifier {
       _isLoading = false;
       print('Notificando ouvintes sobre atualização de veículos disponíveis');
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -83,7 +81,6 @@ class VehicleProvider with ChangeNotifier {
   Future<bool> selectVehicle(String vehicleId, String driverId) async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -106,7 +103,6 @@ class VehicleProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -124,7 +120,6 @@ class VehicleProvider with ChangeNotifier {
   void clearCurrentVehicleSilently() {
     _currentVehicle = null;
     _error = null;
-    // Não chama notifyListeners() para evitar setState durante build
   }
 
   // Limpar veículo atual com notificação
@@ -140,7 +135,6 @@ class VehicleProvider with ChangeNotifier {
 
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -162,7 +156,6 @@ class VehicleProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -175,7 +168,6 @@ class VehicleProvider with ChangeNotifier {
 
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -189,7 +181,6 @@ class VehicleProvider with ChangeNotifier {
       if (vehicle != null) {
         _currentVehicle = vehicle;
 
-        // Salvar localmente
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
             'vehicle_${vehicle.id}', json.encode(vehicle.toJson()));
@@ -201,7 +192,6 @@ class VehicleProvider with ChangeNotifier {
         final updatedVehicle = _currentVehicle!.copyWith(odometer: newOdometer);
         _currentVehicle = updatedVehicle;
 
-        // Salvar localmente
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('vehicle_${updatedVehicle.id}',
             json.encode(updatedVehicle.toJson()));
@@ -214,7 +204,6 @@ class VehicleProvider with ChangeNotifier {
       final updatedVehicle = _currentVehicle!.copyWith(odometer: newOdometer);
       _currentVehicle = updatedVehicle;
 
-      // Salvar localmente
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('vehicle_${updatedVehicle.id}',
@@ -228,7 +217,6 @@ class VehicleProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -239,7 +227,6 @@ class VehicleProvider with ChangeNotifier {
   void clearError() {
     _error = null;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });

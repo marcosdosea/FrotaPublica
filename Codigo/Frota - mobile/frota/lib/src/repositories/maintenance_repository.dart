@@ -83,9 +83,6 @@ class MaintenanceRepository {
   // Obter solicitações de manutenção para um veículo específico
   Future<List<MaintenanceRequest>> getMaintenanceRequestsForVehicle(
       String vehicleId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 800));
-
     return _mockRequests
         .where((request) => request.vehicleId == vehicleId)
         .toList();
@@ -94,9 +91,6 @@ class MaintenanceRepository {
   // Obter solicitações de manutenção para um motorista específico
   Future<List<MaintenanceRequest>> getMaintenanceRequestsForDriver(
       String driverId) async {
-    // Simulando uma chamada de API
-    await Future.delayed(const Duration(milliseconds: 800));
-
     return _mockRequests
         .where((request) => request.driverId == driverId)
         .toList();

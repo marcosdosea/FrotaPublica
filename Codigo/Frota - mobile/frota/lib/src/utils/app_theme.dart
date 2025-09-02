@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 
 class AppTheme {
-  // Cores principais - Sistema moderno
+  // Cores principais
   static const Color primaryColor = Color(0xFF007AFF);
   static const Color primaryDarkColor = Color(0xFF0056CC);
   static const Color primaryLightColor = Color(0xFF4DA3FF);

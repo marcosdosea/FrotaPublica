@@ -23,7 +23,6 @@ class MaintenanceProvider with ChangeNotifier {
   }) async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -49,7 +48,6 @@ class MaintenanceProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -60,7 +58,6 @@ class MaintenanceProvider with ChangeNotifier {
   Future<void> loadRequests() async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -73,7 +70,6 @@ class MaintenanceProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -84,7 +80,6 @@ class MaintenanceProvider with ChangeNotifier {
   void clearError() {
     _error = null;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });

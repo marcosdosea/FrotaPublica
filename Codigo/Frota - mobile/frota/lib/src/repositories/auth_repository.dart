@@ -91,7 +91,6 @@ class AuthRepository {
             unidadeAdministrativaId: 1,
           );
 
-          // Salvar dados do usuário localmente
           await _saveUserData(user);
 
           return user;

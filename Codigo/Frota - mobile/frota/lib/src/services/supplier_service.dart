@@ -10,16 +10,13 @@ class SupplierService {
   // Obter todos os fornecedores (online ou offline)
   Future<List<Supplier>> getAllSuppliers() async {
     try {
-      // Verificar conectividade
       final connectivity = await Connectivity().checkConnectivity();
       final isOnline = connectivity != ConnectivityResult.none;
 
       if (isOnline) {
-        // Tentar carregar online
         try {
           final suppliers = await _supplierRepository.getAllSuppliers();
           if (suppliers.isNotEmpty) {
-            // Salvar localmente para uso offline
             await _updateLocalSuppliers(suppliers);
             return suppliers;
           }
@@ -76,7 +73,6 @@ class SupplierService {
   // Obter um fornecedor pelo ID
   Future<Supplier?> getSupplierById(String id) async {
     try {
-      // Primeiro tentar online
       final connectivity = await Connectivity().checkConnectivity();
       final isOnline = connectivity != ConnectivityResult.none;
 

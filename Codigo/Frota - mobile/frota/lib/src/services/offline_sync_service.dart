@@ -106,8 +106,6 @@ class OfflineSyncService {
       final vistorias = await _localDb.getVistoriasSaidaOffline();
       for (final vistoria in vistorias) {
         try {
-          // Aqui você precisaria implementar a sincronização de vistorias
-          // Por enquanto, vamos apenas remover do banco local
           await _localDb.deleteVistoriaSaidaOffline(vistoria['id']);
           print('Vistoria sincronizada: ID ${vistoria['id']}');
         } catch (e) {

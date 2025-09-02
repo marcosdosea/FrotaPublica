@@ -43,7 +43,6 @@ class ThemeProvider extends ChangeNotifier {
   Future<void> setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });

@@ -18,7 +18,6 @@ class ReminderProvider with ChangeNotifier {
   Future<void> loadVehicleReminders(String vehicleId) async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -32,7 +31,6 @@ class ReminderProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -43,7 +41,6 @@ class ReminderProvider with ChangeNotifier {
   Future<bool> markReminderAsCompleted(String reminderId) async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -69,7 +66,6 @@ class ReminderProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -84,7 +80,6 @@ class ReminderProvider with ChangeNotifier {
   }) async {
     _isLoading = true;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
@@ -110,7 +105,6 @@ class ReminderProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
 
-      // Usar addPostFrameCallback para evitar setState durante build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
@@ -121,7 +115,6 @@ class ReminderProvider with ChangeNotifier {
   void clearError() {
     _error = null;
 
-    // Usar addPostFrameCallback para evitar setState durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });

@@ -21,7 +21,6 @@ class SecureStorageService {
         await _storage.write(key: _passwordKey, value: password);
         await _storage.write(key: _rememberMeKey, value: 'true');
       } else {
-        // Se não lembrar, limpar as credenciais salvas
         await clearCredentials();
       }
     } catch (e) {

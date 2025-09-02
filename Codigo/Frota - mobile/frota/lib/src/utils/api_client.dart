@@ -12,7 +12,6 @@ class ApiClient {
 
   static const storage = FlutterSecureStorage();
 
-  // Criar uma instância HTTP personalizada que aceita certificados inválidos (apenas para desenvolvimento)
   static final _client = HttpClient()
     ..badCertificateCallback =
         ((X509Certificate cert, String host, int port) => true);
@@ -133,7 +132,7 @@ class ApiClient {
       return false;
     } catch (e) {
       print('Erro ao renovar token: $e');
-      // Em caso de erro, força novo login
+      // Em caso de erro força novo login
       await removeToken();
       onTokenExpired?.call();
       return false;
