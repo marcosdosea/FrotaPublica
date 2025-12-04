@@ -1,0 +1,92 @@
+@model FrotaWeb.Models.UnidadeAdministrativaViewModel
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+
+<main class="container mt-4">
+    <h4 class="page-title fs-2">
+        <i class="fa fa-building mr-3"></i>
+        Unidade Administrativa
+    </h4>
+    <h1 class="my-text-label fs-3 mt-4 mb-4">Excluir Unidade</h1>
+    <div class="creator-form fs-5">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label class="label">Nome</label>
+                    <p>@Model.Nome</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label class="label">Cep</label>
+                    <p>@Model.Cep</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label class="label">Rua</label>
+                    <p>@Model.Rua</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label class="label">Bairro</label>
+                    <p>@Model.Bairro</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label class="label">Complemento</label>
+                    <p>@Model.Complemento</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label class="label">Número</label>
+                    <p>@Model.Numero</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label class="label">Cidade</label>
+                    <p>@Model.Cidade</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label class="label">Estado</label>
+                    <p>@Model.Estado</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="type-container offset-md-1 itens-center">
+                    <label class="label">Latitude</label>
+                    <p>@Model.Latitude</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="type-container offset-md-2 itens-center">
+                    <label class="label">Longitude</label>
+                    <p>@Model.Longitude</p>
+                </div>
+            </div>
+        </div>
+        <form asp-action="Delete" class="row mt-4">
+            <div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
+                <a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
+            </div>
+            <div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
+                <input type="submit" value="Excluir" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso" />
+            </div>
+        </form>
+    </div>
+</main>

@@ -1,7 +1,7 @@
 # Ignora as pastas bin e obj
-/Codigo/Frota/**/bin/
-/Codigo/Frota/**/obj/
+/Codigo/Frota - web api/**/bin/
+/Codigo/Frota - web api/**/obj/
 
 # Ignora o .vs
-/Codigo/Frota/.vs
+/Codigo/Frota - web api/.vs
 /.vs

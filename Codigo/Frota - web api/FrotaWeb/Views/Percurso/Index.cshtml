@@ -1,0 +1,201 @@
+@model IEnumerable<FrotaWeb.Models.PercursoViewModel>
+
+<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
+
+<main class="main_content container">
+    <div class="titulo-pagina">
+        <a href="javascript:history.back()" class="voltar">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+        <h1>Percursos</h1>
+        <div class="acoes">
+            <a asp-action="Create" class="btn btn-primario">Criar</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdVeiculo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdPessoa)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DataHoraSaida)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DataHoraRetorno)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LocalPartida)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LatitudePartida)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LongitudePartida)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LocalChegada)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LatitudeChegada)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LongitudeChegada)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OdometroInicial)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.OdometroFinal)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Motivo)
+                    </th>
+                    <th class="column-15"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdVeiculo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdPessoa)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DataHoraSaida)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DataHoraRetorno)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LocalPartida)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LatitudePartida)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LongitudePartida)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LocalChegada)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LatitudeChegada)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LongitudeChegada)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OdometroInicial)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OdometroFinal)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Motivo)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Percurso", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
+                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Details", "Percurso", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
+                                <i class="fa fa-eye cor" aria-hidden="true"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "Percurso", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
+                                <i class="fa fa-trash cor" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav class="navigation-pages">
+            <div></div>
+            @if (ViewBag.TotalPages > 10)
+            {
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Percurso", new { page = 0 })';">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </button>
+                @if (ViewBag.CurrentPage < 5)
+                {
+                    @for (int i = 0; i < 9; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Percurso", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
+                {
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Percurso", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                }
+                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5)
+                {
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            @{
+                                var numeroPageLast = i + 1;
+                            }
+                            <a class="page-link" href="@Url.Action("Index", "Percurso", new { page = i })">@numeroPageLast</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                }
+                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Percurso", new { page = ViewBag.TotalPages -1 })';">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            }
+            @if (ViewBag.TotalPages <= 10)
+            {
+                @for (int i = 0; i < ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        @{
+                            var numeroPageLast = i + 1;
+                        }
+                        <a class="page-link" href="@Url.Action("Index", "Percurso", new { page = i })">@numeroPageLast</a>
+                    </li>
+                }
+            }
+        </nav>
+    }
+</main>

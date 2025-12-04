@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FrotaWeb</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <!-- Header -->
+        <div class="sidebar-header">
+            <img src="~/img/logo/logo.png" alt="Logo" class="sidebar-logo">
+            <h1 class="sidebar-title">FrotaWeb</h1>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Veículos</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link nav-toggle">
+                        <div class="nav-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <span class="nav-text">Veículos</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <div class="nav-submenu">
+                        <a href="@Url.Action("Index", "Veiculo")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <span class="nav-text">Listar Veículos</span>
+                        </a>
+                        <a href="@Url.Action("VeiculosDisponiveis", "Veiculo")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <span class="nav-text">Disponíveis</span>
+                        </a>
+                        <a href="@Url.Action("Index", "Abastecimento")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-gas-pump"></i>
+                            </div>
+                            <span class="nav-text">Abastecimentos</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "MarcaVeiculo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <span class="nav-text">Marcas</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "ModeloVeiculo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-car-side"></i>
+                        </div>
+                        <span class="nav-text">Modelos</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Manutenção</div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link nav-toggle">
+                        <div class="nav-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <span class="nav-text">Manutenção</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <div class="nav-submenu">
+                        <a href="@Url.Action("Index", "SolicitacaoManutencao")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <span class="nav-text">Solicitações</span>
+                        </a>
+                        <a href="@Url.Action("Index", "Manutencao")" class="nav-link">
+                            <div class="nav-icon">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <span class="nav-text">Manutenções</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Vistoria")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <span class="nav-text">Vistorias</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Gestão</div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Pessoa")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="nav-text">Pessoas</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "Fornecedor")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <span class="nav-text">Fornecedores</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="@Url.Action("Index", "PecaInsumo")" class="nav-link">
+                        <div class="nav-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <span class="nav-text">Peças/Insumos</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                <div class="theme-toggle-icon" id="themeToggleIcon">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </button>
+
+            <!-- User Profile -->
+            <a href="/Identity/Account/Manage" class="user-profile">
+                <div class="user-avatar">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @User.Identity.Name.Substring(0, 1).ToUpper()
+                    }
+                    else
+                    {
+                        <i class="fas fa-user"></i>
+                    }
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @User.Identity.Name
+                        }
+                        else
+                        {
+                            @("Usuário")
+                        }
+                    </div>
+                    <div class="user-role">Motorista</div>
+                </div>
+            </a>
+
+            <!-- Logout Button -->
+            <button class="logout-btn" onclick="showLogoutModal()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        @RenderBody()
+    </main>
+
+    <!-- Logout Form (Hidden) -->
+    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" style="display: none;">
+    </form>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <script src="~/js/sidebar.js" asp-append-version="true"></script>
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
