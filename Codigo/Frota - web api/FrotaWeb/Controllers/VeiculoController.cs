@@ -5,6 +5,8 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Service;
 
 namespace FrotaWeb.Controllers
 {
@@ -22,8 +24,9 @@ namespace FrotaWeb.Controllers
         private readonly IAbastecimentoService abastecimentoService;
         private readonly ISolicitacaoManutencaoService solicitacaoManutencaoService;
         private readonly IFornecedorService fornecedorService;
+        private readonly IRotaService rotaService;
 
-        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService, IPercursoService percursoService, IVistoriaService vistoriaService, IAbastecimentoService abastecimentoService, ISolicitacaoManutencaoService solicitacaoManutencaoService, IFornecedorService fornecedorService)
+        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService, IPercursoService percursoService, IVistoriaService vistoriaService, IAbastecimentoService abastecimentoService, ISolicitacaoManutencaoService solicitacaoManutencaoService, IFornecedorService fornecedorService, IRotaService rotaService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
@@ -36,6 +39,7 @@ namespace FrotaWeb.Controllers
             this.abastecimentoService = abastecimentoService;
             this.solicitacaoManutencaoService = solicitacaoManutencaoService;
             this.fornecedorService = fornecedorService;
+            this.rotaService = rotaService;
         }
 
         // GET: Veiculo
@@ -107,7 +111,7 @@ namespace FrotaWeb.Controllers
         }
 
         [Route("Veiculo/Gerenciamento/{idPercurso}/{idVeiculo}")]
-        public IActionResult Gerenciamento(uint idPercurso, uint idVeiculo)
+        public async Task<IActionResult> Gerenciamento(uint idPercurso, uint idVeiculo)
         {
             var veiculo = veiculoService.Get(idVeiculo);
             var percurso = percursoService.Get(idPercurso);
@@ -119,8 +123,32 @@ namespace FrotaWeb.Controllers
 
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
             veiculoViewModel.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
+            var percursoViewModel = mapper.Map<PercursoViewModel>(percurso);
+            
             ViewBag.IdPercursoAtual = idPercurso;
-            ViewBag.Percurso = percurso;
+            ViewBag.Percurso = percursoViewModel;
+            
+            // Obter rota do banco se coordenadas estiverem disponíveis
+            if (percurso.LatitudePartida.HasValue && percurso.LongitudePartida.HasValue &&
+                percurso.LatitudeChegada.HasValue && percurso.LongitudeChegada.HasValue)
+            {
+                try
+                {
+                    var routeJson = await rotaService.ObterRotaAsync(
+                        idPercurso,
+                        percurso.LatitudePartida.Value,
+                        percurso.LongitudePartida.Value,
+                        percurso.LatitudeChegada.Value,
+                        percurso.LongitudeChegada.Value
+                    );
+                    ViewBag.RouteJson = routeJson;
+                }
+                catch
+                {
+                    // Se houver erro, ViewBag.RouteJson permanece null
+                }
+            }
+            
             return View(veiculoViewModel);
         }
 
@@ -289,6 +317,9 @@ namespace FrotaWeb.Controllers
                     veiculo.Status = "D"; // Disponível
                     veiculo.Odometro = percursoViewModel.OdometroFinal;
                     veiculoService.Edit(veiculo);
+                    
+                    // Remover rotas associadas ao percurso
+                    rotaService.RemoverRotasPorPercurso(idPercurso);
                     
                     return RedirectToAction("VeiculosDisponiveis");
                 }

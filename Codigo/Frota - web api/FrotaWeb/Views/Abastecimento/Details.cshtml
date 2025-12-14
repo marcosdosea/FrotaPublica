@@ -1,62 +1,66 @@
-@model FrotaWeb.Models.AbastecimentoViewModel
+﻿@model FrotaWeb.Models.AbastecimentoViewModel
+@using System.Globalization
 
-<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+@{
+    var culture = new CultureInfo("pt-BR");
+    var entityName = "Abastecimento";
+    var controllerName = "Abastecimento";
+}
 
-<div class="container-details">
-    <h4>AbastecimentoViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdFornecedor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdFornecedor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdVeiculo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdVeiculo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdFrota)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdFrota)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdPessoa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdPessoa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataHora)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataHora)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Odometro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Odometro)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Litros)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Litros)
-        </dd>
-    </dl>
-</div>
-<div class="container-buttons">
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+<div class="details-page">
+    <div class="details-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="details-title">
+            <i class="fas fa-eye"></i>
+            Visualizar @entityName
+        </h1>
+    </div>
+
+    <div class="details-card">
+        <div class="details-body">
+            <div class="details-item">
+                <span class="details-label">Código</span>
+                <span class="details-value">@Model.Id</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Fornecedor</span>
+                <span class="details-value">@Model.IdFornecedor</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Veículo</span>
+                <span class="details-value">@Model.IdVeiculo</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Frota</span>
+                <span class="details-value">@Model.IdFrota</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Pessoa</span>
+                <span class="details-value">@Model.IdPessoa</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Data/Hora</span>
+                <span class="details-value">@Model.DataHora.ToString("dd/MM/yyyy HH:mm", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Odômetro</span>
+                <span class="details-value">@Model.Odometro km</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Litros</span>
+                <span class="details-value">@Model.Litros L</span>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Voltar para Lista
+            </a>
+            <a asp-action="Edit" asp-controller="@controllerName" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
 </div>

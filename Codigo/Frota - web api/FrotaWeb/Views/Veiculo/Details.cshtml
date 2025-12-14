@@ -1,120 +1,106 @@
-@model FrotaWeb.Models.VeiculoViewModel
+﻿@model FrotaWeb.Models.VeiculoViewModel
+@using System.Globalization
 
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+@{
+    ViewBag.EntityName = "Veículo";
+    ViewBag.ControllerName = "Veiculo";
+    ViewBag.Id = Model.Id;
+    var culture = new CultureInfo("pt-BR");
+    var entityName = ViewBag.EntityName ?? "Item";
+    var controllerName = ViewBag.ControllerName ?? "";
+}
 
-<main class="container mt-4">
-	<h4 class="page-title fs-2">
-		<i class="fa fa-car mr-3"></i>
-		Ve�culos
-	</h4>
-	<h1 class="my-text-label fs-3 mt-4 mb-4">Visualizar Ve�culo</h1>
-	<div class="creator-form fs-5">
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Unidade Administrativa</label>
-					<p>@Model.IdUnidadeAdministrativa</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Frota</label>
-					<p>@Model.IdFrota</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Placa</label>
-					<p>@Model.Placa</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Chassi</label>
-					<p>@Model.Chassi</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Valor do Ve�culo</label>
-					<p>@Model.Valor</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Modelo Ve�culo</label>
-					<p>@Model.IdModeloVeiculo</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Data Refer�ncia (Valor)</label>
-					<p>@Model.DataReferenciaValor</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Cor</label>
-					<p>@Model.Cor</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Od�metro</label>
-					<p>@Model.Odometro</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Status</label>
-					<p>@Model.Status</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Ano</label>
-					<p>@Model.Ano</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Modelo</label>
-					<p>@Model.Modelo</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Renavan</label>
-					<p>@Model.Renavan</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Vencimento Ipva</label>
-					<p>@Model.VencimentoIpva</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mt-4">
-			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
-				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
-			</div>
-			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<a href="@Url.Action("Edit", "Veiculo", new { id = Model.Id })" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Editar</a>
-			</div>
-		</div>
-	</div>
-</main>
+<div class="details-page">
+    <div class="details-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="details-title">
+            <i class="fas fa-eye"></i>
+            Visualizar @entityName
+        </h1>
+    </div>
+
+    <div class="details-card">
+        <div class="details-body">
+            <div class="details-item">
+                <span class="details-label">Unidade Administrativa</span>
+                <span class="details-value">@Model.IdUnidadeAdministrativa</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Frota</span>
+                <span class="details-value">@Model.IdFrota</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Placa</span>
+                <span class="details-value">@Model.Placa</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Chassi</span>
+                <span class="details-value">@(Model.Chassi ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Valor do Veículo</span>
+                <span class="details-value">
+                    @if (!string.IsNullOrEmpty(Model.Valor) && decimal.TryParse(Model.Valor, NumberStyles.Any, culture, out var valorDecimal))
+                    {
+                        @valorDecimal.ToString("C", culture)
+                    }
+                    else
+                    {
+                        @Model.Valor
+                    }
+                </span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Modelo Veículo</span>
+                <span class="details-value">@Model.IdModeloVeiculo</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Data Referência (Valor)</span>
+                <span class="details-value">@Model.DataReferenciaValor.ToString("dd/MM/yyyy", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Cor</span>
+                <span class="details-value">@Model.Cor</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Odômetro</span>
+                <span class="details-value">@Model.Odometro km</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Status</span>
+                <span class="details-value">
+                    <span class="badge @(Model.Status == "U" ? "badge-warning" : Model.Status == "M" ? "badge-error" : "badge-success")">
+                        @Model.StatusNome
+                    </span>
+                </span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Ano</span>
+                <span class="details-value">@Model.Ano</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Modelo</span>
+                <span class="details-value">@Model.Modelo</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Renavan</span>
+                <span class="details-value">@(Model.Renavan ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">Vencimento IPVA</span>
+                <span class="details-value">@(Model.VencimentoIpva?.ToString("dd/MM/yyyy", culture) ?? "-")</span>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Voltar para Lista
+            </a>
+            <a asp-action="Edit" asp-controller="@controllerName" asp-route-id="@ViewBag.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,78 +1,101 @@
-@model IEnumerable<FrotaWeb.Models.FornecedorViewModel>
+﻿@model IEnumerable<FrotaWeb.Models.FornecedorViewModel>
 
-<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
-
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
-        </a>
-        <h1>Fornecedores</h1>
-        <div class="acoes">
-            <a asp-action="Create" class="btn btn-primario">Criar</a>
+<main class="main-content">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="javascript:history.back()" class="btn btn-tertiary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="page-title">Fornecedores</h1>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar Novo
+            </a>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="tabela">
-            <thead>
-                <tr>
-                    <th class="column-10">
-                        @Html.DisplayNameFor(model => model.Id)
-                    </th>
-                    <th class="column-30">
-                        @Html.DisplayNameFor(model => model.Nome)
-                    </th>
-                    <th class="column-15">
-                        @Html.DisplayNameFor(model => model.Cnpj)
-                    </th>
-                    <th class="">
-                        @Html.DisplayNameFor(model => model.Cep)
-                    </th>
-                    <th class="">
-                        @Html.DisplayNameFor(model => model.Cidade)
-                    </th>
-                    <th class="column-10">
-                        @Html.DisplayNameFor(model => model.Estado)
-                    </th>
-                    <th class="column-15"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label class="filter-label">Buscar</label>
+            <div class="input-group">
+                <i class="fas fa-search input-icon"></i>
+                <input type="text" class="form-input" placeholder="Buscar por nome, CNPJ..." id="searchInput" />
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Limpar
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="table-modern">
+                <thead>
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nome)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Cnpj)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Cep)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Cidade)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Estado)
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Fornecedor", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
-                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Details", "Fornecedor", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", "Fornecedor", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
-                                <i class="fa fa-trash cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
+                        <th>@Html.DisplayNameFor(model => model.Id)</th>
+                        <th>@Html.DisplayNameFor(model => model.Nome)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cnpj)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cep)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cidade)</th>
+                        <th>@Html.DisplayNameFor(model => model.Estado)</th>
+                        <th class="text-right">Ações</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.Id" data-details-url="@Url.Action("Details", "Fornecedor", new { id = item.Id })">
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Nome)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cnpj)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cep)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cidade)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="@Url.Action("Details", "Fornecedor", new { id = item.Id })" class="table-action-btn details" title="Detalhes" onclick="event.stopPropagation()">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "Fornecedor", new { id = item.Id })" class="table-action-btn edit" title="Editar" onclick="event.stopPropagation()">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Fornecedor", new { id = item.Id })" class="table-action-btn delete" title="Excluir" onclick="event.stopPropagation()">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </main>
+
+<script>
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        rows.forEach(row => row.style.display = '');
+    }
+
+    document.getElementById('searchInput')?.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.table-modern tbody tr[data-details-url]').forEach(row => {
+        row.addEventListener('click', function() {
+            const url = this.getAttribute('data-details-url');
+            if (url) window.location.href = url;
+        });
+        row.style.cursor = 'pointer';
+    });
+</script>

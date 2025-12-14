@@ -1,141 +1,102 @@
-@model IEnumerable<FrotaWeb.Models.AbastecimentoViewModel>
+﻿@model IEnumerable<FrotaWeb.Models.AbastecimentoViewModel>
+@using System.Globalization
 
-<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
+@{
+    var culture = new CultureInfo("pt-BR");
+}
 
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
-        </a>
-        <h1>Abastecimentos</h1>
-        <div class="acoes">
-            <a asp-action="Create" class="btn btn-primario">Criar</a>
+<main class="main-content">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="javascript:history.back()" class="btn btn-tertiary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="page-title">Abastecimentos</h1>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar Novo
+            </a>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="tabela">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IdFornecedor)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.DataHora)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Odometro)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Litros)
-                    </th>
-                    <th class="column-15"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IdFornecedor)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DataHora)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Odometro)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Litros)
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Abastecimento", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
-                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Details", "Abastecimento", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", "Abastecimento", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
-                                <i class="fa fa-trash cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label class="filter-label">Buscar</label>
+            <div class="input-group">
+                <i class="fas fa-search input-icon"></i>
+                <input type="text" class="form-input" placeholder="Buscar..." id="searchInput" />
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Limpar
+            </button>
+        </div>
     </div>
-    @if (ViewBag.TotalPages > 1)
-    {
-        <nav class="navigation-pages">
-            <div></div>
-            @if (ViewBag.TotalPages > 10)
-            {
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Abastecimento", new { page = 0 })';">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-                @if (ViewBag.CurrentPage < 5)
-                {
-                    @for (int i = 0; i < 9; i++)
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Fornecedor</th>
+                        <th>Data/Hora</th>
+                        <th>Odômetro</th>
+                        <th>Litros</th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
                     {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
+                        <tr data-id="@item.Id" data-details-url="@Url.Action("Details", "Abastecimento", new { id = item.Id })">
+                            <td>@Html.DisplayFor(modelItem => item.IdFornecedor)</td>
+                            <td>@item.DataHora.ToString("dd/MM/yyyy HH:mm", culture)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Odometro) km</td>
+                            <td>@Html.DisplayFor(modelItem => item.Litros) L</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="@Url.Action("Details", "Abastecimento", new { id = item.Id })" class="table-action-btn details" title="Detalhes" onclick="event.stopPropagation()">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "Abastecimento", new { id = item.Id })" class="table-action-btn edit" title="Editar" onclick="event.stopPropagation()">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Abastecimento", new { id = item.Id })" class="table-action-btn delete" title="Excluir" onclick="event.stopPropagation()">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                     }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                }
-                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
-                {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                }
-                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5)
-                {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                }
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Abastecimento", new { page = ViewBag.TotalPages -1 })';">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            }
-            @if (ViewBag.TotalPages <= 10)
-            {
-                @for (int i = 0; i < ViewBag.TotalPages; i++)
-                {
-                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        @{
-                            var numeroPageLast = i + 1;
-                        }
-                        <a class="page-link" href="@Url.Action("Index", "Abastecimento", new { page = i })">@numeroPageLast</a>
-                    </li>
-                }
-            }
-        </nav>
-    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </main>
+
+<script>
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        rows.forEach(row => row.style.display = '');
+    }
+
+    document.getElementById('searchInput')?.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.table-modern tbody tr[data-details-url]').forEach(row => {
+        row.addEventListener('click', function() {
+            const url = this.getAttribute('data-details-url');
+            if (url) window.location.href = url;
+        });
+        row.style.cursor = 'pointer';
+    });
+</script>

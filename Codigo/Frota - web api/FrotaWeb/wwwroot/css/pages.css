@@ -1,0 +1,211 @@
+/* ========================================
+   PÁGINAS: DETAILS, EDIT, DELETE
+   ======================================== */
+
+/* Página de Detalhes */
+.details-page,
+.edit-page,
+.delete-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.details-header,
+.edit-header,
+.delete-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.details-title,
+.edit-title,
+.delete-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.details-title i,
+.edit-title i,
+.delete-title i {
+  color: var(--primary-500);
+}
+
+.details-card,
+.edit-card,
+.delete-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+}
+
+.details-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.details-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.details-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.details-value {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+}
+
+.details-actions,
+.form-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-primary);
+  margin-top: var(--space-6);
+}
+
+/* Página de Edição */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Página de Exclusão */
+.delete-warning {
+  background: var(--warning-50);
+  border: 1px solid var(--warning-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.delete-warning-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--warning-100);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.delete-warning-icon i {
+  font-size: var(--text-3xl);
+  color: var(--warning-600);
+}
+
+.delete-warning-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--warning-700);
+  margin-bottom: var(--space-2);
+}
+
+.delete-warning-text {
+  font-size: var(--text-base);
+  color: var(--warning-700);
+  margin: 0;
+}
+
+.delete-body {
+  margin-bottom: var(--space-6);
+}
+
+.delete-form {
+  margin-top: var(--space-6);
+}
+
+/* ========================================
+   CARD DE PERFIL DE USUÁRIO
+   ======================================== */
+
+.user-profile-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.user-profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-inverse);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-md);
+}
+
+.user-profile-info {
+  flex: 1;
+}
+
+.user-profile-name {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.user-profile-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.user-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-help {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: var(--space-1);
+}
+

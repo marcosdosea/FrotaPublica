@@ -1,0 +1,44 @@
+﻿@model FrotaWeb.Models.VeiculoViewModel
+
+<div class="veiculo-card">
+    <div class="veiculo-card-header">
+        <h3 class="veiculo-card-title">
+            <i class="fas fa-car"></i>
+            Informações do Veículo
+        </h3>
+    </div>
+    <div class="veiculo-card-body">
+        <div class="veiculo-card-info">
+            <div class="veiculo-card-item">
+                <span class="veiculo-card-label">Modelo</span>
+                <span class="veiculo-card-value">
+                    <i class="fas fa-car-side"></i>
+                    @Model.ModeloNome
+                </span>
+            </div>
+            <div class="veiculo-card-item">
+                <span class="veiculo-card-label">Placa</span>
+                <span class="veiculo-card-value">
+                    <i class="fas fa-id-card"></i>
+                    @Model.Placa
+                </span>
+            </div>
+            <div class="veiculo-card-item">
+                <span class="veiculo-card-label">Status</span>
+                <span class="veiculo-card-value">
+                    <i class="fas fa-circle"></i>
+                    @(Model.Status == "U" ? "Em Uso" : "Disponível")
+                </span>
+            </div>
+            <div class="veiculo-card-item">
+                <span class="veiculo-card-label">Odômetro</span>
+                <span class="veiculo-card-value">
+                    <i class="fas fa-tachometer-alt"></i>
+                    @Model.Odometro km
+                </span>
+            </div>
+        </div>
+        <img src="~/img/car-gerenciamento.png" alt="Veículo" class="veiculo-card-image" />
+    </div>
+</div>
+

@@ -1,84 +1,46 @@
 @page
 @model AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Acesso negado";
+    Layout = null;
 }
 
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="@(ViewContext.HttpContext.Request.Cookies["theme"] ?? "light")">
 <head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .general-area {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .card {
-            max-width: 1080px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 50px 120px;
-            text-align: center;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .icon span {
-            color: #0C69AB;
-            font-size: 300px;
-            height: 300px;
-            width: 300px;
-            margin-right: 25px;
-        }
-
-        .texts-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: start;
-            align-items: start;
-        }
-
-            .texts-info h1 {
-                height: 90px;
-                font-size: 48px;
-                color: #000;
-                font-weight: 800;
-                margin-bottom: 10px;
-            }
-
-            .texts-info p {
-                height: 70px;
-                max-width: 420px;
-                text-wrap: wrap;
-                text-align: left;
-                font-weight: 700;
-                font-size: 24px;
-                color: #666;
-            }
-
-    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Frota</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity.css" asp-append-version="true" />
+    <script>
+        // Aplicar tema salvo
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 </head>
+<body class="register-page">
+    <div class="register-container">
+        <div class="card">
+            <div class="card-body">
+                <div class="login-form-header" style="text-align: center;">
+                    <div style="width: 80px; height: 80px; background: var(--warning-50); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4);">
+                        <i class="fas fa-ban" style="font-size: var(--text-4xl); color: var(--warning-600);"></i>
+                    </div>
+                    <h2 class="login-form-title">@ViewData["Title"]</h2>
+                    <p class="login-form-subtitle">Seu usuário não tem permissão para acessar essa página.</p>
+                </div>
 
-<div class="general-area">
-    <div class="card">
-        <div class="icon">
-            <span class="material-symbols-outlined">lock_person</span>
-        </div>
-        <div class="texts-info">
-            <h1>Acesso negado</h1>
-            <p>Seu usuário não tem permissão para acessar essa página.</p>
+                <div style="text-align: center; margin-top: var(--space-6);">
+                    <a href="javascript:history.back()" class="login-form-submit" style="text-decoration: none; display: inline-block;">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</body>
+</html>

@@ -1,0 +1,333 @@
+/* ========================================
+   COMPONENTES: CARDS MODERNOS
+   ======================================== */
+
+/* Card de Percurso */
+.percurso-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  margin-bottom: var(--space-6);
+}
+
+.percurso-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.percurso-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.percurso-card-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.percurso-card-title i {
+  color: var(--primary-500);
+  font-size: var(--text-2xl);
+}
+
+.percurso-card-status {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  background: var(--primary-50);
+  color: var(--primary-700);
+}
+
+.percurso-card-status.active {
+  background: var(--success-50);
+  color: var(--success-700);
+}
+
+.percurso-card-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+}
+
+.percurso-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.percurso-card-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.percurso-card-value {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.percurso-card-value i {
+  color: var(--primary-500);
+  font-size: var(--text-sm);
+}
+
+.percurso-card-location {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-2);
+}
+
+.percurso-card-location-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+}
+
+.percurso-card-location-icon.origin {
+  background: var(--success-50);
+  color: var(--success-600);
+}
+
+.percurso-card-location-icon.destination {
+  background: var(--primary-50);
+  color: var(--primary-600);
+}
+
+.percurso-card-location-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.percurso-card-location-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-1);
+}
+
+.percurso-card-location-address {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
+}
+
+/* Card de Veículo */
+.veiculo-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  margin-bottom: var(--space-6);
+}
+
+.veiculo-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.veiculo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.veiculo-card-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.veiculo-card-title i {
+  color: var(--primary-500);
+  font-size: var(--text-2xl);
+}
+
+.veiculo-card-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.veiculo-card-info {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.veiculo-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.veiculo-card-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.veiculo-card-value {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.veiculo-card-value i {
+  color: var(--primary-500);
+  font-size: var(--text-sm);
+}
+
+.veiculo-card-image {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  object-fit: contain;
+}
+
+/* Componente de Mapa */
+.route-map-container {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-md);
+  height: 600px;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.route-map {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.route-map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.route-map-loading i {
+  font-size: var(--text-4xl);
+  color: var(--primary-500);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.route-map-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--error-600);
+  padding: var(--space-4);
+}
+
+/* Layout para cards e mapa lado a lado */
+.management-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.management-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (max-width: 1200px) {
+  .management-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .route-map-container {
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .percurso-card-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .veiculo-card-body {
+    flex-direction: column;
+  }
+  
+  .veiculo-card-info {
+    width: 100%;
+  }
+  
+  .veiculo-card-image {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .route-map-container {
+    height: 400px;
+  }
+}
+

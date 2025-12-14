@@ -1,0 +1,178 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    float? originLat = ViewBag.OriginLat;
+    float? originLng = ViewBag.OriginLng;
+    float? destLat = ViewBag.DestLat;
+    float? destLng = ViewBag.DestLng;
+    string mapId = ViewBag.MapId ?? "routeMap";
+    string apiKey = Configuration["GoogleMaps:ApiKey"] ?? "";
+    
+    // Obter rota do ViewBag (já obtida no controller)
+    string? routeJson = ViewBag.RouteJson as string;
+    string routeJsonJs = "null";
+    if (routeJson != null)
+    {
+        // Escapar o JSON para uso seguro em JavaScript
+        routeJsonJs = "\"" + routeJson.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n") + "\"";
+    }
+}
+
+<div class="route-map-container" id="@mapId-container">
+    <div class="route-map" id="@mapId"></div>
+    <div class="route-map-loading" id="@(mapId)-loading">
+        <i class="fas fa-spinner"></i>
+        <span>Carregando rota...</span>
+    </div>
+    <div class="route-map-error" id="@(mapId)-error" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Erro ao carregar o mapa. Verifique as coordenadas.</p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const mapId = '@mapId';
+        const originLat = @(originLat?.ToString() ?? "null");
+        const originLng = @(originLng?.ToString() ?? "null");
+        const destLat = @(destLat?.ToString() ?? "null");
+        const destLng = @(destLng?.ToString() ?? "null");
+        const routeJsonString = @Html.Raw(routeJsonJs);
+        const routeJson = routeJsonString !== "null" ? JSON.parse(routeJsonString) : null;
+
+        if (originLat && originLng && destLat && destLng) {
+            // Carrega o script do Google Maps se ainda não estiver carregado
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=@apiKey&libraries=geometry';
+                script.async = true;
+                script.defer = true;
+                script.onload = initializeMap;
+                document.head.appendChild(script);
+            } else {
+                initializeMap();
+            }
+        } else {
+            document.getElementById(mapId + '-loading').style.display = 'none';
+            document.getElementById(mapId + '-error').style.display = 'block';
+        }
+
+        function initializeMap() {
+            const mapElement = document.getElementById(mapId);
+            const loadingElement = document.getElementById(mapId + '-loading');
+            const errorElement = document.getElementById(mapId + '-error');
+
+            if (!mapElement) return;
+
+            try {
+                const map = new google.maps.Map(mapElement, {
+                    zoom: 8,
+                    center: { lat: (originLat + destLat) / 2, lng: (originLng + destLng) / 2 },
+                    mapTypeId: 'roadmap',
+                    styles: [
+                        {
+                            featureType: 'all',
+                            elementType: 'geometry',
+                            stylers: [{ color: '#242f3e' }]
+                        },
+                        {
+                            featureType: 'all',
+                            elementType: 'labels.text.stroke',
+                            stylers: [{ color: '#242f3e' }]
+                        },
+                        {
+                            featureType: 'all',
+                            elementType: 'labels.text.fill',
+                            stylers: [{ color: '#746855' }]
+                        }
+                    ]
+                });
+
+                const origin = new google.maps.LatLng(originLat, originLng);
+                const destination = new google.maps.LatLng(destLat, destLng);
+
+                // Marcadores
+                new google.maps.Marker({
+                    position: origin,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: '#22c55e',
+                        fillOpacity: 1,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2
+                    },
+                    label: {
+                        text: 'O',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                    }
+                });
+
+                new google.maps.Marker({
+                    position: destination,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: '#0575E6',
+                        fillOpacity: 1,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2
+                    },
+                    label: {
+                        text: 'D',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                    }
+                });
+
+                // Rota
+                const directionsRenderer = new google.maps.DirectionsRenderer({
+                    map: map,
+                    suppressMarkers: true,
+                    polylineOptions: {
+                        strokeColor: '#0575E6',
+                        strokeWeight: 4,
+                        strokeOpacity: 0.8
+                    }
+                });
+
+                // Se temos a rota do banco, usar diretamente
+                if (routeJson && routeJson.status === 'OK' && routeJson.routes && routeJson.routes.length > 0) {
+                    const result = {
+                        routes: routeJson.routes,
+                        status: 'OK'
+                    };
+                    directionsRenderer.setDirections(result);
+                    loadingElement.style.display = 'none';
+                } else {
+                    // Fallback: buscar rota do Google Maps diretamente
+                    const directionsService = new google.maps.DirectionsService();
+                    directionsService.route({
+                        origin: origin,
+                        destination: destination,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    }, (result, status) => {
+                        if (status === 'OK') {
+                            directionsRenderer.setDirections(result);
+                            loadingElement.style.display = 'none';
+                        } else {
+                            loadingElement.style.display = 'none';
+                            errorElement.style.display = 'block';
+                        }
+                    });
+                }
+
+            } catch (error) {
+                console.error('Erro ao inicializar mapa:', error);
+                loadingElement.style.display = 'none';
+                errorElement.style.display = 'block';
+            }
+        }
+    })();
+</script>
+

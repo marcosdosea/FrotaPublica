@@ -1,136 +1,209 @@
-@using Core.DTO
+﻿@using Core.DTO
 @model FrotaWeb.Models.VeiculoViewModel
+@using System.Globalization
 
 @{
-	var unidades = ViewData["Unidades"] as IEnumerable<UnidadeAdministrativaDTO> ?? Enumerable.Empty<UnidadeAdministrativaDTO>();
-	var modelos = ViewData["Modelos"] as IEnumerable<ModeloVeiculoDTO> ?? Enumerable.Empty<ModeloVeiculoDTO>();
+    var unidades = ViewData["Unidades"] as IEnumerable<UnidadeAdministrativaDTO> ?? Enumerable.Empty<UnidadeAdministrativaDTO>();
+    var modelos = ViewData["Modelos"] as IEnumerable<ModeloVeiculoDTO> ?? Enumerable.Empty<ModeloVeiculoDTO>();
+    ViewBag.EntityName = "Veículo";
+    ViewBag.ControllerName = "Veiculo";
+    var entityName = ViewBag.EntityName ?? "Item";
+    var controllerName = ViewBag.ControllerName ?? "";
+    var culture = new CultureInfo("pt-BR");
 }
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="edit-title">
+            <i class="fas fa-edit"></i>
+            Editar @entityName
+        </h1>
+    </div>
 
-<main class="main_content container">
-	<div class="titulo-pagina">
-		<a href="javascript:history.back()" class="voltar">
-			<i class="fa fa-arrow-left"></i> Voltar
-		</a>
-		<h1>Cadastro de Ve�culo</h1>
-	</div>
-	<div class="fomulario">
-		<form asp-action="Edit">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label asp-for="IdModeloVeiculo" class="label">Modelo Ve�culo</label>
-				<select asp-for="IdModeloVeiculo" class="custom-select select2">
-					@if (!modelos.Any())
-					{
-						<option value="" disabled selected hidden>Modelo</option>
-					}
-					else
-					{
-						foreach (var modelo in modelos)
-						{
-							<option value="@modelo.Id">@modelo.Nome</option>
-						}
-					}
-				</select>
-				<span asp-validation-for="IdModeloVeiculo" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Placa" class="label">Placa</label>
-				<input asp-for="Placa" class="form-control" placeholder="ABC1D23" />
-				<span asp-validation-for="Placa" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Chassi" class="label">Chassi</label>
-				<input asp-for="Chassi" class="form-control" placeholder="9BWZZZ377VT123456" />
-				<span asp-validation-for="Chassi" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Valor" class="label">Valor do Ve�culo</label>
-				<input asp-for="Valor" class="form-control" placeholder="80000" />
-				<span asp-validation-for="Valor" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="DataReferenciaValor" class="label">Data Refer�ncia (Valor)</label>
-				<input asp-for="DataReferenciaValor" class="form-control campo-data" placeholder="" />
-				<span asp-validation-for="DataReferenciaValor" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Odometro" class="label">Od�metro</label>
-				<input asp-for="Odometro" class="form-control" placeholder="26000" />
-				<span asp-validation-for="Odometro" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Cor" class="label">Cor</label>
-				<input asp-for="Cor" class="form-control" placeholder="Preto" />
-				<span asp-validation-for="Cor" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Status" class="label">Status</label>
-				<input asp-for="Status" class="form-control" placeholder="Em Uso" />
-				<span asp-validation-for="Status" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Ano" class="label">Ano</label>
-				<input asp-for="Ano" class="form-control" placeholder="AnoEx" />
-				<span asp-validation-for="Ano" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Modelo" class="label">Modelo</label>
-				<input asp-for="Modelo" class="form-control" placeholder="2024" />
-				<span asp-validation-for="Modelo" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="Renavan" class="label">Renavan</label>
-				<input asp-for="Renavan" class="form-control" placeholder="12345678901" />
-				<span asp-validation-for="Renavan" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="VencimentoIpva" class="label">Vencimento Ipva</label>
-				<input asp-for="VencimentoIpva" class="form-control campo-data" placeholder="" />
-				<span asp-validation-for="VencimentoIpva" class="text-danger"></span>
-			</div>
-			<div class="form-group">
-				<label asp-for="IdUnidadeAdministrativa" class="label">Unidade Administrativa</label>
-				<select asp-for="IdUnidadeAdministrativa" class="custom-select select2">
-					@if (!unidades.Any())
-					{
-						<option value="" disabled selected hidden>Administrativo</option>
-					}
-					else
-					{
-						foreach (var unidade in unidades)
-						{
-							<option value="@unidade.Id">@unidade.Nome</option>
-						}
-					}
-				</select>
-				<span asp-validation-for="IdUnidadeAdministrativa" class="text-danger"></span>
-			</div>
-			<div class="buttons">
-				<input type="submit" value="Salvar Altera��es" class="btn btn-primary" />
-			</div>
-		</form>
-	</div>
-</main>
+    <div class="edit-card">
+        <form asp-action="Edit" method="post" class="edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-group">
+                <label asp-for="IdModeloVeiculo" class="form-label">Modelo Veículo</label>
+                <div class="select-wrapper">
+                    <select asp-for="IdModeloVeiculo" class="select-modern select-full">
+                        @if (!modelos.Any())
+                        {
+                            <option value="" disabled selected hidden>Selecione um modelo</option>
+                        }
+                        else
+                        {
+                            foreach (var modelo in modelos)
+                            {
+                                <option value="@modelo.Id">@modelo.Nome</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <span asp-validation-for="IdModeloVeiculo" class="form-error-text"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Placa" class="form-label">Placa</label>
+                    <div class="input-group">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input asp-for="Placa" class="form-input input-placa" placeholder="ABC1D23" maxlength="8" />
+                    </div>
+                    <span asp-validation-for="Placa" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Chassi" class="form-label">Chassi</label>
+                    <div class="input-group">
+                        <i class="fas fa-barcode input-icon"></i>
+                        <input asp-for="Chassi" class="form-input input-lg" placeholder="9BWZZZ377VT123456" />
+                    </div>
+                    <span asp-validation-for="Chassi" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Valor" class="form-label">Valor do Veículo</label>
+                    <div class="input-group">
+                        <i class="fas fa-dollar-sign input-icon"></i>
+                        <input asp-for="Valor" class="form-input input-valor" placeholder="80000" type="number" step="0.01" />
+                    </div>
+                    <span asp-validation-for="Valor" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DataReferenciaValor" class="form-label">Data Referência (Valor)</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input asp-for="DataReferenciaValor" class="form-input input-data" type="date" />
+                    </div>
+                    <span asp-validation-for="DataReferenciaValor" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Odometro" class="form-label">Odômetro</label>
+                    <div class="input-group">
+                        <i class="fas fa-tachometer-alt input-icon"></i>
+                        <input asp-for="Odometro" class="form-input input-numero" placeholder="26000" type="number" />
+                    </div>
+                    <span asp-validation-for="Odometro" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Cor" class="form-label">Cor</label>
+                    <div class="input-group">
+                        <i class="fas fa-palette input-icon"></i>
+                        <input asp-for="Cor" class="form-input input-md" placeholder="Preto" />
+                    </div>
+                    <span asp-validation-for="Cor" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Status" class="form-label">Status</label>
+                    <div class="select-wrapper">
+                        <select asp-for="Status" class="select-modern select-md">
+                            <option value="D">Disponível</option>
+                            <option value="U">Em Uso</option>
+                            <option value="M">Em Manutenção</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Status" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Ano" class="form-label">Ano</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar-alt input-icon"></i>
+                        <input asp-for="Ano" class="form-input input-numero" placeholder="2024" type="number" />
+                    </div>
+                    <span asp-validation-for="Ano" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Modelo" class="form-label">Modelo</label>
+                    <div class="input-group">
+                        <i class="fas fa-car-side input-icon"></i>
+                        <input asp-for="Modelo" class="form-input input-md" placeholder="2024" />
+                    </div>
+                    <span asp-validation-for="Modelo" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Renavan" class="form-label">Renavan</label>
+                    <div class="input-group">
+                        <i class="fas fa-file-alt input-icon"></i>
+                        <input asp-for="Renavan" class="form-input input-lg" placeholder="12345678901" />
+                    </div>
+                    <span asp-validation-for="Renavan" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="VencimentoIpva" class="form-label">Vencimento IPVA</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar-check input-icon"></i>
+                        <input asp-for="VencimentoIpva" class="form-input input-data" type="date" />
+                    </div>
+                    <span asp-validation-for="VencimentoIpva" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IdUnidadeAdministrativa" class="form-label">Unidade Administrativa</label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdUnidadeAdministrativa" class="select-modern select-full">
+                            @if (!unidades.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione uma unidade</option>
+                            }
+                            else
+                            {
+                                foreach (var unidade in unidades)
+                                {
+                                    <option value="@unidade.Id">@unidade.Nome</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdUnidadeAdministrativa" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
-	<script src="~/js/form.js" asp-append-version="true"></script>
-	<!-- Pra os campos select -->
-	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-	<script>
-		// Campos select
-		$(document).ready(function () {
-			$(".select2").select2({
-				language: {
-					noResults: function () {
-						return "N�o encontrado";
-					}
-				}
-			})
-		});
-	</script>
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/input-masks.js" asp-append-version="true"></script>
 }
+
+<style>
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-4);
+    }
+</style>

@@ -13,15 +13,18 @@ namespace FrotaApi.Controllers
         private readonly IPercursoService _percursoService;
         private readonly IPessoaService _pessoaService;
         private readonly IVeiculoService _veiculoService;
+        private readonly IRotaService _rotaService;
 
         public PercursoController(
             IPercursoService percursoService,
             IPessoaService pessoaService,
-            IVeiculoService veiculoService)
+            IVeiculoService veiculoService,
+            IRotaService rotaService)
         {
             _percursoService = percursoService;
             _pessoaService = pessoaService;
             _veiculoService = veiculoService;
+            _rotaService = rotaService;
         }
 
         public class IniciarPercursoModel
@@ -177,6 +180,9 @@ namespace FrotaApi.Controllers
                 percurso.OdometroFinal = model.OdometroFinal;
                 
                 _percursoService.Edit(percurso);
+
+                // Remover rotas associadas ao percurso
+                _rotaService.RemoverRotasPorPercurso(model.IdPercurso);
 
                 return Ok(new
                 {

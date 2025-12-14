@@ -1,130 +1,127 @@
-@model IEnumerable<FrotaWeb.Models.VeiculoViewModel>
+﻿@model IEnumerable<FrotaWeb.Models.VeiculoViewModel>
 
-<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/veiculos-disponiveis.css" asp-append-version="true" />
-
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
-        </a>
-        <div class="title-row">
-            <h1>Veículos Disponíveis</h1>
-            <form method="get" asp-action="VeiculosDisponiveis">
-                <div class="filtro-input">
-                    <input type="text" name="placa" value="@ViewBag.CurrentPlaca" placeholder="Placa" />
-                    <button type="submit" class="search-icon">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </form>
+<main class="main-content">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="javascript:history.back()" class="btn btn-tertiary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="page-title">Veículos Disponíveis</h1>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar Novo
+            </a>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="tabela">
-            <thead>
-                <tr>
-                    <th>Modelo</th>
-                    <th>@Html.DisplayNameFor(model => model.Placa)</th>
-                    <th>@Html.DisplayNameFor(model => model.Cor)</th>
-                    <th>Status</th>
-                    <th class="column-15"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <i class="fa fa-car car-icon"></i>
-                            @Html.DisplayFor(modelItem => item.ModeloNome)
-                        </td>
-                        <td>@Html.DisplayFor(modelItem => item.Placa)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Cor)</td>
-                        <td class="status-disponivel">@Html.DisplayFor(modelItem => item.StatusNome)</td>
-                        <td>
-                            <a href="@Url.Action("Usar", "Veiculo", new { id = item.Id })" class="edit icone" title="Usar" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label class="filter-label">Buscar por Placa</label>
+            <div class="input-group">
+                <i class="fas fa-search input-icon"></i>
+                <input type="text" class="form-input" placeholder="Buscar por placa..." id="searchInput" value="@ViewBag.CurrentPlaca" />
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Limpar
+            </button>
+        </div>
     </div>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>@Html.DisplayNameFor(model => model.Placa)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cor)</th>
+                        <th>Status</th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.Id" data-details-url="@Url.Action("Details", "Veiculo", new { id = item.Id })">
+                            <td>@Html.DisplayFor(modelItem => item.ModeloNome)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Placa)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cor)</td>
+                            <td>
+                                <span class="badge badge-success">
+                                    @Html.DisplayFor(modelItem => item.StatusNome)
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="@Url.Action("Usar", "Veiculo", new { id = item.Id })" class="table-action-btn details" title="Usar" onclick="event.stopPropagation()">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     @if (ViewBag.TotalPages > 1)
     {
-        <nav class="navigation-pages">
-            <div></div>
-            @if (ViewBag.TotalPages > 10)
-            {
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = 0 })';">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-                @if (ViewBag.CurrentPage < 5)
+        <nav class="pagination-container">
+            <div class="pagination">
+                @if (ViewBag.CurrentPage > 0)
                 {
-                    @for (int i = 0; i < 9; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("VeiculosDisponiveis", new { page = i, placa = ViewBag.CurrentPlaca })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = ViewBag.CurrentPage - 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
                 }
-                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
+                
+                @for (int i = Math.Max(0, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages - 1, ViewBag.CurrentPage + 2); i++)
                 {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("VeiculosDisponiveis", new { page = i, placa = ViewBag.CurrentPlaca })">@numeroPageLast</a>
-                        </li>
-                    }
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = i, placa = ViewBag.CurrentPlaca })" class="pagination-btn @(i == ViewBag.CurrentPage ? "active" : "")">
+                        @(i + 1)
+                    </a>
                 }
-                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5)
+                
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages - 1)
                 {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("VeiculosDisponiveis", new { page = i, placa = ViewBag.CurrentPlaca })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = ViewBag.CurrentPage + 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                 }
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = ViewBag.TotalPages -1 })';">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            }
-            @if (ViewBag.TotalPages <= 10)
-            {
-                @for (int i = 0; i < ViewBag.TotalPages; i++)
-                {
-                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        @{
-                            var numeroPageLast = i + 1;
-                        }
-                        <a class="page-link" href="@Url.Action("VeiculosDisponiveis", new { page = i, placa = ViewBag.CurrentPlaca })">@numeroPageLast</a>
-                    </li>
-                }
-            }
+            </div>
         </nav>
     }
 </main>
+
+<script>
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        window.location.href = '@Url.Action("VeiculosDisponiveis", "Veiculo")';
+    }
+
+    // Busca em tempo real
+    document.getElementById('searchInput')?.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Click na linha para ver detalhes
+    document.querySelectorAll('.table-modern tbody tr[data-details-url]').forEach(row => {
+        row.addEventListener('click', function() {
+            const url = this.getAttribute('data-details-url');
+            if (url) {
+                window.location.href = url;
+            }
+        });
+        row.style.cursor = 'pointer';
+    });
+</script>

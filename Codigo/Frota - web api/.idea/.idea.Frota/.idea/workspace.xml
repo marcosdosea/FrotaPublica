@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="710ccf98-7186-438d-b464-7109754fd7c4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Data/IdentityContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Data/IdentityContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Data/UsuarioIdentity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Data/UsuarioIdentity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/AccessDenied.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/AccessDenied.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/AccessDenied.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/AccessDenied.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmail.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmail.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmail.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmail.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmailChange.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmailChange.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmailChange.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ConfirmEmailChange.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ExternalLogin.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ExternalLogin.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ExternalLogin.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPassword.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPassword.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPasswordConfirmation.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPasswordConfirmation.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPasswordConfirmation.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ForgotPasswordConfirmation.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Lockout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Lockout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Lockout.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Lockout.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Login.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Login.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Login.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Login.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWith2fa.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWith2fa.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWith2fa.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWith2fa.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWithRecoveryCode.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWithRecoveryCode.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWithRecoveryCode.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/LoginWithRecoveryCode.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Logout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Logout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Logout.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Logout.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ChangePassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ChangePassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ChangePassword.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ChangePassword.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DeletePersonalData.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DeletePersonalData.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DeletePersonalData.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DeletePersonalData.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Disable2fa.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Disable2fa.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Disable2fa.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Disable2fa.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DownloadPersonalData.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DownloadPersonalData.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DownloadPersonalData.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/DownloadPersonalData.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Email.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Email.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Email.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Email.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/EnableAuthenticator.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/GenerateRecoveryCodes.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/GenerateRecoveryCodes.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/GenerateRecoveryCodes.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/GenerateRecoveryCodes.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Index.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/Index.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ManageNavPages.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ManageNavPages.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/PersonalData.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/PersonalData.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/PersonalData.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/PersonalData.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ResetAuthenticator.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ResetAuthenticator.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ResetAuthenticator.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ResetAuthenticator.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/SetPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/SetPassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/SetPassword.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/SetPassword.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ShowRecoveryCodes.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ShowRecoveryCodes.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ShowRecoveryCodes.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/ShowRecoveryCodes.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/TwoFactorAuthentication.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/TwoFactorAuthentication.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/TwoFactorAuthentication.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/TwoFactorAuthentication.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_StatusMessage.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Register.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Register.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Register.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/Register.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResendEmailConfirmation.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResendEmailConfirmation.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResendEmailConfirmation.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResendEmailConfirmation.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPassword.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPassword.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/_StatusMessage.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/_StatusMessage.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/_ViewImports.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Account/_ViewImports.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Error.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Error.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Error.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/Error.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ViewImports.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ViewImports.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ViewStart.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Areas/Identity/Pages/_ViewStart.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/AbastecimentoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/AbastecimentoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/AccountController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/FornecedorController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/FornecedorController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/FrotaController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/FrotaController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/HomeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/HomeController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/ManutencaoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/ManutencaoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/ManutencaoPecaInsumoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/ManutencaoPecaInsumoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/MarcaPecaInsumoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/MarcaPecaInsumoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/MarcaVeiculoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/MarcaVeiculoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/ModeloVeiculoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/ModeloVeiculoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/PecaInsumoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/PecaInsumoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/PercursoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/PercursoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/PessoaController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/PessoaController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/SolicitacaoManutencaoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/SolicitacaoManutencaoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/UnidadeAdministrativaController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/UnidadeAdministrativaController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/VeiculoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/VeiculoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/VeiculoPecaInsumoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/VeiculoPecaInsumoController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Controllers/VistoriaController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Controllers/VistoriaController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Filter/CustomExceptionFilter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Filter/CustomExceptionFilter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/FrotaWeb.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/FrotaWeb.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/FrotaWeb.csproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/FrotaWeb.csproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Helpers/EmailSender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Helpers/EmailSender.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Helpers/PopupHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Helpers/PopupHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/AbastecimentoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/AbastecimentoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/FornecedorProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/FornecedorProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/FrotaProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/FrotaProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/ManutencaoPecaInsumoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/ManutencaoPecaInsumoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/ManutencaoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/ManutencaoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/MarcaPecaInsumoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/MarcaPecaInsumoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/MarcaVeiculoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/MarcaVeiculoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/ModeloVeiculoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/ModeloVeiculoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/PecaInsumoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/PecaInsumoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/PercursoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/PercursoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/PessoaProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/PessoaProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/SolicitacaoManutencaoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/SolicitacaoManutencaoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/UnidadeAdministrativaProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/UnidadeAdministrativaProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/VeiculoPecaInsumoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/VeiculoPecaInsumoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/VeiculoProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/VeiculoProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Mappers/VistoriaProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Mappers/VistoriaProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Migrations/20231005194039_CreateIdentitySchema.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Migrations/20231005194039_CreateIdentitySchema.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Migrations/20231005194039_CreateIdentitySchema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Migrations/20231005194039_CreateIdentitySchema.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Migrations/IdentityContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Migrations/IdentityContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/AbastecimentoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/AbastecimentoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/ErrorViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/ErrorViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/FornecedorViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/FornecedorViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/FrotaViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/FrotaViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/HomeViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/HomeViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/ManutencaoPecaInsumoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/ManutencaoPecaInsumoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/ManutencaoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/ManutencaoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/MarcaPecaInsumoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/MarcaPecaInsumoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/MarcaVeiculoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/MarcaVeiculoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/ModeloVeiculoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/ModeloVeiculoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/PecaInsumoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/PecaInsumoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/PercursoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/PercursoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/PessoaViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/PessoaViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/SetupPasswordViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/SetupPasswordViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/SolicitacaoManutencaoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/SolicitacaoManutencaoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/UnidadeAdministrativaViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/UnidadeAdministrativaViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/VeiculoPecaInsumoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/VeiculoPecaInsumoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/VeiculoViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/VeiculoViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Models/VistoriaViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Models/VistoriaViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/ScaffoldingReadMe.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/ScaffoldingReadMe.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Abastecimento/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Account/SetupPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Account/SetupPassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Fornecedor/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Frota/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Home/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Home/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Home/Privacy.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Home/Privacy.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Manutencao/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ManutencaoPecaInsumo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaPecaInsumo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/MarcaVeiculo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/ModeloVeiculo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/PecaInsumo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Percurso/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Pessoa/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Shared/Error.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Shared/Error.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_LayoutLogin.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_LayoutLogin.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_LoginPartial.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_LoginPartial.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_ValidationScriptsPartial.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Shared/_ValidationScriptsPartial.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/SolicitacaoManutencao/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/UnidadeAdministrativa/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/FinalizarUso.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/FinalizarUso.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Gerenciamento.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Gerenciamento.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Gerenciamento.cshtml.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Gerenciamento.cshtml.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarAbastecimento.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarAbastecimento.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarSaida.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarSaida.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarVistoria.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/RegistrarVistoria.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/SolicitarManutencao.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/SolicitarManutencao.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Usar.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/Usar.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/VeiculosDisponiveis.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Veiculo/VeiculosDisponiveis.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/VeiculoPecaInsumo/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/Vistoria/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/_ViewImports.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/_ViewImports.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/Views/_ViewStart.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/Views/_ViewStart.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/details.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/details.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/form-pages.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/form-pages.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/form.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/form.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/gerenciamento-veiculo-page.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/gerenciamento-veiculo-page.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/home.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/index-pages.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/index-pages.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/navBar.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/navBar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/site.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/site.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/veiculos-disponiveis.css" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/css/veiculos-disponiveis.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/img/logo/logo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/img/logo/logo.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/authentication.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/authentication.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/form.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/form.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/navBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/js/navBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/bootstrap/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/bootstrap/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FrotaWeb/wwwroot/lib/jquery/LICENSE.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="36dGJVx85s2lbgrtDzbDQbM12GS" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="710ccf98-7186-438d-b464-7109754fd7c4" name="Changes" comment="" />
+      <created>1765328963571</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1765328963571</updated>
+      <workItem from="1765328965199" duration="7000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

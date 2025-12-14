@@ -3,26 +3,17 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../models/journey.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/inspection_status.dart';
 import '../services/inspection_service.dart';
 import 'fuel_registration_screen.dart';
 import 'inspection_selection_screen.dart';
-import 'maintenance_request_screen.dart';
-import '../utils/formatters.dart';
-import '../utils/widgets/action_card.dart';
-import '../widgets/finish_journey_dialog.dart';
-import '../providers/journey_provider.dart';
-import '../providers/fuel_provider.dart';
-import 'available_vehicles_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/local_database_service.dart';
+import '../services/route_service.dart';
 import '../utils/app_theme.dart';
 
 class MapScreen extends StatefulWidget {
@@ -43,13 +34,11 @@ class _MapScreenState extends State<MapScreen> {
   final Set<Polyline> _polylines = {};
   InspectionStatus inspectionStatus = InspectionStatus();
   final InspectionService _inspectionService = InspectionService();
+  final RouteService _routeService = RouteService();
   bool _isLoadingRoute = false;
   String? _routeDistance;
   String? _routeDuration;
   bool _isExpanded = false;
-
-  static const String _googleMapsApiKey =
-      'AIzaSyCxFxCvXpzIcSL_ck0CQyk2Xc2YvOmiLlc';
 
   @override
   void initState() {
@@ -124,18 +113,17 @@ class _MapScreenState extends State<MapScreen> {
       final connectivity = await Connectivity().checkConnectivity();
       final isOnline = connectivity != ConnectivityResult.none;
       final journeyId = widget.journey.id;
+
       if (!isOnline) {
         // Tentar carregar rota salva localmente
         final savedRouteJson =
             await LocalDatabaseService().getRouteForJourney(journeyId);
         if (savedRouteJson != null) {
-          final data = json.decode(savedRouteJson);
-          if (data['status'] == 'OK' && (data['routes'] as List).isNotEmpty) {
-            final route = data['routes'][0];
-            final leg = route['legs'][0];
-            _routeDistance = leg['distance']['text'];
-            _routeDuration = leg['duration']['text'];
-            final String encodedPolyline = route['overview_polyline']['points'];
+          final routeData = _routeService.parseRouteJson(savedRouteJson);
+          if (routeData != null && routeData['status'] == 'OK') {
+            _routeDistance = routeData['distance'];
+            _routeDuration = routeData['duration'];
+            final String encodedPolyline = routeData['polyline'];
             _polylines.add(
               Polyline(
                 polylineId: const PolylineId('route'),
@@ -155,30 +143,24 @@ class _MapScreenState extends State<MapScreen> {
         _fitMarkersInView();
         return;
       }
-      // Online: buscar rota normalmente
-      final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
-          'origin=${origin.latitude},${origin.longitude}&'
-          'destination=${destination.latitude},${destination.longitude}&'
-          'key=$_googleMapsApiKey&'
-          'language=pt-BR';
 
-      print('--- MAP_SCREEN: Chamando URL da API do Google Directions: $url');
-      final response = await http.get(Uri.parse(url));
+      // Online: buscar rota através da API
+      print(
+          '--- MAP_SCREEN: Buscando rota através da API para percurso: $journeyId');
+      final routeJson = await _routeService.getRouteForJourney(journeyId);
 
-      if (response.statusCode == 200) {
-        print('--- MAP_SCREEN: Resposta da API recebida (StatusCode: 200).');
-        final data = json.decode(response.body);
+      if (routeJson != null) {
+        print('--- MAP_SCREEN: Rota obtida da API. Processando...');
+        final routeData = _routeService.parseRouteJson(routeJson);
 
-        if (data['status'] == 'OK' && (data['routes'] as List).isNotEmpty) {
+        if (routeData != null && routeData['status'] == 'OK') {
           print(
               '--- MAP_SCREEN: Status da rota é OK. Desenhando rota no mapa.');
-          final route = data['routes'][0];
-          final leg = route['legs'][0];
 
-          _routeDistance = leg['distance']['text'];
-          _routeDuration = leg['duration']['text'];
+          _routeDistance = routeData['distance'];
+          _routeDuration = routeData['duration'];
+          final String encodedPolyline = routeData['polyline'];
 
-          final String encodedPolyline = route['overview_polyline']['points'];
           _polylines.add(
             Polyline(
               polylineId: const PolylineId('route'),
@@ -187,22 +169,23 @@ class _MapScreenState extends State<MapScreen> {
               width: 5,
             ),
           );
-          // Salvar rota localmente
+
+          // Salvar rota localmente para uso offline
           await LocalDatabaseService()
-              .saveRouteForJourney(journeyId, response.body);
+              .saveRouteForJourney(journeyId, routeJson);
         } else {
           print(
-              '--- MAP_SCREEN: API retornou status: ${data['status']}. Desenhando linha reta como fallback.');
+              '--- MAP_SCREEN: API retornou status: ${routeData?['status'] ?? 'UNKNOWN'}. Desenhando linha reta como fallback.');
           _drawStraightLine(origin, destination);
         }
       } else {
         print(
-            '--- MAP_SCREEN: Falha na chamada da API (StatusCode: ${response.statusCode}). Desenhando linha reta como fallback.');
+            '--- MAP_SCREEN: Não foi possível obter rota da API. Desenhando linha reta como fallback.');
         _drawStraightLine(origin, destination);
       }
     } catch (e) {
       print(
-          '--- MAP_SCREEN: Erro na chamada da API: $e. Desenhando linha reta como fallback.');
+          '--- MAP_SCREEN: Erro ao obter rota: $e. Desenhando linha reta como fallback.');
       _drawStraightLine(origin, destination);
     } finally {
       if (mounted) {
@@ -632,7 +615,7 @@ class _MapScreenState extends State<MapScreen> {
             Expanded(
               child: _buildLocationInfo(
                 'Origem',
-                widget.journey.origin ?? 'Não informado',
+                widget.journey.origin,
                 Icons.radio_button_checked,
                 AppTheme.successColor,
                 isDark,
@@ -642,7 +625,7 @@ class _MapScreenState extends State<MapScreen> {
             Expanded(
               child: _buildLocationInfo(
                 'Destino',
-                widget.journey.destination ?? 'Não informado',
+                widget.journey.destination,
                 Icons.location_on,
                 AppTheme.errorColor,
                 isDark,

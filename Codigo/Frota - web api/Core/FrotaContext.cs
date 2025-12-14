@@ -49,6 +49,8 @@ public partial class FrotaContext : DbContext
 
     public virtual DbSet<Vistorium> Vistoria { get; set; }
 
+    public virtual DbSet<Rota> Rotas { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Abastecimento>(entity =>
@@ -753,6 +755,30 @@ public partial class FrotaContext : DbContext
                 .HasForeignKey(d => d.IdPessoaResponsavel)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Vistoria_Pessoa1");
+        });
+
+        modelBuilder.Entity<Rota>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("rota");
+
+            entity.HasIndex(e => e.IdPercurso, "fk_rota_percurso1_idx");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IdPercurso).HasColumnName("idPercurso");
+            entity.Property(e => e.RouteJson)
+                .HasColumnType("longtext")
+                .HasColumnName("routeJson");
+            entity.Property(e => e.DataCriacao)
+                .HasColumnType("datetime")
+                .HasColumnName("dataCriacao");
+
+            entity.HasOne(d => d.IdPercursoNavigation)
+                .WithMany()
+                .HasForeignKey(d => d.IdPercurso)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_rota_percurso1");
         });
 
         OnModelCreatingPartial(modelBuilder);

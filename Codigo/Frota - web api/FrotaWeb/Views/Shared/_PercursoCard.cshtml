@@ -1,0 +1,60 @@
+﻿@model FrotaWeb.Models.PercursoViewModel
+@using System.Globalization
+
+@{
+    var culture = new CultureInfo("pt-BR");
+}
+
+<div class="percurso-card">
+    <div class="percurso-card-header">
+        <h3 class="percurso-card-title">
+            <i class="fas fa-route"></i>
+            Informações do Percurso
+        </h3>
+        <span class="percurso-card-status active">
+            <i class="fas fa-circle"></i> Em Andamento
+        </span>
+    </div>
+    <div class="percurso-card-body">
+        <div class="percurso-card-item">
+            <span class="percurso-card-label">Data/Hora Saída</span>
+            <span class="percurso-card-value">
+                <i class="fas fa-calendar-alt"></i>
+                @Model.DataHoraSaida.ToString("dd/MM/yyyy HH:mm", culture)
+            </span>
+        </div>
+        <div class="percurso-card-item">
+            <span class="percurso-card-label">Odômetro Inicial</span>
+            <span class="percurso-card-value">
+                <i class="fas fa-tachometer-alt"></i>
+                @Model.OdometroInicial km
+            </span>
+        </div>
+        <div class="percurso-card-item">
+            <span class="percurso-card-label">Motivo</span>
+            <span class="percurso-card-value">
+                <i class="fas fa-file-alt"></i>
+                @Model.Motivo
+            </span>
+        </div>
+    </div>
+    <div class="percurso-card-location">
+        <div class="percurso-card-location-icon origin">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="percurso-card-location-info">
+            <span class="percurso-card-location-label">Origem</span>
+            <span class="percurso-card-location-address">@Model.LocalPartida</span>
+        </div>
+    </div>
+    <div class="percurso-card-location">
+        <div class="percurso-card-location-icon destination">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="percurso-card-location-info">
+            <span class="percurso-card-location-label">Destino</span>
+            <span class="percurso-card-location-address">@Model.LocalChegada</span>
+        </div>
+    </div>
+</div>
+

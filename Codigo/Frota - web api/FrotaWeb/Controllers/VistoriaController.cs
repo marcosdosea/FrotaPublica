@@ -29,7 +29,7 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria/Details/5
-		public ActionResult Details(uint id)
+		public ActionResult Details(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -57,7 +57,7 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria/Edit/5
-		public ActionResult Edit(uint id)
+		public ActionResult Edit(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -80,7 +80,7 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria/Delete/5
-		public ActionResult Delete(uint id)
+		public ActionResult Delete(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -90,7 +90,7 @@ namespace FrotaWeb.Controllers
 		// POST: Vistoria/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(uint id, VistoriaViewModel vistoriaViewModel)
+		public ActionResult Delete(int id, VistoriaViewModel vistoriaViewModel)
 		{
 			TempData["MensagemConfirmacao"] = "Tem certeza que deseja excluir esta vistoria?";
 			vistoriaService.Delete(id);
