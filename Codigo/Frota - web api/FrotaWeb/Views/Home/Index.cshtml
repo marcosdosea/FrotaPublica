@@ -1,4 +1,4 @@
-@model FrotaWeb.Models.HomeViewModel
+﻿@model FrotaWeb.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -22,45 +22,110 @@
 
     <!-- Stats Cards -->
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon bg-primary">
-                <i class="fas fa-car"></i>
+        @if (Model.UserType == "Administrador")
+        {
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalFrotas</h3>
+                    <p class="stat-label">Frotas</p>
+                </div>
             </div>
-            <div class="stat-content">
-                <h3 class="stat-number">24</h3>
-                <p class="stat-label">Veículos Ativos</p>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalVeiculos</h3>
+                    <p class="stat-label">Veículos</p>
+                </div>
             </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-success">
-                <i class="fas fa-gas-pump"></i>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalPessoas</h3>
+                    <p class="stat-label">Pessoas</p>
+                </div>
             </div>
-            <div class="stat-content">
-                <h3 class="stat-number">156</h3>
-                <p class="stat-label">Abastecimentos</p>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalUnidadesAdministrativas</h3>
+                    <p class="stat-label">Unidades</p>
+                </div>
             </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-warning">
-                <i class="fas fa-tools"></i>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-secondary">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalPecasInsumos</h3>
+                    <p class="stat-label">Peças/Insumos</p>
+                </div>
             </div>
-            <div class="stat-content">
-                <h3 class="stat-number">8</h3>
-                <p class="stat-label">Manutenções</p>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalAlertasValidade</h3>
+                    <p class="stat-label">Alertas Urgentes</p>
+                </div>
             </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon bg-danger">
-                <i class="fas fa-exclamation-triangle"></i>
+        }
+        else
+        {
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalVeiculos</h3>
+                    <p class="stat-label">Veículos Ativos</p>
+                </div>
             </div>
-            <div class="stat-content">
-                <h3 class="stat-number">3</h3>
-                <p class="stat-label">Alertas</p>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-gas-pump"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalAbastecimentos</h3>
+                    <p class="stat-label">Abastecimentos</p>
+                </div>
             </div>
-        </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-warning">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalManutencoes</h3>
+                    <p class="stat-label">Manutenções</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bg-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">@Model.TotalAlertasValidade</h3>
+                    <p class="stat-label">Alertas Urgentes</p>
+                </div>
+            </div>
+        }
     </div>
 
     <!-- Main Content Grid -->
@@ -92,6 +157,45 @@
                                     <i class="fas fa-clipboard-check"></i>
                                 </div>
                                 <span>Vistoria</span>
+                            </a>
+                        }
+                        else if (Model.UserType == "Administrador")
+                        {
+                            <a href="@Url.Action("Index", "Frota")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <span>Gerenciar Frotas</span>
+                            </a>
+                            <a href="@Url.Action("Index", "Pessoa")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span>Gerenciar Pessoas</span>
+                            </a>
+                            <a href="@Url.Action("Index", "PecaInsumo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <span>Peças/Insumos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "MarcaVeiculo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                                <span>Marcas Veículos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "ModeloVeiculo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-car-side"></i>
+                                </div>
+                                <span>Modelos Veículos</span>
+                            </a>
+                            <a href="@Url.Action("Index", "MarcaPecaInsumo")" class="quick-action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-tag"></i>
+                                </div>
+                                <span>Marcas Peças</span>
                             </a>
                         }
                         else

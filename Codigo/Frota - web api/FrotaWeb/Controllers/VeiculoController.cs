@@ -5,6 +5,8 @@ using Core.Service;
 using FrotaWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Service;
 
 namespace FrotaWeb.Controllers
 {
@@ -22,8 +24,9 @@ namespace FrotaWeb.Controllers
         private readonly IAbastecimentoService abastecimentoService;
         private readonly ISolicitacaoManutencaoService solicitacaoManutencaoService;
         private readonly IFornecedorService fornecedorService;
+        private readonly IRotaService rotaService;
 
-        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService, IPercursoService percursoService, IVistoriaService vistoriaService, IAbastecimentoService abastecimentoService, ISolicitacaoManutencaoService solicitacaoManutencaoService, IFornecedorService fornecedorService)
+        public VeiculoController(IVeiculoService service, IMapper mapper, IUnidadeAdministrativaService unidadeAdministrativaService, IFrotaService frotaService, IModeloVeiculoService modeloVeiculoService, IPessoaService pessoaService, IPercursoService percursoService, IVistoriaService vistoriaService, IAbastecimentoService abastecimentoService, ISolicitacaoManutencaoService solicitacaoManutencaoService, IFornecedorService fornecedorService, IRotaService rotaService)
         {
             this.veiculoService = service;
             this.mapper = mapper;
@@ -36,6 +39,7 @@ namespace FrotaWeb.Controllers
             this.abastecimentoService = abastecimentoService;
             this.solicitacaoManutencaoService = solicitacaoManutencaoService;
             this.fornecedorService = fornecedorService;
+            this.rotaService = rotaService;
         }
 
         // GET: Veiculo
@@ -46,19 +50,22 @@ namespace FrotaWeb.Controllers
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
 
-            int length = 15;
-            var listaVeiculos = veiculoService.GetPaged(page, length, idFrota).ToList();
-
+            int itemsPerPage = 20;
+            var listaVeiculos = veiculoService.GetPaged(page, itemsPerPage, idFrota).ToList();
             var totalVeiculos = veiculoService.GetAll(idFrota).Count();
-            var totalPages = (int)Math.Ceiling((double)totalVeiculos / length);
+            
+            var pagedResult = new PagedResult<VeiculoViewModel>
+            {
+                Items = mapper.Map<List<VeiculoViewModel>>(listaVeiculos),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalVeiculos,
+                TotalPages = (int)Math.Ceiling((double)totalVeiculos / itemsPerPage)
+            };
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(listaVeiculos);
-            foreach (var veiculo in veiculosViewModel)
+            foreach (var veiculo in pagedResult.Items)
             {
                 veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
-                string status;
                 if(veiculo.Status == "D")
                 {
                     veiculo.StatusNome = "Disponível";
@@ -76,7 +83,9 @@ namespace FrotaWeb.Controllers
                     veiculo.StatusNome = "Indisponível";
                 }
             }
-            return View(veiculosViewModel);
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         [Authorize(Roles = "Gestor,Motorista")]
@@ -87,27 +96,33 @@ namespace FrotaWeb.Controllers
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "UnidadeId")?.Value, out uint idUnidade);
 
-            int length = 15;
-            var pagedResult = veiculoService.GetVeiculosDisponiveisUnidadeAdministrativaPaged(page, length, idFrota, idUnidade, placa);
+            int itemsPerPage = 20;
+            var servicePagedResult = veiculoService.GetVeiculosDisponiveisUnidadeAdministrativaPaged(page, itemsPerPage, idFrota, idUnidade, placa);
 
-            var totalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / length);
-
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPlaca = placa;
-
-            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(pagedResult.Items);
+            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(servicePagedResult.Items);
 
             foreach (var veiculo in veiculosViewModel)
             {
                 veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
                 veiculo.StatusNome = "Disponível";
             }
-            return View(veiculosViewModel);
+
+            var pagedResult = new PagedResult<VeiculoViewModel>
+            {
+                Items = veiculosViewModel,
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = servicePagedResult.TotalCount,
+                TotalPages = (int)Math.Ceiling((double)servicePagedResult.TotalCount / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            ViewBag.CurrentPlaca = placa;
+            return View(pagedResult.Items);
         }
 
         [Route("Veiculo/Gerenciamento/{idPercurso}/{idVeiculo}")]
-        public IActionResult Gerenciamento(uint idPercurso, uint idVeiculo)
+        public async Task<IActionResult> Gerenciamento(uint idPercurso, uint idVeiculo)
         {
             var veiculo = veiculoService.Get(idVeiculo);
             var percurso = percursoService.Get(idPercurso);
@@ -119,8 +134,32 @@ namespace FrotaWeb.Controllers
 
             var veiculoViewModel = mapper.Map<VeiculoViewModel>(veiculo);
             veiculoViewModel.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
+            var percursoViewModel = mapper.Map<PercursoViewModel>(percurso);
+            
             ViewBag.IdPercursoAtual = idPercurso;
-            ViewBag.Percurso = percurso;
+            ViewBag.Percurso = percursoViewModel;
+            
+            // Obter rota do banco se coordenadas estiverem disponíveis
+            if (percurso.LatitudePartida.HasValue && percurso.LongitudePartida.HasValue &&
+                percurso.LatitudeChegada.HasValue && percurso.LongitudeChegada.HasValue)
+            {
+                try
+                {
+                    var routeJson = await rotaService.ObterRotaAsync(
+                        idPercurso,
+                        percurso.LatitudePartida.Value,
+                        percurso.LongitudePartida.Value,
+                        percurso.LatitudeChegada.Value,
+                        percurso.LongitudeChegada.Value
+                    );
+                    ViewBag.RouteJson = routeJson;
+                }
+                catch
+                {
+                    // Se houver erro, ViewBag.RouteJson permanece null
+                }
+            }
+            
             return View(veiculoViewModel);
         }
 
@@ -289,6 +328,9 @@ namespace FrotaWeb.Controllers
                     veiculo.Status = "D"; // Disponível
                     veiculo.Odometro = percursoViewModel.OdometroFinal;
                     veiculoService.Edit(veiculo);
+                    
+                    // Remover rotas associadas ao percurso
+                    rotaService.RemoverRotasPorPercurso(idPercurso);
                     
                     return RedirectToAction("VeiculosDisponiveis");
                 }

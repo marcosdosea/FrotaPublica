@@ -1,26 +1,57 @@
 @page
 @model ResendEmailConfirmationModel
 @{
-    ViewData["Title"] = "Resend email confirmation";
+    ViewData["Title"] = "Reenviar confirmação de email";
+    Layout = null;
 }
 
-<h1>@ViewData["Title"]</h1>
-<h2>Enter your email.</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" aria-required="true" />
-                <label asp-for="Input.Email" class="form-label"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Frota</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity.css" asp-append-version="true" />
+</head>
+<body class="register-page">
+    <div class="register-container">
+        <div class="card">
+            <div class="card-body">
+                <div class="login-form-header">
+                    <h2 class="login-form-title">Reenviar confirmação</h2>
+                    <p class="login-form-subtitle">Digite seu email para reenviar</p>
+                </div>
+
+                <form method="post">
+                    <div asp-validation-summary="All" class="login-form-error"></div>
+                    
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="email">Email</label>
+                        <div class="login-form-input-wrapper">
+                            <i class="fas fa-envelope login-form-input-icon"></i>
+                            <input id="email" type="email" asp-for="Input.Email" class="login-form-input" aria-required="true" placeholder="seu@email.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="login-form-error-text"></span>
+                    </div>
+
+                    <button type="submit" class="login-form-submit">
+                        Reenviar
+                    </button>
+
+                    <div style="text-align: center; margin-top: var(--space-4);">
+                        <a asp-page="./Login" class="login-form-forgot-link">
+                            <i class="fas fa-arrow-left"></i> Voltar para login
+                        </a>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
-        </form>
+        </div>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

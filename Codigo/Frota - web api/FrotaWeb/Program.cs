@@ -36,7 +36,15 @@ namespace FrotaWeb
             builder.Services.AddTransient<IUnidadeAdministrativaService, UnidadeAdministrativaService>();
             builder.Services.AddTransient<IPercursoService, PercursoService>();
             builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
+            builder.Services.AddTransient<IRotaService, RotaService>();
+            builder.Services.AddTransient<IValidadePecaInsumoService, ValidadePecaInsumoService>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            
+            // HttpClient para RotaService
+            builder.Services.AddHttpClient<IRotaService, RotaService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
             builder.Services.AddHttpContextAccessor();
 
             var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");

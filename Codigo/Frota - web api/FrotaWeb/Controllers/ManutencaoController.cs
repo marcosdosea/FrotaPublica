@@ -17,14 +17,16 @@ namespace FrotaWeb.Controllers
         private readonly IVeiculoService veiculoService;
         private readonly IPessoaService pessoaService;
         private readonly IFornecedorService fornecedorService;
+        private readonly IValidadePecaInsumoService validadeService;
 
-        public ManutencaoController(IManutencaoService manutencaoService, IMapper mapper, IVeiculoService veiculoService, IPessoaService pessoaService, IFornecedorService fornecedorService)
+        public ManutencaoController(IManutencaoService manutencaoService, IMapper mapper, IVeiculoService veiculoService, IPessoaService pessoaService, IFornecedorService fornecedorService, IValidadePecaInsumoService validadeService)
         {
             this.manutencaoService = manutencaoService;
             this.mapper = mapper;
             this.veiculoService = veiculoService;
             this.pessoaService = pessoaService;
             this.fornecedorService = fornecedorService;
+            this.validadeService = validadeService;
         }
 
         // GET: ManutencaoController
@@ -34,12 +36,11 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute]int page = 0, [FromQuery] uint? idVeiculo = null)
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            int length = 15;
+            int itemsPerPage = 20;
 
             var veiculos = veiculoService.GetVeiculoDTO((int)idFrota);
             ViewData["Veiculos"] = veiculos;
             ViewBag.IdVeiculoSelecionado = idVeiculo;
-
 
             var query = manutencaoService.GetAll(idFrota);
             if (idVeiculo.HasValue)
@@ -47,23 +48,31 @@ namespace FrotaWeb.Controllers
                 query = query.Where(m => m.IdVeiculo == idVeiculo.Value);
             }
 
-            var totalManutencoes = query.Count();
-            var listaManutencoes = query
-                                    .Skip(page * length)
-                                    .Take(length)
-                                    .ToList();
+            var allManutencoes = query.ToList();
+            var totalItems = allManutencoes.Count;
+            
+            var pagedItems = allManutencoes
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
 
-            var totalPages = (int)Math.Ceiling((double)totalManutencoes / length);
+            var pagedResult = new PagedResult<ManutencaoViewModel>
+            {
+                Items = mapper.Map<List<ManutencaoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            var listaManutencaoViewModel = mapper.Map<List<ManutencaoViewModel>>(listaManutencoes);
-            foreach (var item in listaManutencaoViewModel)
+            foreach (var item in pagedResult.Items)
             {
                 item.PlacaVeiculo = veiculoService.GetPlacaVeiculo(item.IdVeiculo);
                 item.NomeResponsavel = pessoaService.GetNomePessoa(item.IdResponsavel);
             }
-            return View(listaManutencaoViewModel);
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         // GET: ManutencaoController/Details/5
@@ -98,7 +107,10 @@ namespace FrotaWeb.Controllers
                 {
                     var manutencao = mapper.Map<Manutencao>(manutencaoViewModel);
                     manutencao.IdFrota = (uint)idFrota;
-                    manutencaoService.Create(manutencao);
+                    var idManutencao = manutencaoService.Create(manutencao);
+                    
+                    // Atualizar validades de peças após manutenção
+                    validadeService.AtualizarValidadeAposManutencao(idManutencao, manutencao.IdVeiculo);
                     PopupHelper.AddPopup(this, type: "success", title: "Opera��o conclu�da", message: "A manuten��o foi cadastrada com sucesso.");
                 }
                 catch (ServiceException exception)

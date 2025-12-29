@@ -1,25 +1,47 @@
-@model FrotaWeb.Models.PecaInsumoViewModel
+﻿@model FrotaWeb.Models.PecaInsumoViewModel
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+@{
+    var entityName = "Peça/Insumo";
+    var controllerName = "PecaInsumo";
+}
 
-<main class="main_content container">
-	<div class="titulo-pagina">
-		<a href="javascript:history.back()" class="voltar">
-			<i class="fa fa-arrow-left"></i> Voltar
-		</a>
-		<h1>Cadastro de Peças e Insumos</h1>
-	</div>
-	<div class="fomulario">
-		<form asp-action="Edit">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label asp-for="Descricao" class="label">Descrição</label>
-				<textarea asp-for="Descricao" class="form-control" placeholder=""></textarea>
-				<span asp-validation-for="Descricao" class="text-danger"></span>
-			</div>
-			<div class="buttons">
-				<input type="submit" value="Salvar Alterações" class="btn btn-primary" />
-			</div>
-		</form>
-	</div>
-</main>
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="edit-title">Editar @entityName</h1>
+    </div>
+
+    <div class="edit-card">
+        <form asp-action="Edit" method="post" class="edit-form">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <div class="form-group">
+                <label asp-for="Descricao" class="form-label">
+                    <i class="fas fa-file-alt"></i>
+                    Descrição
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-file-alt input-icon"></i>
+                    <textarea asp-for="Descricao" class="form-input" rows="4" placeholder="Descreva a peça ou insumo"></textarea>
+                </div>
+                <span asp-validation-for="Descricao" class="form-error-text"></span>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

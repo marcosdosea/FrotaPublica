@@ -10,327 +10,63 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>@ViewData["Title"] - Frota</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-md);
-        }
-
-        .register-container {
-            width: 100%;
-            max-width: 1200px;
-            background: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 700px;
-        }
-
-        .register-visual {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-2xl);
-            color: var(--text-inverse);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .register-visual::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .visual-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
-
-        .visual-icon {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-xl);
-            backdrop-filter: blur(10px);
-        }
-
-        .visual-icon i {
-            font-size: 3rem;
-            color: var(--text-inverse);
-        }
-
-        .visual-title {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            margin-bottom: var(--spacing-md);
-            line-height: 1.2;
-        }
-
-        .visual-subtitle {
-            font-size: var(--font-size-lg);
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        .register-form {
-            padding: var(--spacing-2xl);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .form-logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--spacing-md);
-        }
-
-        .form-title {
-            font-size: var(--font-size-2xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .form-subtitle {
-            color: var(--text-secondary);
-            font-size: var(--font-size-base);
-        }
-
-        .register-button {
-            width: 100%;
-            padding: 0.875rem;
-            background: var(--primary-color);
-            color: var(--text-inverse);
-            border: none;
-            border-radius: var(--radius-lg);
-            font-size: var(--font-size-base);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .register-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(12, 105, 171, 0.4);
-        }
-
-        .register-button:active {
-            transform: translateY(0);
-        }
-
-        .back-link {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: var(--font-size-sm);
-        }
-
-        .back-link a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            margin-left: var(--spacing-xs);
-        }
-
-        .back-link a:hover {
-            color: var(--primary-dark);
-            text-decoration: none;
-        }
-
-        .error-messages {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .error-messages ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .error-messages li {
-            color: var(--error-color);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .error-messages li:last-child {
-            margin-bottom: 0;
-        }
-
-        @@media (max-width: 768px) {
-            .register-container {
-                grid-template-columns: 1fr;
-                max-width: 500px;
-            }
-
-            .register-visual {
-                display: none;
-            }
-
-            .register-form {
-                padding: var(--spacing-xl);
-            }
-        }
-
-        @@media (max-width: 480px) {
-            body {
-                padding: var(--spacing-sm);
-            }
-
-            .register-form {
-                padding: var(--spacing-lg);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity.css" asp-append-version="true" />
 </head>
-<body>
+<body class="register-page">
     <div class="register-container">
-        <div class="register-visual">
-            <div class="visual-content">
-                <div class="visual-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h1 class="visual-title">Cadastro</h1>
-                <p class="visual-subtitle">Crie sua conta para acessar o sistema de gestão de frota</p>
-            </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="login-form-header">
+                    <h2 class="login-form-title">Criar nova conta</h2>
+                    <p class="login-form-subtitle">Preencha os dados abaixo</p>
         </div>
 
-        <div class="register-form">
-            <div class="form-header">
-                <img src="~/img/logo/logo.png" alt="Logo" class="form-logo">
-                <h2 class="form-title">Criar Conta</h2>
-                <p class="form-subtitle">Preencha os dados para se cadastrar</p>
-            </div>
-
-            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="error-messages">
-                        <div asp-validation-summary="ModelOnly"></div>
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="login-form-error"></div>
+                    
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="email">Email</label>
+                        <div class="login-form-input-wrapper">
+                            <i class="fas fa-envelope login-form-input-icon"></i>
+                            <input id="email" type="email" asp-for="Input.Email" class="login-form-input" autocomplete="username" aria-required="true" placeholder="seu@email.com" />
                     </div>
-                }
-
-                <div class="form-group">
-                    <label class="form-label" for="cpf-input">CPF</label>
-                    <div class="input-group">
-                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="form-input input-sm" maxlength="14" required aria-required="true" placeholder="000.000.000-00" />
-                        <i class="fas fa-user input-icon"></i>
-                    </div>
-                    <span asp-validation-for="Input.UserName" class="error-message"></span>
+                        <span asp-validation-for="Input.Email" class="login-form-error-text"></span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <div class="input-group">
-                        <input type="email" asp-for="Input.Email" class="form-input input-lg" autocomplete="email" required aria-required="true" placeholder="seu@email.com" />
-                        <i class="fas fa-envelope input-icon"></i>
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="password">Senha</label>
+                        <div class="login-form-input-wrapper">
+                            <i class="fas fa-lock login-form-input-icon"></i>
+                            <input id="password" type="password" asp-for="Input.Password" class="login-form-input" autocomplete="new-password" aria-required="true" placeholder="Digite sua senha" />
                     </div>
-                    <span asp-validation-for="Input.Email" class="error-message"></span>
+                        <span asp-validation-for="Input.Password" class="login-form-error-text"></span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Senha</label>
-                    <div class="input-group">
-                        <input id="password" type="password" asp-for="Input.Password" class="form-input" autocomplete="new-password" required aria-required="true" placeholder="Digite sua senha" />
-                        <i class="fas fa-eye input-icon" id="togglePassword"></i>
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="confirmPassword">Confirmar Senha</label>
+                        <div class="login-form-input-wrapper">
+                            <i class="fas fa-lock login-form-input-icon"></i>
+                            <input id="confirmPassword" type="password" asp-for="Input.ConfirmPassword" class="login-form-input" autocomplete="new-password" aria-required="true" placeholder="Confirme sua senha" />
                     </div>
-                    <span asp-validation-for="Input.Password" class="error-message"></span>
+                        <span asp-validation-for="Input.ConfirmPassword" class="login-form-error-text"></span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Confirmar Senha</label>
-                    <div class="input-group">
-                        <input id="confirm-password" type="password" asp-for="Input.ConfirmPassword" class="form-input" autocomplete="new-password" required aria-required="true" placeholder="Confirme sua senha" />
-                        <i class="fas fa-eye input-icon" id="toggleConfirmPassword"></i>
-                    </div>
-                    <span asp-validation-for="Input.ConfirmPassword" class="error-message"></span>
-                </div>
-
-                <button id="registerSubmit" type="submit" class="register-button">
-                    Registrar-se
+                    <button id="registerSubmit" type="submit" class="login-form-submit">
+                        Registrar
                 </button>
 
-                <div class="back-link">
-                    Cancelar operação?<a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Voltar</a>
+                    <div style="text-align: center; margin-top: var(--space-4);">
+                        <a asp-page="./Login" class="login-form-forgot-link">
+                            <i class="fas fa-arrow-left"></i> Voltar para login
+                        </a>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        // CPF Mask
-        document.getElementById('cpf-input').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            e.target.value = value;
-        });
-
-        // Password Toggle
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const password = document.getElementById('password');
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
-            const password = document.getElementById('confirm-password');
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Form Animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('.register-form');
-            form.style.opacity = '0';
-            form.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                form.style.transition = 'all 0.6s ease';
-                form.style.opacity = '1';
-                form.style.transform = 'translateY(0)';
-            }, 100);
-        });
-    </script>
+    </div>
 
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />

@@ -1,18 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FrotaWeb</title>
+    <title>@ViewData["Title"] - Frota</title>
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/forms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages.css" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -22,9 +23,10 @@
         <!-- Header -->
         <div class="sidebar-header">
             <img src="~/img/logo/logo.png" alt="Logo" class="sidebar-logo">
-            <h1 class="sidebar-title">FrotaWeb</h1>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-chevron-right"></i>
+            <h1 class="sidebar-title">Frota</h1>
+            <!-- Sidebar Toggle Button (Inside Sidebar) -->
+            <button class="sidebar-toggle-internal" id="sidebarToggleInternal" title="Expandir/Retrair">
+                <i class="fas fa-chevron-left"></i>
             </button>
         </div>
 
@@ -37,7 +39,7 @@
                         <div class="nav-icon">
                             <i class="fas fa-home"></i>
                         </div>
-                        <span class="nav-text">Dashboard</span>
+                        <span class="nav-text">Tela Inicial</span>
                     </a>
                 </div>
             </div>
@@ -114,6 +116,15 @@
                             </div>
                             <span class="nav-text">Manutenções</span>
                         </a>
+                        @if (User.IsInRole("Mecânico"))
+                        {
+                            <a href="@Url.Action("Index", "Mecanico")" class="nav-link">
+                                <div class="nav-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <span class="nav-text">Painel do Mecânico</span>
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="nav-item">
@@ -158,11 +169,14 @@
         <!-- Footer -->
         <div class="sidebar-footer">
             <!-- Theme Toggle -->
+            <div class="theme-toggle-wrapper">
+                <span class="theme-toggle-label">Tema</span>
             <button class="theme-toggle" id="themeToggle" title="Alternar tema">
                 <div class="theme-toggle-icon" id="themeToggleIcon">
                     <i class="fas fa-moon"></i>
                 </div>
             </button>
+            </div>
 
             <!-- User Profile -->
             <a href="/Identity/Account/Manage" class="user-profile">
@@ -199,13 +213,21 @@
         </div>
     </nav>
 
+    <!-- Sidebar Toggle Button (External - When Sidebar is Closed) -->
+    <button class="sidebar-toggle-external" id="sidebarToggleExternal">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay"></div>
+
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
         @RenderBody()
     </main>
 
     <!-- Logout Form (Hidden) -->
-    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" style="display: none;">
+    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home")" method="post" class="d-none">
     </form>
 
     <!-- Scripts -->
@@ -214,6 +236,9 @@
     <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/sidebar.js" asp-append-version="true"></script>
     <script src="~/js/modal.js" asp-append-version="true"></script>
+    <script src="~/js/input-masks.js" asp-append-version="true"></script>
+    <script src="~/js/table-interactions.js" asp-append-version="true"></script>
+    <script src="~/js/pagination.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -20,16 +20,37 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: PecaInsumoController
-        public ActionResult Index()
+        [Route("PecaInsumo/Index/{page}")]
+        [Route("PecaInsumo/{page}")]
+        [Route("PecaInsumo")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
             }
-            var listaPeca = _pecaInsumoService.GetAll(idFrota);            
-            var listaPecaModel = _mapper.Map<List<PecaInsumoViewModel>>(listaPeca);
-            return View(listaPecaModel);
+            
+            int itemsPerPage = 20;
+            var allPecas = _pecaInsumoService.GetAll(idFrota).ToList();
+            var totalItems = allPecas.Count;
+            
+            var pagedItems = allPecas
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<PecaInsumoViewModel>
+            {
+                Items = _mapper.Map<List<PecaInsumoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         // GET: PecaInsumoController/Details/5

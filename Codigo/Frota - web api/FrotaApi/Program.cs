@@ -77,6 +77,12 @@ namespace FrotaApi
             builder.Services.AddTransient<IPercursoService, PercursoService>();
             builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
             builder.Services.AddTransient<IEmailSender, DummyEmailSender>();  // Implementação mock para IEmailSender
+            
+            // HttpClient para RotaService
+            builder.Services.AddHttpClient<IRotaService, RotaService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
 
             var connectionString = builder.Configuration.GetConnectionString("FrotaDatabase");
             if (string.IsNullOrEmpty(connectionString))

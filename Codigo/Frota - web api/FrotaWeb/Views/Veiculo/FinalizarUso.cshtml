@@ -1,4 +1,9 @@
-@model FrotaWeb.Models.PercursoViewModel
+﻿@model FrotaWeb.Models.PercursoViewModel
+@using System.Globalization
+
+@{
+    var culture = new CultureInfo("pt-BR");
+}
 
 <link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
 
@@ -32,7 +37,7 @@
             <div class="alert alert-info">
                 <p><strong>Informações do Percurso:</strong></p>
                 <ul>
-                    <li>Data/Hora Saída: @Model.DataHoraSaida.ToString("dd/MM/yyyy HH:mm")</li>
+                    <li>Data/Hora Saída: @Model.DataHoraSaida.ToString("dd/MM/yyyy HH:mm", culture)</li>
                     <li>Local de Partida: @Model.LocalPartida</li>
                     <li>Local de Chegada: @Model.LocalChegada</li>
                     <li>Odômetro Inicial: @Model.OdometroInicial km</li>

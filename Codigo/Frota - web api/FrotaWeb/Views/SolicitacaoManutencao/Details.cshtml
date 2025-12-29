@@ -1,50 +1,66 @@
-@model FrotaWeb.Models.SolicitacaoManutencaoViewModel
+﻿@model FrotaWeb.Models.SolicitacaoManutencaoViewModel
+@using System.Globalization
 
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+@{
+    var culture = new CultureInfo("pt-BR");
+    var entityName = "Solicitação de Manutenção";
+    var controllerName = "SolicitacaoManutencao";
+}
 
-<main class="container mt-4">
-	<h4 class="page-title fs-2">
-		<i class="fa fa-tools mr-3"></i>
-		Solicita��o de Manuten��o
-	</h4>
-	<h1 class="my-text-label fs-3 mt-4 mb-4">Visualizar Solicita��o</h1>
-	<div class="creator-form fs-5">
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Ve�culo</label>
-					<p>@Model.IdVeiculo</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Pessoa</label>
-					<p>@Model.IdPessoa</p>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label class="label">Data de Solicita��o</label>
-					<p>@Model.DataSolicitacao</p>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label class="label">Descri��o</label>
-					<textarea asp-for="DescricaoProblema" class="form-control bg-white" placeholder="" readonly>@Model.DescricaoProblema</textarea>
-				</div>
-			</div>
-		</div>
-		<div class="row mt-4">
-			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
-				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
-			</div>
-			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<a href="@Url.Action("Edit", "Solicitacaomanutencao", new { id = Model.Id })" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso">Editar</a>
-			</div>
-		</div>
-	</div>
-</main>
+<div class="details-page">
+    <div class="details-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="details-title">Visualizar @entityName</h1>
+    </div>
+
+    <div class="details-card">
+        <div class="details-body">
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-hashtag"></i>
+                    Código
+                </span>
+                <span class="details-value">@Model.Id</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-car"></i>
+                    Veículo
+                </span>
+                <span class="details-value">@(Model.PlacaVeiculo ?? Model.IdVeiculo.ToString())</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-user"></i>
+                    Pessoa
+                </span>
+                <span class="details-value">@(Model.NomePessoa ?? Model.IdPessoa.ToString())</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Data de Solicitação
+                </span>
+                <span class="details-value">@Model.DataSolicitacao.ToString("dd/MM/yyyy HH:mm", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-file-alt"></i>
+                    Descrição do Problema
+                </span>
+                <span class="details-value">@Model.DescricaoProblema</span>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Voltar para Lista
+            </a>
+            <a asp-action="Edit" asp-controller="@controllerName" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
+</div>

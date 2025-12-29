@@ -1,125 +1,197 @@
-@model IEnumerable<FrotaWeb.Models.VeiculoViewModel>
+﻿@model IEnumerable<FrotaWeb.Models.VeiculoViewModel>
 
-<link rel="stylesheet" href="~/css/index-pages.css" asp-append-version="true" />
-
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
-        </a>
-        <h1>Ve�culos</h1>
-        <div class="acoes">
-            <a asp-action="Create" class="btn btn-primario">Criar</a>
+<main class="main-content">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="javascript:history.back()" class="btn btn-tertiary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="page-title">Veículos</h1>
+        </div>
+        <div class="page-header-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar Novo
+            </a>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="tabela">
-            <thead>
-                <tr>
-                    <th>Modelo</th>
-                    <th>@Html.DisplayNameFor(model => model.Placa)</th>
-                    <th>@Html.DisplayNameFor(model => model.Cor)</th>
-                    <th>Status</th>
-                    <th class="column-15"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.ModeloNome)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Placa)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Cor)</td>
-                        <td>@Html.DisplayFor(modelItem => item.StatusNome)</td>
-                        <td>
-                            <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="edit icone" title="Editar" data-toggle="tooltip">
-                                <i class="fa fa-pencil-alt cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="details icone" title="Detalhes" data-toggle="tooltip">
-                                <i class="fa fa-eye cor" aria-hidden="true"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="delete icone" title="Excluir" data-toggle="tooltip">
-                                <i class="fa fa-trash cor" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label class="filter-label">Buscar</label>
+            <div class="input-group">
+                <i class="fas fa-search input-icon"></i>
+                <input type="text" class="form-input" placeholder="Buscar por placa, modelo..." id="searchInput" />
+            </div>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Status</label>
+            <div class="select-wrapper">
+                <select class="select-modern select-md" id="statusFilter">
+                    <option value="">Todos</option>
+                    <option value="D">Disponível</option>
+                    <option value="U">Em Uso</option>
+                    <option value="M">Em Manutenção</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Limpar
+            </button>
+        </div>
     </div>
-    @if (ViewBag.TotalPages > 1)
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Modelo</th>
+                        <th>@Html.DisplayNameFor(model => model.Placa)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cor)</th>
+                        <th>Status</th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.Id" data-details-url="@Url.Action("Details", "Veiculo", new { id = item.Id })">
+                            <td>@Html.DisplayFor(modelItem => item.ModeloNome)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Placa)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cor)</td>
+                            <td>
+                                <span class="badge @(item.Status == "U" ? "badge-warning" : item.Status == "M" ? "badge-error" : "badge-success")">
+                                    @Html.DisplayFor(modelItem => item.StatusNome)
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="@Url.Action("Details", "Veiculo", new { id = item.Id })" class="table-action-btn details" title="Detalhes" onclick="event.stopPropagation()">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "Veiculo", new { id = item.Id })" class="table-action-btn edit" title="Editar" onclick="event.stopPropagation()">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Veiculo", new { id = item.Id })" class="table-action-btn delete" title="Excluir" onclick="event.stopPropagation()">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @{
+        var pagedResult = ViewBag.PagedResult as PagedResult<VeiculoViewModel>;
+    }
+    @if (pagedResult != null && pagedResult.TotalPages > 1)
     {
-        <nav class="navigation-pages">
-            <div></div>
-            @if (ViewBag.TotalPages > 10)
-            {
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Veiculo", new { page = 0 })';">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-                @if (ViewBag.CurrentPage < 5)
+        <nav class="pagination-container">
+            <div class="pagination">
+                @if (pagedResult.HasPreviousPage)
                 {
-                    @for (int i = 0; i < 9; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Veiculo", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
+                    <a href="@Url.Action("Index", "Veiculo", new { page = pagedResult.CurrentPage - 1 })" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
                 }
-                @if (ViewBag.CurrentPage > ViewBag.TotalPages - 5)
+                
+                @for (int i = Math.Max(0, pagedResult.CurrentPage - 2); i <= Math.Min(pagedResult.TotalPages - 1, pagedResult.CurrentPage + 2); i++)
                 {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.TotalPages - 9; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Veiculo", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
+                    <a href="@Url.Action("Index", "Veiculo", new { page = i })" class="pagination-btn @(i == pagedResult.CurrentPage ? "active" : "")">
+                        @(i + 1)
+                    </a>
                 }
-                @if (ViewBag.CurrentPage >= 5 && ViewBag.CurrentPage <= ViewBag.TotalPages - 5)
+                
+                @if (pagedResult.HasNextPage)
                 {
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
-                    @for (int i = ViewBag.CurrentPage - 4; i <= ViewBag.CurrentPage + 4; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            @{
-                                var numeroPageLast = i + 1;
-                            }
-                            <a class="page-link" href="@Url.Action("Index", "Veiculo", new { page = i })">@numeroPageLast</a>
-                        </li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link">...</a>
-                    </li>
+                    <a href="@Url.Action("Index", "Veiculo", new { page = pagedResult.CurrentPage + 1 })" class="pagination-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                 }
-                <button id="arrow" type="button" class="page-item" onclick="window.location.href='@Url.Action("Index", "Veiculo", new { page = ViewBag.TotalPages -1 })';">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            }
-            @if (ViewBag.TotalPages <= 10)
-            {
-                @for (int i = 0; i < ViewBag.TotalPages; i++)
-                {
-                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        @{
-                            var numeroPageLast = i + 1;
-                        }
-                        <a class="page-link" href="@Url.Action("Index", "Veiculo", new { page = i })">@numeroPageLast</a>
-                    </li>
-                }
-            }
+            </div>
         </nav>
     }
 </main>
+
+<script>
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = '';
+    }
+
+    // Busca em tempo real
+    document.getElementById('searchInput')?.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.table-modern tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .page-header-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+    }
+
+    .page-title {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-bold);
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .pagination-container {
+        margin-top: var(--space-6);
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+    }
+
+    .pagination-btn {
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-primary);
+        border-radius: var(--radius-md);
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: all var(--transition-fast);
+    }
+
+    .pagination-btn:hover {
+        background: var(--bg-secondary);
+        border-color: var(--border-secondary);
+    }
+
+    .pagination-btn.active {
+        background: var(--primary-500);
+        border-color: var(--primary-500);
+        color: var(--text-inverse);
+    }
+</style>

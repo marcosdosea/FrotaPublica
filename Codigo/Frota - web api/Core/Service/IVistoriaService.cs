@@ -10,8 +10,8 @@ namespace Core.Service
     {
 		uint Create(Vistorium vistoria);
 		void Edit(Vistorium vistoria);
-		void Delete(uint id);
-		Vistorium? Get(uint id);
+		void Delete(int id);
+		Vistorium? Get(int id);
 		IEnumerable<Vistorium> GetAll(uint idFrota);
 	}
 }

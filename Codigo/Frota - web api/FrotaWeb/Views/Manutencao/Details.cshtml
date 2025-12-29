@@ -1,74 +1,102 @@
-@model FrotaWeb.Models.ManutencaoViewModel
+﻿@model FrotaWeb.Models.ManutencaoViewModel
+@using System.Globalization
 
-<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+@{
+    var culture = new CultureInfo("pt-BR");
+    var entityName = "Manutenção";
+    var controllerName = "Manutencao";
+    decimal valorPecas = 0;
+    decimal valorManutencao = 0;
+    decimal.TryParse(Model.ValorPecas?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out valorPecas);
+    decimal.TryParse(Model.ValorManutencao?.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out valorManutencao);
+}
 
-<div class="container-details">
-    <h4>Manutencao</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdVeiculo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdVeiculo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdFornecedor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdFornecedor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataHora)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataHora)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdResponsavel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdResponsavel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorPecas)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorPecas)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorManutencao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorManutencao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tipo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tipo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Comprovante)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Comprovante)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
-</div>
-<div class="container-buttons">
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+<div class="details-page">
+    <div class="details-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="details-title">Visualizar @entityName</h1>
+    </div>
+
+    <div class="details-card">
+        <div class="details-body">
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-hashtag"></i>
+                    Código
+                </span>
+                <span class="details-value">@Model.Id</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-car"></i>
+                    Veículo
+                </span>
+                <span class="details-value">@(Model.PlacaVeiculo ?? Model.IdVeiculo.ToString())</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-building"></i>
+                    Fornecedor
+                </span>
+                <span class="details-value">@Model.IdFornecedor</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Data/Hora
+                </span>
+                <span class="details-value">@Model.DataHora.ToString("dd/MM/yyyy HH:mm", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-user-tie"></i>
+                    Responsável
+                </span>
+                <span class="details-value">@(Model.NomeResponsavel ?? Model.IdResponsavel.ToString())</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-dollar-sign"></i>
+                    Valor das Peças
+                </span>
+                <span class="details-value">@valorPecas.ToString("C", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Valor da Manutenção
+                </span>
+                <span class="details-value">@valorManutencao.ToString("C", culture)</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-tag"></i>
+                    Tipo
+                </span>
+                <span class="details-value">@Model.Tipo</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-info-circle"></i>
+                    Status
+                </span>
+                <span class="details-value">
+                    <span class="badge @(Model.Status == "C" ? "badge-success" : Model.Status == "E" ? "badge-warning" : "badge-error")">
+                        @(Model.Status == "C" ? "Concluída" : Model.Status == "E" ? "Em Andamento" : "Pendente")
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Voltar para Lista
+            </a>
+            <a asp-action="Edit" asp-controller="@controllerName" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
 </div>

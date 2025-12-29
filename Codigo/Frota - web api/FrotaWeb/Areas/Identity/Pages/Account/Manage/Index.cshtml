@@ -1,30 +1,60 @@
 @page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Perfil";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+<div class="user-profile-card">
+    <div class="user-profile-header">
+        <div class="user-profile-avatar">
+            @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Username))
+            {
+                <span>@Model.Username.Substring(0, 1).ToUpper()</span>
+            }
+            else
+            {
+                <i class="fas fa-user"></i>
+            }
+        </div>
+        <div class="user-profile-info">
+            <h2 class="user-profile-name">Meu Perfil</h2>
+            <p class="user-profile-subtitle">Gerencie suas informações de conta</p>
+        </div>
     </div>
+
+    <partial name="_StatusMessage" for="StatusMessage" />
+
+    <form id="profile-form" method="post" class="user-profile-form">
+        <div asp-validation-summary="ModelOnly" class="form-error"></div>
+        
+        <div class="form-group">
+            <label asp-for="Username" class="form-label">Nome de Usuário</label>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input asp-for="Username" class="form-input" disabled />
+            </div>
+            <span class="form-help">Seu nome de usuário não pode ser alterado</span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.PhoneNumber" class="form-label">Telefone</label>
+            <div class="input-group">
+                <i class="fas fa-phone input-icon"></i>
+                <input asp-for="Input.PhoneNumber" class="form-input input-telefone" placeholder="(00) 00000-0000" />
+            </div>
+            <span asp-validation-for="Input.PhoneNumber" class="form-error-text"></span>
+        </div>
+
+        <div class="form-actions">
+            <button id="update-profile-button" type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/input-masks.js" asp-append-version="true"></script>
 }

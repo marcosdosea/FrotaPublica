@@ -20,16 +20,37 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria
-		public ActionResult Index()
+		[Route("Vistoria/Index/{page}")]
+		[Route("Vistoria/{page}")]
+		[Route("Vistoria")]
+		public ActionResult Index([FromRoute] int page = 0)
 		{
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            var vistorias = vistoriaService.GetAll(idFrota);
-			var vistoriasViewModel = mapper.Map<List<VistoriaViewModel>>(vistorias);
-			return View(vistoriasViewModel);
+            
+            int itemsPerPage = 20;
+            var allVistorias = vistoriaService.GetAll(idFrota).ToList();
+            var totalItems = allVistorias.Count;
+            
+            var pagedItems = allVistorias
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<VistoriaViewModel>
+            {
+                Items = mapper.Map<List<VistoriaViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+			return View(pagedResult.Items);
 		}
 
 		// GET: Vistoria/Details/5
-		public ActionResult Details(uint id)
+		public ActionResult Details(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -57,7 +78,7 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria/Edit/5
-		public ActionResult Edit(uint id)
+		public ActionResult Edit(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -80,7 +101,7 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria/Delete/5
-		public ActionResult Delete(uint id)
+		public ActionResult Delete(int id)
 		{
 			var vistoria = vistoriaService.Get(id);
 			var vistoriaViewModel = mapper.Map<VistoriaViewModel>(vistoria);
@@ -90,7 +111,7 @@ namespace FrotaWeb.Controllers
 		// POST: Vistoria/Delete/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Delete(uint id, VistoriaViewModel vistoriaViewModel)
+		public ActionResult Delete(int id, VistoriaViewModel vistoriaViewModel)
 		{
 			TempData["MensagemConfirmacao"] = "Tem certeza que deseja excluir esta vistoria?";
 			vistoriaService.Delete(id);

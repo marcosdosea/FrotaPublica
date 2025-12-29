@@ -24,12 +24,33 @@ namespace FrotaWeb.Controllers
             this.pessoaService = pessoaService;
         }
         // GET: AbastecimentoController
-        public ActionResult Index()
+        [Route("Abastecimento/Index/{page}")]
+        [Route("Abastecimento/{page}")]
+        [Route("Abastecimento")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            var listaAbastecimentos = abastecimentoService.GetAll(idFrota);
-            var listaAbastecimentosViewModel = mapper.Map<List<AbastecimentoViewModel>>(listaAbastecimentos);
-            return View(listaAbastecimentosViewModel);
+            
+            int itemsPerPage = 20;
+            var allAbastecimentos = abastecimentoService.GetAll(idFrota).ToList();
+            var totalItems = allAbastecimentos.Count;
+            
+            var pagedItems = allAbastecimentos
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<AbastecimentoViewModel>
+            {
+                Items = mapper.Map<List<AbastecimentoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         // GET: AbastecimentoController/Details/5

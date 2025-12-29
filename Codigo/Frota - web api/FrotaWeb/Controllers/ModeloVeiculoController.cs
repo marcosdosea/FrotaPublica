@@ -33,16 +33,37 @@ namespace FrotaWeb.Controllers
         /// GET : ModeloVeiculoController
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        [Route("ModeloVeiculo/Index/{page}")]
+        [Route("ModeloVeiculo/{page}")]
+        [Route("ModeloVeiculo")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
             }
-            var listaModelVeiculos = _modeloveiculoservice.GetAll(idFrota);
-            var ModelVeiculos = _mapper.Map<List<ModeloVeiculoViewModel>>(listaModelVeiculos);
-            return View(ModelVeiculos);
+            
+            int itemsPerPage = 20;
+            var allModelos = _modeloveiculoservice.GetAll(idFrota).ToList();
+            var totalItems = allModelos.Count;
+            
+            var pagedItems = allModelos
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<ModeloVeiculoViewModel>
+            {
+                Items = _mapper.Map<List<ModeloVeiculoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         /// <summary>

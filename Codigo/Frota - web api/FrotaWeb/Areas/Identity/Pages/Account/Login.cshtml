@@ -2,7 +2,7 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Login - FrotaWeb";
+    ViewData["Title"] = "Login - Frota";
     Layout = null;
 }
 
@@ -12,299 +12,60 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-md);
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 1200px;
-            background: var(--bg-primary);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 600px;
-        }
-
-        .login-visual {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-2xl);
-            color: var(--text-inverse);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-visual::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @@keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
-        }
-
-        .visual-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
-
-        .visual-icon {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-xl);
-            backdrop-filter: blur(10px);
-        }
-
-        .visual-icon i {
-            font-size: 3rem;
-            color: var(--text-inverse);
-        }
-
-        .visual-title {
-            font-size: var(--font-size-3xl);
-            font-weight: 700;
-            margin-bottom: var(--spacing-md);
-            line-height: 1.2;
-        }
-
-        .visual-subtitle {
-            font-size: var(--font-size-lg);
-            opacity: 0.9;
-            line-height: 1.6;
-        }
-
-        .login-form {
-            padding: var(--spacing-2xl);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .form-logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--spacing-md);
-        }
-
-        .form-title {
-            font-size: var(--font-size-2xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .form-subtitle {
-            color: var(--text-secondary);
-            font-size: var(--font-size-base);
-        }
-
-        .form-options {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 1rem;
-            height: 1rem;
-            accent-color: var(--primary-color);
-        }
-
-        .checkbox-label {
-            font-size: var(--font-size-sm);
-            color: var(--text-secondary);
-        }
-
-        .forgot-link {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-            transition: color var(--transition-fast);
-        }
-
-        .forgot-link:hover {
-            color: var(--primary-dark);
-            text-decoration: none;
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 0.875rem;
-            background: var(--primary-color);
-            color: var(--text-inverse);
-            border: none;
-            border-radius: var(--radius-lg);
-            font-size: var(--font-size-base);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .login-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(12, 105, 171, 0.4);
-        }
-
-        .login-button:active {
-            transform: translateY(0);
-        }
-
-        .error-messages {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .error-messages ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .error-messages li {
-            color: var(--error-color);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .error-messages li:last-child {
-            margin-bottom: 0;
-        }
-
-        @@media (max-width: 768px) {
-            .login-container {
-                grid-template-columns: 1fr;
-                max-width: 400px;
-            }
-
-            .login-visual {
-                display: none;
-            }
-
-            .login-form {
-                padding: var(--spacing-xl);
-            }
-
-            .visual-title {
-                font-size: var(--font-size-2xl);
-            }
-
-            .form-title {
-                font-size: var(--font-size-xl);
-            }
-        }
-
-        @@media (max-width: 480px) {
-            body {
-                padding: var(--spacing-sm);
-            }
-
-            .login-form {
-                padding: var(--spacing-lg);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity.css" asp-append-version="true" />
 </head>
-<body>
+<body class="login-page">
     <div class="login-container">
         <div class="login-visual">
-            <div class="visual-content">
-                <div class="visual-icon">
-                    <i class="fas fa-car"></i>
-                </div>
-                <h1 class="visual-title">FrotaWeb</h1>
-                <p class="visual-subtitle">Sistema moderno de gestão de frota com tecnologia avançada e interface intuitiva</p>
+            <div class="login-visual-content">
+                <h1 class="login-visual-title">Frota</h1>
+                <p class="login-visual-subtitle">Sistema moderno de gestão de frota pública</p>
             </div>
         </div>
 
         <div class="login-form">
-            <div class="form-header">
-                <img src="~/img/logo/logo.png" alt="Logo" class="form-logo">
-                <h2 class="form-title">Bem-vindo</h2>
-                <p class="form-subtitle">Faça login para acessar sua conta</p>
+            <div class="login-form-header">
+                <h2 class="login-form-title">Olá novamente!</h2>
+                <p class="login-form-subtitle">Bem-vindo de volta</p>
             </div>
 
             <form id="account" method="post">
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="error-messages">
+                    <div class="login-form-error">
                         <div asp-validation-summary="ModelOnly"></div>
                     </div>
                 }
 
-                <div class="form-group">
-                    <label class="form-label" for="cpf-input">CPF</label>
-                    <div class="input-group">
-                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="form-input input-sm" maxlength="14" required aria-required="true" placeholder="000.000.000-00" />
-                        <i class="fas fa-user input-icon"></i>
+                <div class="login-form-group">
+                    <label class="login-form-label" for="cpf-input">CPF</label>
+                    <div class="login-form-input-wrapper">
+                        <i class="fas fa-user login-form-input-icon"></i>
+                        <input id="cpf-input" type="text" asp-for="Input.UserName" class="login-form-input" maxlength="14" required aria-required="true" placeholder="000.000.000-00" />
                     </div>
-                    <span asp-validation-for="Input.UserName" class="error-message"></span>
+                    <span asp-validation-for="Input.UserName" class="login-form-error-text"></span>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="password">Senha</label>
-                    <div class="input-group">
-                        <input id="password" type="password" asp-for="Input.Password" class="form-input" autocomplete="current-password" required aria-required="true" placeholder="Digite sua senha" />
-                        <i class="fas fa-eye input-icon" id="togglePassword"></i>
+                <div class="login-form-group">
+                    <label class="login-form-label" for="password">Senha</label>
+                    <div class="login-form-input-wrapper">
+                        <i class="fas fa-lock login-form-input-icon"></i>
+                        <input id="password" type="password" asp-for="Input.Password" class="login-form-input" autocomplete="current-password" required aria-required="true" placeholder="Digite sua senha" />
                     </div>
-                    <span asp-validation-for="Input.Password" class="error-message"></span>
+                    <span asp-validation-for="Input.Password" class="login-form-error-text"></span>
                 </div>
 
-                <div class="form-options">
-                    <div class="checkbox-group">
+                <div class="login-form-options">
+                    <div class="login-form-checkbox">
                         <input asp-for="Input.RememberMe" type="checkbox" id="rememberMe">
-                        <label for="rememberMe" class="checkbox-label">Lembrar de mim</label>
+                        <label for="rememberMe" class="login-form-checkbox-label">Lembrar de mim</label>
                     </div>
-                    <a asp-page="./ForgotPassword" class="forgot-link">Esqueceu a senha?</a>
+                    <a asp-page="./ForgotPassword" class="login-form-forgot-link">Esqueceu a senha?</a>
                 </div>
 
-                <button id="login-submit" type="submit" class="login-button">
+                <button id="login-submit" type="submit" class="login-form-submit">
                     Entrar
                 </button>
             </form>
@@ -319,28 +80,6 @@
             value = value.replace(/(\d{3})(\d)/, '$1.$2');
             value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
             e.target.value = value;
-        });
-
-        // Password Toggle
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const password = document.getElementById('password');
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Form Animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('.login-form');
-            form.style.opacity = '0';
-            form.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                form.style.transition = 'all 0.6s ease';
-                form.style.opacity = '1';
-                form.style.transform = 'translateY(0)';
-            }, 100);
         });
     </script>
 

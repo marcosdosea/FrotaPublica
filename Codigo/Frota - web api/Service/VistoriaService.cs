@@ -29,7 +29,7 @@ namespace Service
         /// </summary>
         /// <param name="id">Id da vistoria que será excluída</param>
         /// <exception cref="NotImplementedException"></exception>
-        public void Delete(uint id)
+        public void Delete(int id)
         {
             var vistoria = context.Vistoria.Find(id);
             if (vistoria != null)
@@ -54,7 +54,7 @@ namespace Service
         /// <param name="id">Id da vistoria que a ser consultada</param>
         /// <returns>Objeto contendo os dados da vistoria encontrada, ou null se não existir</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Vistorium? Get(uint id)
+        public Vistorium? Get(int id)
         {
             return context.Vistoria.Find(id);
         }

@@ -1,110 +1,92 @@
-@model FrotaWeb.Models.PessoaViewModel
+﻿@model FrotaWeb.Models.PessoaViewModel
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>PessoaViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cpf)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cpf)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cep)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cep)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rua)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rua)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Bairro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Bairro)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Complemento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Complemento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Numero)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Numero)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cidade)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cidade)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdFrota)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdFrota)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdPapelPessoa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdPapelPessoa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ativo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ativo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusAtivo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusAtivo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+@{
+    var entityName = "Pessoa";
+    var controllerName = "Pessoa";
+    var idValue = Model.Id;
+}
+
+<div class="delete-page">
+    <div class="delete-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="delete-title">Excluir @entityName</h1>
+    </div>
+
+    <div class="delete-card">
+        <div class="delete-warning">
+            <div class="delete-warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="delete-warning-title">Tem certeza que deseja excluir?</h3>
+            <p class="delete-warning-text">Esta ação não pode ser desfeita. Todos os dados relacionados serão permanentemente removidos.</p>
+        </div>
+
+        <div class="delete-body">
+            <div class="details-body">
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-hashtag"></i>
+                        Código
+                    </span>
+                    <span class="details-value">@Model.Id</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-id-card"></i>
+                        CPF
+                    </span>
+                    <span class="details-value">@Model.Cpf</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-user"></i>
+                        Nome
+                    </span>
+                    <span class="details-value">@Model.Nome</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </span>
+                    <span class="details-value">@Model.Email</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-phone"></i>
+                        Telefone
+                    </span>
+                    <span class="details-value">@Model.Telefone</span>
+                </div>
+                <div class="details-item">
+                    <span class="details-label">
+                        <i class="fas fa-check-circle"></i>
+                        Status
+                    </span>
+                    <span class="details-value">
+                        <span class="badge @(Model.Ativo == 1 ? "badge-success" : "badge-error")">
+                            @(Model.StatusAtivo ?? (Model.Ativo == 1 ? "Ativo" : "Desativado"))
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post" class="delete-form">
+            @if (idValue != null)
+            {
+                <input type="hidden" name="id" value="@idValue" />
+            }
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Confirmar Exclusão
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

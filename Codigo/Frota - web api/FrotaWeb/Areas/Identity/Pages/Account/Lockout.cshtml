@@ -1,10 +1,39 @@
 @page
 @model LockoutModel
 @{
-    ViewData["Title"] = "Locked out";
+    ViewData["Title"] = "Conta bloqueada";
+    Layout = null;
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Frota</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/identity.css" asp-append-version="true" />
+</head>
+<body class="register-page">
+    <div class="register-container">
+        <div class="card">
+            <div class="card-body">
+                <div class="login-form-header" style="text-align: center;">
+                    <div style="width: 80px; height: 80px; background: var(--error-50); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4);">
+                        <i class="fas fa-lock" style="font-size: var(--text-4xl); color: var(--error-600);"></i>
+                    </div>
+                    <h2 class="login-form-title">@ViewData["Title"]</h2>
+                    <p class="login-form-subtitle">Esta conta foi bloqueada. Tente novamente mais tarde.</p>
+                </div>
+
+                <div style="text-align: center; margin-top: var(--space-6);">
+                    <a asp-page="./Login" class="login-form-submit" style="text-decoration: none; display: inline-block;">
+                        Voltar para login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
