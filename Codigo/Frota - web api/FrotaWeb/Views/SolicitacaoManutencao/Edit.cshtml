@@ -1,78 +1,113 @@
 ﻿@model FrotaWeb.Models.SolicitacaoManutencaoViewModel
 @using Core.DTO
+@using System.Globalization
 
 @{
-	var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
-	var pessoas = ViewData["Pessoas"] as IEnumerable<PessoaDTO> ?? Enumerable.Empty<PessoaDTO>();
+    var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
+    var pessoas = ViewData["Pessoas"] as IEnumerable<PessoaDTO> ?? Enumerable.Empty<PessoaDTO>();
+    var entityName = "Solicitação de Manutenção";
+    var controllerName = "SolicitacaoManutencao";
+    var culture = new CultureInfo("pt-BR");
 }
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="edit-title">Editar @entityName</h1>
+    </div>
 
-<main class="main_content container">
-	<div class="titulo-pagina">
-		<a href="javascript:history.back()" class="voltar">
-			<i class="fa fa-arrow-left"></i> Voltar
-		</a>
-		<h1>Criar Solicita��o de Manuten��o</h1>
-	</div>
-	<div class="fomulario">
-		<form asp-action="Edit">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group w30">
-				<label asp-for="IdVeiculo" class="control-label">Ve�culo</label>
-				<select asp-for="IdVeiculo" class="custom-select select2">
-					@if (!veiculos.Any())
-					{
-						<option value="" disabled selected hidden>Veiculo</option>
-					}
-					else
-					{
-						foreach (var veiculo in veiculos)
-						{
-							<option value="@veiculo.Id">@veiculo.Placa</option>
-						}
-					}
-				</select>
-				<span asp-validation-for="IdVeiculo" class="text-danger"></span>
-			</div>
-			<div class="form-group w40">
-				<label asp-for="IdPessoa" class="control-label">Solicitante</label>
-				<select asp-for="IdPessoa" class="custom-select select2">
-					@if (!pessoas.Any())
-					{
-						<option value="" disabled selected hidden>Veiculo</option>
-					}
-					else
-					{
-						foreach (var pessoa in pessoas)
-						{
-							<option value="@pessoa.Id">@pessoa.Nome</option>
-						}
-					}
-				</select>
-				<span asp-validation-for="IdPessoa" class="text-danger"></span>
-			</div>
-			<div class="form-group w20">
-				<label asp-for="DataSolicitacao" class="label">Data de Solicita��o</label>
-				<input asp-for="DataSolicitacao" class="form-control" placeholder="" />
-				<span asp-validation-for="DataSolicitacao" class="text-danger"></span>
-			</div>
-			<hr class="divisor">
-			<div class="form-group w100">
-				<label asp-for="DescricaoProblema" class="label">Descri��o</label>
-				<textarea asp-for="DescricaoProblema" class="form-control" placeholder="Manuten��o necess�ria"></textarea>
-				<span asp-validation-for="DescricaoProblema" class="text-danger"></span>
-			</div>
-			<div class="buttons">
-				<input type="submit" value="Salvar Altera��es" class="btn btn-primary" />
-			</div>
-		</form>
-	</div>
-</main>
+    <div class="edit-card">
+        <form asp-action="Edit" method="post" class="edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="IdVeiculo" class="form-label">
+                        <i class="fas fa-car"></i>
+                        Veículo
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdVeiculo" class="select-modern select-full">
+                            @if (!veiculos.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um veículo</option>
+                            }
+                            else
+                            {
+                                foreach (var veiculo in veiculos)
+                                {
+                                    <option value="@veiculo.Id" selected="@(Model.IdVeiculo == veiculo.Id)">@veiculo.Placa</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdVeiculo" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IdPessoa" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Solicitante
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdPessoa" class="select-modern select-full">
+                            @if (!pessoas.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um solicitante</option>
+                            }
+                            else
+                            {
+                                foreach (var pessoa in pessoas)
+                                {
+                                    <option value="@pessoa.Id" selected="@(Model.IdPessoa == pessoa.Id)">@pessoa.Nome</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdPessoa" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DataSolicitacao" class="form-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Data de Solicitação
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-calendar input-icon"></i>
+                    <input asp-for="DataSolicitacao" class="form-input input-data" type="datetime-local" />
+                </div>
+                <span asp-validation-for="DataSolicitacao" class="form-error-text"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DescricaoProblema" class="form-label">
+                    <i class="fas fa-file-alt"></i>
+                    Descrição do Problema
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-file-alt input-icon"></i>
+                    <textarea asp-for="DescricaoProblema" class="form-input" rows="4" placeholder="Descreva o problema que necessita manutenção"></textarea>
+                </div>
+                <span asp-validation-for="DescricaoProblema" class="form-error-text"></span>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
-	<script src="~/js/form.js" asp-append-version="true"></script>
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    <partial name="_ValidationScriptsPartial" />
 }

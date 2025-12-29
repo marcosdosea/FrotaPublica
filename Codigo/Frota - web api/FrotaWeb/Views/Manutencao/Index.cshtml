@@ -105,27 +105,30 @@
         </div>
     </div>
 
-    @if (ViewBag.TotalPages > 1)
+    @{
+        var pagedResult = ViewBag.PagedResult as FrotaWeb.Models.PagedResult<ManutencaoViewModel>;
+    }
+    @if (pagedResult != null && pagedResult.TotalPages > 1)
     {
         <nav class="pagination-container">
             <div class="pagination">
-                @if (ViewBag.CurrentPage > 0)
+                @if (pagedResult.HasPreviousPage)
                 {
-                    <a href="@Url.Action("Index", "Manutencao", new { page = ViewBag.CurrentPage - 1, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn">
+                    <a href="@Url.Action("Index", "Manutencao", new { page = pagedResult.CurrentPage - 1, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 }
                 
-                @for (int i = Math.Max(0, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages - 1, ViewBag.CurrentPage + 2); i++)
+                @for (int i = Math.Max(0, pagedResult.CurrentPage - 2); i <= Math.Min(pagedResult.TotalPages - 1, pagedResult.CurrentPage + 2); i++)
                 {
-                    <a href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a href="@Url.Action("Index", "Manutencao", new { page = i, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn @(i == pagedResult.CurrentPage ? "active" : "")">
                         @(i + 1)
                     </a>
                 }
                 
-                @if (ViewBag.CurrentPage < ViewBag.TotalPages - 1)
+                @if (pagedResult.HasNextPage)
                 {
-                    <a href="@Url.Action("Index", "Manutencao", new { page = ViewBag.CurrentPage + 1, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn">
+                    <a href="@Url.Action("Index", "Manutencao", new { page = pagedResult.CurrentPage + 1, idVeiculo = ViewBag.IdVeiculoSelecionado })" class="pagination-btn">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 }

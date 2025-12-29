@@ -27,33 +27,52 @@ namespace FrotaWeb.Controllers
 
 
         // GET: SolicitacaomanutencaoController.cs
+        [Route("SolicitacaoManutencao/Index/{page}")]
         [Route("SolicitacaoManutencao/Index")]
+        [Route("SolicitacaoManutencao/{page}")]
         [Route("SolicitacaoManutencao")]
-        public ActionResult Index([FromQuery] uint? idVeiculo = null)
+        public ActionResult Index([FromRoute] int page = 0, [FromQuery] uint? idVeiculo = null)
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
 
-            // Obter todos os ve�culos para o dropdown
+            // Obter todos os veículos para o dropdown
             var veiculos = veiculoService.GetVeiculoDTO(idFrota);
             ViewData["Veiculos"] = veiculos;
             ViewBag.IdVeiculoSelecionado = idVeiculo;
 
-            // Aplicar filtro por ve�culo se necess�rio
+            // Aplicar filtro por veículo se necessário
             var query = service.GetAll(idFrota);
             if (idVeiculo.HasValue)
             {
                 query = query.Where(s => s.IdVeiculo == idVeiculo.Value);
             }
 
-            var listaSolicitacoes = query.ToList();
+            int itemsPerPage = 20;
+            var allSolicitacoes = query.ToList();
+            var totalItems = allSolicitacoes.Count;
+            
+            var pagedItems = allSolicitacoes
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
 
-            var listaSolicitacoesModel = _mapper.Map<List<SolicitacaoManutencaoViewModel>>(listaSolicitacoes);
-            foreach (var item in listaSolicitacoesModel)
+            var pagedResult = new PagedResult<SolicitacaoManutencaoViewModel>
+            {
+                Items = _mapper.Map<List<SolicitacaoManutencaoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            foreach (var item in pagedResult.Items)
             {
                 item.PlacaVeiculo = veiculoService.GetPlacaVeiculo(item.IdVeiculo);
                 item.NomePessoa = pessoaService.GetNomePessoa(item.IdPessoa);
             }
-            return View(listaSolicitacoesModel);
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         // GET: SolicitacaomanutencaoController.cs/Details/5
@@ -68,7 +87,11 @@ namespace FrotaWeb.Controllers
         // GET: SolicitacaomanutencaoController.cs/Create
         public ActionResult Create()
         {
-            int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
+            var frotaIdClaim = User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId");
+            if (frotaIdClaim == null || !int.TryParse(frotaIdClaim.Value, out int idFrota) || idFrota == 0)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
             ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
             return View();
@@ -85,12 +108,12 @@ namespace FrotaWeb.Controllers
                 {
                     var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
                     service.Create(solicitacao, idFrota);
-                    PopupHelper.AddPopup(this, type: "success", title: "Opera��o conclu�da", message: "A solicita��o foi cadastrada com sucesso!");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "A solicitação foi cadastrada com sucesso!");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Opera��o n�o realizada", message: "Houveram inconsist�ncias nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado j� foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     return View(solicitacaoModel);
@@ -121,12 +144,12 @@ namespace FrotaWeb.Controllers
                 {
                     var solicitacao = _mapper.Map<Solicitacaomanutencao>(solicitacaoModel);
                     service.Edit(solicitacao, idFrota);
-                    PopupHelper.AddPopup(this, type: "success", title: "Opera��o conclu�da", message: "As altera��es foram salvas com sucesso.");
+                    PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "As alterações foram salvas com sucesso.");
                 }
                 catch (ServiceException exception)
                 {
-                    PopupHelper.AddPopup(this, type: "warning", title: "Opera��o n�o realizada", message: "Houveram inconsist�ncias nos dados informados.");
-                    ModelState.AddModelError(exception.AtributoError!, "Esse dado j� foi utilizado em um cadastro existente");
+                    PopupHelper.AddPopup(this, type: "warning", title: "Operação não realizada", message: "Houveram inconsistências nos dados informados.");
+                    ModelState.AddModelError(exception.AtributoError!, "Esse dado já foi utilizado em um cadastro existente");
                     ViewData["Veiculos"] = veiculoService.GetVeiculoDTO(idFrota);
                     ViewData["Pessoas"] = pessoaService.GetAllOrdemAlfabetica(idFrota);
                     return View(solicitacaoModel);
@@ -152,11 +175,11 @@ namespace FrotaWeb.Controllers
             try
             {
                 service.Delete(id);
-                PopupHelper.AddPopup(this, type: "success", title: "Opera��o conclu�da", message: "O registro foi removido com sucesso.");
+                PopupHelper.AddPopup(this, type: "success", title: "Operação concluída", message: "O registro foi removido com sucesso.");
             }
             catch (ServiceException exception)
             {
-                PopupHelper.AddPopup(this, type: "error", title: "Opera��o mal sucedida", message: "N�o foi poss�vel remover o registro.");
+                PopupHelper.AddPopup(this, type: "error", title: "Operação mal sucedida", message: "Não foi possível remover o registro.");
                 return View(solicitacaoModel);
             }
             return RedirectToAction(nameof(Index));

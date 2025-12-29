@@ -482,41 +482,115 @@ table td {
   opacity: 1;
 }
 
-.sidebar-toggle {
-  position: fixed;
-  left: calc(var(--sidebar-width-closed) - 20px);
-  top: var(--space-6);
-  width: 40px;
-  height: 40px;
+/* Botão Toggle Interno (dentro da sidebar quando aberta) */
+.sidebar-toggle-internal {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
   background: var(--primary-500);
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: left var(--transition-normal), background-color var(--transition-fast);
-  z-index: calc(var(--z-fixed) + 1);
+  transition: all var(--transition-fast);
+  z-index: 10;
   color: var(--text-inverse);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sidebar.open .sidebar-toggle-internal {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-toggle-internal:hover {
+  background: var(--primary-600);
+  transform: translateY(-50%) scale(1.1);
   box-shadow: var(--shadow-lg);
 }
 
-.sidebar-toggle:hover {
+.sidebar-toggle-internal:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.sidebar-toggle-internal i {
+  transition: transform var(--transition-normal);
+  font-size: var(--text-sm);
+}
+
+.sidebar.open .sidebar-toggle-internal i {
+  transform: rotate(180deg);
+}
+
+/* Botão Toggle Externo (fora da sidebar quando fechada) */
+.sidebar-toggle-external {
+  position: fixed;
+  left: 0;
+  top: var(--space-6);
+  width: 48px;
+  height: 48px;
+  background: var(--primary-500);
+  border: none;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  z-index: calc(var(--z-fixed) + 1);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.sidebar:not(.open) ~ .sidebar-toggle-external,
+body:not(:has(.sidebar.open)) .sidebar-toggle-external {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-toggle-external:hover {
   background: var(--primary-600);
-  transform: scale(1.1);
   box-shadow: var(--shadow-xl);
 }
 
-.sidebar-toggle:active {
+.sidebar-toggle-external:active {
   transform: scale(0.95);
 }
 
-.sidebar-toggle i {
-  transition: transform var(--transition-normal);
+.sidebar-toggle-external i {
+  font-size: var(--text-lg);
 }
 
-body:has(.sidebar.open) .sidebar-toggle i {
-  transform: rotate(180deg);
+/* Quando sidebar está aberta, esconde o botão externo */
+.sidebar.open ~ .sidebar-toggle-external {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-toggle-external {
+    left: 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+  
+  .sidebar-toggle-internal {
+    display: none;
+  }
+  
+  /* Em mobile, o botão externo sempre visível quando sidebar fechada */
+  .sidebar:not(.open) ~ .sidebar-toggle-external {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 .sidebar-nav {

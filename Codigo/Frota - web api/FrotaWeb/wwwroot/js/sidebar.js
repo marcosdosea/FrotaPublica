@@ -8,7 +8,8 @@
 
     // Elementos DOM
     const sidebar = document.getElementById('sidebar');
-    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarToggleInternal = document.getElementById('sidebarToggleInternal');
+    const sidebarToggleExternal = document.getElementById('sidebarToggleExternal');
     const mainContent = document.getElementById('mainContent');
     const navLinks = document.querySelectorAll('.nav-link');
     const navToggles = document.querySelectorAll('.nav-toggle');
@@ -49,9 +50,17 @@
 
     // Event Listeners
     function setupEventListeners() {
-        // Toggle sidebar
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function(e) {
+        // Toggle sidebar - botão interno
+        if (sidebarToggleInternal) {
+            sidebarToggleInternal.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+        }
+        
+        // Toggle sidebar - botão externo
+        if (sidebarToggleExternal) {
+            sidebarToggleExternal.addEventListener('click', function(e) {
                 e.stopPropagation();
                 toggleSidebar();
             });
@@ -80,11 +89,14 @@
         
         // Fechar sidebar ao clicar fora (exceto na sidebar e no toggle)
         document.addEventListener('click', function(e) {
-            // Não fecha se clicar na sidebar ou no toggle
+            // Não fecha se clicar na sidebar ou nos toggles
             if (sidebar && sidebar.contains(e.target)) {
                 return;
             }
-            if (sidebarToggle && sidebarToggle.contains(e.target)) {
+            if (sidebarToggleInternal && sidebarToggleInternal.contains(e.target)) {
+                return;
+            }
+            if (sidebarToggleExternal && sidebarToggleExternal.contains(e.target)) {
                 return;
             }
             
@@ -170,18 +182,8 @@
 
     // Atualizar posição do botão toggle
     function updateTogglePosition() {
-        if (!sidebarToggle) return;
-        
-        const sidebarWidthClosed = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width-closed') || '80px';
-        const sidebarWidthOpen = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width-open') || '280px';
-        
-        if (sidebarOpen) {
-            const openValue = parseInt(sidebarWidthOpen) - 20;
-            sidebarToggle.style.left = openValue + 'px';
-        } else {
-            const closedValue = parseInt(sidebarWidthClosed) - 20;
-            sidebarToggle.style.left = closedValue + 'px';
-        }
+        // A posição agora é controlada pelo CSS
+        // Esta função pode ser usada para outras atualizações se necessário
     }
 
     // Toggle submenu
@@ -247,6 +249,9 @@
                 closeSidebar();
             }
             // Em desktop, mantém o estado atual (não abre automaticamente)
+            updateTogglePosition();
+        } else {
+            // Atualiza posição mesmo sem mudança de modo
             updateTogglePosition();
         }
     }

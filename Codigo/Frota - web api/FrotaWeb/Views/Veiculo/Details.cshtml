@@ -15,32 +15,44 @@
         <a href="javascript:history.back()" class="btn btn-tertiary">
             <i class="fas fa-arrow-left"></i> Voltar
         </a>
-        <h1 class="details-title">
-            <i class="fas fa-eye"></i>
-            Visualizar @entityName
-        </h1>
+        <h1 class="details-title">Visualizar @entityName</h1>
     </div>
 
     <div class="details-card">
         <div class="details-body">
             <div class="details-item">
-                <span class="details-label">Unidade Administrativa</span>
+                <span class="details-label">
+                    <i class="fas fa-building"></i>
+                    Unidade Administrativa
+                </span>
                 <span class="details-value">@Model.IdUnidadeAdministrativa</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Frota</span>
+                <span class="details-label">
+                    <i class="fas fa-truck"></i>
+                    Frota
+                </span>
                 <span class="details-value">@Model.IdFrota</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Placa</span>
+                <span class="details-label">
+                    <i class="fas fa-id-card"></i>
+                    Placa
+                </span>
                 <span class="details-value">@Model.Placa</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Chassi</span>
+                <span class="details-label">
+                    <i class="fas fa-barcode"></i>
+                    Chassi
+                </span>
                 <span class="details-value">@(Model.Chassi ?? "-")</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Valor do Veículo</span>
+                <span class="details-label">
+                    <i class="fas fa-dollar-sign"></i>
+                    Valor do Veículo
+                </span>
                 <span class="details-value">
                     @if (!string.IsNullOrEmpty(Model.Valor) && decimal.TryParse(Model.Valor, NumberStyles.Any, culture, out var valorDecimal))
                     {
@@ -53,23 +65,38 @@
                 </span>
             </div>
             <div class="details-item">
-                <span class="details-label">Modelo Veículo</span>
+                <span class="details-label">
+                    <i class="fas fa-car-side"></i>
+                    Modelo Veículo
+                </span>
                 <span class="details-value">@Model.IdModeloVeiculo</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Data Referência (Valor)</span>
+                <span class="details-label">
+                    <i class="fas fa-calendar"></i>
+                    Data Referência (Valor)
+                </span>
                 <span class="details-value">@Model.DataReferenciaValor.ToString("dd/MM/yyyy", culture)</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Cor</span>
+                <span class="details-label">
+                    <i class="fas fa-palette"></i>
+                    Cor
+                </span>
                 <span class="details-value">@Model.Cor</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Odômetro</span>
+                <span class="details-label">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Odômetro
+                </span>
                 <span class="details-value">@Model.Odometro km</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Status</span>
+                <span class="details-label">
+                    <i class="fas fa-info-circle"></i>
+                    Status
+                </span>
                 <span class="details-value">
                     <span class="badge @(Model.Status == "U" ? "badge-warning" : Model.Status == "M" ? "badge-error" : "badge-success")">
                         @Model.StatusNome
@@ -77,19 +104,31 @@
                 </span>
             </div>
             <div class="details-item">
-                <span class="details-label">Ano</span>
+                <span class="details-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Ano
+                </span>
                 <span class="details-value">@Model.Ano</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Modelo</span>
+                <span class="details-label">
+                    <i class="fas fa-car"></i>
+                    Modelo
+                </span>
                 <span class="details-value">@Model.Modelo</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Renavan</span>
+                <span class="details-label">
+                    <i class="fas fa-file-alt"></i>
+                    Renavan
+                </span>
                 <span class="details-value">@(Model.Renavan ?? "-")</span>
             </div>
             <div class="details-item">
-                <span class="details-label">Vencimento IPVA</span>
+                <span class="details-label">
+                    <i class="fas fa-calendar-check"></i>
+                    Vencimento IPVA
+                </span>
                 <span class="details-value">@(Model.VencimentoIpva?.ToString("dd/MM/yyyy", culture) ?? "-")</span>
             </div>
         </div>

@@ -1,30 +1,57 @@
 ﻿@model FrotaWeb.Models.PecaInsumoViewModel
 
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+@{
+    var entityName = "Peça/Insumo";
+    var controllerName = "PecaInsumo";
+}
 
-<main class="container mt-4">
-    <h4 class="page-title fs-2">
-        <i class="fa fa-cog mr-3"></i>
-        Peças e Insumos
-    </h4>
-    <h1 class="my-text-label fs-3 mt-4 mb-4">Excluir Peças e Insumos</h1>
-    <div class="creator-form fs-5">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="type-container offset-md-1 itens-center">
-                    <label class="label">Descrição</label>
-                    <textarea asp-for="Descricao" class="form-control bg-white" placeholder="" readonly>@Model.Descricao</textarea>
+<div class="delete-page">
+    <div class="delete-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="delete-title">Excluir @entityName</h1>
+    </div>
+
+    <div class="delete-card">
+        <div class="alert alert-warning" style="background: var(--warning-50); border: 1px solid var(--warning-200); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-6);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <i class="fas fa-exclamation-triangle" style="color: var(--warning-600); font-size: var(--text-xl);"></i>
+                <div>
+                    <strong style="color: var(--warning-700);">Atenção!</strong>
+                    <p style="color: var(--warning-700); margin: var(--space-1) 0 0 0; font-size: var(--text-sm);">
+                        Esta ação não pode ser desfeita. Tem certeza que deseja excluir este registro?
+                    </p>
                 </div>
             </div>
         </div>
-        <form asp-action="Delete" class="row mt-4">
-            <div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
-                <a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
+
+        <div class="details-body">
+            <div class="details-item">
+                <div class="details-label">
+                    <i class="fas fa-hashtag"></i>
+                    ID
+                </div>
+                <div class="details-value">@Html.DisplayFor(model => model.Id)</div>
             </div>
-            <div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-                <input type="submit" value="Excluir" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso" />
+
+            <div class="details-item">
+                <div class="details-label">
+                    <i class="fas fa-file-alt"></i>
+                    Descrição
+                </div>
+                <div class="details-value">@Html.DisplayFor(model => model.Descricao)</div>
             </div>
+        </div>
+
+        <form asp-action="Delete" method="post" class="form-actions">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Confirmar Exclusão
+            </button>
         </form>
     </div>
-</main>
+</div>

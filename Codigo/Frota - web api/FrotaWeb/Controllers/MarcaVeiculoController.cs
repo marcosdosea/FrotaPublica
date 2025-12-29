@@ -20,16 +20,37 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: MarcaVeiculo
-		public ActionResult Index()
+		[Route("MarcaVeiculo/Index/{page}")]
+		[Route("MarcaVeiculo/{page}")]
+		[Route("MarcaVeiculo")]
+		public ActionResult Index([FromRoute] int page = 0)
 		{
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (idFrota == 0)
             {
                 return Redirect("/Identity/Account/Login");
             }
-            var marcaVeiculos = _service.GetAll(idFrota);
-			var marcaVeiculosViewModel = mapper.Map<List<MarcaVeiculoViewModel>>(marcaVeiculos);
-			return View(marcaVeiculosViewModel);
+            
+            int itemsPerPage = 20;
+            var allMarcas = _service.GetAll(idFrota).ToList();
+            var totalItems = allMarcas.Count;
+            
+            var pagedItems = allMarcas
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<MarcaVeiculoViewModel>
+            {
+                Items = mapper.Map<List<MarcaVeiculoViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+			return View(pagedResult.Items);
 		}
 
 		// GET: MarcaVeiculo/Details/5

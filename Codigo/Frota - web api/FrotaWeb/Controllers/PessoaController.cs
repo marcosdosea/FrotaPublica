@@ -38,27 +38,31 @@ namespace FrotaWeb.Controllers
         public ActionResult Index([FromRoute] int page = 0, string search = null, string filterBy = "Nome")
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
-            int length = 13;
+            int itemsPerPage = 20;
             int totalResultados;
             bool isAdm = User.Claims.FirstOrDefault(claim => claim.Type.Contains("role"))?.Value == "Administrador";
-            var listaPessoas = pessoaService.GetPaged(idFrota, isAdm, page, length, out totalResultados, search, filterBy).ToList();
+            var listaPessoas = pessoaService.GetPaged(idFrota, isAdm, page, itemsPerPage, out totalResultados, search, filterBy).ToList();
 
-            var totalPessoas = pessoaService.GetAll(idFrota, isAdm).Count();
-            var totalPages = (int)Math.Ceiling((double)totalResultados / length);
+            var pagedResult = new PagedResult<PessoaViewModel>
+            {
+                Items = mapper.Map<List<PessoaViewModel>>(listaPessoas),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalResultados,
+                TotalPages = (int)Math.Ceiling((double)totalResultados / itemsPerPage)
+            };
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.Search = search;
-            ViewBag.FilterBy = filterBy;
-            ViewBag.Resultados = listaPessoas.Count();
-
-            var listaPessoasModel = mapper.Map<List<PessoaViewModel>>(listaPessoas);
-            foreach (var item in listaPessoasModel)
+            foreach (var item in pagedResult.Items)
             {
                 item.StatusAtivo = item.Ativo == 1 ? "Ativo" : "Desativado";
             }
+
+            ViewBag.PagedResult = pagedResult;
+            ViewBag.Search = search;
+            ViewBag.FilterBy = filterBy;
+            ViewBag.Resultados = totalResultados;
             
-            return View(listaPessoasModel);
+            return View(pagedResult.Items);
         }
 
         // GET: PessoaController/Details/5

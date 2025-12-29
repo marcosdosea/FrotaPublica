@@ -2,182 +2,242 @@
 
 @{
     var estados = ViewData["Estados"] as List<string>;
+    var entityName = "Fornecedor";
+    var controllerName = "Fornecedor";
 }
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
-
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
         </a>
-        <h1>Cadastro de Fornecedor</h1>
+        <h1 class="edit-title">Criar @entityName</h1>
     </div>
-    <div class="fomulario">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="edit-card">
+        <form asp-action="Create" method="post" class="edit-form" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Cnpj" class="form-label">
+                        <i class="fas fa-file-contract"></i>
+                        CNPJ
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-file-contract input-icon"></i>
+                        <input asp-for="Cnpj" class="form-input input-cpf" id="cnpjInput" placeholder="00.000.000/0000-00" maxlength="18" />
+                    </div>
+                    <span asp-validation-for="Cnpj" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Nome" class="form-label">
+                        <i class="fas fa-building"></i>
+                        Nome
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-building input-icon"></i>
+                        <input asp-for="Nome" class="form-input input-endereco" id="nomeEmpresa" placeholder="Nome da empresa" />
+                    </div>
+                    <span asp-validation-for="Nome" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Cep" class="form-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        CEP
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input asp-for="Cep" class="form-input input-cpf" id="cep" maxlength="9" placeholder="00000-000" />
+                    </div>
+                    <span asp-validation-for="Cep" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Rua" class="form-label">
+                        <i class="fas fa-road"></i>
+                        Rua
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-road input-icon"></i>
+                        <input asp-for="Rua" class="form-input input-endereco" id="rua" placeholder="Nome da rua" />
+                    </div>
+                    <span asp-validation-for="Rua" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Bairro" class="form-label">
+                        <i class="fas fa-map"></i>
+                        Bairro
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-map input-icon"></i>
+                        <input asp-for="Bairro" class="form-input input-md" id="bairro" placeholder="Nome do bairro" />
+                    </div>
+                    <span asp-validation-for="Bairro" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Numero" class="form-label">
+                        <i class="fas fa-hashtag"></i>
+                        Número
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-hashtag input-icon"></i>
+                        <input asp-for="Numero" class="form-input input-numero" id="numeroInput" placeholder="123" />
+                    </div>
+                    <span asp-validation-for="Numero" class="form-error-text"></span>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label asp-for="Cnpj" class="control-label"></label>
-                <input asp-for="Cnpj" class="form-control" id="cnpjInput" />
-                <span asp-validation-for="Cnpj" class="text-danger"></span>
+                <label asp-for="Complemento" class="form-label">
+                    <i class="fas fa-building"></i>
+                    Complemento
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-building input-icon"></i>
+                    <input asp-for="Complemento" class="form-input input-md" placeholder="Complemento (opcional)" />
+                </div>
+                <span asp-validation-for="Complemento" class="form-error-text"></span>
             </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Cidade" class="form-label">
+                        <i class="fas fa-city"></i>
+                        Cidade
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-city input-icon"></i>
+                        <input asp-for="Cidade" class="form-input input-md" id="cidade" placeholder="Nome da cidade" />
+                    </div>
+                    <span asp-validation-for="Cidade" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Estado" class="form-label">
+                        <i class="fas fa-flag"></i>
+                        Estado
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="Estado" class="select-modern select-full" id="Estado">
+                            @if (!estados.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um estado</option>
+                            }
+                            else
+                            {
+                                foreach (var estado in estados)
+                                {
+                                    <option value="@estado">@estado</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="Estado" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Latitude" class="form-label">
+                        <i class="fas fa-map-pin"></i>
+                        Latitude
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-map-pin input-icon"></i>
+                        <input asp-for="Latitude" class="form-input input-numero" type="number" placeholder="Latitude" />
+                    </div>
+                    <span asp-validation-for="Latitude" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Longitude" class="form-label">
+                        <i class="fas fa-map-pin"></i>
+                        Longitude
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-map-pin input-icon"></i>
+                        <input asp-for="Longitude" class="form-input input-numero" type="number" placeholder="Longitude" />
+                    </div>
+                    <span asp-validation-for="Longitude" class="form-error-text"></span>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" id="nomeEmpresa" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
+                <label asp-for="Ativo" class="form-label">
+                    <i class="fas fa-check-circle"></i>
+                    Status
+                </label>
+                <div class="select-wrapper">
+                    <select asp-for="Ativo" class="select-modern select-full">
+                        <option value="1" selected>Ativo</option>
+                        <option value="0">Inativo</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Ativo" class="form-error-text"></span>
             </div>
-            <hr class="divisor">
-            <div class="form-group w40">
-                <label asp-for="Cep" class="control-label"></label>
-                <input asp-for="Cep" class="form-control" id="cep" maxlength="9" />
-                <span asp-validation-for="Cep" class="text-danger"></span>
-            </div>
-            <div class="form-group w50">
-                <label asp-for="Rua" class="control-label"></label>
-                <input asp-for="Rua" class="form-control" id="rua" />
-                <span asp-validation-for="Rua" class="text-danger"></span>
-            </div>
-            <div class="form-group w40">
-                <label asp-for="Bairro" class="control-label"></label>
-                <input asp-for="Bairro" class="form-control" id="bairro" />
-                <span asp-validation-for="Bairro" class="text-danger"></span>
-            </div>
-            <div class="form-group w60">
-                <label asp-for="Complemento" class="control-label"></label>
-                <input asp-for="Complemento" class="form-control" />
-                <span asp-validation-for="Complemento" class="text-danger"></span>
-            </div>
-            <div class="form-group w10">
-                <label asp-for="Numero" class="control-label"></label>
-                <input asp-for="Numero" class="form-control" />
-                <span asp-validation-for="Numero" class="text-danger"></span>
-            </div>
-            <div class="form-group w40">
-                <label asp-for="Cidade" class="control-label"></label>
-                <input asp-for="Cidade" class="form-control" id="cidade" />
-                <span asp-validation-for="Cidade" class="text-danger"></span>
-            </div>
-            <div class="form-group w10">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="custom-select select2" id="Estado">
-                    @if (!estados.Any())
-                    {
-                        <option value="" disabled selected hidden>Frota</option>
-                    }
-                    else
-                    {
-                        foreach (var estado in estados)
-                        {
-                            <option value="@estado">@estado</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <hr class="divisor">
-            <div class="form-group">
-                <label asp-for="Latitude" class="control-label"></label>
-                <input asp-for="Latitude" class="form-control" />
-                <span asp-validation-for="Latitude" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Longitude" class="control-label"></label>
-                <input asp-for="Longitude" class="form-control" />
-                <span asp-validation-for="Longitude" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ativo" class="control-label"></label>
-                <input asp-for="Ativo" class="form-control" />
-                <span asp-validation-for="Ativo" class="text-danger"></span>
-            </div>
-            <div class="buttons">
-                <input type="submit" value="Cadastrar Fornecedor" class="btn btn-primary" />
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
             </div>
         </form>
     </div>
-</main>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        document.getElementById("cep").addEventListener("blur", function () {
-            const cep = this.value.replace(/\D/g, ""); // Remove caracteres não numéricos
-
+        document.getElementById("cep")?.addEventListener("blur", function () {
+            const cep = this.value.replace(/\D/g, "");
             if (cep.length === 8) {
                 fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Erro ao buscar CEP.");
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        if (data.erro) {
-                            alert("CEP não encontrado.");
-                            return;
-                        }
-
-                        // Preenche os campos com os dados retornados
-                        document.getElementById("rua").value = data.logradouro || "";
-                        document.getElementById("bairro").value = data.bairro || "";
-                        document.getElementById("cidade").value = data.localidade || "";
-                        // Seletor para estado
-                        const estadoSelect = document.getElementById("Estado");
-                        estadoSelect.value = data.uf || "";
-                        if (!estadoSelect.value) {
-                            alert("Estado não encontrado no seletor.");
+                        if (!data.erro) {
+                            document.getElementById("rua").value = data.logradouro || "";
+                            document.getElementById("bairro").value = data.bairro || "";
+                            document.getElementById("cidade").value = data.localidade || "";
+                            const estadoSelect = document.getElementById("Estado");
+                            estadoSelect.value = data.uf || "";
                         }
                     })
-                    .catch(error => {
-                        console.error("Erro ao consultar o CEP:", error);
-                        alert("Não foi possível consultar o CEP.");
-                    });
-            } else {
-                alert("CEP inválido. Por favor, insira um CEP válido.");
+                    .catch(error => console.error("Erro ao consultar o CEP:", error));
             }
         });
 
-        document.getElementById('cnpjInput').addEventListener('change', function () {
-            var cnpj = this.value.trim();
-            cnpj = cnpj.replace(/[^\d]+/g, '');
+        document.getElementById('cnpjInput')?.addEventListener('change', function () {
+            var cnpj = this.value.trim().replace(/[^\d]+/g, '');
             if (cnpj.length === 14) {
-                fetch(`/Fornecedor/ConsultaCnpj?cnpj=${cnpj}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error('Erro na consulta do CNPJ');
-                        }
-                    })
+                fetch(`/Fornecedor/ConsultaCnpj?cnpj=${cnpj}`)
+                    .then(response => response.json())
                     .then(data => {
                         if (!data.error) {
-                            document.getElementById('nomeEmpresa').value = data.fantasia;
-                            document.getElementById("rua").value = data.logradouro;
-                            document.getElementById('numeroInput').value = (data.numero === "S/N") ? "00" : data.numero;
-                            document.getElementById("bairro").value = data.bairro;
-                            document.getElementById("cidade").value = data.municipio;
-                            document.getElementById('cep').value = data.cep.replace(/[^\d]/g, '');
-                            // Seletor para estado
+                            document.getElementById('nomeEmpresa').value = data.fantasia || "";
+                            document.getElementById("rua").value = data.logradouro || "";
+                            if (document.getElementById('numeroInput')) {
+                                document.getElementById('numeroInput').value = (data.numero === "S/N") ? "00" : (data.numero || "");
+                            }
+                            document.getElementById("bairro").value = data.bairro || "";
+                            document.getElementById("cidade").value = data.municipio || "";
+                            document.getElementById('cep').value = (data.cep || "").replace(/[^\d]/g, '');
                             const estadoSelect = document.getElementById("Estado");
                             estadoSelect.value = data.uf || "";
-                            if (!estadoSelect.value) {
-                                alert("Estado não encontrado no seletor.");
-                            }
-                        } else {
-                            alert('CNPJ não encontrado.');
                         }
                     })
                     .catch(error => console.error('Erro:', error));
-            } else {
-                alert('CNPJ inválido. Certifique-se de que possui 14 dígitos.');
             }
         });
     </script>

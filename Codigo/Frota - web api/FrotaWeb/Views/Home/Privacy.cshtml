@@ -1,6 +1,359 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Política de Privacidade";
+    Layout = null;
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Frota Pública</title>
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .privacy-policy-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .privacy-policy-content {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .privacy-header {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .privacy-header h1 {
+            color: #2563eb;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .last-updated {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .privacy-intro {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2563eb;
+        }
+
+        .privacy-intro p {
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .privacy-intro p:last-child {
+            margin-bottom: 0;
+        }
+
+        .privacy-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .privacy-section h2 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+        }
+
+        .privacy-section h3 {
+            color: #374151;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .privacy-section p {
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .privacy-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: #4b5563;
+        }
+
+        .privacy-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #374151;
+        }
+
+        .contact-info p:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-info i {
+            color: #2563eb;
+            width: 20px;
+            font-size: 1.1rem;
+        }
+
+        .contact-info a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .privacy-policy-content {
+                padding: 1.5rem;
+            }
+
+            .privacy-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .privacy-section h2 {
+                font-size: 1.3rem;
+            }
+
+            .privacy-section h3 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="privacy-policy-container">
+        <div class="privacy-policy-content">
+            <header class="privacy-header">
+                <h1>Política de Privacidade – Frota Pública</h1>
+                <p class="last-updated">Última atualização: @DateTime.Now.ToString("dd/MM/yyyy")</p>
+            </header>
+
+            <div class="privacy-intro">
+                <p>
+                    A ItatechJr respeita a sua privacidade e está comprometida com a proteção dos dados pessoais de seus usuários. 
+                    Esta Política de Privacidade descreve como as informações são coletadas, utilizadas, armazenadas e protegidas no 
+                    aplicativo Frota Pública, disponível na Google Play Store.
+                </p>
+                <p>
+                    <strong>Ao utilizar o aplicativo, você concorda com as práticas descritas nesta Política.</strong>
+                </p>
+            </div>
+
+            <section class="privacy-section">
+                <h2>1. Informações que Coletamos</h2>
+                <p>O aplicativo Frota Pública pode coletar os seguintes tipos de informações:</p>
+
+                <h3>1.1 Informações fornecidas pelo usuário</h3>
+                <ul>
+                    <li>Nome completo;</li>
+                    <li>Endereço de e-mail;</li>
+                    <li>Dados de autenticação (login e senha);</li>
+                    <li>Cargo ou vínculo institucional;</li>
+                    <li>Informações inseridas voluntariamente no uso do sistema.</li>
+                </ul>
+
+                <h3>1.2 Informações operacionais</h3>
+                <ul>
+                    <li>Dados de veículos (placa, modelo, ano, status);</li>
+                    <li>Registros de uso, manutenção e histórico operacional;</li>
+                    <li>Informações administrativas relacionadas à gestão da frota.</li>
+                </ul>
+
+                <h3>1.3 Informações técnicas</h3>
+                <ul>
+                    <li>Endereço IP;</li>
+                    <li>Tipo e modelo do dispositivo;</li>
+                    <li>Sistema operacional e versão;</li>
+                    <li>Registros de acesso e uso do aplicativo.</li>
+                </ul>
+
+                <h3>1.4 Dados de localização (quando aplicável)</h3>
+                <p>
+                    Caso o aplicativo utilize funcionalidades de localização, a coleta ocorrerá somente com consentimento explícito do usuário, 
+                    podendo ser utilizada para:
+                </p>
+                <ul>
+                    <li>Monitoramento operacional da frota;</li>
+                    <li>Registro de rotas ou eventos logísticos.</li>
+                </ul>
+                <p>
+                    A localização pode ser desativada a qualquer momento nas configurações do dispositivo.
+                </p>
+            </section>
+
+            <section class="privacy-section">
+                <h2>2. Como Utilizamos as Informações</h2>
+                <p>As informações coletadas são utilizadas para:</p>
+                <ul>
+                    <li>Fornecer e operar as funcionalidades do aplicativo;</li>
+                    <li>Autenticar usuários e gerenciar contas;</li>
+                    <li>Gerar relatórios de gestão de frota;</li>
+                    <li>Melhorar a performance, estabilidade e segurança do aplicativo;</li>
+                    <li>Cumprir obrigações legais e administrativas;</li>
+                    <li>Comunicar atualizações relevantes do sistema.</li>
+                </ul>
+            </section>
+
+            <section class="privacy-section">
+                <h2>3. Compartilhamento de Informações</h2>
+                <p>A ItatechJr não vende, aluga ou comercializa dados pessoais dos usuários.</p>
+                <p>Os dados poderão ser compartilhados apenas:</p>
+                <ul>
+                    <li>Com provedores de infraestrutura e hospedagem, estritamente para funcionamento do serviço;</li>
+                    <li>Quando exigido por lei, ordem judicial ou autoridade competente;</li>
+                    <li>Para proteção de direitos legais e prevenção de fraudes.</li>
+                </ul>
+            </section>
+
+            <section class="privacy-section">
+                <h2>4. Armazenamento e Segurança dos Dados</h2>
+                <p>
+                    Adotamos medidas técnicas e organizacionais adequadas para proteger os dados contra:
+                </p>
+                <ul>
+                    <li>Acesso não autorizado;</li>
+                    <li>Alteração indevida;</li>
+                    <li>Vazamento ou destruição acidental.</li>
+                </ul>
+                <p>
+                    Essas medidas incluem controle de acesso, boas práticas de desenvolvimento seguro e proteção da infraestrutura. 
+                    Ainda assim, nenhum sistema é totalmente isento de riscos.
+                </p>
+            </section>
+
+            <section class="privacy-section">
+                <h2>5. Retenção e Exclusão de Dados</h2>
+                <p>
+                    Os dados pessoais são mantidos apenas pelo tempo necessário para cumprir as finalidades descritas nesta Política 
+                    ou conforme exigido por lei.
+                </p>
+                <p>O usuário pode solicitar:</p>
+                <ul>
+                    <li>Acesso aos seus dados;</li>
+                    <li>Correção de informações;</li>
+                    <li>Exclusão da conta e dos dados pessoais, quando aplicável.</li>
+                </ul>
+            </section>
+
+            <section class="privacy-section">
+                <h2>6. Direitos do Usuário (LGPD)</h2>
+                <p>
+                    Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), o usuário tem direito a:
+                </p>
+                <ul>
+                    <li>Confirmar a existência de tratamento de dados;</li>
+                    <li>Acessar, corrigir ou atualizar seus dados;</li>
+                    <li>Solicitar a anonimização ou exclusão;</li>
+                    <li>Revogar consentimentos previamente concedidos.</li>
+                </ul>
+                <p>
+                    As solicitações podem ser feitas através do canal de contato informado abaixo.
+                </p>
+            </section>
+
+            <section class="privacy-section">
+                <h2>7. Permissões do Aplicativo</h2>
+                <p>O aplicativo pode solicitar permissões necessárias para seu funcionamento, como:</p>
+                <ul>
+                    <li>Acesso à internet;</li>
+                    <li>Acesso à localização (quando aplicável);</li>
+                    <li>Armazenamento local para dados operacionais.</li>
+                </ul>
+                <p>
+                    Nenhuma permissão é utilizada para fins não relacionados à funcionalidade principal do aplicativo.
+                </p>
+            </section>
+
+            <section class="privacy-section">
+                <h2>8. Alterações nesta Política</h2>
+                <p>
+                    Esta Política de Privacidade pode ser atualizada periodicamente.
+                    Recomendamos que o usuário revise esta página regularmente. A data da última atualização será sempre informada no topo do documento.
+                </p>
+            </section>
+
+            <section class="privacy-section">
+                <h2>9. Contato</h2>
+                <p>
+                    Em caso de dúvidas, solicitações ou questões relacionadas à privacidade e proteção de dados, entre em contato:
+                </p>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> <strong>E-mail:</strong> <a href="mailto:contato@itatechjr.com.br">contato@itatechjr.com.br</a></p>
+                    <p><i class="fas fa-building"></i> <strong>Empresa:</strong> ItatechJr</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

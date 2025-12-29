@@ -20,12 +20,33 @@ namespace FrotaWeb.Controllers
 		}
 
 		// GET: Vistoria
-		public ActionResult Index()
+		[Route("Vistoria/Index/{page}")]
+		[Route("Vistoria/{page}")]
+		[Route("Vistoria")]
+		public ActionResult Index([FromRoute] int page = 0)
 		{
             uint.TryParse(User.Claims?.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
-            var vistorias = vistoriaService.GetAll(idFrota);
-			var vistoriasViewModel = mapper.Map<List<VistoriaViewModel>>(vistorias);
-			return View(vistoriasViewModel);
+            
+            int itemsPerPage = 20;
+            var allVistorias = vistoriaService.GetAll(idFrota).ToList();
+            var totalItems = allVistorias.Count;
+            
+            var pagedItems = allVistorias
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<VistoriaViewModel>
+            {
+                Items = mapper.Map<List<VistoriaViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+			return View(pagedResult.Items);
 		}
 
 		// GET: Vistoria/Details/5

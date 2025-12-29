@@ -13,10 +13,7 @@
         <a href="javascript:history.back()" class="btn btn-tertiary">
             <i class="fas fa-arrow-left"></i> Voltar
         </a>
-        <h1 class="delete-title">
-            <i class="fas fa-trash-alt"></i>
-            Excluir @entityName
-        </h1>
+        <h1 class="delete-title">Excluir @entityName</h1>
     </div>
 
     <div class="delete-card">
@@ -31,27 +28,45 @@
         <div class="delete-body">
             <div class="details-body">
                 <div class="details-item">
-                    <span class="details-label">Código</span>
+                    <span class="details-label">
+                        <i class="fas fa-hashtag"></i>
+                        Código
+                    </span>
                     <span class="details-value">@Model.Id</span>
                 </div>
                 <div class="details-item">
-                    <span class="details-label">Fornecedor</span>
+                    <span class="details-label">
+                        <i class="fas fa-building"></i>
+                        Fornecedor
+                    </span>
                     <span class="details-value">@Model.IdFornecedor</span>
                 </div>
                 <div class="details-item">
-                    <span class="details-label">Veículo</span>
+                    <span class="details-label">
+                        <i class="fas fa-car"></i>
+                        Veículo
+                    </span>
                     <span class="details-value">@Model.IdVeiculo</span>
                 </div>
                 <div class="details-item">
-                    <span class="details-label">Data/Hora</span>
+                    <span class="details-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        Data/Hora
+                    </span>
                     <span class="details-value">@Model.DataHora.ToString("dd/MM/yyyy HH:mm", culture)</span>
                 </div>
                 <div class="details-item">
-                    <span class="details-label">Odômetro</span>
+                    <span class="details-label">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Odômetro
+                    </span>
                     <span class="details-value">@Model.Odometro km</span>
                 </div>
                 <div class="details-item">
-                    <span class="details-label">Litros</span>
+                    <span class="details-label">
+                        <i class="fas fa-gas-pump"></i>
+                        Litros
+                    </span>
                     <span class="details-value">@Model.Litros L</span>
                 </div>
             </div>

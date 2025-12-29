@@ -24,6 +24,10 @@
         <div class="sidebar-header">
             <img src="~/img/logo/logo.png" alt="Logo" class="sidebar-logo">
             <h1 class="sidebar-title">Frota</h1>
+            <!-- Sidebar Toggle Button (Inside Sidebar) -->
+            <button class="sidebar-toggle-internal" id="sidebarToggleInternal" title="Expandir/Retrair">
+                <i class="fas fa-chevron-left"></i>
+            </button>
         </div>
 
         <!-- Navigation -->
@@ -112,6 +116,15 @@
                             </div>
                             <span class="nav-text">Manutenções</span>
                         </a>
+                        @if (User.IsInRole("Mecânico"))
+                        {
+                            <a href="@Url.Action("Index", "Mecanico")" class="nav-link">
+                                <div class="nav-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <span class="nav-text">Painel do Mecânico</span>
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="nav-item">
@@ -200,9 +213,9 @@
         </div>
     </nav>
 
-    <!-- Sidebar Toggle Button (Always Visible) -->
-    <button class="sidebar-toggle" id="sidebarToggle">
-        <i class="fas fa-chevron-right"></i>
+    <!-- Sidebar Toggle Button (External - When Sidebar is Closed) -->
+    <button class="sidebar-toggle-external" id="sidebarToggleExternal">
+        <i class="fas fa-bars"></i>
     </button>
 
     <!-- Sidebar Overlay (Mobile) -->
@@ -225,6 +238,7 @@
     <script src="~/js/modal.js" asp-append-version="true"></script>
     <script src="~/js/input-masks.js" asp-append-version="true"></script>
     <script src="~/js/table-interactions.js" asp-append-version="true"></script>
+    <script src="~/js/pagination.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -512,6 +512,169 @@ body.register-page {
   margin-top: var(--space-4);
 }
 
+/* ========================================
+   USER PROFILE PAGE
+   ======================================== */
+.user-profile-card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-primary);
+  overflow: hidden;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: var(--text-inverse);
+}
+
+.user-profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--text-inverse);
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-profile-info {
+  flex: 1;
+}
+
+.user-profile-name {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  margin: 0 0 var(--space-1) 0;
+  color: var(--text-inverse);
+}
+
+.user-profile-subtitle {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.user-profile-form {
+  padding: var(--space-8);
+}
+
+.user-profile-form .form-group {
+  margin-bottom: var(--space-6);
+}
+
+.user-profile-form .form-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.user-profile-form .input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-profile-form .input-icon {
+  position: absolute;
+  left: var(--space-4);
+  color: var(--text-tertiary);
+  font-size: var(--text-base);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.user-profile-form .form-input {
+  width: 100%;
+  padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 24px + var(--space-3));
+  font-size: var(--text-base);
+  font-family: var(--font-family-sans);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.user-profile-form .form-input:focus {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(5, 117, 230, 0.1);
+}
+
+.user-profile-form .form-input:disabled {
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+.user-profile-form .form-help {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: var(--space-2);
+}
+
+.user-profile-form .form-error {
+  background: var(--error-50);
+  border: 1px solid var(--error-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  color: var(--error-700);
+  font-size: var(--text-sm);
+}
+
+.user-profile-form .form-error-text {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--error-600);
+  margin-top: var(--space-1);
+}
+
+.user-profile-form .form-actions {
+  margin-top: var(--space-8);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.user-profile-form .btn {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+
+.user-profile-form .btn-primary {
+  background: var(--primary-500);
+  color: var(--text-inverse);
+}
+
+.user-profile-form .btn-primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 @media (max-width: 768px) {
   .identity-content {
     grid-template-columns: 1fr;
@@ -529,5 +692,24 @@ body.register-page {
   
   .identity-main {
     padding: var(--space-4);
+  }
+  
+  .user-profile-header {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-6);
+  }
+  
+  .user-profile-form {
+    padding: var(--space-6);
+  }
+  
+  .user-profile-form .form-actions {
+    flex-direction: column;
+  }
+  
+  .user-profile-form .btn {
+    width: 100%;
+    justify-content: center;
   }
 }

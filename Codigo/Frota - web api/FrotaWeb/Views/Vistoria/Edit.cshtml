@@ -1,63 +1,88 @@
 ﻿@model FrotaWeb.Models.VistoriaViewModel
+@using System.Globalization
 
+@{
+    var entityName = "Vistoria";
+    var controllerName = "Vistoria";
+    var culture = new CultureInfo("pt-BR");
+}
 
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/form.css" asp-append-version="true" />
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="edit-title">Editar @entityName</h1>
+    </div>
 
-<main class="container mt-4">
-	<h4 class="page-title fs-2">
-		<i class="fa fa-clipboard-check mr-3"></i>
-		Vistoria
-	</h4>
-	<h1 class="my-text-label fs-3 mt-4 mb-4">Editar Vistoria</h1>
-	<form asp-action="Edit" class="creator-form fs-5">
-		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Data" class="label">Data</label>
-					<input asp-for="Data" class="form-control" placeholder="" />
-					<span asp-validation-for="Data" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="Problemas" class="label">Problemas</label>
-					<input asp-for="Problemas" class="form-control" placeholder="" />
-					<span asp-validation-for="Problemas" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mb-3">
-			<div class="col-md-6">
-				<div class="type-container offset-md-1 itens-center">
-					<label asp-for="Tipo" class="label">Tipo</label>
-					<input asp-for="Tipo" class="form-control" placeholder="" />
-					<span asp-validation-for="Tipo" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="type-container offset-md-2 itens-center">
-					<label asp-for="IdPessoaResponsavel" class="label">Responsável</label>
-					<input asp-for="IdPessoaResponsavel" class="form-control" placeholder="" />
-					<span asp-validation-for="IdPessoaResponsavel" class="text-danger"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row mt-4">
-			<div class="col-12 col-md-6 mb-2 mb-md-0 itens-center">
-				<a asp-action="Index" class="my-button btn btn-danger btn-sm w-50 w-md-auto">Voltar</a>
-			</div>
-			<div class="col-12 col-md-6 d-flex justify-content-md-end itens-center">
-				<input type="submit" value="Salvar" class="my-button btn btn-success btn-sm w-50 w-md-auto botao-sucesso" />
-			</div>
-		</div>
-	</form>
-</main>
+    <div class="edit-card">
+        <form asp-action="Edit" method="post" class="edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Data" class="form-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        Data
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input asp-for="Data" class="form-input input-data" type="date" />
+                    </div>
+                    <span asp-validation-for="Data" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Tipo" class="form-label">
+                        <i class="fas fa-tag"></i>
+                        Tipo
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-tag input-icon"></i>
+                        <input asp-for="Tipo" class="form-input input-md" placeholder="Tipo de vistoria" />
+                    </div>
+                    <span asp-validation-for="Tipo" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdPessoaResponsavel" class="form-label">
+                    <i class="fas fa-user-tie"></i>
+                    Responsável
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-user-tie input-icon"></i>
+                    <input asp-for="IdPessoaResponsavel" class="form-input input-numero" type="number" placeholder="ID do Responsável" />
+                </div>
+                <span asp-validation-for="IdPessoaResponsavel" class="form-error-text"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Problemas" class="form-label">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Problemas
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-exclamation-triangle input-icon"></i>
+                    <textarea asp-for="Problemas" class="form-input" rows="4" placeholder="Descreva os problemas encontrados"></textarea>
+                </div>
+                <span asp-validation-for="Problemas" class="form-error-text"></span>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
-	<script src="~/js/form.js" asp-append-version="true"></script>
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    <partial name="_ValidationScriptsPartial" />
 }

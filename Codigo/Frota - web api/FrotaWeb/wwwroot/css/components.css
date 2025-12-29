@@ -308,6 +308,73 @@
   }
 }
 
+/* ========================================
+   PAGINAÇÃO
+   ======================================== */
+.pagination-container {
+  margin-top: var(--space-6);
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-4) 0;
+}
+
+.pagination {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.pagination-btn {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+}
+
+.pagination-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn.active {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  color: var(--text-inverse);
+  font-weight: var(--font-semibold);
+}
+
+.pagination-btn:disabled,
+.pagination-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    justify-content: center;
+  }
+  
+  .pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: var(--text-xs);
+  }
+}
+
 @media (max-width: 768px) {
   .percurso-card-body {
     grid-template-columns: 1fr;

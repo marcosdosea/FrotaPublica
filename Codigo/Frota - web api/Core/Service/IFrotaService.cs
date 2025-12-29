@@ -12,5 +12,6 @@ namespace Core.Service
         uint GetUnidadeByUsername(string username);
         IEnumerable<Frotum> GetAll();
         IEnumerable<FrotaDTO> GetAllOrdemAlfabetica();
+        Task<PessoaInfoDto> GetFrotaEUnidadeByUsernameAsync(string username);
     }
 }

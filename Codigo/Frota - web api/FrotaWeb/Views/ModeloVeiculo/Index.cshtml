@@ -67,6 +67,37 @@
             </table>
         </div>
     </div>
+
+    @{
+        var pagedResult = ViewBag.PagedResult as PagedResult<ModeloVeiculoViewModel>;
+    }
+    @if (pagedResult != null && pagedResult.TotalPages > 1)
+    {
+        <nav class="pagination-container">
+            <div class="pagination">
+                @if (pagedResult.HasPreviousPage)
+                {
+                    <a href="@Url.Action("Index", "ModeloVeiculo", new { page = pagedResult.CurrentPage - 1 })" class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                }
+                
+                @for (int i = Math.Max(0, pagedResult.CurrentPage - 2); i <= Math.Min(pagedResult.TotalPages - 1, pagedResult.CurrentPage + 2); i++)
+                {
+                    <a href="@Url.Action("Index", "ModeloVeiculo", new { page = i })" class="pagination-btn @(i == pagedResult.CurrentPage ? "active" : "")">
+                        @(i + 1)
+                    </a>
+                }
+                
+                @if (pagedResult.HasNextPage)
+                {
+                    <a href="@Url.Action("Index", "ModeloVeiculo", new { page = pagedResult.CurrentPage + 1 })" class="pagination-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        </nav>
+    }
 </main>
 
 <script>

@@ -23,7 +23,10 @@ namespace FrotaWeb.Controllers
         }
 
         // GET: FornecedorController
-        public ActionResult Index()
+        [Route("Fornecedor/Index/{page}")]
+        [Route("Fornecedor/{page}")]
+        [Route("Fornecedor")]
+        public ActionResult Index([FromRoute] int page = 0)
         {
             int.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId").Value, out int idFrota);
             if (idFrota == 0)
@@ -31,9 +34,26 @@ namespace FrotaWeb.Controllers
                 return Redirect("/Identity/Account/Login");
             }
 
-            var listaFornecedor = fornecedorService.GetAll(idFrota);
-            var listaFornecedorModel = mapper.Map<List<FornecedorViewModel>>(listaFornecedor);
-            return View(listaFornecedorModel);
+            int itemsPerPage = 20;
+            var allFornecedores = fornecedorService.GetAll(idFrota).ToList();
+            var totalItems = allFornecedores.Count;
+            
+            var pagedItems = allFornecedores
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToList();
+            
+            var pagedResult = new PagedResult<FornecedorViewModel>
+            {
+                Items = mapper.Map<List<FornecedorViewModel>>(pagedItems),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         // GET: FornecedorController/Details/5

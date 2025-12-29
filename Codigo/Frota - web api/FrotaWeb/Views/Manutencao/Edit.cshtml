@@ -1,112 +1,194 @@
 ﻿@model FrotaWeb.Models.ManutencaoViewModel
 @using Core.DTO
+@using System.Globalization
 
 @{
     var veiculos = ViewData["Veiculos"] as IEnumerable<VeiculoDTO> ?? Enumerable.Empty<VeiculoDTO>();
     var pessoas = ViewData["Pessoas"] as IEnumerable<PessoaDTO> ?? Enumerable.Empty<PessoaDTO>();
     var fornecedores = ViewData["Fornecedores"] as IEnumerable<FornecedorDTO> ?? Enumerable.Empty<FornecedorDTO>();
+    var entityName = "Manutenção";
+    var controllerName = "Manutencao";
+    var culture = new CultureInfo("pt-BR");
 }
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
-
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
         </a>
-        <h1>Cadastro de Manutenção</h1>
+        <h1 class="edit-title">Editar @entityName</h1>
     </div>
-    <div class="fomulario">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group w30">
-                <label asp-for="IdVeiculo" class="control-label">Veículo</label>
-                <select asp-for="IdVeiculo" class="custom-select select2">
-                    @if (!veiculos.Any())
-                    {
-                        <option value="" disabled selected hidden>Veiculo</option>
-                    }
-                    else
-                    {
-                        foreach (var veiculo in veiculos)
-                        {
-                            <option value="@veiculo.Id">@veiculo.Placa</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
+
+    <div class="edit-card">
+        <form asp-action="Edit" method="post" class="edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="IdVeiculo" class="form-label">
+                        <i class="fas fa-car"></i>
+                        Veículo
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdVeiculo" class="select-modern select-full">
+                            @if (!veiculos.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um veículo</option>
+                            }
+                            else
+                            {
+                                foreach (var veiculo in veiculos)
+                                {
+                                    <option value="@veiculo.Id" selected="@(Model.IdVeiculo == veiculo.Id)">@veiculo.Placa</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdVeiculo" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IdFornecedor" class="form-label">
+                        <i class="fas fa-building"></i>
+                        Fornecedor
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdFornecedor" class="select-modern select-full">
+                            @if (!fornecedores.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um fornecedor</option>
+                            }
+                            else
+                            {
+                                foreach (var fornecedor in fornecedores)
+                                {
+                                    <option value="@fornecedor.Id" selected="@(Model.IdFornecedor == fornecedor.Id)">@fornecedor.Nome</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdFornecedor" class="form-error-text"></span>
+                </div>
             </div>
-            <div class="form-group w40">
-                <label asp-for="IdFornecedor" class="control-label">Fornecedor</label>
-                <select asp-for="IdFornecedor" class="custom-select select2">
-                    @if (!fornecedores.Any())
-                    {
-                        <option value="" disabled selected hidden>Fornecedor</option>
-                    }
-                    else
-                    {
-                        foreach (var fornecedor in fornecedores)
-                        {
-                            <option value="@fornecedor.Id">@fornecedor.Nome</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="IdFornecedor" class="text-danger"></span>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="DataHora" class="form-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        Data/Hora
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input asp-for="DataHora" class="form-input input-data" type="datetime-local" />
+                    </div>
+                    <span asp-validation-for="DataHora" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IdResponsavel" class="form-label">
+                        <i class="fas fa-user-tie"></i>
+                        Responsável
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="IdResponsavel" class="select-modern select-full">
+                            @if (!pessoas.Any())
+                            {
+                                <option value="" disabled selected hidden>Selecione um responsável</option>
+                            }
+                            else
+                            {
+                                foreach (var pessoa in pessoas)
+                                {
+                                    <option value="@pessoa.Id" selected="@(Model.IdResponsavel == pessoa.Id)">@pessoa.Nome</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="IdResponsavel" class="form-error-text"></span>
+                </div>
             </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="ValorPecas" class="form-label">
+                        <i class="fas fa-dollar-sign"></i>
+                        Valor das Peças
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-dollar-sign input-icon"></i>
+                        <input asp-for="ValorPecas" class="form-input input-valor" placeholder="0.00" type="text" />
+                    </div>
+                    <span asp-validation-for="ValorPecas" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ValorManutencao" class="form-label">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Valor da Manutenção
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-money-bill-wave input-icon"></i>
+                        <input asp-for="ValorManutencao" class="form-input input-valor" placeholder="0.00" type="text" />
+                    </div>
+                    <span asp-validation-for="ValorManutencao" class="form-error-text"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Tipo" class="form-label">
+                        <i class="fas fa-tag"></i>
+                        Tipo
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-tag input-icon"></i>
+                        <input asp-for="Tipo" class="form-input input-md" placeholder="Tipo de manutenção" />
+                    </div>
+                    <span asp-validation-for="Tipo" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Status" class="form-label">
+                        <i class="fas fa-info-circle"></i>
+                        Status
+                    </label>
+                    <div class="select-wrapper">
+                        <select asp-for="Status" class="select-modern select-full">
+                            <option value="P" selected="@(Model.Status == "P")">Pendente</option>
+                            <option value="E" selected="@(Model.Status == "E")">Em Andamento</option>
+                            <option value="C" selected="@(Model.Status == "C")">Concluída</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Status" class="form-error-text"></span>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label asp-for="DataHora" class="control-label"></label>
-                <input asp-for="DataHora" class="form-control" />
-                <span asp-validation-for="DataHora" class="text-danger"></span>
+                <label asp-for="Comprovante" class="form-label">
+                    <i class="fas fa-file-upload"></i>
+                    Comprovante
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-file-upload input-icon"></i>
+                    <input asp-for="Comprovante" class="form-input" type="file" />
+                </div>
+                <span asp-validation-for="Comprovante" class="form-error-text"></span>
             </div>
-            <div class="form-group w40">
-                <label asp-for="IdResponsavel" class="control-label">Responsável</label>
-                <select asp-for="IdResponsavel" class="custom-select select2">
-                    @if (!pessoas.Any())
-                    {
-                        <option value="" disabled selected hidden>Responsável</option>
-                    }
-                    else
-                    {
-                        foreach (var pessoa in pessoas)
-                        {
-                            <option value="@pessoa.Id">@pessoa.Nome</option>
-                        }
-                    }
-                </select>
-                <span asp-validation-for="IdResponsavel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ValorPecas" class="control-label"></label>
-                <input asp-for="ValorPecas" class="form-control" />
-                <span asp-validation-for="ValorPecas" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ValorManutencao" class="control-label"></label>
-                <input asp-for="ValorManutencao" class="form-control" />
-                <span asp-validation-for="ValorManutencao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tipo" class="control-label"></label>
-                <input asp-for="Tipo" class="form-control" />
-                <span asp-validation-for="Tipo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Comprovante" class="control-label"></label>
-                <input asp-for="Comprovante" class="form-control" />
-                <span asp-validation-for="Comprovante" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="buttons">
-                <input type="submit" value="Salvar Alterações" class="btn btn-primary" />
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
             </div>
         </form>
     </div>
-</main>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

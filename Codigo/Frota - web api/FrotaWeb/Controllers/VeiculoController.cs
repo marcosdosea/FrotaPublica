@@ -50,19 +50,22 @@ namespace FrotaWeb.Controllers
         {
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
 
-            int length = 15;
-            var listaVeiculos = veiculoService.GetPaged(page, length, idFrota).ToList();
-
+            int itemsPerPage = 20;
+            var listaVeiculos = veiculoService.GetPaged(page, itemsPerPage, idFrota).ToList();
             var totalVeiculos = veiculoService.GetAll(idFrota).Count();
-            var totalPages = (int)Math.Ceiling((double)totalVeiculos / length);
+            
+            var pagedResult = new PagedResult<VeiculoViewModel>
+            {
+                Items = mapper.Map<List<VeiculoViewModel>>(listaVeiculos),
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = totalVeiculos,
+                TotalPages = (int)Math.Ceiling((double)totalVeiculos / itemsPerPage)
+            };
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(listaVeiculos);
-            foreach (var veiculo in veiculosViewModel)
+            foreach (var veiculo in pagedResult.Items)
             {
                 veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
-                string status;
                 if(veiculo.Status == "D")
                 {
                     veiculo.StatusNome = "Disponível";
@@ -80,7 +83,9 @@ namespace FrotaWeb.Controllers
                     veiculo.StatusNome = "Indisponível";
                 }
             }
-            return View(veiculosViewModel);
+
+            ViewBag.PagedResult = pagedResult;
+            return View(pagedResult.Items);
         }
 
         [Authorize(Roles = "Gestor,Motorista")]
@@ -91,23 +96,29 @@ namespace FrotaWeb.Controllers
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "FrotaId")?.Value, out uint idFrota);
             uint.TryParse(User.Claims.FirstOrDefault(claim => claim.Type == "UnidadeId")?.Value, out uint idUnidade);
 
-            int length = 15;
-            var pagedResult = veiculoService.GetVeiculosDisponiveisUnidadeAdministrativaPaged(page, length, idFrota, idUnidade, placa);
+            int itemsPerPage = 20;
+            var servicePagedResult = veiculoService.GetVeiculosDisponiveisUnidadeAdministrativaPaged(page, itemsPerPage, idFrota, idUnidade, placa);
 
-            var totalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / length);
-
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPlaca = placa;
-
-            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(pagedResult.Items);
+            var veiculosViewModel = mapper.Map<List<VeiculoViewModel>>(servicePagedResult.Items);
 
             foreach (var veiculo in veiculosViewModel)
             {
                 veiculo.ModeloNome = modeloVeiculoService.Get(veiculo.IdModeloVeiculo).Nome;
                 veiculo.StatusNome = "Disponível";
             }
-            return View(veiculosViewModel);
+
+            var pagedResult = new PagedResult<VeiculoViewModel>
+            {
+                Items = veiculosViewModel,
+                CurrentPage = page,
+                ItemsPerPage = itemsPerPage,
+                TotalItems = servicePagedResult.TotalCount,
+                TotalPages = (int)Math.Ceiling((double)servicePagedResult.TotalCount / itemsPerPage)
+            };
+
+            ViewBag.PagedResult = pagedResult;
+            ViewBag.CurrentPlaca = placa;
+            return View(pagedResult.Items);
         }
 
         [Route("Veiculo/Gerenciamento/{idPercurso}/{idVeiculo}")]

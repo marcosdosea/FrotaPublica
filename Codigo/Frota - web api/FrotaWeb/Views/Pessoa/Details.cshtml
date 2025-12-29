@@ -1,110 +1,138 @@
 ﻿@model FrotaWeb.Models.PessoaViewModel
 
-<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+@{
+    var entityName = "Pessoa";
+    var controllerName = "Pessoa";
+}
 
-<div class="container-details">
-    <h4>PessoaViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cpf)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cpf)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cep)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cep)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rua)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rua)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Bairro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Bairro)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Complemento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Complemento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Numero)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Numero)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cidade)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cidade)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdFrota)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdFrota)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdPapelPessoa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdPapelPessoa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ativo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ativo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusAtivo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusAtivo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
-        </dd>
-    </dl>
-</div>
-<div class="container-buttons">
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+<div class="details-page">
+    <div class="details-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <h1 class="details-title">Visualizar @entityName</h1>
+    </div>
+
+    <div class="details-card">
+        <div class="details-body">
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-hashtag"></i>
+                    Código
+                </span>
+                <span class="details-value">@Model.Id</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-id-card"></i>
+                    CPF
+                </span>
+                <span class="details-value">@Model.Cpf</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-user"></i>
+                    Nome
+                </span>
+                <span class="details-value">@Model.Nome</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-envelope"></i>
+                    Email
+                </span>
+                <span class="details-value">@Model.Email</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-phone"></i>
+                    Telefone
+                </span>
+                <span class="details-value">@Model.Telefone</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-map-marker-alt"></i>
+                    CEP
+                </span>
+                <span class="details-value">@(Model.Cep ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-road"></i>
+                    Rua
+                </span>
+                <span class="details-value">@(Model.Rua ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-hashtag"></i>
+                    Número
+                </span>
+                <span class="details-value">@(Model.Numero ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-building"></i>
+                    Complemento
+                </span>
+                <span class="details-value">@(Model.Complemento ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-map"></i>
+                    Bairro
+                </span>
+                <span class="details-value">@(Model.Bairro ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-city"></i>
+                    Cidade
+                </span>
+                <span class="details-value">@(Model.Cidade ?? "-")</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-flag"></i>
+                    Estado
+                </span>
+                <span class="details-value">@Model.Estado</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-truck"></i>
+                    Frota
+                </span>
+                <span class="details-value">@Model.IdFrota</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-user-tag"></i>
+                    Papel
+                </span>
+                <span class="details-value">@Model.IdPapelPessoa</span>
+            </div>
+            <div class="details-item">
+                <span class="details-label">
+                    <i class="fas fa-check-circle"></i>
+                    Status
+                </span>
+                <span class="details-value">
+                    <span class="badge @(Model.Ativo == 1 ? "badge-success" : "badge-error")">
+                        @(Model.StatusAtivo ?? (Model.Ativo == 1 ? "Ativo" : "Desativado"))
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="details-actions">
+            <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Voltar para Lista
+            </a>
+            <a asp-action="Edit" asp-controller="@controllerName" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
 </div>

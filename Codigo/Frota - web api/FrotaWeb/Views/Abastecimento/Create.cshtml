@@ -1,51 +1,97 @@
 ﻿@model FrotaWeb.Models.AbastecimentoViewModel
 
-<link rel="stylesheet" href="~/css/form-pages.css" asp-append-version="true" />
+@{
+    var entityName = "Abastecimento";
+    var controllerName = "Abastecimento";
+}
 
-<main class="main_content container">
-    <div class="titulo-pagina">
-        <a href="javascript:history.back()" class="voltar">
-            <i class="fa fa-arrow-left"></i> Voltar
+<div class="edit-page">
+    <div class="edit-header">
+        <a href="javascript:history.back()" class="btn btn-tertiary">
+            <i class="fas fa-arrow-left"></i> Voltar
         </a>
-        <h1>Lan�amento de Abastecimento</h1>
+        <h1 class="edit-title">Criar @entityName</h1>
     </div>
-    <div class="fomulario">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="edit-card">
+        <form asp-action="Create" method="post" class="edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-error"></div>
+            
             <div class="form-group">
-                <label asp-for="IdFornecedor" class="control-label"></label>
-                <input asp-for="IdFornecedor" class="form-control" />
-                <span asp-validation-for="IdFornecedor" class="text-danger"></span>
+                <label asp-for="IdVeiculo" class="form-label">
+                    <i class="fas fa-car"></i>
+                    Veículo
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-car input-icon"></i>
+                    <input asp-for="IdVeiculo" class="form-input input-numero" type="number" placeholder="ID do Veículo" />
+                </div>
+                <span asp-validation-for="IdVeiculo" class="form-error-text"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="IdVeiculo" class="control-label"></label>
-                <input asp-for="IdVeiculo" class="form-control" />
-                <span asp-validation-for="IdVeiculo" class="text-danger"></span>
+                <label asp-for="IdFornecedor" class="form-label">
+                    <i class="fas fa-building"></i>
+                    Fornecedor
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-building input-icon"></i>
+                    <input asp-for="IdFornecedor" class="form-input input-numero" type="number" placeholder="ID do Fornecedor" />
+                </div>
+                <span asp-validation-for="IdFornecedor" class="form-error-text"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="DataHora" class="control-label"></label>
-                <input asp-for="DataHora" class="form-control" />
-                <span asp-validation-for="DataHora" class="text-danger"></span>
+                <label asp-for="DataHora" class="form-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Data/Hora
+                </label>
+                <div class="input-group">
+                    <i class="fas fa-calendar input-icon"></i>
+                    <input asp-for="DataHora" class="form-input input-data" type="datetime-local" />
+                </div>
+                <span asp-validation-for="DataHora" class="form-error-text"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Odometro" class="control-label"></label>
-                <input asp-for="Odometro" class="form-control" />
-                <span asp-validation-for="Odometro" class="text-danger"></span>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Odometro" class="form-label">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Odômetro
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-tachometer-alt input-icon"></i>
+                        <input asp-for="Odometro" class="form-input input-numero" placeholder="26000" type="number" />
+                    </div>
+                    <span asp-validation-for="Odometro" class="form-error-text"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Litros" class="form-label">
+                        <i class="fas fa-gas-pump"></i>
+                        Litros
+                    </label>
+                    <div class="input-group">
+                        <i class="fas fa-gas-pump input-icon"></i>
+                        <input asp-for="Litros" class="form-input input-valor" placeholder="50.00" type="number" step="0.01" />
+                    </div>
+                    <span asp-validation-for="Litros" class="form-error-text"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Litros" class="control-label"></label>
-                <input asp-for="Litros" class="form-control" />
-                <span asp-validation-for="Litros" class="text-danger"></span>
-            </div>
-            <div class="buttons">
-                <input type="submit" value="Lan�ar Abastecimento" class="btn btn-primary" />
+
+            <div class="form-actions">
+                <a asp-action="Index" asp-controller="@controllerName" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
             </div>
         </form>
     </div>
-</main>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/input-masks.js" asp-append-version="true"></script>
 }

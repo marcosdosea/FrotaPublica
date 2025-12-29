@@ -1,0 +1,588 @@
+@{
+    ViewData["Title"] = "Painel do Mecânico";
+    var alertas = ViewBag.Alertas as List<Core.Service.AlertaValidade> ?? new List<Core.Service.AlertaValidade>();
+    var manutencoes = ViewBag.Manutencoes as List<Core.Manutencao> ?? new List<Core.Manutencao>();
+    var idUnidade = ViewBag.IdUnidade as uint?;
+    var nomeUnidade = ViewBag.NomeUnidade as string ?? "N/A";
+}
+
+<div class="mecanico-dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1 class="dashboard-title">
+                <i class="fas fa-wrench"></i>
+                Painel do Mecânico
+            </h1>
+            <p class="dashboard-subtitle">Unidade: @nomeUnidade</p>
+        </div>
+    </div>
+
+    <!-- Alertas de Validade -->
+    <div class="alertas-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Alertas de Validade de Peças
+            </h2>
+            <span class="badge badge-danger">@alertas.Count(a => a.TipoAlerta == "Urgente") Urgentes</span>
+        </div>
+
+        <div class="alertas-grid">
+            @foreach (var alerta in alertas.OrderBy(a => a.TipoAlerta == "Urgente" ? 0 : 1).Take(10))
+            {
+                <div class="alerta-card @(alerta.TipoAlerta == "Urgente" ? "alerta-urgente" : "alerta-aviso")">
+                    <div class="alerta-header">
+                        <div class="alerta-icon">
+                            <i class="fas fa-@(alerta.TipoAlerta == "Urgente" ? "exclamation-circle" : "info-circle")"></i>
+                        </div>
+                        <div class="alerta-tipo">@alerta.TipoAlerta</div>
+                    </div>
+                    <div class="alerta-body">
+                        <h3 class="alerta-peca">@alerta.DescricaoPeca</h3>
+                        <p class="alerta-veiculo">
+                            <i class="fas fa-car"></i> @alerta.PlacaVeiculo
+                        </p>
+                        <p class="alerta-mensagem">@alerta.Mensagem</p>
+                        <div class="alerta-detalhes">
+                            @if (alerta.KmRestantes > 0)
+                            {
+                                <span class="detalhe-item">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    @alerta.KmRestantes km restantes
+                                </span>
+                            }
+                            @if (alerta.DiasRestantes > 0)
+                            {
+                                <span class="detalhe-item">
+                                    <i class="fas fa-calendar"></i>
+                                    @alerta.DiasRestantes dias restantes
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (!alertas.Any())
+            {
+                <div class="empty-state">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Nenhum alerta de validade no momento</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Kanban de Manutenções -->
+    <div class="kanban-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-tasks"></i>
+                Manutenções - Kanban
+            </h2>
+        </div>
+
+        <div class="kanban-board">
+            <!-- Coluna: Pendentes -->
+            <div class="kanban-column">
+                <div class="kanban-column-header status-pendente">
+                    <h3>Pendentes</h3>
+                    <span class="kanban-count">@manutencoes.Count(m => m.Status == "Pendente")</span>
+                </div>
+                <div class="kanban-cards">
+                    @foreach (var manutencao in manutencoes.Where(m => m.Status == "Pendente").OrderByDescending(m => m.DataHora))
+                    {
+                        <div class="kanban-card" data-id="@manutencao.Id">
+                            <div class="kanban-card-header">
+                                <span class="kanban-card-placa">@manutencao.IdVeiculoNavigation.Placa</span>
+                                <span class="kanban-card-tipo">@manutencao.Tipo</span>
+                            </div>
+                            <div class="kanban-card-body">
+                                <p class="kanban-card-data">
+                                    <i class="fas fa-calendar"></i>
+                                    @manutencao.DataHora.ToString("dd/MM/yyyy HH:mm")
+                                </p>
+                                <p class="kanban-card-responsavel">
+                                    <i class="fas fa-user"></i>
+                                    @manutencao.IdResponsavelNavigation.Nome
+                                </p>
+                                <p class="kanban-card-valor">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    R$ @manutencao.ValorManutencao.ToString("N2")
+                                </p>
+                            </div>
+                            <div class="kanban-card-actions">
+                                <a href="@Url.Action("Details", "Manutencao", new { id = manutencao.Id })" class="btn-kanban btn-view">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <a href="@Url.Action("Edit", "Manutencao", new { id = manutencao.Id })" class="btn-kanban btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Coluna: Em Andamento -->
+            <div class="kanban-column">
+                <div class="kanban-column-header status-andamento">
+                    <h3>Em Andamento</h3>
+                    <span class="kanban-count">@manutencoes.Count(m => m.Status == "Em Andamento")</span>
+                </div>
+                <div class="kanban-cards">
+                    @foreach (var manutencao in manutencoes.Where(m => m.Status == "Em Andamento").OrderByDescending(m => m.DataHora))
+                    {
+                        <div class="kanban-card" data-id="@manutencao.Id">
+                            <div class="kanban-card-header">
+                                <span class="kanban-card-placa">@manutencao.IdVeiculoNavigation.Placa</span>
+                                <span class="kanban-card-tipo">@manutencao.Tipo</span>
+                            </div>
+                            <div class="kanban-card-body">
+                                <p class="kanban-card-data">
+                                    <i class="fas fa-calendar"></i>
+                                    @manutencao.DataHora.ToString("dd/MM/yyyy HH:mm")
+                                </p>
+                                <p class="kanban-card-responsavel">
+                                    <i class="fas fa-user"></i>
+                                    @manutencao.IdResponsavelNavigation.Nome
+                                </p>
+                                <p class="kanban-card-valor">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    R$ @manutencao.ValorManutencao.ToString("N2")
+                                </p>
+                            </div>
+                            <div class="kanban-card-actions">
+                                <a href="@Url.Action("Details", "Manutencao", new { id = manutencao.Id })" class="btn-kanban btn-view">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <a href="@Url.Action("Edit", "Manutencao", new { id = manutencao.Id })" class="btn-kanban btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Coluna: Concluídas -->
+            <div class="kanban-column">
+                <div class="kanban-column-header status-concluida">
+                    <h3>Concluídas</h3>
+                    <span class="kanban-count">@manutencoes.Count(m => m.Status == "Concluída")</span>
+                </div>
+                <div class="kanban-cards">
+                    @foreach (var manutencao in manutencoes.Where(m => m.Status == "Concluída").OrderByDescending(m => m.DataHora).Take(10))
+                    {
+                        <div class="kanban-card" data-id="@manutencao.Id">
+                            <div class="kanban-card-header">
+                                <span class="kanban-card-placa">@manutencao.IdVeiculoNavigation.Placa</span>
+                                <span class="kanban-card-tipo">@manutencao.Tipo</span>
+                            </div>
+                            <div class="kanban-card-body">
+                                <p class="kanban-card-data">
+                                    <i class="fas fa-calendar"></i>
+                                    @manutencao.DataHora.ToString("dd/MM/yyyy HH:mm")
+                                </p>
+                                <p class="kanban-card-responsavel">
+                                    <i class="fas fa-user"></i>
+                                    @manutencao.IdResponsavelNavigation.Nome
+                                </p>
+                                <p class="kanban-card-valor">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    R$ @manutencao.ValorManutencao.ToString("N2")
+                                </p>
+                            </div>
+                            <div class="kanban-card-actions">
+                                <a href="@Url.Action("Details", "Manutencao", new { id = manutencao.Id })" class="btn-kanban btn-view">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.mecanico-dashboard {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    margin-bottom: var(--space-6);
+    color: var(--text-inverse);
+}
+
+.dashboard-title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    margin: 0 0 var(--space-2) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.dashboard-subtitle {
+    font-size: var(--text-lg);
+    opacity: 0.9;
+    margin: 0;
+}
+
+.alertas-section,
+.kanban-section {
+    margin-bottom: var(--space-8);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--border-primary);
+}
+
+.section-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.badge {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+}
+
+.badge-danger {
+    background: var(--error-500);
+    color: var(--text-inverse);
+}
+
+.alertas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--space-4);
+}
+
+.alerta-card {
+    background: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    border: 2px solid var(--border-primary);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-fast);
+}
+
+.alerta-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.alerta-urgente {
+    border-color: var(--error-500);
+    background: linear-gradient(to bottom, var(--error-50), var(--bg-elevated));
+}
+
+.alerta-aviso {
+    border-color: var(--warning-500);
+    background: linear-gradient(to bottom, var(--warning-50), var(--bg-elevated));
+}
+
+.alerta-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.alerta-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xl);
+}
+
+.alerta-urgente .alerta-icon {
+    background: var(--error-500);
+    color: var(--text-inverse);
+}
+
+.alerta-aviso .alerta-icon {
+    background: var(--warning-500);
+    color: var(--text-inverse);
+}
+
+.alerta-tipo {
+    font-weight: var(--font-bold);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.alerta-urgente .alerta-tipo {
+    color: var(--error-700);
+}
+
+.alerta-aviso .alerta-tipo {
+    color: var(--warning-700);
+}
+
+.alerta-peca {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.alerta-veiculo {
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-2) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.alerta-mensagem {
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3) 0;
+    line-height: 1.6;
+}
+
+.alerta-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-primary);
+}
+
+.detalhe-item {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    min-height: 600px;
+}
+
+.kanban-column {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-column-header {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.kanban-column-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--text-inverse);
+}
+
+.status-pendente {
+    background: var(--warning-500);
+}
+
+.status-andamento {
+    background: var(--primary-500);
+}
+
+.status-concluida {
+    background: var(--success-500);
+}
+
+.kanban-count {
+    background: rgba(255, 255, 255, 0.3);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+}
+
+.kanban-cards {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    overflow-y: auto;
+    max-height: calc(100vh - 400px);
+}
+
+.kanban-card {
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
+
+.kanban-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.kanban-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.kanban-card-placa {
+    font-weight: var(--font-bold);
+    font-size: var(--text-lg);
+    color: var(--primary-600);
+}
+
+.kanban-card-tipo {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+}
+
+.kanban-card-body {
+    margin-bottom: var(--space-3);
+}
+
+.kanban-card-body p {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.kanban-card-actions {
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-primary);
+}
+
+.btn-kanban {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    text-align: center;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+}
+
+.btn-view {
+    background: var(--primary-500);
+    color: var(--text-inverse);
+}
+
+.btn-view:hover {
+    background: var(--primary-600);
+    color: var(--text-inverse);
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: var(--warning-500);
+    color: var(--text-inverse);
+}
+
+.btn-edit:hover {
+    background: var(--warning-600);
+    color: var(--text-inverse);
+    text-decoration: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--text-tertiary);
+}
+
+.empty-state i {
+    font-size: var(--text-4xl);
+    color: var(--success-500);
+    margin-bottom: var(--space-4);
+}
+
+@@media (max-width: 1200px) {
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+    
+    .alertas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@@media (max-width: 768px) {
+    .dashboard-header {
+        padding: var(--space-6);
+    }
+    
+    .dashboard-title {
+        font-size: var(--text-2xl);
+    }
+}
+</style>
+
+<script>
+    // Atualizar alertas periodicamente
+    setInterval(function() {
+        fetch('@Url.Action("Alertas", "Mecanico")')
+            .then(response => response.json())
+            .then(data => {
+                // Atualizar contador de alertas urgentes
+                const urgentes = data.filter(a => a.tipoAlerta === "Urgente").length;
+                const badge = document.querySelector('.badge-danger');
+                if (badge) {
+                    badge.textContent = urgentes + ' Urgentes';
+                }
+            })
+            .catch(error => console.error('Erro ao atualizar alertas:', error));
+    }, 60000); // Atualizar a cada minuto
+</script>
+

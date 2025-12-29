@@ -87,6 +87,27 @@ namespace Service
             return idFrota;
         }
 
+        public async Task<PessoaInfoDto> GetFrotaEUnidadeByUsernameAsync(string username)
+        {
+            if(string.IsNullOrEmpty(username))
+                throw new UnauthorizedAccessException("Usuário não encontrado.");
+
+            var pessoaInfo = await context.Pessoas
+                .AsNoTracking()
+                .Where(p => p.Cpf == username)
+                .Select(p => new PessoaInfoDto
+                {
+                    IdFrota = p.IdFrota,
+                    IdUnidade = p.IdunidadeAdministrativa
+                })
+                .FirstOrDefaultAsync();
+            
+            if (pessoaInfo == null || pessoaInfo.IdFrota == 0)
+                throw new InvalidOperationException("Frota não encontrada para o usário autenticado.");
+            
+            return pessoaInfo;
+        }
+
         /// <summary>
         /// Método para obter o id da unidade do usuário que fizer a autenticação
         /// </summary>

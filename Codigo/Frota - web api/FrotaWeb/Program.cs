@@ -37,6 +37,7 @@ namespace FrotaWeb
             builder.Services.AddTransient<IPercursoService, PercursoService>();
             builder.Services.AddTransient<IManutencaoPecaInsumoService, ManutencaoPecaInsumoService>();
             builder.Services.AddTransient<IRotaService, RotaService>();
+            builder.Services.AddTransient<IValidadePecaInsumoService, ValidadePecaInsumoService>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             
             // HttpClient para RotaService

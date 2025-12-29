@@ -5,7 +5,7 @@
         <div class="page-header-content">
             <a href="javascript:history.back()" class="btn btn-tertiary">
                 <i class="fas fa-arrow-left"></i> Voltar
-            </a>
+        </a>
             <h1 class="page-title">Veículos Disponíveis</h1>
         </div>
         <div class="page-header-actions">
@@ -26,69 +26,72 @@
         <div class="filter-actions">
             <button type="button" class="btn btn-secondary" onclick="clearFilters()">
                 <i class="fas fa-times"></i> Limpar
-            </button>
+                    </button>
+                </div>
         </div>
-    </div>
 
     <div class="table-container">
         <div class="table-wrapper">
             <table class="table-modern">
-                <thead>
-                    <tr>
-                        <th>Modelo</th>
-                        <th>@Html.DisplayNameFor(model => model.Placa)</th>
-                        <th>@Html.DisplayNameFor(model => model.Cor)</th>
-                        <th>Status</th>
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>@Html.DisplayNameFor(model => model.Placa)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cor)</th>
+                    <th>Status</th>
                         <th class="text-right">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
                         <tr data-id="@item.Id" data-details-url="@Url.Action("Details", "Veiculo", new { id = item.Id })">
                             <td>@Html.DisplayFor(modelItem => item.ModeloNome)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Placa)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Cor)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Placa)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Cor)</td>
                             <td>
                                 <span class="badge badge-success">
                                     @Html.DisplayFor(modelItem => item.StatusNome)
                                 </span>
                             </td>
-                            <td>
+                        <td>
                                 <div class="table-actions">
                                     <a href="@Url.Action("Usar", "Veiculo", new { id = item.Id })" class="table-action-btn details" title="Usar" onclick="event.stopPropagation()">
                                         <i class="fas fa-check"></i>
-                                    </a>
+                            </a>
                                 </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
     </div>
 
-    @if (ViewBag.TotalPages > 1)
+    @{
+        var pagedResult = ViewBag.PagedResult as PagedResult<VeiculoViewModel>;
+    }
+    @if (pagedResult != null && pagedResult.TotalPages > 1)
     {
         <nav class="pagination-container">
             <div class="pagination">
-                @if (ViewBag.CurrentPage > 0)
+                @if (pagedResult.HasPreviousPage)
                 {
-                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = ViewBag.CurrentPage - 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = pagedResult.CurrentPage - 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 }
                 
-                @for (int i = Math.Max(0, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages - 1, ViewBag.CurrentPage + 2); i++)
+                @for (int i = Math.Max(0, pagedResult.CurrentPage - 2); i <= Math.Min(pagedResult.TotalPages - 1, pagedResult.CurrentPage + 2); i++)
                 {
-                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = i, placa = ViewBag.CurrentPlaca })" class="pagination-btn @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = i, placa = ViewBag.CurrentPlaca })" class="pagination-btn @(i == pagedResult.CurrentPage ? "active" : "")">
                         @(i + 1)
                     </a>
                 }
                 
-                @if (ViewBag.CurrentPage < ViewBag.TotalPages - 1)
+                @if (pagedResult.HasNextPage)
                 {
-                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = ViewBag.CurrentPage + 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
+                    <a href="@Url.Action("VeiculosDisponiveis", "Veiculo", new { page = pagedResult.CurrentPage + 1, placa = ViewBag.CurrentPlaca })" class="pagination-btn">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 }
